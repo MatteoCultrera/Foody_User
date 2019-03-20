@@ -1,3 +1,5 @@
+import android.graphics.drawable.VectorDrawable
+
 apply plugin: 'com.android.application'
 
 android {
@@ -25,4 +27,8 @@ dependencies {
     testImplementation 'junit:junit:4.12'
     androidTestImplementation 'com.android.support.test:runner:1.0.2'
     androidTestImplementation 'com.android.support.test.espresso:espresso-core:3.0.2'
+
+    //Library for circular images
+
+    implementation 'de.hdodenhof:circleimageview:2.1.0'
 }
