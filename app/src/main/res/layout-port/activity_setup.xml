@@ -44,7 +44,7 @@
             app:srcCompat="@drawable/foody_white" />
 
         <de.hdodenhof.circleimageview.CircleImageView
-            android:id="@+id/circleImageView"
+            android:id="@+id/profilePicture"
             android:layout_width="159dp"
             android:layout_height="159dp"
             android:layout_gravity="center_horizontal"
@@ -60,13 +60,13 @@
             app:layout_constraintVertical_bias="1.0" />
 
         <android.support.design.widget.FloatingActionButton
-            android:id="@+id/fab"
+            android:id="@+id/edit_profile_picture"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:elevation="32dp"
             android:src="@drawable/edit_black"
-            app:layout_constraintBottom_toBottomOf="@+id/circleImageView"
-            app:layout_constraintEnd_toEndOf="@+id/circleImageView"
+            app:layout_constraintBottom_toBottomOf="@+id/profilePicture"
+            app:layout_constraintEnd_toEndOf="@+id/profilePicture"
             app:maxImageSize="36dp" />
 
 
