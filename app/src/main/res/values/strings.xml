@@ -1,5 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string name="app_name">Foody</string>
-    <string name="name_text">Name</string>
+    <string name="name_hint">Name</string>
+    <string name="email_hint">E-mail</string>
+    <string name="address_hint">Address</string>
+    <string name="phone_hint">Phone Number</string>
 </resources>
