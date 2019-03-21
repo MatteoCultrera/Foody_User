@@ -29,4 +29,8 @@ dependencies {
     //Library for circular images
 
     implementation 'de.hdodenhof:circleimageview:2.1.0'
+
+    //FAB
+
+    implementation 'com.android.support:design:28.0.0'
 }
