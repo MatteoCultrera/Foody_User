@@ -1,35 +1,28 @@
 package com.example.foodyuser;
 
-import android.app.Activity;
 import android.app.AlertDialog;
-import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
-import android.content.res.Configuration;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.net.Uri;
-import android.os.Debug;
+import android.os.PersistableBundle;
 import android.provider.MediaStore;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.View;
 import android.widget.ArrayAdapter;
+import android.widget.EditText;
 
 import com.yalantis.ucrop.UCrop;
 import com.yalantis.ucrop.UCropActivity;
 
 import java.io.ByteArrayOutputStream;
 import java.io.File;
-import java.io.FileInputStream;
 import java.io.FileOutputStream;
-import java.io.InputStream;
-import java.lang.reflect.Array;
-import java.nio.file.Files;
 
 import de.hdodenhof.circleimageview.CircleImageView;
 
@@ -37,9 +30,11 @@ public class Setup extends AppCompatActivity {
 
     private CircleImageView profilePicture;
     private FloatingActionButton editImage;
+    private EditText name, email, address, phoneNumber;
     private final int GALLERY_REQUEST_CODE = 1;
     private final int REQUEST_CAPTURE_IMAGE = 100;
     private final String PROFILE_IMAGE = "ProfileImage.jpg";
+    private final String PLACEHOLDER_CAMERA="PlaceCamera.jpg";
     private File pictureDirectory;
 
     @Override
@@ -47,7 +42,9 @@ public class Setup extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_setup);
 
+
         init();
+
 
         editImage.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -55,6 +52,43 @@ public class Setup extends AppCompatActivity {
                 showPickImageDialog();
             }
         });
+
+    }
+
+    @Override
+    public void onSaveInstanceState(Bundle outState) {
+        super.onSaveInstanceState(outState);
+
+        outState.putString("name", name.getText().toString());
+        outState.putString("email", email.getText().toString());
+        outState.putString("address", address.getText().toString());
+        outState.putString("phone_num", phoneNumber.getText().toString());
+
+    }
+
+    @Override
+    protected void onRestoreInstanceState(Bundle savedInstanceState) {
+        super.onRestoreInstanceState(savedInstanceState);
+
+        name.setText(savedInstanceState.getString("name", getResources().getString(R.string.name_hint)));
+        email.setText(savedInstanceState.getString("email", getResources().getString(R.string.email_hint)));
+        address.setText(savedInstanceState.getString("address", getResources().getString(R.string.address_hint)));
+        phoneNumber.setText(savedInstanceState.getString("phone_num", getResources().getString(R.string.phone_hint)));
+
+        name.clearFocus();
+        email.clearFocus();
+        address.clearFocus();
+        phoneNumber.clearFocus();
+
+
+
+    }
+
+    protected void onPause(){
+        super.onPause();
+
+
+
 
     }
 
@@ -78,8 +112,18 @@ public class Setup extends AppCompatActivity {
 
         this.profilePicture = findViewById(R.id.profilePicture);
         this.editImage = findViewById(R.id.edit_profile_picture);
+        this.name = findViewById(R.id.userName);
+        this.email = findViewById(R.id.emailAddress);
+        this.address = findViewById(R.id.address);
+        this.phoneNumber = findViewById(R.id.phoneNumber);
+
+        Bitmap image = getBitmapFromFile(PROFILE_IMAGE);
+
+        if(image != null)
+            profilePicture.setImageBitmap(image);
 
     }
+
 
     @Override
     protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
@@ -91,8 +135,8 @@ public class Setup extends AppCompatActivity {
                 case REQUEST_CAPTURE_IMAGE:
                     if(data!= null && data.getExtras() != null){
                         Bitmap image = (Bitmap) data.getExtras().get("data");
-                        setBitmapProfile(image);
-                        startCrop(Uri.fromFile(new File(getFilesDir(), PROFILE_IMAGE)));
+                        setBitmapPlaceholder(image);
+                        startCrop(Uri.fromFile(new File(getFilesDir(), PLACEHOLDER_CAMERA)));
                     }
                     break;
 
@@ -118,6 +162,32 @@ public class Setup extends AppCompatActivity {
         }
     }
 
+    private void setBitmapPlaceholder(Bitmap bitmap){
+        File f = new File(this.getFilesDir(), PLACEHOLDER_CAMERA);
+
+        if(f.exists())
+            this.deleteFile(f.getName());
+
+        f = new File(this.getFilesDir(), PLACEHOLDER_CAMERA);
+
+//Convert bitmap to byte array
+        ByteArrayOutputStream bos = new ByteArrayOutputStream();
+        bitmap.compress(Bitmap.CompressFormat.JPEG, 100, bos);
+        byte[] bitmapdata = bos.toByteArray();
+
+//write the bytes in file
+
+        try{
+
+            FileOutputStream fos = new FileOutputStream(f);
+            fos.write(bitmapdata);
+            fos.flush();
+            fos.close();
+        }catch (Exception e){
+            e.printStackTrace();
+        }
+    }
+
     private void setBitmapProfile(Bitmap bitmap){
 
         File f = new File(this.getFilesDir(), PROFILE_IMAGE);
@@ -135,12 +205,13 @@ public class Setup extends AppCompatActivity {
 //write the bytes in file
 
         try{
-            FileOutputStream fos = this.openFileOutput(this.getFilesDir() + PROFILE_IMAGE, MODE_PRIVATE);
+
+            FileOutputStream fos = new FileOutputStream(f);
             fos.write(bitmapdata);
             fos.flush();
             fos.close();
         }catch (Exception e){
-
+            e.printStackTrace();
         }
     }
 
@@ -148,6 +219,8 @@ public class Setup extends AppCompatActivity {
         BitmapFactory.Options options = new BitmapFactory.Options();
         options.inPreferredConfig = Bitmap.Config.ARGB_8888;
         File dest = new File(this.getFilesDir(), PROFILE_IMAGE);
+        if(!dest.exists())
+            return null;
         Bitmap bitmap = BitmapFactory.decodeFile(dest.getPath(), options);
         return  bitmap;
 
@@ -190,13 +263,6 @@ public class Setup extends AppCompatActivity {
     }
 
     private void startCrop(@NonNull Uri uri){
-
-
-        File dest = new File(this.getFilesDir(), PROFILE_IMAGE);
-
-        if(dest.exists())
-            this.deleteFile(dest.getName());
-
 
         UCrop uCrop = UCrop.of(uri, Uri.fromFile(new File(this.getFilesDir(), PROFILE_IMAGE)));
 
