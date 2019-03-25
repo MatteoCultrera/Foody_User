@@ -6,4 +6,5 @@
     <string name="address_hint">Address</string>
     <string name="phone_hint">Phone Number</string>
     <string name="crop_image">Crop Image</string>
+    <string name="biography">Biography</string>
 </resources>
