@@ -5,6 +5,7 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.graphics.Color;
 import android.net.Uri;
 import android.os.PersistableBundle;
 import android.provider.MediaStore;
@@ -13,9 +14,13 @@ import android.support.annotation.Nullable;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.telephony.PhoneNumberUtils;
+import android.util.Log;
+import android.util.Patterns;
 import android.view.View;
 import android.widget.ArrayAdapter;
 import android.widget.EditText;
+import android.widget.TextView;
 
 import com.yalantis.ucrop.UCrop;
 import com.yalantis.ucrop.UCropActivity;
@@ -23,6 +28,8 @@ import com.yalantis.ucrop.UCropActivity;
 import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.FileOutputStream;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import de.hdodenhof.circleimageview.CircleImageView;
 
@@ -30,7 +37,8 @@ public class Setup extends AppCompatActivity {
 
     private CircleImageView profilePicture;
     private FloatingActionButton editImage;
-    private EditText name, email, address, phoneNumber;
+    private EditText name, email, address, phoneNumber, bio;
+    private TextView errorName, errorMail, errorAddress, errorPhone, errorBio;
     private final int GALLERY_REQUEST_CODE = 1;
     private final int REQUEST_CAPTURE_IMAGE = 100;
     private final String PROFILE_IMAGE = "ProfileImage.jpg";
@@ -87,10 +95,61 @@ public class Setup extends AppCompatActivity {
     protected void onPause(){
         super.onPause();
 
+    }
 
+    private void checkName(){
+        String username = name.getText().toString();
+        String regx = "^[\\p{L} .'-]+$";
+        View errorLine = findViewById(R.id.name_error_line);
+        Pattern regex = Pattern.compile(regx);
+        Matcher matcher = regex.matcher(username);
+
+        if(!matcher.matches()){
+            errorName.setText(getResources().getString(R.string.error_name));
+            errorLine.setBackgroundColor(getResources().getColor(R.color.errorColor,this.getTheme()));
+            errorLine.setAlpha(1);
+        }else{
+            errorName.setText("");
+            errorLine.setAlpha(0.2f);
+            errorLine.setBackgroundColor(Color.BLACK);
+        }
 
 
     }
+
+    private void checkNumber(){
+        String userNumber = phoneNumber.getText().toString();
+        View errorLine = findViewById(R.id.number_error_line);
+
+        if(!PhoneNumberUtils.isGlobalPhoneNumber(userNumber) || userNumber.length() == 0){
+            errorPhone.setText(getResources().getString(R.string.error_number));
+            errorLine.setBackgroundColor(getResources().getColor(R.color.errorColor,this.getTheme()));
+            errorLine.setAlpha(1);
+        }else{
+            errorPhone.setText("");
+            errorLine.setAlpha(0.2f);
+            errorLine.setBackgroundColor(Color.BLACK);
+        }
+
+
+    }
+
+    private void checkMail(){
+        View errorLine = findViewById(R.id.email_error_line);
+
+        if(!Patterns.EMAIL_ADDRESS.matcher(email.getText()).matches()){
+            errorMail.setText(getResources().getString(R.string.error_email));
+            errorLine.setBackgroundColor(getResources().getColor(R.color.errorColor,this.getTheme()));
+            errorLine.setAlpha(1);
+        }else{
+            errorName.setText("");
+            errorLine.setAlpha(0.2f);
+            errorLine.setBackgroundColor(Color.BLACK);
+        }
+
+
+    }
+
 
     private  void pickFromGallery(){
         Intent intent = new Intent(Intent.ACTION_PICK);
@@ -117,10 +176,56 @@ public class Setup extends AppCompatActivity {
         this.address = findViewById(R.id.address);
         this.phoneNumber = findViewById(R.id.phoneNumber);
 
+        this.errorName = findViewById(R.id.name_error);
+        this.errorMail = findViewById(R.id.email_error);
+        this.errorPhone = findViewById(R.id.number_error);
+        this.errorAddress = findViewById(R.id.address_error);
+        this.errorBio = findViewById(R.id.bio_error);
+
+        errorName.setText("");
+        errorMail.setText("");
+        errorPhone.setText("");
+        errorAddress.setText("");
+        errorBio.setText("");
+
+
+        name.setText("Walter White");
+        email.setText("Heisenberg@gmail.com");
+        address.setText("308 Negra Arroyo Lane, Albuquerque, New Mexico, 87104 ");
+        phoneNumber.setText("117-8987");
+
         Bitmap image = getBitmapFromFile(PROFILE_IMAGE);
 
         if(image != null)
             profilePicture.setImageBitmap(image);
+
+        name.setOnFocusChangeListener(new View.OnFocusChangeListener() {
+            @Override
+            public void onFocusChange(View v, boolean hasFocus) {
+                if(!name.hasFocus()){
+                    checkName();
+                }
+            }
+        });
+
+        phoneNumber.setOnFocusChangeListener(new View.OnFocusChangeListener() {
+            @Override
+            public void onFocusChange(View v, boolean hasFocus) {
+                if(!phoneNumber.hasFocus()){
+                    checkNumber();
+                }
+            }
+        });
+
+        email.setOnFocusChangeListener(new View.OnFocusChangeListener() {
+            @Override
+            public void onFocusChange(View v, boolean hasFocus) {
+                if(!phoneNumber.hasFocus()){
+                    checkMail();
+                }
+            }
+        });
+
 
     }
 
