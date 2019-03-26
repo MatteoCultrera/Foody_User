@@ -6,4 +6,8 @@
     <string name="address_hint">Indirizzo</string>
     <string name="phone_hint">Cellulare</string>
     <string name="crop_image">Ritaglia</string>
+    <string name="alert_dialog_image_gallery">Galleria</string>
+    <string name="alert_dialog_image_camera">Fotocamera</string>
+    <string name="cancel">Annulla</string>
+    <string name="alert_dialog_image_title">Scegli un\'opzione</string>
 </resources>
