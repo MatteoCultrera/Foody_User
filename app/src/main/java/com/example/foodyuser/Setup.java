@@ -19,7 +19,9 @@ import android.util.Log;
 import android.util.Patterns;
 import android.view.View;
 import android.widget.ArrayAdapter;
+import android.widget.Button;
 import android.widget.EditText;
+import android.widget.ImageButton;
 import android.widget.TextView;
 
 import com.yalantis.ucrop.UCrop;
@@ -36,6 +38,7 @@ import de.hdodenhof.circleimageview.CircleImageView;
 public class Setup extends AppCompatActivity {
 
     private CircleImageView profilePicture;
+    private ImageButton save, back;
     private FloatingActionButton editImage;
     private EditText name, email, address, phoneNumber, bio;
     private TextView errorName, errorMail, errorAddress, errorPhone, errorBio;
@@ -97,6 +100,31 @@ public class Setup extends AppCompatActivity {
 
     }
 
+    private void updateSave(){
+        String username = name.getText().toString();
+        String regx = "^[\\p{L} .'-]+$";
+        Pattern regex = Pattern.compile(regx);
+        Matcher nameMatcher = regex.matcher(username);
+
+        String userNumber = phoneNumber.getText().toString();
+
+        View errorLine = findViewById(R.id.email_error_line);
+
+        if(!nameMatcher.matches() || !PhoneNumberUtils.isGlobalPhoneNumber(userNumber)
+                || userNumber.length() == 0 || !Patterns.EMAIL_ADDRESS.matcher(email.getText()).matches()){
+            save.setImageResource(R.drawable.save_dis);
+            save.setEnabled(false);
+            save.setClickable(false);
+        }else{
+            save.setImageResource(R.drawable.save_white);
+            save.setEnabled(true);
+            save.setClickable(true);
+        }
+
+
+    }
+
+
     private void checkName(){
         String username = name.getText().toString();
         String regx = "^[\\p{L} .'-]+$";
@@ -114,6 +142,7 @@ public class Setup extends AppCompatActivity {
             errorLine.setBackgroundColor(Color.BLACK);
         }
 
+        updateSave();
 
     }
 
@@ -131,6 +160,7 @@ public class Setup extends AppCompatActivity {
             errorLine.setBackgroundColor(Color.BLACK);
         }
 
+        updateSave();
 
     }
 
@@ -142,10 +172,12 @@ public class Setup extends AppCompatActivity {
             errorLine.setBackgroundColor(getResources().getColor(R.color.errorColor,this.getTheme()));
             errorLine.setAlpha(1);
         }else{
-            errorName.setText("");
+            errorMail.setText("");
             errorLine.setAlpha(0.2f);
             errorLine.setBackgroundColor(Color.BLACK);
         }
+
+        updateSave();
 
 
     }
@@ -181,6 +213,9 @@ public class Setup extends AppCompatActivity {
         this.errorPhone = findViewById(R.id.number_error);
         this.errorAddress = findViewById(R.id.address_error);
         this.errorBio = findViewById(R.id.bio_error);
+
+        this.back = findViewById(R.id.backButton);
+        this.save = findViewById(R.id.saveButton);
 
         errorName.setText("");
         errorMail.setText("");
@@ -226,6 +261,7 @@ public class Setup extends AppCompatActivity {
             }
         });
 
+        updateSave();
 
     }
 
