@@ -5,6 +5,9 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+
+import android.graphics.drawable.Drawable;
+
 import android.net.Uri;
 import android.os.PersistableBundle;
 import android.provider.MediaStore;
@@ -13,9 +16,22 @@ import android.support.annotation.Nullable;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+
+import android.text.Layout;
+import android.view.LayoutInflater;
 import android.view.View;
+import android.view.ViewGroup;
+
 import android.widget.ArrayAdapter;
+import android.widget.Button;
 import android.widget.EditText;
+
+import android.widget.ImageView;
+import android.widget.ListAdapter;
+import android.widget.ListView;
+import android.widget.TextView;
+import android.widget.Toast;
+
 
 import com.yalantis.ucrop.UCrop;
 import com.yalantis.ucrop.UCropActivity;
@@ -23,14 +39,18 @@ import com.yalantis.ucrop.UCropActivity;
 import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.FileOutputStream;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import de.hdodenhof.circleimageview.CircleImageView;
 
 public class Setup extends AppCompatActivity {
 
     private CircleImageView profilePicture;
+    private ImageButton save, back;
     private FloatingActionButton editImage;
-    private EditText name, email, address, phoneNumber;
+    private EditText name, email, address, phoneNumber, bio;
+    private TextView errorName, errorMail, errorAddress, errorPhone, errorBio;
     private final int GALLERY_REQUEST_CODE = 1;
     private final int REQUEST_CAPTURE_IMAGE = 100;
     private final String PROFILE_IMAGE = "ProfileImage.jpg";
@@ -52,6 +72,8 @@ public class Setup extends AppCompatActivity {
                 showPickImageDialog();
             }
         });
+
+
 
     }
 
@@ -87,10 +109,90 @@ public class Setup extends AppCompatActivity {
     protected void onPause(){
         super.onPause();
 
+    }
 
+    private void updateSave(){
+        String username = name.getText().toString();
+        String regx = "^[\\p{L} .'-]+$";
+        Pattern regex = Pattern.compile(regx);
+        Matcher nameMatcher = regex.matcher(username);
+
+        String userNumber = phoneNumber.getText().toString();
+
+        View errorLine = findViewById(R.id.email_error_line);
+
+        if(!nameMatcher.matches() || !PhoneNumberUtils.isGlobalPhoneNumber(userNumber)
+                || userNumber.length() == 0 || !Patterns.EMAIL_ADDRESS.matcher(email.getText()).matches()){
+            save.setImageResource(R.drawable.save_dis);
+            save.setEnabled(false);
+            save.setClickable(false);
+        }else{
+            save.setImageResource(R.drawable.save_white);
+            save.setEnabled(true);
+            save.setClickable(true);
+        }
 
 
     }
+
+
+    private void checkName(){
+        String username = name.getText().toString();
+        String regx = "^[\\p{L} .'-]+$";
+        View errorLine = findViewById(R.id.name_error_line);
+        Pattern regex = Pattern.compile(regx);
+        Matcher matcher = regex.matcher(username);
+
+        if(!matcher.matches()){
+            errorName.setText(getResources().getString(R.string.error_name));
+            errorLine.setBackgroundColor(getResources().getColor(R.color.errorColor,this.getTheme()));
+            errorLine.setAlpha(1);
+        }else{
+            errorName.setText("");
+            errorLine.setAlpha(0.2f);
+            errorLine.setBackgroundColor(Color.BLACK);
+        }
+
+        updateSave();
+
+    }
+
+    private void checkNumber(){
+        String userNumber = phoneNumber.getText().toString();
+        View errorLine = findViewById(R.id.number_error_line);
+
+        if(!PhoneNumberUtils.isGlobalPhoneNumber(userNumber) || userNumber.length() == 0){
+            errorPhone.setText(getResources().getString(R.string.error_number));
+            errorLine.setBackgroundColor(getResources().getColor(R.color.errorColor,this.getTheme()));
+            errorLine.setAlpha(1);
+        }else{
+            errorPhone.setText("");
+            errorLine.setAlpha(0.2f);
+            errorLine.setBackgroundColor(Color.BLACK);
+        }
+
+        updateSave();
+
+    }
+
+    private void checkMail(){
+        View errorLine = findViewById(R.id.email_error_line);
+
+        if(!Patterns.EMAIL_ADDRESS.matcher(email.getText()).matches()){
+            errorMail.setText(getResources().getString(R.string.error_email));
+            errorLine.setBackgroundColor(getResources().getColor(R.color.errorColor,this.getTheme()));
+            errorLine.setAlpha(1);
+        }else{
+            errorMail.setText("");
+            errorLine.setAlpha(0.2f);
+            errorLine.setBackgroundColor(Color.BLACK);
+        }
+
+        updateSave();
+
+
+    }
+
 
     private  void pickFromGallery(){
         Intent intent = new Intent(Intent.ACTION_PICK);
@@ -117,10 +219,60 @@ public class Setup extends AppCompatActivity {
         this.address = findViewById(R.id.address);
         this.phoneNumber = findViewById(R.id.phoneNumber);
 
+        this.errorName = findViewById(R.id.name_error);
+        this.errorMail = findViewById(R.id.email_error);
+        this.errorPhone = findViewById(R.id.number_error);
+        this.errorAddress = findViewById(R.id.address_error);
+        this.errorBio = findViewById(R.id.bio_error);
+
+        this.back = findViewById(R.id.backButton);
+        this.save = findViewById(R.id.saveButton);
+
+        errorName.setText("");
+        errorMail.setText("");
+        errorPhone.setText("");
+        errorAddress.setText("");
+        errorBio.setText("");
+
+
+        name.setText("Walter White");
+        email.setText("Heisenberg@gmail.com");
+        address.setText("308 Negra Arroyo Lane, Albuquerque, New Mexico, 87104 ");
+        phoneNumber.setText("117-8987");
+
         Bitmap image = getBitmapFromFile(PROFILE_IMAGE);
 
         if(image != null)
             profilePicture.setImageBitmap(image);
+
+        name.setOnFocusChangeListener(new View.OnFocusChangeListener() {
+            @Override
+            public void onFocusChange(View v, boolean hasFocus) {
+                if(!name.hasFocus()){
+                    checkName();
+                }
+            }
+        });
+
+        phoneNumber.setOnFocusChangeListener(new View.OnFocusChangeListener() {
+            @Override
+            public void onFocusChange(View v, boolean hasFocus) {
+                if(!phoneNumber.hasFocus()){
+                    checkNumber();
+                }
+            }
+        });
+
+        email.setOnFocusChangeListener(new View.OnFocusChangeListener() {
+            @Override
+            public void onFocusChange(View v, boolean hasFocus) {
+                if(!phoneNumber.hasFocus()){
+                    checkMail();
+                }
+            }
+        });
+
+        updateSave();
 
     }
 
@@ -221,29 +373,37 @@ public class Setup extends AppCompatActivity {
         File dest = new File(this.getFilesDir(), PROFILE_IMAGE);
         if(!dest.exists())
             return null;
-        Bitmap bitmap = BitmapFactory.decodeFile(dest.getPath(), options);
-        return  bitmap;
+        return  BitmapFactory.decodeFile(dest.getPath(), options);
 
     }
 
     private void showPickImageDialog(){
+        final Item[] items = {
+                new Item(getString(R.string.alert_dialog_image_gallery), R.drawable.photo_black),
+                new Item(getString(R.string.alert_dialog_image_camera), R.drawable.camera_black)
+        };
+        ListAdapter arrayAdapter = new ArrayAdapter<Item>(
+                this,
+                R.layout.alert_dialog_item,
+                R.id.tv1,
+                items){
+            public View getView(int position, View convertView, @NonNull ViewGroup parent) {
+                View v = super.getView(position, convertView, parent);
+                TextView tv = v.findViewById(R.id.tv1);
+                ImageView iv = v.findViewById(R.id.iv1);
+                iv.setImageDrawable(getDrawable(items[position].icon));
+                return v;
+            }
+        };
         AlertDialog.Builder builder = new AlertDialog.Builder(Setup.this);
-
-        builder.setTitle("Select one Option");
-
-        final ArrayAdapter<String> arrayAdapter =
-                new ArrayAdapter<>(Setup.this, android.R.layout.select_dialog_item);
-
-        arrayAdapter.add("Gallery");
-        arrayAdapter.add("Camera");
-
-        builder.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
+        builder.setNegativeButton(getResources().getString(R.string.cancel), new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialog, int which) {
                 dialog.dismiss();
             }
         });
-
+        builder.setTitle(getResources().getString(R.string.alert_dialog_image_title));
+        builder.setCancelable(false);
         builder.setAdapter(arrayAdapter, new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialog, int which) {
@@ -257,9 +417,7 @@ public class Setup extends AppCompatActivity {
                 }
             }
         });
-
         builder.show();
-
     }
 
     private void startCrop(@NonNull Uri uri){
