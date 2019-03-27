@@ -5,11 +5,11 @@
     <string name="email_hint">E-mail</string>
     <string name="address_hint">Indirizzo</string>
     <string name="phone_hint">Cellulare</string>
-    <string name="bio_hint">Biografia</string>
+    <string name="bio_hint">Biografia (Opzionale)</string>
     <string name="crop_image">Ritaglia</string>
-
     <string name="biography">Biografia</string>
 
+    <string name="foody_level">Foody Principiante</string>
 
     <string name="alert_dialog_image_gallery">Galleria</string>
     <string name="alert_dialog_image_camera">Fotocamera</string>

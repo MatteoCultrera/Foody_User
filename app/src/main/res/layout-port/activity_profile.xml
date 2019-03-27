@@ -3,6 +3,7 @@
 
 <android.support.constraint.ConstraintLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
     android:theme="@style/AppTheme"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
@@ -54,16 +55,12 @@
             android:layout_marginTop="65dp"
             android:layout_marginEnd="16dp"
             android:clickable="false"
-            android:autoSizeMaxTextSize="30sp"
-            android:autoSizeMinTextSize="12sp"
-            android:autoSizeStepGranularity="2sp"
-            android:autoSizeTextType="uniform"
             android:background="@android:color/transparent"
             android:elevation="16dp"
             android:fontFamily="@font/roboto_bold"
             android:gravity="center_vertical"
             android:hint="Name TextView"
-            android:maxLines="1"
+            android:maxLines="2"
             android:textColor="#ffffffff"
             android:textColorHint="#bbffffff"
             android:textSize="30sp"
@@ -84,8 +81,7 @@
             android:elevation="16dp"
             android:fontFamily="@font/roboto_regular"
             android:gravity="center_vertical"
-
-            android:hint="Foody Beginner"
+            android:text="@string/foody_level"
             android:maxLines="1"
             android:textColor="#ffffffff"
             android:textColorHint="#bbffffff"
@@ -102,9 +98,9 @@
 
         <FrameLayout
             android:id="@+id/frameLayout"
-            android:layout_width="93dp"
-            android:layout_height="93dp"
-            android:layout_marginTop="144dp"
+            android:layout_width="88dp"
+            android:layout_height="88dp"
+            android:layout_marginTop="148dp"
             android:elevation="32dp"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
@@ -117,10 +113,11 @@
                 android:id="@+id/edit_mode"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="20dp"
-                android:layout_marginStart="20dp"
+                android:layout_marginStart="16dp"
+                app:fabSize="normal"
+                android:layout_marginTop="16dp"
                 android:src="@drawable/edit_black"
-                app:maxImageSize="36dp"/>
+                app:maxImageSize="26dp"/>
 
         </FrameLayout>
 
@@ -142,88 +139,14 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginStart="16dp"
-            android:layout_marginTop="56dp"
+            android:layout_marginTop="36dp"
             android:layout_marginEnd="16dp"
             android:orientation="horizontal">
 
             <ImageView
                 android:layout_width="30dp"
                 android:layout_height="30dp"
-                android:scaleType="fitCenter"
-                android:src="@drawable/mail_black" />
-
-            <TextView
-                android:id="@+id/emailAddress"
-                style="@android:style/Widget.Material.EditText"
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:layout_marginStart="5dp"
-                android:clickable="false"
-                android:background="@android:color/transparent"
-                android:fontFamily="@font/roboto_regular"
-                android:hint="@string/email_hint"
-                android:maxLines="1"
-                android:textSize="15sp" />
-
-        </LinearLayout>
-
-        <View
-            android:layout_width="match_parent"
-            android:layout_height="1dp"
-            android:layout_marginLeft="16dp"
-            android:layout_marginTop="3.5dp"
-            android:layout_marginRight="16dp"
-            android:alpha="0.2"
-            android:background="@android:color/black" />
-
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginStart="16dp"
-            android:layout_marginTop="40dp"
-            android:layout_marginEnd="16dp"
-            android:orientation="horizontal">
-
-            <ImageView
-                android:layout_width="30dp"
-                android:layout_height="30dp"
-                android:scaleType="fitCenter"
-                android:src="@drawable/location_black" />
-
-            <TextView
-                android:id="@+id/address"
-                style="@android:style/Widget.Material.EditText"
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:layout_marginStart="5dp"
-                android:background="@android:color/transparent"
-                android:fontFamily="@font/roboto_regular"
-                android:hint="@string/address_hint"
-                android:maxLines="1"
-                android:textSize="15sp" />
-
-        </LinearLayout>
-
-        <View
-            android:layout_width="match_parent"
-            android:layout_height="1dp"
-            android:layout_marginLeft="16dp"
-            android:layout_marginTop="3.5dp"
-            android:layout_marginRight="16dp"
-            android:alpha="0.2"
-            android:background="@android:color/black" />
-
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginStart="16dp"
-            android:layout_marginTop="40dp"
-            android:layout_marginEnd="16dp"
-            android:orientation="horizontal">
-
-            <ImageView
-                android:layout_width="30dp"
-                android:layout_height="30dp"
+                android:layout_marginTop="8dp"
                 android:scaleType="fitCenter"
                 android:src="@drawable/phone_black" />
 
@@ -231,12 +154,12 @@
                 android:id="@+id/phoneNumber"
                 style="@android:style/Widget.Material.EditText"
                 android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:layout_marginStart="5dp"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="8dp"
+                android:layout_marginTop="14dp"
                 android:background="@android:color/transparent"
                 android:fontFamily="@font/roboto_regular"
                 android:hint="@string/phone_hint"
-                android:maxLines="1"
                 android:textSize="15sp" />
 
         </LinearLayout>
@@ -254,27 +177,106 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginStart="16dp"
-            android:layout_marginTop="40dp"
+            android:layout_marginTop="36dp"
             android:layout_marginEnd="16dp"
             android:orientation="horizontal">
 
             <ImageView
                 android:layout_width="30dp"
                 android:layout_height="30dp"
+                android:layout_marginTop="8dp"
                 android:scaleType="fitCenter"
-                android:src="@drawable/phone_black" />
+                android:src="@drawable/mail_black" />
 
             <TextView
-                android:id="@+id/biography"
+                android:id="@+id/emailAddress"
                 style="@android:style/Widget.Material.EditText"
                 android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:layout_marginStart="5dp"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="8dp"
+                android:layout_marginTop="14dp"
+                android:background="@android:color/transparent"
+                android:fontFamily="@font/roboto_regular"
+                android:hint="@string/email_hint"
+                android:textSize="15sp" />
+
+        </LinearLayout>
+
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="1dp"
+            android:layout_marginLeft="16dp"
+            android:layout_marginTop="3.5dp"
+            android:layout_marginRight="16dp"
+            android:alpha="0.2"
+            android:background="@android:color/black" />
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="16dp"
+            android:layout_marginTop="36dp"
+            android:layout_marginEnd="16dp"
+            android:orientation="horizontal">
+
+            <ImageView
+                android:layout_width="30dp"
+                android:layout_height="30dp"
+                android:layout_marginTop="8dp"
+                android:scaleType="fitCenter"
+                android:src="@drawable/location_black" />
+
+            <TextView
+                android:id="@+id/address"
+                style="@android:style/Widget.Material.EditText"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="8dp"
+                android:layout_marginTop="14dp"
+                android:background="@android:color/transparent"
+                android:fontFamily="@font/roboto_regular"
+                android:hint="@string/address_hint"
+                android:textSize="15sp" />
+
+        </LinearLayout>
+
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="1dp"
+            android:layout_marginLeft="16dp"
+            android:layout_marginTop="3.5dp"
+            android:layout_marginRight="16dp"
+            android:alpha="0.2"
+            android:background="@android:color/black" />
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="16dp"
+            android:layout_marginTop="36dp"
+            android:layout_marginEnd="16dp"
+            android:orientation="horizontal">
+
+            <ImageView
+                android:layout_width="30dp"
+                android:layout_height="30dp"
+                android:layout_marginTop="8dp"
+                android:scaleType="fitCenter"
+                android:src="@drawable/name_black" />
+
+            <TextView
+                android:id="@+id/bio"
+                style="@android:style/Widget.Material.EditText"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="8dp"
+                android:layout_marginTop="14dp"
                 android:background="@android:color/transparent"
                 android:fontFamily="@font/roboto_regular"
                 android:hint="@string/biography"
-                android:maxLength="140"
-                android:textSize="15sp" />
+                android:maxLines="3"
+                android:textSize="15sp"
+                />
 
         </LinearLayout>
 

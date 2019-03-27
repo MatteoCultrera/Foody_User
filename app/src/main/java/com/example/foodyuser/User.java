@@ -3,13 +3,19 @@ package com.example.foodyuser;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.os.Bundle;
 
+import android.support.annotation.Nullable;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v7.app.AppCompatActivity;
 
+import android.util.Log;
 import android.view.View;
 import android.widget.TextView;
+
+import java.io.File;
 
 import de.hdodenhof.circleimageview.CircleImageView;
 
@@ -22,7 +28,7 @@ public class User extends AppCompatActivity {
     private TextView email;
     private TextView address;
     private TextView phoneNumber;
-
+    private TextView bio;
 
     //Shared Preferences definition
     Context context;
@@ -39,7 +45,6 @@ public class User extends AppCompatActivity {
         editMode.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-
                 Intent intent = new Intent(User.this, Setup.class);
                 startActivity(intent);
             }
@@ -55,31 +60,51 @@ public class User extends AppCompatActivity {
         this.email = findViewById(R.id.emailAddress);
         this.address = findViewById(R.id.address);
         this.phoneNumber = findViewById(R.id.phoneNumber);
+        this.bio = findViewById(R.id.bio);
 
         //setup of the Shared Preferences to save value in (key, value) format
         context = getApplicationContext();
         sharedPref = context.getSharedPreferences("myPreference", MODE_PRIVATE);
         edit = sharedPref.edit();
+
+        name.setText("Walter White");
+        email.setText("Heisenberg@gmail.com");
+        address.setText("308 Negra Arroyo Lane, Albuquerque, New Mexico, 87104");
+        phoneNumber.setText("3334567890");
+        bio.setText("My name is Walter White and i cook! My address is 308 Negra Arroyo Lane, Albuquerque, New Mexico, 87104 ");
+
+        edit.putString("name", name.getText().toString());
+        edit.putString("email", email.getText().toString());
+        edit.putString("address", address.getText().toString());
+        edit.putString("phoneNumber", phoneNumber.getText().toString());
+        edit.putString("bio", bio.getText().toString());
         edit.apply();
-
-
     }
 
     @Override
     public void onSaveInstanceState(Bundle outState) {
         super.onSaveInstanceState(outState);
 
+        outState.putString("name", name.getText().toString());
+        outState.putString("email", email.getText().toString());
+        outState.putString("address", address.getText().toString());
+        outState.putString("phoneNumber", phoneNumber.getText().toString());
+        outState.putString("bio", bio.getText().toString());
     }
 
     @Override
     protected void onRestoreInstanceState(Bundle savedInstanceState) {
         super.onRestoreInstanceState(savedInstanceState);
 
+        name.setText(savedInstanceState.getString("name", getResources().getString(R.string.name_hint)));
+        email.setText(savedInstanceState.getString("email", getResources().getString(R.string.email_hint)));
+        address.setText(savedInstanceState.getString("address", getResources().getString(R.string.address_hint)));
+        phoneNumber.setText(savedInstanceState.getString("phoneNumber", getResources().getString(R.string.phone_hint)));
+        bio.setText(savedInstanceState.getString("bio", getResources().getString(R.string.biography)));
     }
 
     protected void onPause(){
         super.onPause();
-
     }
 
     @Override
@@ -90,5 +115,6 @@ public class User extends AppCompatActivity {
         email.setText(sharedPref.getString("email", email.getHint().toString()));
         address.setText(sharedPref.getString("address", address.getHint().toString()));
         phoneNumber.setText(sharedPref.getString("phoneNumber", phoneNumber.getHint().toString()));
+        bio.setText(sharedPref.getString("bio", bio.getHint().toString()));
     }
 }
