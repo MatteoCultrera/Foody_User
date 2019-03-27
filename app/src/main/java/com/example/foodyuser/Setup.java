@@ -18,6 +18,7 @@ import android.telephony.PhoneNumberUtils;
 import android.util.Log;
 import android.util.Patterns;
 import android.view.View;
+import android.view.WindowManager;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
@@ -63,6 +64,8 @@ public class Setup extends AppCompatActivity {
                 showPickImageDialog();
             }
         });
+
+
 
     }
 

@@ -83,7 +83,7 @@
 
         <android.support.constraint.ConstraintLayout
             android:layout_width="match_parent"
-            android:layout_height="match_parent">
+            android:layout_height="wrap_content">
 
             <de.hdodenhof.circleimageview.CircleImageView
                 android:id="@+id/profilePicture"
@@ -147,6 +147,7 @@
                     android:hint="@string/name_hint"
                     android:inputType="textPersonName"
                     android:maxLines="1"
+                    android:lines="1"
                     android:textSize="15sp"
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintStart_toEndOf="@+id/imageView"
@@ -437,8 +438,8 @@
                     android:layout_height="wrap_content"
                     android:text="@string/error_bio"
                     android:textColor="#C90006"
-                    app:layout_constraintTop_toBottomOf="@+id/bio_error_line"
-                    app:layout_constraintStart_toStartOf="parent" />
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toBottomOf="@+id/bio_error_line" />
 
 
             </android.support.constraint.ConstraintLayout>
