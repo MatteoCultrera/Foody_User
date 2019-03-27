@@ -1,8 +1,10 @@
 package com.example.foodyuser;
 
 import android.app.AlertDialog;
+import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 
@@ -15,6 +17,7 @@ import android.support.annotation.Nullable;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+
 
 import android.telephony.PhoneNumberUtils;
 import android.util.Patterns;
@@ -53,14 +56,18 @@ public class Setup extends AppCompatActivity {
     private final String PROFILE_IMAGE = "ProfileImage.jpg";
     private final String PLACEHOLDER_CAMERA="PlaceCamera.jpg";
 
+
+    //Shared Preferences definition
+    Context context;
+    SharedPreferences sharedPref;
+    SharedPreferences.Editor edit;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_setup);
 
-
         init();
-
 
         editImage.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -71,6 +78,20 @@ public class Setup extends AppCompatActivity {
 
 
 
+    }
+
+
+    @Override
+    public void onBackPressed() {
+        super.onBackPressed();
+
+        edit.putString("name", name.getText().toString());
+        edit.putString("email", email.getText().toString());
+        edit.putString("address", address.getText().toString());
+        edit.putString("phoneNumber", phoneNumber.getText().toString());
+        edit.apply();
+
+        finish();
     }
 
     @Override
@@ -97,9 +118,6 @@ public class Setup extends AppCompatActivity {
         email.clearFocus();
         address.clearFocus();
         phoneNumber.clearFocus();
-
-
-
     }
 
     protected void onPause(){
@@ -214,6 +232,12 @@ public class Setup extends AppCompatActivity {
         this.email = findViewById(R.id.emailAddress);
         this.address = findViewById(R.id.address);
         this.phoneNumber = findViewById(R.id.phoneNumber);
+
+        //setup of the Shared Preferences to save value in (key, value) format
+        context = getApplicationContext();
+        sharedPref = context.getSharedPreferences("myPreference", MODE_PRIVATE);
+        edit = sharedPref.edit();
+        edit.apply();
 
         this.errorName = findViewById(R.id.name_error);
         this.errorMail = findViewById(R.id.email_error);
