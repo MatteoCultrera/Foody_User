@@ -1,5 +1,4 @@
 package com.example.foodyuser;
-
 import android.app.AlertDialog;
 import android.content.Context;
 import android.content.DialogInterface;
@@ -7,38 +6,33 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
-
 import android.graphics.Color;
-
 import android.net.Uri;
+import android.os.Environment;
 import android.provider.MediaStore;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.design.widget.FloatingActionButton;
+import android.support.v4.content.FileProvider;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
-
-
 import android.telephony.PhoneNumberUtils;
+import android.util.Log;
 import android.util.Patterns;
 import android.view.View;
 import android.view.ViewGroup;
-
 import android.widget.ArrayAdapter;
 import android.widget.EditText;
-
 import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.ListAdapter;
 import android.widget.TextView;
-
-
 import com.yalantis.ucrop.UCrop;
 import com.yalantis.ucrop.UCropActivity;
-
 import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.FileOutputStream;
+import java.io.IOException;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -55,6 +49,7 @@ public class Setup extends AppCompatActivity {
     private final int REQUEST_CAPTURE_IMAGE = 100;
     private final String PROFILE_IMAGE = "ProfileImage.jpg";
     private final String PLACEHOLDER_CAMERA="PlaceCamera.jpg";
+    private String placeholderPath;
 
 
     //Shared Preferences definition
@@ -219,8 +214,22 @@ public class Setup extends AppCompatActivity {
 
     private void pickFromCamera(){
         Intent pictureIntent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
-        if(pictureIntent.resolveActivity(getPackageManager())!= null)
+        if(pictureIntent.resolveActivity(getPackageManager())!= null){
+
+            File photoFile = createOrReplacePlaceholder();
+
+            if(photoFile!=null){
+                Uri photoURI = FileProvider.getUriForFile(this,
+                        "com.example.foodyuser",
+                        photoFile);
+                pictureIntent.putExtra(MediaStore.EXTRA_OUTPUT, photoURI);
+                Log.d("PICTURE", "Launching Camera");
+                startActivityForResult(pictureIntent, REQUEST_CAPTURE_IMAGE);
+            }
+
             startActivityForResult(pictureIntent, REQUEST_CAPTURE_IMAGE);
+
+        }
 
     }
 
@@ -260,7 +269,7 @@ public class Setup extends AppCompatActivity {
         address.setText("308 Negra Arroyo Lane, Albuquerque, New Mexico, 87104 ");
         phoneNumber.setText("117-8987");
 
-        Bitmap image = getBitmapFromFile(PROFILE_IMAGE);
+        Bitmap image = getBitmapFromFile();
 
         if(image != null)
             profilePicture.setImageBitmap(image);
@@ -301,15 +310,15 @@ public class Setup extends AppCompatActivity {
     protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
 
+        Log.d("PICTURE", "End Picture");
+
         if(resultCode == RESULT_OK){
             switch (requestCode){
 
                 case REQUEST_CAPTURE_IMAGE:
-                    if(data!= null && data.getExtras() != null){
-                        Bitmap image = (Bitmap) data.getExtras().get("data");
-                        setBitmapPlaceholder(image);
-                        startCrop(Uri.fromFile(new File(getFilesDir(), PLACEHOLDER_CAMERA)));
-                    }
+                    File f = new File(placeholderPath);
+                    Log.d("PICTURE", "Entered Request Capture");
+                    startCrop(Uri.fromFile(f));
                     break;
 
                 case GALLERY_REQUEST_CODE:
@@ -325,7 +334,7 @@ public class Setup extends AppCompatActivity {
                     break;
 
                 case  UCrop.REQUEST_CROP:
-                    Bitmap bitmap = getBitmapFromFile(PROFILE_IMAGE);
+                    Bitmap bitmap = getBitmapFromFile();
                     if(bitmap != null){
                         profilePicture.setImageBitmap(bitmap);
                     }
@@ -335,6 +344,7 @@ public class Setup extends AppCompatActivity {
     }
 
     private void setBitmapPlaceholder(Bitmap bitmap){
+
         File f = new File(this.getFilesDir(), PLACEHOLDER_CAMERA);
 
         if(f.exists())
@@ -358,6 +368,24 @@ public class Setup extends AppCompatActivity {
         }catch (Exception e){
             e.printStackTrace();
         }
+    }
+
+
+    private File createOrReplacePlaceholder(){
+
+        Log.d("PICTURE", "Create or Replace");
+        File storageDir = getExternalFilesDir(Environment.DIRECTORY_PICTURES);
+
+        File f = new File(storageDir, PLACEHOLDER_CAMERA);
+
+        if(f.exists())
+            this.deleteFile(f.getName());
+
+        f = new File(storageDir, PLACEHOLDER_CAMERA);
+
+        placeholderPath = f.getPath();
+
+       return f;
     }
 
     private void setBitmapProfile(Bitmap bitmap){
@@ -387,7 +415,7 @@ public class Setup extends AppCompatActivity {
         }
     }
 
-    private Bitmap getBitmapFromFile(String fileName){
+    private Bitmap getBitmapFromFile(){
         BitmapFactory.Options options = new BitmapFactory.Options();
         options.inPreferredConfig = Bitmap.Config.ARGB_8888;
         File dest = new File(this.getFilesDir(), PROFILE_IMAGE);
@@ -459,7 +487,7 @@ public class Setup extends AppCompatActivity {
     private UCrop.Options getCropOptions(){
         UCrop.Options options= new UCrop.Options();
 
-        options.setCompressionQuality(70);
+        options.setCompressionQuality(100);
 
         //Compress Type
         //options.setCompressionFormat(Bitmap.CompressFormat.PNG);
