@@ -12,11 +12,14 @@ import android.os.Environment;
 import android.provider.MediaStore;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
+import android.support.design.button.MaterialButton;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v4.content.FileProvider;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.telephony.PhoneNumberUtils;
+import android.text.Editable;
+import android.text.TextWatcher;
 import android.util.Log;
 import android.util.Patterns;
 import android.view.View;
@@ -51,7 +54,6 @@ public class Setup extends AppCompatActivity {
     private final String PLACEHOLDER_CAMERA="PlaceCamera.jpg";
     private String placeholderPath;
 
-
     //Shared Preferences definition
     Context context;
     SharedPreferences sharedPref;
@@ -73,7 +75,6 @@ public class Setup extends AppCompatActivity {
 
     }
 
-
     @Override
     public void onBackPressed() {
         super.onBackPressed();
@@ -82,6 +83,7 @@ public class Setup extends AppCompatActivity {
         edit.putString("email", email.getText().toString());
         edit.putString("address", address.getText().toString());
         edit.putString("phoneNumber", phoneNumber.getText().toString());
+        edit.putString("bio", bio.getText().toString());
         edit.apply();
 
         finish();
@@ -94,8 +96,8 @@ public class Setup extends AppCompatActivity {
         outState.putString("name", name.getText().toString());
         outState.putString("email", email.getText().toString());
         outState.putString("address", address.getText().toString());
-        outState.putString("phone_num", phoneNumber.getText().toString());
-
+        outState.putString("phoneNumber", phoneNumber.getText().toString());
+        outState.putString("bio", bio.getText().toString());
     }
 
     @Override
@@ -105,12 +107,14 @@ public class Setup extends AppCompatActivity {
         name.setText(savedInstanceState.getString("name", getResources().getString(R.string.name_hint)));
         email.setText(savedInstanceState.getString("email", getResources().getString(R.string.email_hint)));
         address.setText(savedInstanceState.getString("address", getResources().getString(R.string.address_hint)));
-        phoneNumber.setText(savedInstanceState.getString("phone_num", getResources().getString(R.string.phone_hint)));
+        phoneNumber.setText(savedInstanceState.getString("phoneNumber", getResources().getString(R.string.phone_hint)));
+        bio.setText(savedInstanceState.getString("bio", getResources().getString(R.string.bio_hint)));
 
         name.clearFocus();
         email.clearFocus();
         address.clearFocus();
         phoneNumber.clearFocus();
+        bio.clearFocus();
     }
 
     protected void onPause(){
@@ -139,7 +143,6 @@ public class Setup extends AppCompatActivity {
             save.setClickable(true);
         }
 
-
     }
 
 
@@ -165,10 +168,12 @@ public class Setup extends AppCompatActivity {
     }
 
     private void checkNumber(){
-        String userNumber = phoneNumber.getText().toString();
+        String regexpPhone = "^(([+]|00)39)?((3[1-6][0-9]))(\\d{7})$";
+        final String userNumber = phoneNumber.getText().toString();
+
         View errorLine = findViewById(R.id.number_error_line);
 
-        if(!PhoneNumberUtils.isGlobalPhoneNumber(userNumber) || userNumber.length() == 0){
+        if(!Pattern.compile(regexpPhone).matcher(userNumber).matches()){
             errorPhone.setText(getResources().getString(R.string.error_number));
             errorLine.setBackgroundColor(getResources().getColor(R.color.errorColor,this.getTheme()));
             errorLine.setAlpha(1);
@@ -184,11 +189,13 @@ public class Setup extends AppCompatActivity {
 
     private void checkMail(){
         View errorLine = findViewById(R.id.email_error_line);
+        String regexpEmail = "^[_A-Za-z0-9-\\+]+(\\.[_A-Za-z0-9-]+)*@" + "[A-Za-z0-9-]+(\\.[A-Za-z0-9]+)*(\\.[A-Za-z]{2,})$";
+        final String emailToCheck = email.getText().toString();
 
-        if(!Patterns.EMAIL_ADDRESS.matcher(email.getText()).matches()){
-            errorMail.setText(getResources().getString(R.string.error_email));
-            errorLine.setBackgroundColor(getResources().getColor(R.color.errorColor,this.getTheme()));
-            errorLine.setAlpha(1);
+        if(!Pattern.compile(regexpEmail).matcher(emailToCheck).matches()) {
+                errorMail.setText(getResources().getString(R.string.error_email));
+                errorLine.setBackgroundColor(getResources().getColor(R.color.errorColor, this.getTheme()));
+                errorLine.setAlpha(1);
         }else{
             errorMail.setText("");
             errorLine.setAlpha(0.2f);
@@ -199,7 +206,6 @@ public class Setup extends AppCompatActivity {
 
 
     }
-
 
     private  void pickFromGallery(){
         Intent intent = new Intent(Intent.ACTION_PICK);
@@ -221,12 +227,9 @@ public class Setup extends AppCompatActivity {
                         "com.example.foodyuser",
                         photoFile);
                 pictureIntent.putExtra(MediaStore.EXTRA_OUTPUT, photoURI);
-                Log.d("PICTURE", "Launching Camera");
                 startActivityForResult(pictureIntent, REQUEST_CAPTURE_IMAGE);
             }
-
         }
-
     }
 
     private void init(){
@@ -237,12 +240,12 @@ public class Setup extends AppCompatActivity {
         this.email = findViewById(R.id.emailAddress);
         this.address = findViewById(R.id.address);
         this.phoneNumber = findViewById(R.id.phoneNumber);
+        this.bio = findViewById(R.id.bio);
 
         //setup of the Shared Preferences to save value in (key, value) format
         context = getApplicationContext();
         sharedPref = context.getSharedPreferences("myPreference", MODE_PRIVATE);
         edit = sharedPref.edit();
-        edit.apply();
 
         this.errorName = findViewById(R.id.name_error);
         this.errorMail = findViewById(R.id.email_error);
@@ -259,46 +262,64 @@ public class Setup extends AppCompatActivity {
         errorAddress.setText("");
         errorBio.setText("");
 
-
-        name.setText("Walter White");
-        email.setText("Heisenberg@gmail.com");
-        address.setText("308 Negra Arroyo Lane, Albuquerque, New Mexico, 87104 ");
-        phoneNumber.setText("117-8987");
+        name.setText(sharedPref.getString("name", getResources().getString(R.string.name_hint)));
+        email.setText(sharedPref.getString("email", getResources().getString(R.string.email_hint)));
+        address.setText(sharedPref.getString("address", getResources().getString(R.string.address_hint)));
+        phoneNumber.setText(sharedPref.getString("phoneNumber", getResources().getString(R.string.phone_hint)));
+        bio.setText(sharedPref.getString("bio", getResources().getString(R.string.bio_hint)));
+        edit.apply();
 
         Bitmap image = getBitmapFromFile();
 
         if(image != null)
             profilePicture.setImageBitmap(image);
 
-        name.setOnFocusChangeListener(new View.OnFocusChangeListener() {
+        name.addTextChangedListener(new TextWatcher() {
             @Override
-            public void onFocusChange(View v, boolean hasFocus) {
-                if(!name.hasFocus()){
-                    checkName();
-                }
+            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+            }
+
+            @Override
+            public void onTextChanged(CharSequence s, int start, int before, int count) {
+                checkName();
+            }
+
+            @Override
+            public void afterTextChanged(Editable s) {
             }
         });
 
-        phoneNumber.setOnFocusChangeListener(new View.OnFocusChangeListener() {
+        phoneNumber.addTextChangedListener(new TextWatcher() {
             @Override
-            public void onFocusChange(View v, boolean hasFocus) {
-                if(!phoneNumber.hasFocus()){
-                    checkNumber();
-                }
+            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+            }
+
+            @Override
+            public void onTextChanged(CharSequence s, int start, int before, int count) {
+                checkNumber();
+            }
+
+            @Override
+            public void afterTextChanged(Editable s) {
             }
         });
 
-        email.setOnFocusChangeListener(new View.OnFocusChangeListener() {
+        email.addTextChangedListener(new TextWatcher() {
             @Override
-            public void onFocusChange(View v, boolean hasFocus) {
-                if(!phoneNumber.hasFocus()){
-                    checkMail();
-                }
+            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+            }
+
+            @Override
+            public void onTextChanged(CharSequence s, int start, int before, int count) {
+                checkMail();
+            }
+
+            @Override
+            public void afterTextChanged(Editable s) {
             }
         });
 
         updateSave();
-
     }
 
 
@@ -306,14 +327,11 @@ public class Setup extends AppCompatActivity {
     protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
 
-        Log.d("PICTURE", "End Picture");
-
         if(resultCode == RESULT_OK){
             switch (requestCode){
 
                 case REQUEST_CAPTURE_IMAGE:
                     File f = new File(placeholderPath);
-                    Log.d("PICTURE", "Entered Request Capture");
                     startCrop(Uri.fromFile(f));
                     break;
 
@@ -348,13 +366,12 @@ public class Setup extends AppCompatActivity {
 
         f = new File(this.getFilesDir(), PLACEHOLDER_CAMERA);
 
-//Convert bitmap to byte array
+        //Convert bitmap to byte array
         ByteArrayOutputStream bos = new ByteArrayOutputStream();
         bitmap.compress(Bitmap.CompressFormat.JPEG, 100, bos);
         byte[] bitmapdata = bos.toByteArray();
 
-//write the bytes in file
-
+        //write the bytes in file
         try{
 
             FileOutputStream fos = new FileOutputStream(f);
@@ -369,7 +386,6 @@ public class Setup extends AppCompatActivity {
 
     private File createOrReplacePlaceholder(){
 
-        Log.d("PICTURE", "Create or Replace");
         File storageDir = getExternalFilesDir(Environment.DIRECTORY_PICTURES);
 
         File f = new File(storageDir, PLACEHOLDER_CAMERA);
