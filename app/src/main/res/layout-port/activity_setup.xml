@@ -24,10 +24,12 @@
             android:id="@+id/backButton"
             android:layout_width="36dp"
             android:layout_height="36dp"
+            android:layout_marginStart="16dp"
             android:background="@android:color/transparent"
             android:padding="6dp"
             android:scaleType="fitCenter"
             android:src="@drawable/back_white"
+            android:onClick="backToProfile"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent" />

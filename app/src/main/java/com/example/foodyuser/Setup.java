@@ -17,6 +17,8 @@ import android.support.v4.content.FileProvider;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.telephony.PhoneNumberUtils;
+import android.text.Editable;
+import android.text.TextWatcher;
 import android.util.Log;
 import android.util.Patterns;
 import android.view.View;
@@ -50,6 +52,7 @@ public class Setup extends AppCompatActivity {
     private final String PROFILE_IMAGE = "ProfileImage.jpg";
     private final String PLACEHOLDER_CAMERA="PlaceCamera.jpg";
     private String placeholderPath;
+    private boolean unchanged = true;
 
 
     //Shared Preferences definition
@@ -237,6 +240,7 @@ public class Setup extends AppCompatActivity {
         this.email = findViewById(R.id.emailAddress);
         this.address = findViewById(R.id.address);
         this.phoneNumber = findViewById(R.id.phoneNumber);
+        this.bio = findViewById(R.id.bio);
 
         //setup of the Shared Preferences to save value in (key, value) format
         context = getApplicationContext();
@@ -244,12 +248,90 @@ public class Setup extends AppCompatActivity {
         edit = sharedPref.edit();
         edit.apply();
 
+        //onTextChange to notify the user that there are fields that are not saved
+        this.name.addTextChangedListener(new TextWatcher() {
+            @Override
+            public void beforeTextChanged(CharSequence charSequence, int i, int i1, int i2) {
+            }
+
+            @Override
+            public void onTextChanged(CharSequence charSequence, int i, int i1, int i2) {
+            }
+
+            @Override
+            public void afterTextChanged(Editable editable) {
+                String check = sharedPref.getString("name", null);
+                if (check != null && check.compareTo(editable.toString()) == 0){
+                    unchanged = false;
+                }
+            }
+        });
+        this.email.addTextChangedListener(new TextWatcher() {
+            @Override
+            public void beforeTextChanged(CharSequence charSequence, int i, int i1, int i2) {
+
+            }
+
+            @Override
+            public void onTextChanged(CharSequence charSequence, int i, int i1, int i2) {
+            }
+
+            @Override
+            public void afterTextChanged(Editable editable) {
+                String check = sharedPref.getString("email", null);
+                if (check != null && check.compareTo(editable.toString()) == 0){
+                    unchanged = false;
+                }
+            }
+        });
+        this.address.addTextChangedListener(new TextWatcher() {
+            @Override
+            public void beforeTextChanged(CharSequence charSequence, int i, int i1, int i2) {
+            }
+            @Override
+            public void onTextChanged(CharSequence charSequence, int i, int i1, int i2) {
+            }
+            @Override
+            public void afterTextChanged(Editable editable) {
+                String check = sharedPref.getString("address", null);
+                if (check != null && check.compareTo(editable.toString()) == 0){
+                    unchanged = false;
+                }
+            }
+        });
+        this.phoneNumber.addTextChangedListener(new TextWatcher() {
+            @Override
+            public void beforeTextChanged(CharSequence charSequence, int i, int i1, int i2) {
+            }
+            @Override
+            public void onTextChanged(CharSequence charSequence, int i, int i1, int i2) {
+            }
+            @Override
+            public void afterTextChanged(Editable editable) {
+                String check = sharedPref.getString("phoneNumber", null);
+                if (check != null && check.compareTo(editable.toString()) == 0){
+                    unchanged = false;
+                }
+            }
+        });
+        this.bio.addTextChangedListener(new TextWatcher() {
+            @Override
+            public void beforeTextChanged(CharSequence charSequence, int i, int i1, int i2) {
+            }
+            @Override
+            public void onTextChanged(CharSequence charSequence, int i, int i1, int i2) {
+            }
+            @Override
+            public void afterTextChanged(Editable editable) {
+                unchanged = false;
+            }
+        });
+
         this.errorName = findViewById(R.id.name_error);
         this.errorMail = findViewById(R.id.email_error);
         this.errorPhone = findViewById(R.id.number_error);
         this.errorAddress = findViewById(R.id.address_error);
         this.errorBio = findViewById(R.id.bio_error);
-
         this.back = findViewById(R.id.backButton);
         this.save = findViewById(R.id.saveButton);
 
@@ -258,7 +340,6 @@ public class Setup extends AppCompatActivity {
         errorPhone.setText("");
         errorAddress.setText("");
         errorBio.setText("");
-
 
         name.setText("Walter White");
         email.setText("Heisenberg@gmail.com");
@@ -269,7 +350,6 @@ public class Setup extends AppCompatActivity {
 
         if(image != null)
             profilePicture.setImageBitmap(image);
-
         name.setOnFocusChangeListener(new View.OnFocusChangeListener() {
             @Override
             public void onFocusChange(View v, boolean hasFocus) {
@@ -278,7 +358,6 @@ public class Setup extends AppCompatActivity {
                 }
             }
         });
-
         phoneNumber.setOnFocusChangeListener(new View.OnFocusChangeListener() {
             @Override
             public void onFocusChange(View v, boolean hasFocus) {
@@ -287,7 +366,6 @@ public class Setup extends AppCompatActivity {
                 }
             }
         });
-
         email.setOnFocusChangeListener(new View.OnFocusChangeListener() {
             @Override
             public void onFocusChange(View v, boolean hasFocus) {
@@ -296,9 +374,7 @@ public class Setup extends AppCompatActivity {
                 }
             }
         });
-
         updateSave();
-
     }
 
 
@@ -433,7 +509,6 @@ public class Setup extends AppCompatActivity {
                 items){
             public View getView(int position, View convertView, @NonNull ViewGroup parent) {
                 View v = super.getView(position, convertView, parent);
-                TextView tv = v.findViewById(R.id.tv1);
                 ImageView iv = v.findViewById(R.id.iv1);
                 iv.setImageDrawable(getDrawable(items[position].icon));
                 return v;
@@ -465,18 +540,10 @@ public class Setup extends AppCompatActivity {
     }
 
     private void startCrop(@NonNull Uri uri){
-
         UCrop uCrop = UCrop.of(uri, Uri.fromFile(new File(this.getFilesDir(), PROFILE_IMAGE)));
-
-
         uCrop.withAspectRatio(1,1);
-
         uCrop.withMaxResultSize(450,450);
-
         uCrop.withOptions(getCropOptions());
-
-
-
         uCrop.start(Setup.this);
     }
 
@@ -495,17 +562,36 @@ public class Setup extends AppCompatActivity {
         //Colors
         options.setStatusBarColor(getResources().getColor(R.color.colorPrimaryDark, getTheme()));
         options.setToolbarColor(getResources().getColor(R.color.colorPrimary, getTheme()));
-
-
         options.setAllowedGestures(UCropActivity.ALL, UCropActivity.ALL, UCropActivity.ALL);
-
         options.setCircleDimmedLayer(true);
-
         options.setToolbarTitle(getResources().getString(R.string.crop_image));
-
         return options;
-
-
     }
 
+    public void backToProfile(View view) {
+        if (unchanged){
+            Log.d("ALERT", "true");
+            super.onBackPressed();
+        }
+        else {
+            Log.d("ALERT", "false");
+            AlertDialog.Builder builder = new AlertDialog.Builder(Setup.this);
+            builder.setNegativeButton(getResources().getString(R.string.cancel), new DialogInterface.OnClickListener() {
+                @Override
+                public void onClick(DialogInterface dialog, int which) {
+                    dialog.dismiss();
+                }
+            });
+            builder.setPositiveButton(getResources().getString(R.string.accept), new DialogInterface.OnClickListener() {
+                @Override
+                public void onClick(DialogInterface dialogInterface, int i) {
+                    Setup.super.onBackPressed();
+                }
+            });
+            builder.setTitle(getResources().getString(R.string.alert_dialog_back_title));
+            builder.setMessage(getResources().getString(R.string.alert_dialog_back_message));
+            builder.setCancelable(false);
+            builder.show();
+        }
+    }
 }

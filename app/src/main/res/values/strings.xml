@@ -7,10 +7,10 @@
     <string name="phone_hint">Phone Number</string>
     <string name="bio_hint">Biography</string>
     <string name="crop_image">Crop Image</string>
-
+    <string name="alert_dialog_back_title">Watch out!</string>
     <string name="biography">Biography</string>
-
-
+    <string name="accept">Confirm</string>
+    <string name="alert_dialog_back_message">There are modifications not saved that will be lost. Continue?</string>
     <string name="alert_dialog_image_gallery">Gallery</string>
     <string name="alert_dialog_image_camera">Camera</string>
     <string name="cancel">Cancel</string>
