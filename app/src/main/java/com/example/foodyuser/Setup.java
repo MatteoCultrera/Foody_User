@@ -5,7 +5,9 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
-import android.graphics.Color;
+
+import android.graphics.drawable.Drawable;
+
 import android.net.Uri;
 import android.os.PersistableBundle;
 import android.provider.MediaStore;
@@ -14,16 +16,22 @@ import android.support.annotation.Nullable;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
-import android.telephony.PhoneNumberUtils;
-import android.util.Log;
-import android.util.Patterns;
+
+import android.text.Layout;
+import android.view.LayoutInflater;
 import android.view.View;
-import android.view.WindowManager;
+import android.view.ViewGroup;
+
 import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
-import android.widget.ImageButton;
+
+import android.widget.ImageView;
+import android.widget.ListAdapter;
+import android.widget.ListView;
 import android.widget.TextView;
+import android.widget.Toast;
+
 
 import com.yalantis.ucrop.UCrop;
 import com.yalantis.ucrop.UCropActivity;
@@ -365,29 +373,37 @@ public class Setup extends AppCompatActivity {
         File dest = new File(this.getFilesDir(), PROFILE_IMAGE);
         if(!dest.exists())
             return null;
-        Bitmap bitmap = BitmapFactory.decodeFile(dest.getPath(), options);
-        return  bitmap;
+        return  BitmapFactory.decodeFile(dest.getPath(), options);
 
     }
 
     private void showPickImageDialog(){
+        final Item[] items = {
+                new Item(getString(R.string.alert_dialog_image_gallery), R.drawable.photo_black),
+                new Item(getString(R.string.alert_dialog_image_camera), R.drawable.camera_black)
+        };
+        ListAdapter arrayAdapter = new ArrayAdapter<Item>(
+                this,
+                R.layout.alert_dialog_item,
+                R.id.tv1,
+                items){
+            public View getView(int position, View convertView, @NonNull ViewGroup parent) {
+                View v = super.getView(position, convertView, parent);
+                TextView tv = v.findViewById(R.id.tv1);
+                ImageView iv = v.findViewById(R.id.iv1);
+                iv.setImageDrawable(getDrawable(items[position].icon));
+                return v;
+            }
+        };
         AlertDialog.Builder builder = new AlertDialog.Builder(Setup.this);
-
-        builder.setTitle("Select one Option");
-
-        final ArrayAdapter<String> arrayAdapter =
-                new ArrayAdapter<>(Setup.this, android.R.layout.select_dialog_item);
-
-        arrayAdapter.add("Gallery");
-        arrayAdapter.add("Camera");
-
-        builder.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
+        builder.setNegativeButton(getResources().getString(R.string.cancel), new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialog, int which) {
                 dialog.dismiss();
             }
         });
-
+        builder.setTitle(getResources().getString(R.string.alert_dialog_image_title));
+        builder.setCancelable(false);
         builder.setAdapter(arrayAdapter, new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialog, int which) {
@@ -401,9 +417,7 @@ public class Setup extends AppCompatActivity {
                 }
             }
         });
-
         builder.show();
-
     }
 
     private void startCrop(@NonNull Uri uri){
