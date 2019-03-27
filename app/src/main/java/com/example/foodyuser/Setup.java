@@ -8,28 +8,29 @@ import android.content.SharedPreferences;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 
-import android.graphics.drawable.Drawable;
+import android.graphics.Color;
 
 import android.net.Uri;
-import android.os.PersistableBundle;
 import android.provider.MediaStore;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+
+
+import android.telephony.PhoneNumberUtils;
+import android.util.Patterns;
 import android.view.View;
 import android.view.ViewGroup;
 
 import android.widget.ArrayAdapter;
-import android.widget.Button;
 import android.widget.EditText;
 
+import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.ListAdapter;
-import android.widget.ListView;
 import android.widget.TextView;
-import android.widget.Toast;
 
 
 import com.yalantis.ucrop.UCrop;
@@ -54,7 +55,6 @@ public class Setup extends AppCompatActivity {
     private final int REQUEST_CAPTURE_IMAGE = 100;
     private final String PROFILE_IMAGE = "ProfileImage.jpg";
     private final String PLACEHOLDER_CAMERA="PlaceCamera.jpg";
-    private File pictureDirectory;
 
 
     //Shared Preferences definition
@@ -399,7 +399,7 @@ public class Setup extends AppCompatActivity {
 
     private void showPickImageDialog(){
         final Item[] items = {
-                new Item(getString(R.string.alert_dialog_image_gallery), R.drawable.photo_black),
+                new Item(getString(R.string.alert_dialog_image_gallery), R.drawable.collections_black),
                 new Item(getString(R.string.alert_dialog_image_camera), R.drawable.camera_black)
         };
         ListAdapter arrayAdapter = new ArrayAdapter<Item>(
