@@ -8,6 +8,9 @@
     <string name="bio_hint">Biography</string>
     <string name="crop_image">Crop Image</string>
 
+    <string name="biography">Biography</string>
+
+
     <string name="alert_dialog_image_gallery">Gallery</string>
     <string name="alert_dialog_image_camera">Camera</string>
     <string name="cancel">Cancel</string>
@@ -19,5 +22,6 @@
     <string name="error_email">Invalid E-mail</string>
     <string name="error_bio">Invalid Bio</string>
     <string name="edit_profile">Edit Profile</string>
+
 
 </resources>
