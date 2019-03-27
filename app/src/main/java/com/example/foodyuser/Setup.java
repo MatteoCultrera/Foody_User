@@ -33,6 +33,7 @@ import com.yalantis.ucrop.UCrop;
 import com.yalantis.ucrop.UCropActivity;
 import java.io.ByteArrayOutputStream;
 import java.io.File;
+import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.util.regex.Matcher;
@@ -76,18 +77,31 @@ public class Setup extends AppCompatActivity {
 
     }
 
-
     @Override
     public void onBackPressed() {
-        super.onBackPressed();
-
-        edit.putString("name", name.getText().toString());
-        edit.putString("email", email.getText().toString());
-        edit.putString("address", address.getText().toString());
-        edit.putString("phoneNumber", phoneNumber.getText().toString());
-        edit.apply();
-
-        finish();
+        if (unchanged){
+            super.onBackPressed();
+        }
+        else {
+            Log.d("ALERT", "false");
+            AlertDialog.Builder builder = new AlertDialog.Builder(Setup.this);
+            builder.setNegativeButton(getResources().getString(R.string.cancel), new DialogInterface.OnClickListener() {
+                @Override
+                public void onClick(DialogInterface dialog, int which) {
+                    dialog.dismiss();
+                }
+            });
+            builder.setPositiveButton(getResources().getString(R.string.accept), new DialogInterface.OnClickListener() {
+                @Override
+                public void onClick(DialogInterface dialogInterface, int i) {
+                    Setup.super.onBackPressed();
+                }
+            });
+            builder.setTitle(getResources().getString(R.string.alert_dialog_back_title));
+            builder.setMessage(getResources().getString(R.string.alert_dialog_back_message));
+            builder.setCancelable(false);
+            builder.show();
+        }
     }
 
     @Override
@@ -145,7 +159,6 @@ public class Setup extends AppCompatActivity {
 
     }
 
-
     private void checkName(){
         String username = name.getText().toString();
         String regx = "^[\\p{L} .'-]+$";
@@ -197,12 +210,8 @@ public class Setup extends AppCompatActivity {
             errorLine.setAlpha(0.2f);
             errorLine.setBackgroundColor(Color.BLACK);
         }
-
         updateSave();
-
-
     }
-
 
     private  void pickFromGallery(){
         Intent intent = new Intent(Intent.ACTION_PICK);
@@ -233,7 +242,7 @@ public class Setup extends AppCompatActivity {
     }
 
     private void init(){
-
+        unchanged = true;
         this.profilePicture = findViewById(R.id.profilePicture);
         this.editImage = findViewById(R.id.edit_profile_picture);
         this.name = findViewById(R.id.userName);
@@ -261,7 +270,7 @@ public class Setup extends AppCompatActivity {
             @Override
             public void afterTextChanged(Editable editable) {
                 String check = sharedPref.getString("name", null);
-                if (check != null && check.compareTo(editable.toString()) == 0){
+                if (check != null && check.compareTo(editable.toString()) != 0){
                     unchanged = false;
                 }
             }
@@ -279,7 +288,7 @@ public class Setup extends AppCompatActivity {
             @Override
             public void afterTextChanged(Editable editable) {
                 String check = sharedPref.getString("email", null);
-                if (check != null && check.compareTo(editable.toString()) == 0){
+                if (check != null && check.compareTo(editable.toString()) != 0){
                     unchanged = false;
                 }
             }
@@ -294,7 +303,7 @@ public class Setup extends AppCompatActivity {
             @Override
             public void afterTextChanged(Editable editable) {
                 String check = sharedPref.getString("address", null);
-                if (check != null && check.compareTo(editable.toString()) == 0){
+                if (check != null && check.compareTo(editable.toString()) != 0){
                     unchanged = false;
                 }
             }
@@ -309,7 +318,7 @@ public class Setup extends AppCompatActivity {
             @Override
             public void afterTextChanged(Editable editable) {
                 String check = sharedPref.getString("phoneNumber", null);
-                if (check != null && check.compareTo(editable.toString()) == 0){
+                if (check != null && check.compareTo(editable.toString()) != 0){
                     unchanged = false;
                 }
             }
@@ -324,7 +333,7 @@ public class Setup extends AppCompatActivity {
             @Override
             public void afterTextChanged(Editable editable) {
                 String check = sharedPref.getString("bio", null);
-                if (check != null && check.compareTo(editable.toString()) == 0){
+                if (check != null && check.compareTo(editable.toString()) != 0){
                     unchanged = false;
                 }
             }
@@ -344,16 +353,20 @@ public class Setup extends AppCompatActivity {
         errorAddress.setText("");
         errorBio.setText("");
 
-        name.setText("Walter White");
-        email.setText("Heisenberg@gmail.com");
-        address.setText("308 Negra Arroyo Lane, Albuquerque, New Mexico, 87104 ");
-        phoneNumber.setText("117-8987");
+        Bitmap b = BitmapFactory.decodeFile(this.getFilesDir() + "/" + PROFILE_IMAGE);
+        profilePicture.setImageBitmap(b);
+        name.setText(sharedPref.getString("name", getResources().getString(R.string.name_hint)));
+        email.setText(sharedPref.getString("email", getResources().getString(R.string.email_hint)));
+        address.setText(sharedPref.getString("address", getResources().getString(R.string.address_hint)));
+        phoneNumber.setText(sharedPref.getString("phoneNumber", getResources().getString(R.string.phone_hint)));
+        bio.setText(sharedPref.getString("bio", getResources().getString(R.string.bio_hint)));
+        edit.apply();
 
         Bitmap image = getBitmapFromFile();
 
         if(image != null)
             profilePicture.setImageBitmap(image);
-        name.setOnFocusChangeListener(new View.OnFocusChangeListener() {
+            name.setOnFocusChangeListener(new View.OnFocusChangeListener() {
             @Override
             public void onFocusChange(View v, boolean hasFocus) {
                 if(!name.hasFocus()){
@@ -379,7 +392,6 @@ public class Setup extends AppCompatActivity {
         });
         updateSave();
     }
-
 
     @Override
     protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
@@ -445,7 +457,6 @@ public class Setup extends AppCompatActivity {
         }
     }
 
-
     private File createOrReplacePlaceholder(){
 
         Log.d("PICTURE", "Create or Replace");
@@ -464,7 +475,6 @@ public class Setup extends AppCompatActivity {
     }
 
     private void setBitmapProfile(Bitmap bitmap){
-        //TODO: MA STA ROBA SERVE?hu
 
         File f = new File(this.getFilesDir(), PROFILE_IMAGE);
 
@@ -473,12 +483,12 @@ public class Setup extends AppCompatActivity {
 
         f = new File(this.getFilesDir(), PROFILE_IMAGE);
 
-//Convert bitmap to byte array
+        //Convert bitmap to byte array
         ByteArrayOutputStream bos = new ByteArrayOutputStream();
         bitmap.compress(Bitmap.CompressFormat.JPEG, 100, bos);
         byte[] bitmapdata = bos.toByteArray();
 
-//write the bytes in file
+        //write the bytes in file
 
         try{
 
@@ -574,7 +584,7 @@ public class Setup extends AppCompatActivity {
 
     public void backToProfile(View view) {
         if (unchanged){
-            Log.d("ALERT", "true");
+            super.onBackPressed();
         }
         else {
             Log.d("ALERT", "false");
@@ -596,5 +606,15 @@ public class Setup extends AppCompatActivity {
             builder.setCancelable(false);
             builder.show();
         }
+    }
+
+    public void savedProfile(View view) {
+        super.onBackPressed();
+        edit.putString("name", name.getText().toString());
+        edit.putString("email", email.getText().toString());
+        edit.putString("address", address.getText().toString());
+        edit.putString("phoneNumber", phoneNumber.getText().toString());
+        edit.apply();
+        finish();
     }
 }
