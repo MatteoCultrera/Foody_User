@@ -71,8 +71,6 @@ public class Setup extends AppCompatActivity {
             }
         });
 
-
-
     }
 
 
@@ -226,8 +224,6 @@ public class Setup extends AppCompatActivity {
                 Log.d("PICTURE", "Launching Camera");
                 startActivityForResult(pictureIntent, REQUEST_CAPTURE_IMAGE);
             }
-
-            startActivityForResult(pictureIntent, REQUEST_CAPTURE_IMAGE);
 
         }
 
