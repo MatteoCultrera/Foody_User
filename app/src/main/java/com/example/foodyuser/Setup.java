@@ -323,7 +323,10 @@ public class Setup extends AppCompatActivity {
             }
             @Override
             public void afterTextChanged(Editable editable) {
-                unchanged = false;
+                String check = sharedPref.getString("bio", null);
+                if (check != null && check.compareTo(editable.toString()) == 0){
+                    unchanged = false;
+                }
             }
         });
 
@@ -461,6 +464,7 @@ public class Setup extends AppCompatActivity {
     }
 
     private void setBitmapProfile(Bitmap bitmap){
+        //TODO: MA STA ROBA SERVE?hu
 
         File f = new File(this.getFilesDir(), PROFILE_IMAGE);
 
@@ -571,7 +575,6 @@ public class Setup extends AppCompatActivity {
     public void backToProfile(View view) {
         if (unchanged){
             Log.d("ALERT", "true");
-            super.onBackPressed();
         }
         else {
             Log.d("ALERT", "false");
