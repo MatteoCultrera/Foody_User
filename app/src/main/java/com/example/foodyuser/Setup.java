@@ -381,7 +381,6 @@ public class Setup extends AppCompatActivity {
 
                 case REQUEST_CAPTURE_IMAGE:
                     File f = new File(placeholderPath);
-                    Log.d("PICTURE", "Entered Request Capture");
                     startCrop(Uri.fromFile(f));
                     break;
 
@@ -399,6 +398,7 @@ public class Setup extends AppCompatActivity {
 
                 case  UCrop.REQUEST_CROP:
                     Bitmap bitmap = getBitmapFromFile();
+
                     if(bitmap != null){
                         profilePicture.setImageBitmap(bitmap);
                         File placeholder = new File(storageDir, PLACEHOLDER_CAMERA);
@@ -482,7 +482,7 @@ public class Setup extends AppCompatActivity {
     private Bitmap getBitmapFromFile(){
         BitmapFactory.Options options = new BitmapFactory.Options();
         options.inPreferredConfig = Bitmap.Config.ARGB_8888;
-        File dest = new File(this.getFilesDir(), PROFILE_IMAGE);
+        File dest = new File(storageDir, PLACEHOLDER_CAMERA);
         if(!dest.exists())
             return null;
         return  BitmapFactory.decodeFile(dest.getPath(), options);
@@ -532,7 +532,7 @@ public class Setup extends AppCompatActivity {
     }
 
     private void startCrop(@NonNull Uri uri){
-        UCrop uCrop = UCrop.of(uri, Uri.fromFile(new File(this.getFilesDir(), PROFILE_IMAGE)));
+        UCrop uCrop = UCrop.of(uri, Uri.fromFile(new File(storageDir, PLACEHOLDER_CAMERA)));
         uCrop.withAspectRatio(1,1);
         uCrop.withMaxResultSize(450,450);
         uCrop.withOptions(getCropOptions());
