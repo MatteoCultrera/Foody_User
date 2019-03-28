@@ -33,7 +33,6 @@ import com.yalantis.ucrop.UCrop;
 import com.yalantis.ucrop.UCropActivity;
 import java.io.ByteArrayOutputStream;
 import java.io.File;
-import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.util.regex.Matcher;
@@ -53,8 +52,7 @@ public class Setup extends AppCompatActivity {
     private final String PROFILE_IMAGE = "ProfileImage.jpg";
     private final String PLACEHOLDER_CAMERA="PlaceCamera.jpg";
     private String placeholderPath;
-    private boolean unchanged = true;
-
+    private boolean unchanged;
 
     //Shared Preferences definition
     Context context;
@@ -79,29 +77,16 @@ public class Setup extends AppCompatActivity {
 
     @Override
     public void onBackPressed() {
-        if (unchanged){
-            super.onBackPressed();
-        }
-        else {
-            Log.d("ALERT", "false");
-            AlertDialog.Builder builder = new AlertDialog.Builder(Setup.this);
-            builder.setNegativeButton(getResources().getString(R.string.cancel), new DialogInterface.OnClickListener() {
-                @Override
-                public void onClick(DialogInterface dialog, int which) {
-                    dialog.dismiss();
-                }
-            });
-            builder.setPositiveButton(getResources().getString(R.string.accept), new DialogInterface.OnClickListener() {
-                @Override
-                public void onClick(DialogInterface dialogInterface, int i) {
-                    Setup.super.onBackPressed();
-                }
-            });
-            builder.setTitle(getResources().getString(R.string.alert_dialog_back_title));
-            builder.setMessage(getResources().getString(R.string.alert_dialog_back_message));
-            builder.setCancelable(false);
-            builder.show();
-        }
+        super.onBackPressed();
+
+        edit.putString("name", name.getText().toString());
+        edit.putString("email", email.getText().toString());
+        edit.putString("address", address.getText().toString());
+        edit.putString("phoneNumber", phoneNumber.getText().toString());
+        edit.putString("bio", bio.getText().toString());
+        edit.apply();
+
+        finish();
     }
 
     @Override
@@ -111,8 +96,8 @@ public class Setup extends AppCompatActivity {
         outState.putString("name", name.getText().toString());
         outState.putString("email", email.getText().toString());
         outState.putString("address", address.getText().toString());
-        outState.putString("phone_num", phoneNumber.getText().toString());
-
+        outState.putString("phoneNumber", phoneNumber.getText().toString());
+        outState.putString("bio", bio.getText().toString());
     }
 
     @Override
@@ -122,12 +107,14 @@ public class Setup extends AppCompatActivity {
         name.setText(savedInstanceState.getString("name", getResources().getString(R.string.name_hint)));
         email.setText(savedInstanceState.getString("email", getResources().getString(R.string.email_hint)));
         address.setText(savedInstanceState.getString("address", getResources().getString(R.string.address_hint)));
-        phoneNumber.setText(savedInstanceState.getString("phone_num", getResources().getString(R.string.phone_hint)));
+        phoneNumber.setText(savedInstanceState.getString("phoneNumber", getResources().getString(R.string.phone_hint)));
+        bio.setText(savedInstanceState.getString("bio", getResources().getString(R.string.bio_hint)));
 
         name.clearFocus();
         email.clearFocus();
         address.clearFocus();
         phoneNumber.clearFocus();
+        bio.clearFocus();
     }
 
     protected void onPause(){
@@ -155,7 +142,9 @@ public class Setup extends AppCompatActivity {
             save.setEnabled(true);
             save.setClickable(true);
         }
+
     }
+
 
     private void checkName(){
         String username = name.getText().toString();
@@ -179,10 +168,12 @@ public class Setup extends AppCompatActivity {
     }
 
     private void checkNumber(){
-        String userNumber = phoneNumber.getText().toString();
+        String regexpPhone = "^(([+]|00)39)?((3[1-6][0-9]))(\\d{7})$";
+        final String userNumber = phoneNumber.getText().toString();
+
         View errorLine = findViewById(R.id.number_error_line);
 
-        if(!PhoneNumberUtils.isGlobalPhoneNumber(userNumber) || userNumber.length() == 0){
+        if(!Pattern.compile(regexpPhone).matcher(userNumber).matches()){
             errorPhone.setText(getResources().getString(R.string.error_number));
             errorLine.setBackgroundColor(getResources().getColor(R.color.errorColor,this.getTheme()));
             errorLine.setAlpha(1);
@@ -191,17 +182,17 @@ public class Setup extends AppCompatActivity {
             errorLine.setAlpha(0.2f);
             errorLine.setBackgroundColor(Color.BLACK);
         }
-
         updateSave();
-
     }
 
     private void checkMail(){
         View errorLine = findViewById(R.id.email_error_line);
+        String regexpEmail = "^[_A-Za-z0-9-\\+]+(\\.[_A-Za-z0-9-]+)*@" + "[A-Za-z0-9-]+(\\.[A-Za-z0-9]+)*(\\.[A-Za-z]{2,})$";
+        final String emailToCheck = email.getText().toString();
 
-        if(!Patterns.EMAIL_ADDRESS.matcher(email.getText()).matches()){
+        if(!Pattern.compile(regexpEmail).matcher(emailToCheck).matches()) {
             errorMail.setText(getResources().getString(R.string.error_email));
-            errorLine.setBackgroundColor(getResources().getColor(R.color.errorColor,this.getTheme()));
+            errorLine.setBackgroundColor(getResources().getColor(R.color.errorColor, this.getTheme()));
             errorLine.setAlpha(1);
         }else{
             errorMail.setText("");
@@ -231,12 +222,9 @@ public class Setup extends AppCompatActivity {
                         "com.example.foodyuser",
                         photoFile);
                 pictureIntent.putExtra(MediaStore.EXTRA_OUTPUT, photoURI);
-                Log.d("PICTURE", "Launching Camera");
                 startActivityForResult(pictureIntent, REQUEST_CAPTURE_IMAGE);
             }
-
         }
-
     }
 
     private void init(){
@@ -253,7 +241,34 @@ public class Setup extends AppCompatActivity {
         context = getApplicationContext();
         sharedPref = context.getSharedPreferences("myPreference", MODE_PRIVATE);
         edit = sharedPref.edit();
+
+        this.errorName = findViewById(R.id.name_error);
+        this.errorMail = findViewById(R.id.email_error);
+        this.errorPhone = findViewById(R.id.number_error);
+        this.errorAddress = findViewById(R.id.address_error);
+        this.errorBio = findViewById(R.id.bio_error);
+        this.back = findViewById(R.id.backButton);
+        this.save = findViewById(R.id.saveButton);
+
+        errorName.setText("");
+        errorMail.setText("");
+        errorPhone.setText("");
+        errorAddress.setText("");
+        errorBio.setText("");
+
+        Bitmap b = BitmapFactory.decodeFile(this.getFilesDir() + "/" + PROFILE_IMAGE);
+        profilePicture.setImageBitmap(b);
+        name.setText(sharedPref.getString("name", getResources().getString(R.string.name_hint)));
+        email.setText(sharedPref.getString("email", getResources().getString(R.string.email_hint)));
+        address.setText(sharedPref.getString("address", getResources().getString(R.string.address_hint)));
+        phoneNumber.setText(sharedPref.getString("phoneNumber", getResources().getString(R.string.phone_hint)));
+        bio.setText(sharedPref.getString("bio", getResources().getString(R.string.bio_hint)));
         edit.apply();
+
+        Bitmap image = getBitmapFromFile();
+
+        if(image != null)
+            profilePicture.setImageBitmap(image);
 
         //onTextChange to notify the user that there are fields that are not saved
         this.name.addTextChangedListener(new TextWatcher() {
@@ -340,33 +355,6 @@ public class Setup extends AppCompatActivity {
             }
         });
 
-        this.errorName = findViewById(R.id.name_error);
-        this.errorMail = findViewById(R.id.email_error);
-        this.errorPhone = findViewById(R.id.number_error);
-        this.errorAddress = findViewById(R.id.address_error);
-        this.errorBio = findViewById(R.id.bio_error);
-        this.back = findViewById(R.id.backButton);
-        this.save = findViewById(R.id.saveButton);
-
-        errorName.setText("");
-        errorMail.setText("");
-        errorPhone.setText("");
-        errorAddress.setText("");
-        errorBio.setText("");
-
-        Bitmap b = BitmapFactory.decodeFile(this.getFilesDir() + "/" + PROFILE_IMAGE);
-        profilePicture.setImageBitmap(b);
-        name.setText(sharedPref.getString("name", getResources().getString(R.string.name_hint)));
-        email.setText(sharedPref.getString("email", getResources().getString(R.string.email_hint)));
-        address.setText(sharedPref.getString("address", getResources().getString(R.string.address_hint)));
-        phoneNumber.setText(sharedPref.getString("phoneNumber", getResources().getString(R.string.phone_hint)));
-        bio.setText(sharedPref.getString("bio", getResources().getString(R.string.bio_hint)));
-        edit.apply();
-
-        Bitmap image = getBitmapFromFile();
-
-        if(image != null)
-            profilePicture.setImageBitmap(image);
         updateSave();
     }
 
