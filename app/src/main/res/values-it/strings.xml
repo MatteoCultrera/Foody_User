@@ -26,4 +26,11 @@
     <string name="accept">Confermo</string>
     <string name="alert_dialog_back_message">"Ci sono delle modifiche non salvate che andranno perse. Continuare? "</string>
 
+
+    <string name="name_Walter">Walter White</string>
+    <string name="phone_Walter">3312174516</string>
+    <string name="mail_Walter">Heisenberg@gmail.com</string>
+    <string name="address_Walter">308 Negra Arroyo Lane, Albuquerque, New Mexico, 87104</string>
+    <string name="bio_Walter">My name is Walter White and I love to cook!</string>
+
 </resources>
