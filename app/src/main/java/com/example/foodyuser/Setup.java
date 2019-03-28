@@ -58,7 +58,7 @@ public class Setup extends AppCompatActivity {
     private final String PLACEHOLDER_CAMERA="PlaceCamera.jpg";
     private String placeholderPath;
     private File storageDir;
-    private boolean unchanged;
+    private boolean unchanged, checkString = true;
 
     //Shared Preferences definition
     Context context;
@@ -81,20 +81,6 @@ public class Setup extends AppCompatActivity {
             }
         });
 
-    }
-
-    @Override
-    public void onBackPressed() {
-        super.onBackPressed();
-
-        edit.putString("name", name.getText().toString());
-        edit.putString("email", email.getText().toString());
-        edit.putString("address", address.getText().toString());
-        edit.putString("phoneNumber", phoneNumber.getText().toString());
-        edit.putString("bio", bio.getText().toString());
-        edit.apply();
-
-        finish();
     }
 
     @Override
@@ -136,17 +122,8 @@ public class Setup extends AppCompatActivity {
     }
 
     private void updateSave(){
-        String username = name.getText().toString();
-        String regx = "^[\\p{L} .'-]+$";
-        Pattern regex = Pattern.compile(regx);
-        Matcher nameMatcher = regex.matcher(username);
 
-        String userNumber = phoneNumber.getText().toString();
-
-        View errorLine = findViewById(R.id.email_error_line);
-
-        if(!nameMatcher.matches() || !PhoneNumberUtils.isGlobalPhoneNumber(userNumber)
-                || userNumber.length() == 0 || !Patterns.EMAIL_ADDRESS.matcher(email.getText()).matches()){
+        if(!checkString){
             save.setImageResource(R.drawable.save_dis);
             save.setEnabled(false);
             save.setClickable(false);
@@ -166,17 +143,19 @@ public class Setup extends AppCompatActivity {
         Matcher matcher = regex.matcher(username);
 
         if(!matcher.matches()){
+            checkString = false;
             errorName.setText(getResources().getString(R.string.error_name));
             errorLine.setBackgroundColor(getResources().getColor(R.color.errorColor,this.getTheme()));
             errorLine.setAlpha(1);
+
         }else{
+            checkString = true;
             errorName.setText("");
             errorLine.setAlpha(0.2f);
             errorLine.setBackgroundColor(Color.BLACK);
         }
 
         updateSave();
-
     }
 
     private void checkNumber(){
@@ -186,14 +165,17 @@ public class Setup extends AppCompatActivity {
         View errorLine = findViewById(R.id.number_error_line);
 
         if(!Pattern.compile(regexpPhone).matcher(userNumber).matches()){
+            checkString = false;
             errorPhone.setText(getResources().getString(R.string.error_number));
             errorLine.setBackgroundColor(getResources().getColor(R.color.errorColor,this.getTheme()));
             errorLine.setAlpha(1);
         }else{
+            checkString = true;
             errorPhone.setText("");
             errorLine.setAlpha(0.2f);
             errorLine.setBackgroundColor(Color.BLACK);
         }
+
         updateSave();
     }
 
@@ -204,13 +186,16 @@ public class Setup extends AppCompatActivity {
 
         if(!Pattern.compile(regexpEmail).matcher(emailToCheck).matches()) {
             errorMail.setText(getResources().getString(R.string.error_email));
+            checkString = false;
             errorLine.setBackgroundColor(getResources().getColor(R.color.errorColor, this.getTheme()));
             errorLine.setAlpha(1);
         }else{
+            checkString = true;
             errorMail.setText("");
             errorLine.setAlpha(0.2f);
             errorLine.setBackgroundColor(Color.BLACK);
         }
+
         updateSave();
     }
 
@@ -560,7 +545,7 @@ public class Setup extends AppCompatActivity {
         return options;
     }
 
-    public void backToProfile(View view) {
+    protected void backToProfile(View view) {
         if (unchanged){
             super.onBackPressed();
         }
@@ -586,7 +571,7 @@ public class Setup extends AppCompatActivity {
         }
     }
 
-    public void savedProfile(View view) {
+    protected void savedProfile(View view) {
 
         File f = new File(storageDir, PLACEHOLDER_CAMERA);
 
