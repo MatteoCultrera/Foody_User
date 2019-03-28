@@ -5,8 +5,10 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.net.Uri;
 import android.os.Bundle;
 
+import android.os.Environment;
 import android.support.annotation.Nullable;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v7.app.AppCompatActivity;
@@ -30,6 +32,8 @@ public class User extends AppCompatActivity {
     private TextView phoneNumber;
     private TextView bio;
     private final String PROFILE_IMAGE = "ProfileImage.jpg";
+    private final String PLACEHOLDER_CAMERA="PlaceCamera.jpg";
+    private File storageDir;
 
     //Shared Preferences definition
     Context context;
@@ -40,7 +44,15 @@ public class User extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
         setContentView(R.layout.activity_profile);
+
+        context = getApplicationContext();
+        sharedPref = context.getSharedPreferences("myPreference", MODE_PRIVATE);
+
+        firstStart();
+
+        storageDir = getExternalFilesDir(Environment.DIRECTORY_PICTURES);
 
         init();
 
@@ -48,9 +60,34 @@ public class User extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 Intent intent = new Intent(User.this, Setup.class);
+                File pl = new File(storageDir, PLACEHOLDER_CAMERA);
+                pl.delete();
                 startActivity(intent);
             }
         });
+    }
+
+    private void firstStart(){
+
+        edit = sharedPref.edit();
+
+        if(!sharedPref.contains("name"))
+            edit.putString("name",getString(R.string.name_Walter));
+
+        if(!sharedPref.contains("email"))
+            edit.putString("email",getString(R.string.mail_Walter));
+
+        if(!sharedPref.contains("address"))
+            edit.putString("address",getString(R.string.address_Walter));
+
+        if(!sharedPref.contains("phoneNumber"))
+            edit.putString("phoneNumber",getString(R.string.phone_Walter));
+
+        if(!sharedPref.contains("bio"))
+            edit.putString("bio",getString(R.string.bio_Walter));
+
+        edit.apply();
+
     }
 
     private void init(){
@@ -64,25 +101,19 @@ public class User extends AppCompatActivity {
         this.bio = findViewById(R.id.bio);
 
         //setup of the Shared Preferences to save value in (key, value) format
-        context = getApplicationContext();
-        sharedPref = context.getSharedPreferences("myPreference", MODE_PRIVATE);
-        edit = sharedPref.edit();
 
         name.setText(sharedPref.getString("name", getResources().getString(R.string.name_hint)));
         email.setText(sharedPref.getString("email", getResources().getString(R.string.email_hint)));
         address.setText(sharedPref.getString("address", getResources().getString(R.string.address_hint)));
         phoneNumber.setText(sharedPref.getString("phoneNumber", getResources().getString(R.string.phone_hint)));
         bio.setText(sharedPref.getString("bio", getResources().getString(R.string.bio_hint)));
-        Bitmap b = BitmapFactory.decodeFile(this.getFilesDir() + "/" + PROFILE_IMAGE);
-        profilePicture.setImageBitmap(b);
-        edit.apply();
 
-        edit.putString("name", name.getText().toString());
-        edit.putString("email", email.getText().toString());
-        edit.putString("address", address.getText().toString());
-        edit.putString("phoneNumber", phoneNumber.getText().toString());
-        edit.putString("bio", bio.getText().toString());
-        edit.apply();
+        File f = new File(storageDir, PROFILE_IMAGE);
+
+        if(f.exists()){
+            profilePicture.setImageURI(Uri.fromFile(f));
+        }
+
     }
 
     @Override
@@ -109,16 +140,51 @@ public class User extends AppCompatActivity {
 
     protected void onPause(){
         super.onPause();
+
+    }
+
+    @Override
+    protected void onRestart() {
+        super.onRestart();
+
+        setContentView(R.layout.activity_profile);
+
+        storageDir = getExternalFilesDir(Environment.DIRECTORY_PICTURES);
+
+        init();
+
+        editMode.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(User.this, Setup.class);
+                File pl = new File(storageDir, PLACEHOLDER_CAMERA);
+                pl.delete();
+                startActivity(intent);
+            }
+        });
+
     }
 
     @Override
     protected void onResume() {
         super.onResume();
 
-        name.setText(sharedPref.getString("name", name.getHint().toString()));
-        email.setText(sharedPref.getString("email", email.getHint().toString()));
-        address.setText(sharedPref.getString("address", address.getHint().toString()));
-        phoneNumber.setText(sharedPref.getString("phoneNumber", phoneNumber.getHint().toString()));
-        bio.setText(sharedPref.getString("bio", bio.getHint().toString()));
+        setContentView(R.layout.activity_profile);
+
+        storageDir = getExternalFilesDir(Environment.DIRECTORY_PICTURES);
+
+        init();
+
+        editMode.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(User.this, Setup.class);
+                File pl = new File(storageDir, PLACEHOLDER_CAMERA);
+                pl.delete();
+                startActivity(intent);
+            }
+        });
+
+
     }
 }

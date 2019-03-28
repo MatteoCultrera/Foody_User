@@ -7,6 +7,7 @@ import android.content.SharedPreferences;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Color;
+import android.graphics.drawable.BitmapDrawable;
 import android.net.Uri;
 import android.os.Environment;
 import android.provider.MediaStore;
@@ -33,8 +34,12 @@ import com.yalantis.ucrop.UCrop;
 import com.yalantis.ucrop.UCropActivity;
 import java.io.ByteArrayOutputStream;
 import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.io.InputStream;
+import java.io.OutputStream;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -52,6 +57,7 @@ public class Setup extends AppCompatActivity {
     private final String PROFILE_IMAGE = "ProfileImage.jpg";
     private final String PLACEHOLDER_CAMERA="PlaceCamera.jpg";
     private String placeholderPath;
+    private File storageDir;
     private boolean unchanged;
 
     //Shared Preferences definition
@@ -63,6 +69,8 @@ public class Setup extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_setup);
+
+        storageDir = getExternalFilesDir(Environment.DIRECTORY_PICTURES);
 
         init();
 
@@ -104,6 +112,11 @@ public class Setup extends AppCompatActivity {
     protected void onRestoreInstanceState(Bundle savedInstanceState) {
         super.onRestoreInstanceState(savedInstanceState);
 
+        File f = new File(storageDir, PLACEHOLDER_CAMERA);
+
+        if(f.exists())
+            profilePicture.setImageURI(Uri.fromFile(f));
+
         name.setText(savedInstanceState.getString("name", getResources().getString(R.string.name_hint)));
         email.setText(savedInstanceState.getString("email", getResources().getString(R.string.email_hint)));
         address.setText(savedInstanceState.getString("address", getResources().getString(R.string.address_hint)));
@@ -144,7 +157,6 @@ public class Setup extends AppCompatActivity {
         }
 
     }
-
 
     private void checkName(){
         String username = name.getText().toString();
@@ -256,19 +268,19 @@ public class Setup extends AppCompatActivity {
         errorAddress.setText("");
         errorBio.setText("");
 
-        Bitmap b = BitmapFactory.decodeFile(this.getFilesDir() + "/" + PROFILE_IMAGE);
-        profilePicture.setImageBitmap(b);
-        name.setText(sharedPref.getString("name", getResources().getString(R.string.name_hint)));
-        email.setText(sharedPref.getString("email", getResources().getString(R.string.email_hint)));
-        address.setText(sharedPref.getString("address", getResources().getString(R.string.address_hint)));
-        phoneNumber.setText(sharedPref.getString("phoneNumber", getResources().getString(R.string.phone_hint)));
-        bio.setText(sharedPref.getString("bio", getResources().getString(R.string.bio_hint)));
+        File f = new File(storageDir, PROFILE_IMAGE);
+
+        if(f.exists())
+            profilePicture.setImageURI(Uri.fromFile(f));
+
+
+        name.setText(sharedPref.getString("name", getResources().getString(R.string.name_Walter)));
+        email.setText(sharedPref.getString("email", getResources().getString(R.string.mail_Walter)));
+        address.setText(sharedPref.getString("address", getResources().getString(R.string.address_Walter)));
+        phoneNumber.setText(sharedPref.getString("phoneNumber", getResources().getString(R.string.phone_Walter)));
+        bio.setText(sharedPref.getString("bio", getResources().getString(R.string.bio_Walter)));
         edit.apply();
 
-        Bitmap image = getBitmapFromFile();
-
-        if(image != null)
-            profilePicture.setImageBitmap(image);
 
         //onTextChange to notify the user that there are fields that are not saved
         this.name.addTextChangedListener(new TextWatcher() {
@@ -389,6 +401,8 @@ public class Setup extends AppCompatActivity {
                     Bitmap bitmap = getBitmapFromFile();
                     if(bitmap != null){
                         profilePicture.setImageBitmap(bitmap);
+                        File placeholder = new File(storageDir, PLACEHOLDER_CAMERA);
+                        saveBitmap(bitmap, placeholder.getPath());
                     }
                     break;
             }
@@ -425,7 +439,6 @@ public class Setup extends AppCompatActivity {
     private File createOrReplacePlaceholder(){
 
         Log.d("PICTURE", "Create or Replace");
-        File storageDir = getExternalFilesDir(Environment.DIRECTORY_PICTURES);
 
         File f = new File(storageDir, PLACEHOLDER_CAMERA);
 
@@ -574,12 +587,50 @@ public class Setup extends AppCompatActivity {
     }
 
     public void savedProfile(View view) {
-        super.onBackPressed();
+
+        File f = new File(storageDir, PLACEHOLDER_CAMERA);
+
+        if(f.exists()){
+            BitmapFactory.Options bmOptions = new BitmapFactory.Options();
+            Bitmap bitmap = BitmapFactory.decodeFile(f.getAbsolutePath(),bmOptions);
+            File profile = new File(storageDir, PROFILE_IMAGE);
+            saveBitmap(bitmap, profile.getPath());
+
+        }
+
         edit.putString("name", name.getText().toString());
         edit.putString("email", email.getText().toString());
         edit.putString("address", address.getText().toString());
         edit.putString("phoneNumber", phoneNumber.getText().toString());
+        edit.putString("bio", bio.getText().toString());
         edit.apply();
         finish();
     }
+
+    private void saveBitmap(Bitmap bitmap,String path){
+        if(bitmap!=null){
+            try {
+                FileOutputStream outputStream = null;
+                try {
+                    outputStream = new FileOutputStream(path); //here is set your file path where you want to save or also here you can set file object directly
+
+                    bitmap.compress(Bitmap.CompressFormat.JPEG, 100, outputStream); // bitmap is your Bitmap instance, if you want to compress it you can compress reduce percentage
+                } catch (Exception e) {
+                    e.printStackTrace();
+                } finally {
+                    try {
+                        if (outputStream != null) {
+                            outputStream.close();
+                        }
+                    } catch (IOException e) {
+                        e.printStackTrace();
+                    }
+                }
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        }
+    }
+
+
 }
