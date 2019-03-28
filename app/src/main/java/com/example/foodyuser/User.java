@@ -29,11 +29,13 @@ public class User extends AppCompatActivity {
     private TextView address;
     private TextView phoneNumber;
     private TextView bio;
+    private final String PROFILE_IMAGE = "ProfileImage.jpg";
 
     //Shared Preferences definition
     Context context;
     SharedPreferences sharedPref;
     SharedPreferences.Editor edit;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -51,7 +53,6 @@ public class User extends AppCompatActivity {
         });
     }
 
-
     private void init(){
 
         this.profilePicture = findViewById(R.id.profilePicture);
@@ -67,11 +68,14 @@ public class User extends AppCompatActivity {
         sharedPref = context.getSharedPreferences("myPreference", MODE_PRIVATE);
         edit = sharedPref.edit();
 
-        name.setText("Walter White");
-        email.setText("Heisenberg@gmail.com");
-        address.setText("308 Negra Arroyo Lane, Albuquerque, New Mexico, 87104");
-        phoneNumber.setText("3334567890");
-        bio.setText("My name is Walter White and i cook! My address is 308 Negra Arroyo Lane, Albuquerque, New Mexico, 87104 ");
+        name.setText(sharedPref.getString("name", getResources().getString(R.string.name_hint)));
+        email.setText(sharedPref.getString("email", getResources().getString(R.string.email_hint)));
+        address.setText(sharedPref.getString("address", getResources().getString(R.string.address_hint)));
+        phoneNumber.setText(sharedPref.getString("phoneNumber", getResources().getString(R.string.phone_hint)));
+        bio.setText(sharedPref.getString("bio", getResources().getString(R.string.bio_hint)));
+        Bitmap b = BitmapFactory.decodeFile(this.getFilesDir() + "/" + PROFILE_IMAGE);
+        profilePicture.setImageBitmap(b);
+        edit.apply();
 
         edit.putString("name", name.getText().toString());
         edit.putString("email", email.getText().toString());

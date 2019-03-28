@@ -12,7 +12,6 @@ import android.os.Environment;
 import android.provider.MediaStore;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
-import android.support.design.button.MaterialButton;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v4.content.FileProvider;
 import android.support.v7.app.AppCompatActivity;
@@ -53,6 +52,7 @@ public class Setup extends AppCompatActivity {
     private final String PROFILE_IMAGE = "ProfileImage.jpg";
     private final String PLACEHOLDER_CAMERA="PlaceCamera.jpg";
     private String placeholderPath;
+    private boolean unchanged;
 
     //Shared Preferences definition
     Context context;
@@ -182,9 +182,7 @@ public class Setup extends AppCompatActivity {
             errorLine.setAlpha(0.2f);
             errorLine.setBackgroundColor(Color.BLACK);
         }
-
         updateSave();
-
     }
 
     private void checkMail(){
@@ -193,18 +191,15 @@ public class Setup extends AppCompatActivity {
         final String emailToCheck = email.getText().toString();
 
         if(!Pattern.compile(regexpEmail).matcher(emailToCheck).matches()) {
-                errorMail.setText(getResources().getString(R.string.error_email));
-                errorLine.setBackgroundColor(getResources().getColor(R.color.errorColor, this.getTheme()));
-                errorLine.setAlpha(1);
+            errorMail.setText(getResources().getString(R.string.error_email));
+            errorLine.setBackgroundColor(getResources().getColor(R.color.errorColor, this.getTheme()));
+            errorLine.setAlpha(1);
         }else{
             errorMail.setText("");
             errorLine.setAlpha(0.2f);
             errorLine.setBackgroundColor(Color.BLACK);
         }
-
         updateSave();
-
-
     }
 
     private  void pickFromGallery(){
@@ -233,7 +228,7 @@ public class Setup extends AppCompatActivity {
     }
 
     private void init(){
-
+        unchanged = true;
         this.profilePicture = findViewById(R.id.profilePicture);
         this.editImage = findViewById(R.id.edit_profile_picture);
         this.name = findViewById(R.id.userName);
@@ -252,7 +247,6 @@ public class Setup extends AppCompatActivity {
         this.errorPhone = findViewById(R.id.number_error);
         this.errorAddress = findViewById(R.id.address_error);
         this.errorBio = findViewById(R.id.bio_error);
-
         this.back = findViewById(R.id.backButton);
         this.save = findViewById(R.id.saveButton);
 
@@ -262,6 +256,8 @@ public class Setup extends AppCompatActivity {
         errorAddress.setText("");
         errorBio.setText("");
 
+        Bitmap b = BitmapFactory.decodeFile(this.getFilesDir() + "/" + PROFILE_IMAGE);
+        profilePicture.setImageBitmap(b);
         name.setText(sharedPref.getString("name", getResources().getString(R.string.name_hint)));
         email.setText(sharedPref.getString("email", getResources().getString(R.string.email_hint)));
         address.setText(sharedPref.getString("address", getResources().getString(R.string.address_hint)));
@@ -274,64 +270,106 @@ public class Setup extends AppCompatActivity {
         if(image != null)
             profilePicture.setImageBitmap(image);
 
-        name.addTextChangedListener(new TextWatcher() {
+        //onTextChange to notify the user that there are fields that are not saved
+        this.name.addTextChangedListener(new TextWatcher() {
             @Override
-            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+            public void beforeTextChanged(CharSequence charSequence, int i, int i1, int i2) {
             }
 
             @Override
-            public void onTextChanged(CharSequence s, int start, int before, int count) {
+            public void onTextChanged(CharSequence charSequence, int i, int i1, int i2) {
                 checkName();
             }
 
             @Override
-            public void afterTextChanged(Editable s) {
+            public void afterTextChanged(Editable editable) {
+                String check = sharedPref.getString("name", null);
+                if (check != null && check.compareTo(editable.toString()) != 0){
+                    unchanged = false;
+                }
             }
         });
-
-        phoneNumber.addTextChangedListener(new TextWatcher() {
+        this.email.addTextChangedListener(new TextWatcher() {
             @Override
-            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+            public void beforeTextChanged(CharSequence charSequence, int i, int i1, int i2) {
+
             }
 
             @Override
-            public void onTextChanged(CharSequence s, int start, int before, int count) {
-                checkNumber();
-            }
-
-            @Override
-            public void afterTextChanged(Editable s) {
-            }
-        });
-
-        email.addTextChangedListener(new TextWatcher() {
-            @Override
-            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
-            }
-
-            @Override
-            public void onTextChanged(CharSequence s, int start, int before, int count) {
+            public void onTextChanged(CharSequence charSequence, int i, int i1, int i2) {
                 checkMail();
             }
 
             @Override
-            public void afterTextChanged(Editable s) {
+            public void afterTextChanged(Editable editable) {
+                String check = sharedPref.getString("email", null);
+                if (check != null && check.compareTo(editable.toString()) != 0){
+                    unchanged = false;
+                }
+            }
+        });
+        this.address.addTextChangedListener(new TextWatcher() {
+            @Override
+            public void beforeTextChanged(CharSequence charSequence, int i, int i1, int i2) {
+            }
+            @Override
+            public void onTextChanged(CharSequence charSequence, int i, int i1, int i2) {
+            }
+            @Override
+            public void afterTextChanged(Editable editable) {
+                String check = sharedPref.getString("address", null);
+                if (check != null && check.compareTo(editable.toString()) != 0){
+                    unchanged = false;
+                }
+            }
+        });
+        this.phoneNumber.addTextChangedListener(new TextWatcher() {
+            @Override
+            public void beforeTextChanged(CharSequence charSequence, int i, int i1, int i2) {
+            }
+            @Override
+            public void onTextChanged(CharSequence charSequence, int i, int i1, int i2) {
+                checkNumber();
+            }
+            @Override
+            public void afterTextChanged(Editable editable) {
+                String check = sharedPref.getString("phoneNumber", null);
+                if (check != null && check.compareTo(editable.toString()) != 0){
+                    unchanged = false;
+                }
+            }
+        });
+        this.bio.addTextChangedListener(new TextWatcher() {
+            @Override
+            public void beforeTextChanged(CharSequence charSequence, int i, int i1, int i2) {
+            }
+            @Override
+            public void onTextChanged(CharSequence charSequence, int i, int i1, int i2) {
+            }
+            @Override
+            public void afterTextChanged(Editable editable) {
+                String check = sharedPref.getString("bio", null);
+                if (check != null && check.compareTo(editable.toString()) != 0){
+                    unchanged = false;
+                }
             }
         });
 
         updateSave();
     }
 
-
     @Override
     protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
+
+        Log.d("PICTURE", "End Picture");
 
         if(resultCode == RESULT_OK){
             switch (requestCode){
 
                 case REQUEST_CAPTURE_IMAGE:
                     File f = new File(placeholderPath);
+                    Log.d("PICTURE", "Entered Request Capture");
                     startCrop(Uri.fromFile(f));
                     break;
 
@@ -366,12 +404,13 @@ public class Setup extends AppCompatActivity {
 
         f = new File(this.getFilesDir(), PLACEHOLDER_CAMERA);
 
-        //Convert bitmap to byte array
+//Convert bitmap to byte array
         ByteArrayOutputStream bos = new ByteArrayOutputStream();
         bitmap.compress(Bitmap.CompressFormat.JPEG, 100, bos);
         byte[] bitmapdata = bos.toByteArray();
 
-        //write the bytes in file
+//write the bytes in file
+
         try{
 
             FileOutputStream fos = new FileOutputStream(f);
@@ -383,9 +422,9 @@ public class Setup extends AppCompatActivity {
         }
     }
 
-
     private File createOrReplacePlaceholder(){
 
+        Log.d("PICTURE", "Create or Replace");
         File storageDir = getExternalFilesDir(Environment.DIRECTORY_PICTURES);
 
         File f = new File(storageDir, PLACEHOLDER_CAMERA);
@@ -409,12 +448,12 @@ public class Setup extends AppCompatActivity {
 
         f = new File(this.getFilesDir(), PROFILE_IMAGE);
 
-//Convert bitmap to byte array
+        //Convert bitmap to byte array
         ByteArrayOutputStream bos = new ByteArrayOutputStream();
         bitmap.compress(Bitmap.CompressFormat.JPEG, 100, bos);
         byte[] bitmapdata = bos.toByteArray();
 
-//write the bytes in file
+        //write the bytes in file
 
         try{
 
@@ -449,7 +488,6 @@ public class Setup extends AppCompatActivity {
                 items){
             public View getView(int position, View convertView, @NonNull ViewGroup parent) {
                 View v = super.getView(position, convertView, parent);
-                TextView tv = v.findViewById(R.id.tv1);
                 ImageView iv = v.findViewById(R.id.iv1);
                 iv.setImageDrawable(getDrawable(items[position].icon));
                 return v;
@@ -481,18 +519,10 @@ public class Setup extends AppCompatActivity {
     }
 
     private void startCrop(@NonNull Uri uri){
-
         UCrop uCrop = UCrop.of(uri, Uri.fromFile(new File(this.getFilesDir(), PROFILE_IMAGE)));
-
-
         uCrop.withAspectRatio(1,1);
-
         uCrop.withMaxResultSize(450,450);
-
         uCrop.withOptions(getCropOptions());
-
-
-
         uCrop.start(Setup.this);
     }
 
@@ -511,17 +541,45 @@ public class Setup extends AppCompatActivity {
         //Colors
         options.setStatusBarColor(getResources().getColor(R.color.colorPrimaryDark, getTheme()));
         options.setToolbarColor(getResources().getColor(R.color.colorPrimary, getTheme()));
-
-
         options.setAllowedGestures(UCropActivity.ALL, UCropActivity.ALL, UCropActivity.ALL);
-
         options.setCircleDimmedLayer(true);
-
         options.setToolbarTitle(getResources().getString(R.string.crop_image));
-
         return options;
-
-
     }
 
+    public void backToProfile(View view) {
+        if (unchanged){
+            super.onBackPressed();
+        }
+        else {
+            Log.d("ALERT", "false");
+            AlertDialog.Builder builder = new AlertDialog.Builder(Setup.this);
+            builder.setNegativeButton(getResources().getString(R.string.cancel), new DialogInterface.OnClickListener() {
+                @Override
+                public void onClick(DialogInterface dialog, int which) {
+                    dialog.dismiss();
+                }
+            });
+            builder.setPositiveButton(getResources().getString(R.string.accept), new DialogInterface.OnClickListener() {
+                @Override
+                public void onClick(DialogInterface dialogInterface, int i) {
+                    Setup.super.onBackPressed();
+                }
+            });
+            builder.setTitle(getResources().getString(R.string.alert_dialog_back_title));
+            builder.setMessage(getResources().getString(R.string.alert_dialog_back_message));
+            builder.setCancelable(false);
+            builder.show();
+        }
+    }
+
+    public void savedProfile(View view) {
+        super.onBackPressed();
+        edit.putString("name", name.getText().toString());
+        edit.putString("email", email.getText().toString());
+        edit.putString("address", address.getText().toString());
+        edit.putString("phoneNumber", phoneNumber.getText().toString());
+        edit.apply();
+        finish();
+    }
 }
