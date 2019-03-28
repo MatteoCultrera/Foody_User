@@ -155,8 +155,6 @@ public class Setup extends AppCompatActivity {
             save.setEnabled(true);
             save.setClickable(true);
         }
-
-
     }
 
     private void checkName(){
@@ -265,6 +263,7 @@ public class Setup extends AppCompatActivity {
 
             @Override
             public void onTextChanged(CharSequence charSequence, int i, int i1, int i2) {
+                checkName();
             }
 
             @Override
@@ -283,6 +282,7 @@ public class Setup extends AppCompatActivity {
 
             @Override
             public void onTextChanged(CharSequence charSequence, int i, int i1, int i2) {
+                checkMail();
             }
 
             @Override
@@ -314,6 +314,7 @@ public class Setup extends AppCompatActivity {
             }
             @Override
             public void onTextChanged(CharSequence charSequence, int i, int i1, int i2) {
+                checkNumber();
             }
             @Override
             public void afterTextChanged(Editable editable) {
@@ -366,30 +367,6 @@ public class Setup extends AppCompatActivity {
 
         if(image != null)
             profilePicture.setImageBitmap(image);
-            name.setOnFocusChangeListener(new View.OnFocusChangeListener() {
-            @Override
-            public void onFocusChange(View v, boolean hasFocus) {
-                if(!name.hasFocus()){
-                    checkName();
-                }
-            }
-        });
-        phoneNumber.setOnFocusChangeListener(new View.OnFocusChangeListener() {
-            @Override
-            public void onFocusChange(View v, boolean hasFocus) {
-                if(!phoneNumber.hasFocus()){
-                    checkNumber();
-                }
-            }
-        });
-        email.setOnFocusChangeListener(new View.OnFocusChangeListener() {
-            @Override
-            public void onFocusChange(View v, boolean hasFocus) {
-                if(!phoneNumber.hasFocus()){
-                    checkMail();
-                }
-            }
-        });
         updateSave();
     }
 
