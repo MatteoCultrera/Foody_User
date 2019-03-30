@@ -1,5 +1,6 @@
 package com.example.foodyuser;
 
+@SuppressWarnings("unused")
 public class Item{
     private final String text;
     private final int icon;
@@ -12,8 +13,4 @@ public class Item{
         return icon;
     }
 
-    @Override
-    public String toString() {
-        return text;
-    }
 }

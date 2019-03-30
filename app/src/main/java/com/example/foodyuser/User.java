@@ -3,17 +3,11 @@ package com.example.foodyuser;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
-import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
 import android.net.Uri;
 import android.os.Bundle;
-
 import android.os.Environment;
-import android.support.annotation.Nullable;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v7.app.AppCompatActivity;
-
-import android.util.Log;
 import android.view.View;
 import android.widget.TextView;
 
@@ -36,9 +30,9 @@ public class User extends AppCompatActivity {
     private File storageDir;
 
     //Shared Preferences definition
-    Context context;
-    SharedPreferences sharedPref;
-    SharedPreferences.Editor edit;
+    private Context context;
+    private SharedPreferences sharedPref;
+    private SharedPreferences.Editor edit;
 
 
     @Override
@@ -61,7 +55,9 @@ public class User extends AppCompatActivity {
             public void onClick(View v) {
                 Intent intent = new Intent(User.this, Setup.class);
                 File pl = new File(storageDir, PLACEHOLDER_CAMERA);
-                pl.delete();
+                if(!pl.delete()){
+                    System.out.println("Delete Failure");
+                }
                 startActivity(intent);
             }
         });
@@ -158,7 +154,9 @@ public class User extends AppCompatActivity {
             public void onClick(View v) {
                 Intent intent = new Intent(User.this, Setup.class);
                 File pl = new File(storageDir, PLACEHOLDER_CAMERA);
-                pl.delete();
+                if(!pl.delete()){
+                    System.out.println("Delete Failure");
+                }
                 startActivity(intent);
             }
         });
@@ -180,7 +178,9 @@ public class User extends AppCompatActivity {
             public void onClick(View v) {
                 Intent intent = new Intent(User.this, Setup.class);
                 File pl = new File(storageDir, PLACEHOLDER_CAMERA);
-                pl.delete();
+                if(!pl.delete()){
+                    System.out.println("Delete Failure");
+                }
                 startActivity(intent);
             }
         });

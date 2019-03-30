@@ -7,7 +7,6 @@ import android.content.SharedPreferences;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Color;
-import android.graphics.drawable.BitmapDrawable;
 import android.net.Uri;
 import android.os.Environment;
 import android.provider.MediaStore;
@@ -17,11 +16,9 @@ import android.support.design.widget.FloatingActionButton;
 import android.support.v4.content.FileProvider;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
-import android.telephony.PhoneNumberUtils;
 import android.text.Editable;
 import android.text.TextWatcher;
 import android.util.Log;
-import android.util.Patterns;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
@@ -32,14 +29,9 @@ import android.widget.ListAdapter;
 import android.widget.TextView;
 import com.yalantis.ucrop.UCrop;
 import com.yalantis.ucrop.UCropActivity;
-import java.io.ByteArrayOutputStream;
 import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
-import java.io.InputStream;
-import java.io.OutputStream;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -61,9 +53,9 @@ public class Setup extends AppCompatActivity {
     private boolean unchanged, checkString = true;
 
     //Shared Preferences definition
-    Context context;
-    SharedPreferences sharedPref;
-    SharedPreferences.Editor edit;
+    private Context context;
+    private SharedPreferences sharedPref;
+    private SharedPreferences.Editor edit;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -394,33 +386,6 @@ public class Setup extends AppCompatActivity {
         }
     }
 
-    private void setBitmapPlaceholder(Bitmap bitmap){
-
-        File f = new File(this.getFilesDir(), PLACEHOLDER_CAMERA);
-
-        if(f.exists())
-            this.deleteFile(f.getName());
-
-        f = new File(this.getFilesDir(), PLACEHOLDER_CAMERA);
-
-//Convert bitmap to byte array
-        ByteArrayOutputStream bos = new ByteArrayOutputStream();
-        bitmap.compress(Bitmap.CompressFormat.JPEG, 100, bos);
-        byte[] bitmapdata = bos.toByteArray();
-
-//write the bytes in file
-
-        try{
-
-            FileOutputStream fos = new FileOutputStream(f);
-            fos.write(bitmapdata);
-            fos.flush();
-            fos.close();
-        }catch (Exception e){
-            e.printStackTrace();
-        }
-    }
-
     private File createOrReplacePlaceholder(){
 
         Log.d("PICTURE", "Create or Replace");
@@ -435,33 +400,6 @@ public class Setup extends AppCompatActivity {
         placeholderPath = f.getPath();
 
        return f;
-    }
-
-    private void setBitmapProfile(Bitmap bitmap){
-
-        File f = new File(this.getFilesDir(), PROFILE_IMAGE);
-
-        if(f.exists())
-            this.deleteFile(f.getName());
-
-        f = new File(this.getFilesDir(), PROFILE_IMAGE);
-
-        //Convert bitmap to byte array
-        ByteArrayOutputStream bos = new ByteArrayOutputStream();
-        bitmap.compress(Bitmap.CompressFormat.JPEG, 100, bos);
-        byte[] bitmapdata = bos.toByteArray();
-
-        //write the bytes in file
-
-        try{
-
-            FileOutputStream fos = new FileOutputStream(f);
-            fos.write(bitmapdata);
-            fos.flush();
-            fos.close();
-        }catch (Exception e){
-            e.printStackTrace();
-        }
     }
 
     private Bitmap getBitmapFromFile(){
@@ -546,7 +484,7 @@ public class Setup extends AppCompatActivity {
         return options;
     }
 
-    protected void backToProfile(View view) {
+    public void backToProfile(View view) {
         if (unchanged){
             super.onBackPressed();
         }
@@ -599,7 +537,7 @@ public class Setup extends AppCompatActivity {
         }
     }
 
-    protected void savedProfile(View view) {
+    public void savedProfile(View view) {
 
         File f = new File(storageDir, PLACEHOLDER_CAMERA);
 
@@ -644,6 +582,5 @@ public class Setup extends AppCompatActivity {
             }
         }
     }
-
 
 }

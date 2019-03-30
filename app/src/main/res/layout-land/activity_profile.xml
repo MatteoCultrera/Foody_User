@@ -1,7 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <android.support.constraint.ConstraintLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:tools="http://schemas.android.com/tools"
     android:theme="@style/AppTheme"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
@@ -14,6 +13,7 @@
         android:layout_height="105dp"
         android:scaleType="centerCrop"
         android:src="@drawable/user_static_background"
+        android:contentDescription="@null"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="@+id/constraintLayout3"
         app:layout_constraintTop_toTopOf="parent"
@@ -145,6 +145,7 @@
                     android:layout_height="30dp"
                     android:layout_marginTop="8dp"
                     android:scaleType="fitCenter"
+                    android:contentDescription="@null"
                     android:src="@drawable/phone_black" />
 
                 <TextView
@@ -158,7 +159,7 @@
                     android:fontFamily="@font/roboto_regular"
                     android:hint="@string/phone_hint"
                     android:textSize="15sp"
-                    android:textColor="#ff212121"/>
+                    android:textColor="@color/primaryText"/>
 
             </LinearLayout>
 
@@ -184,6 +185,7 @@
                     android:layout_height="30dp"
                     android:layout_marginTop="8dp"
                     android:scaleType="fitCenter"
+                    android:contentDescription="@null"
                     android:src="@drawable/mail_black" />
 
                 <TextView
@@ -197,7 +199,7 @@
                     android:fontFamily="@font/roboto_regular"
                     android:hint="@string/email_hint"
                     android:textSize="15sp"
-                    android:textColor="#ff212121"/>
+                    android:textColor="@color/primaryText"/>
 
             </LinearLayout>
 
@@ -223,6 +225,7 @@
                     android:layout_height="30dp"
                     android:layout_marginTop="8dp"
                     android:scaleType="fitCenter"
+                    android:contentDescription="@null"
                     android:src="@drawable/location_black" />
 
                 <TextView
@@ -236,7 +239,7 @@
                     android:fontFamily="@font/roboto_regular"
                     android:hint="@string/address_hint"
                     android:textSize="15sp"
-                    android:textColor="#ff212121"/>
+                    android:textColor="@color/primaryText"/>
 
             </LinearLayout>
 
@@ -262,6 +265,7 @@
                     android:layout_height="30dp"
                     android:layout_marginTop="8dp"
                     android:scaleType="fitCenter"
+                    android:contentDescription="@null"
                     android:src="@drawable/name_black" />
 
                 <TextView
@@ -276,7 +280,7 @@
                     android:hint="@string/biography"
                     android:maxLines="3"
                     android:textSize="15sp"
-                    android:textColor="#ff212121"/>
+                    android:textColor="@color/primaryText"/>
 
             </LinearLayout>
 
