@@ -1,6 +1,7 @@
 package com.example.foodyuser;
 
-@SuppressWarnings("unused")
+import android.support.annotation.NonNull;
+
 public class Item{
     private final String text;
     private final int icon;
@@ -10,7 +11,11 @@ public class Item{
     }
 
     public int getIcon() {
-        return icon;
+        return this.icon;
     }
 
+    @NonNull
+    public String toString(){
+        return this.text;
+    }
 }

@@ -40,10 +40,12 @@ import de.hdodenhof.circleimageview.CircleImageView;
 public class Setup extends AppCompatActivity {
 
     private CircleImageView profilePicture;
-    private ImageButton save, back;
+    private ImageButton save;
     private FloatingActionButton editImage;
     private EditText name, email, address, phoneNumber, bio;
-    private TextView errorName, errorMail, errorAddress, errorPhone, errorBio;
+    private TextView errorName;
+    private TextView errorMail;
+    private TextView errorPhone;
     private final int GALLERY_REQUEST_CODE = 1;
     private final int REQUEST_CAPTURE_IMAGE = 100;
     private final String PROFILE_IMAGE = "ProfileImage.jpg";
@@ -52,8 +54,6 @@ public class Setup extends AppCompatActivity {
     private File storageDir;
     private boolean unchanged, checkString = true;
 
-    //Shared Preferences definition
-    private Context context;
     private SharedPreferences sharedPref;
     private SharedPreferences.Editor edit;
 
@@ -227,16 +227,17 @@ public class Setup extends AppCompatActivity {
         this.bio = findViewById(R.id.bio);
 
         //setup of the Shared Preferences to save value in (key, value) format
-        context = getApplicationContext();
+        //Shared Preferences definition
+        Context context = getApplicationContext();
         sharedPref = context.getSharedPreferences("myPreference", MODE_PRIVATE);
         edit = sharedPref.edit();
 
         this.errorName = findViewById(R.id.name_error);
         this.errorMail = findViewById(R.id.email_error);
         this.errorPhone = findViewById(R.id.number_error);
-        this.errorAddress = findViewById(R.id.address_error);
-        this.errorBio = findViewById(R.id.bio_error);
-        this.back = findViewById(R.id.backButton);
+        TextView errorAddress = findViewById(R.id.address_error);
+        TextView errorBio = findViewById(R.id.bio_error);
+        //ImageButton back = findViewById(R.id.backButton);
         this.save = findViewById(R.id.saveButton);
 
         errorName.setText("");
@@ -367,9 +368,6 @@ public class Setup extends AppCompatActivity {
 
                         if(imageUri != null)
                             startCrop(imageUri);
-
-                      // profilePicture.setImageURI(imageUri);
-
                     }
                     break;
 
@@ -380,6 +378,7 @@ public class Setup extends AppCompatActivity {
                         profilePicture.setImageBitmap(bitmap);
                         File placeholder = new File(storageDir, PLACEHOLDER_CAMERA);
                         saveBitmap(bitmap, placeholder.getPath());
+                        unchanged = false;
                     }
                     break;
             }
@@ -467,15 +466,7 @@ public class Setup extends AppCompatActivity {
         UCrop.Options options= new UCrop.Options();
 
         options.setCompressionQuality(100);
-
-        //Compress Type
-        //options.setCompressionFormat(Bitmap.CompressFormat.PNG);
-        //options.setCompressionFormat(Bitmap.CompressFormat.JPEG);
-
-        //UI
         options.setHideBottomControls(true);
-
-        //Colors
         options.setStatusBarColor(getResources().getColor(R.color.colorPrimaryDark, getTheme()));
         options.setToolbarColor(getResources().getColor(R.color.colorPrimary, getTheme()));
         options.setAllowedGestures(UCropActivity.ALL, UCropActivity.ALL, UCropActivity.ALL);
