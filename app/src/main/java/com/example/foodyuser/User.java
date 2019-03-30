@@ -3,17 +3,11 @@ package com.example.foodyuser;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
-import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
 import android.net.Uri;
 import android.os.Bundle;
-
 import android.os.Environment;
-import android.support.annotation.Nullable;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v7.app.AppCompatActivity;
-
-import android.util.Log;
 import android.view.View;
 import android.widget.TextView;
 
@@ -24,21 +18,16 @@ import de.hdodenhof.circleimageview.CircleImageView;
 
 public class User extends AppCompatActivity {
 
-    private CircleImageView profilePicture;
     private FloatingActionButton editMode;
     private TextView name;
     private TextView email;
     private TextView address;
     private TextView phoneNumber;
     private TextView bio;
-    private final String PROFILE_IMAGE = "ProfileImage.jpg";
     private final String PLACEHOLDER_CAMERA="PlaceCamera.jpg";
     private File storageDir;
 
-    //Shared Preferences definition
-    Context context;
-    SharedPreferences sharedPref;
-    SharedPreferences.Editor edit;
+    private SharedPreferences sharedPref;
 
 
     @Override
@@ -47,7 +36,8 @@ public class User extends AppCompatActivity {
 
         setContentView(R.layout.activity_profile);
 
-        context = getApplicationContext();
+        //Shared Preferences definition
+        Context context = getApplicationContext();
         sharedPref = context.getSharedPreferences("myPreference", MODE_PRIVATE);
 
         firstStart();
@@ -61,7 +51,9 @@ public class User extends AppCompatActivity {
             public void onClick(View v) {
                 Intent intent = new Intent(User.this, Setup.class);
                 File pl = new File(storageDir, PLACEHOLDER_CAMERA);
-                pl.delete();
+                if(!pl.delete()){
+                    System.out.println("Delete Failure");
+                }
                 startActivity(intent);
             }
         });
@@ -69,7 +61,7 @@ public class User extends AppCompatActivity {
 
     private void firstStart(){
 
-        edit = sharedPref.edit();
+        SharedPreferences.Editor edit = sharedPref.edit();
 
         if(!sharedPref.contains("name"))
             edit.putString("name",getString(R.string.name_Walter));
@@ -92,7 +84,7 @@ public class User extends AppCompatActivity {
 
     private void init(){
 
-        this.profilePicture = findViewById(R.id.profilePicture);
+        CircleImageView profilePicture = findViewById(R.id.profilePicture);
         this.editMode = findViewById(R.id.edit_mode);
         this.name = findViewById(R.id.userName);
         this.email = findViewById(R.id.emailAddress);
@@ -108,6 +100,7 @@ public class User extends AppCompatActivity {
         phoneNumber.setText(sharedPref.getString("phoneNumber", getResources().getString(R.string.phone_hint)));
         bio.setText(sharedPref.getString("bio", getResources().getString(R.string.bio_hint)));
 
+        String PROFILE_IMAGE = "ProfileImage.jpg";
         File f = new File(storageDir, PROFILE_IMAGE);
 
         if(f.exists()){
@@ -158,7 +151,9 @@ public class User extends AppCompatActivity {
             public void onClick(View v) {
                 Intent intent = new Intent(User.this, Setup.class);
                 File pl = new File(storageDir, PLACEHOLDER_CAMERA);
-                pl.delete();
+                if(!pl.delete()){
+                    System.out.println("Delete Failure");
+                }
                 startActivity(intent);
             }
         });
@@ -180,7 +175,9 @@ public class User extends AppCompatActivity {
             public void onClick(View v) {
                 Intent intent = new Intent(User.this, Setup.class);
                 File pl = new File(storageDir, PLACEHOLDER_CAMERA);
-                pl.delete();
+                if(!pl.delete()){
+                    System.out.println("Delete Failure");
+                }
                 startActivity(intent);
             }
         });

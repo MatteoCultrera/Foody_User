@@ -7,7 +7,6 @@ import android.content.SharedPreferences;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Color;
-import android.graphics.drawable.BitmapDrawable;
 import android.net.Uri;
 import android.os.Environment;
 import android.provider.MediaStore;
@@ -17,11 +16,9 @@ import android.support.design.widget.FloatingActionButton;
 import android.support.v4.content.FileProvider;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
-import android.telephony.PhoneNumberUtils;
 import android.text.Editable;
 import android.text.TextWatcher;
 import android.util.Log;
-import android.util.Patterns;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
@@ -32,14 +29,9 @@ import android.widget.ListAdapter;
 import android.widget.TextView;
 import com.yalantis.ucrop.UCrop;
 import com.yalantis.ucrop.UCropActivity;
-import java.io.ByteArrayOutputStream;
 import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
-import java.io.InputStream;
-import java.io.OutputStream;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -48,10 +40,12 @@ import de.hdodenhof.circleimageview.CircleImageView;
 public class Setup extends AppCompatActivity {
 
     private CircleImageView profilePicture;
-    private ImageButton save, back;
+    private ImageButton save;
     private FloatingActionButton editImage;
     private EditText name, email, address, phoneNumber, bio;
-    private TextView errorName, errorMail, errorAddress, errorPhone, errorBio;
+    private TextView errorName;
+    private TextView errorMail;
+    private TextView errorPhone;
     private final int GALLERY_REQUEST_CODE = 1;
     private final int REQUEST_CAPTURE_IMAGE = 100;
     private final String PROFILE_IMAGE = "ProfileImage.jpg";
@@ -60,10 +54,8 @@ public class Setup extends AppCompatActivity {
     private File storageDir;
     private boolean unchanged, checkString = true;
 
-    //Shared Preferences definition
-    Context context;
-    SharedPreferences sharedPref;
-    SharedPreferences.Editor edit;
+    private SharedPreferences sharedPref;
+    private SharedPreferences.Editor edit;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -159,7 +151,7 @@ public class Setup extends AppCompatActivity {
     }
 
     private void checkNumber(){
-        String regexpPhone = "^(([+]|00)39)?((3[1-6][0-9]))(\\d{7})$";
+        String regexpPhone = "^(([+]|00)39)?(3[1-6][0-9])(\\d{7})$";
         final String userNumber = phoneNumber.getText().toString();
 
         View errorLine = findViewById(R.id.number_error_line);
@@ -181,7 +173,7 @@ public class Setup extends AppCompatActivity {
 
     private void checkMail(){
         View errorLine = findViewById(R.id.email_error_line);
-        String regexpEmail = "^[_A-Za-z0-9-\\+]+(\\.[_A-Za-z0-9-]+)*@" + "[A-Za-z0-9-]+(\\.[A-Za-z0-9]+)*(\\.[A-Za-z]{2,})$";
+        String regexpEmail = "^[_A-Za-z0-9-+]+(\\.[_A-Za-z0-9-]+)*@" + "[A-Za-z0-9-]+(\\.[A-Za-z0-9]+)*(\\.[A-Za-z]{2,})$";
         final String emailToCheck = email.getText().toString();
 
         if(!Pattern.compile(regexpEmail).matcher(emailToCheck).matches()) {
@@ -235,16 +227,17 @@ public class Setup extends AppCompatActivity {
         this.bio = findViewById(R.id.bio);
 
         //setup of the Shared Preferences to save value in (key, value) format
-        context = getApplicationContext();
+        //Shared Preferences definition
+        Context context = getApplicationContext();
         sharedPref = context.getSharedPreferences("myPreference", MODE_PRIVATE);
         edit = sharedPref.edit();
 
         this.errorName = findViewById(R.id.name_error);
         this.errorMail = findViewById(R.id.email_error);
         this.errorPhone = findViewById(R.id.number_error);
-        this.errorAddress = findViewById(R.id.address_error);
-        this.errorBio = findViewById(R.id.bio_error);
-        this.back = findViewById(R.id.backButton);
+        TextView errorAddress = findViewById(R.id.address_error);
+        TextView errorBio = findViewById(R.id.bio_error);
+        //ImageButton back = findViewById(R.id.backButton);
         this.save = findViewById(R.id.saveButton);
 
         errorName.setText("");
@@ -375,9 +368,6 @@ public class Setup extends AppCompatActivity {
 
                         if(imageUri != null)
                             startCrop(imageUri);
-
-                      // profilePicture.setImageURI(imageUri);
-
                     }
                     break;
 
@@ -388,36 +378,10 @@ public class Setup extends AppCompatActivity {
                         profilePicture.setImageBitmap(bitmap);
                         File placeholder = new File(storageDir, PLACEHOLDER_CAMERA);
                         saveBitmap(bitmap, placeholder.getPath());
+                        unchanged = false;
                     }
                     break;
             }
-        }
-    }
-
-    private void setBitmapPlaceholder(Bitmap bitmap){
-
-        File f = new File(this.getFilesDir(), PLACEHOLDER_CAMERA);
-
-        if(f.exists())
-            this.deleteFile(f.getName());
-
-        f = new File(this.getFilesDir(), PLACEHOLDER_CAMERA);
-
-//Convert bitmap to byte array
-        ByteArrayOutputStream bos = new ByteArrayOutputStream();
-        bitmap.compress(Bitmap.CompressFormat.JPEG, 100, bos);
-        byte[] bitmapdata = bos.toByteArray();
-
-//write the bytes in file
-
-        try{
-
-            FileOutputStream fos = new FileOutputStream(f);
-            fos.write(bitmapdata);
-            fos.flush();
-            fos.close();
-        }catch (Exception e){
-            e.printStackTrace();
         }
     }
 
@@ -435,33 +399,6 @@ public class Setup extends AppCompatActivity {
         placeholderPath = f.getPath();
 
        return f;
-    }
-
-    private void setBitmapProfile(Bitmap bitmap){
-
-        File f = new File(this.getFilesDir(), PROFILE_IMAGE);
-
-        if(f.exists())
-            this.deleteFile(f.getName());
-
-        f = new File(this.getFilesDir(), PROFILE_IMAGE);
-
-        //Convert bitmap to byte array
-        ByteArrayOutputStream bos = new ByteArrayOutputStream();
-        bitmap.compress(Bitmap.CompressFormat.JPEG, 100, bos);
-        byte[] bitmapdata = bos.toByteArray();
-
-        //write the bytes in file
-
-        try{
-
-            FileOutputStream fos = new FileOutputStream(f);
-            fos.write(bitmapdata);
-            fos.flush();
-            fos.close();
-        }catch (Exception e){
-            e.printStackTrace();
-        }
     }
 
     private Bitmap getBitmapFromFile(){
@@ -484,10 +421,11 @@ public class Setup extends AppCompatActivity {
                 R.layout.alert_dialog_item,
                 R.id.tv1,
                 items){
+            @NonNull
             public View getView(int position, View convertView, @NonNull ViewGroup parent) {
                 View v = super.getView(position, convertView, parent);
                 ImageView iv = v.findViewById(R.id.iv1);
-                iv.setImageDrawable(getDrawable(items[position].icon));
+                iv.setImageDrawable(getDrawable(items[position].getIcon()));
                 return v;
             }
         };
@@ -528,15 +466,7 @@ public class Setup extends AppCompatActivity {
         UCrop.Options options= new UCrop.Options();
 
         options.setCompressionQuality(100);
-
-        //Compress Type
-        //options.setCompressionFormat(Bitmap.CompressFormat.PNG);
-        //options.setCompressionFormat(Bitmap.CompressFormat.JPEG);
-
-        //UI
         options.setHideBottomControls(true);
-
-        //Colors
         options.setStatusBarColor(getResources().getColor(R.color.colorPrimaryDark, getTheme()));
         options.setToolbarColor(getResources().getColor(R.color.colorPrimary, getTheme()));
         options.setAllowedGestures(UCropActivity.ALL, UCropActivity.ALL, UCropActivity.ALL);
@@ -545,7 +475,7 @@ public class Setup extends AppCompatActivity {
         return options;
     }
 
-    protected void backToProfile(View view) {
+    public void backToProfile(View view) {
         if (unchanged){
             super.onBackPressed();
         }
@@ -571,7 +501,34 @@ public class Setup extends AppCompatActivity {
         }
     }
 
-    protected void savedProfile(View view) {
+    @Override
+    public void onBackPressed() {
+        if (unchanged){
+            super.onBackPressed();
+        }
+        else {
+            Log.d("ALERT", "false");
+            AlertDialog.Builder builder = new AlertDialog.Builder(Setup.this);
+            builder.setNegativeButton(getResources().getString(R.string.cancel), new DialogInterface.OnClickListener() {
+                @Override
+                public void onClick(DialogInterface dialog, int which) {
+                    dialog.dismiss();
+                }
+            });
+            builder.setPositiveButton(getResources().getString(R.string.accept), new DialogInterface.OnClickListener() {
+                @Override
+                public void onClick(DialogInterface dialogInterface, int i) {
+                    Setup.super.onBackPressed();
+                }
+            });
+            builder.setTitle(getResources().getString(R.string.alert_dialog_back_title));
+            builder.setMessage(getResources().getString(R.string.alert_dialog_back_message));
+            builder.setCancelable(false);
+            builder.show();
+        }
+    }
+
+    public void savedProfile(View view) {
 
         File f = new File(storageDir, PLACEHOLDER_CAMERA);
 
@@ -616,6 +573,5 @@ public class Setup extends AppCompatActivity {
             }
         }
     }
-
 
 }

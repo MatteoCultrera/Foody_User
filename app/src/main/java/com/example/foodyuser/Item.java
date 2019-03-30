@@ -1,14 +1,21 @@
 package com.example.foodyuser;
 
+import android.support.annotation.NonNull;
+
 public class Item{
-    public final String text;
-    public final int icon;
+    private final String text;
+    private final int icon;
     public Item(String text, Integer icon) {
         this.text = text;
         this.icon = icon;
     }
-    @Override
-    public String toString() {
-        return text;
+
+    public int getIcon() {
+        return this.icon;
+    }
+
+    @NonNull
+    public String toString(){
+        return this.text;
     }
 }

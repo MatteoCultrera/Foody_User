@@ -12,18 +12,18 @@
             android:layout_width="40dp"
             android:layout_height="40dp"
             android:layout_gravity="center_vertical"
-            android:layout_marginLeft="16dp"
+            android:layout_marginStart="16dp"
+            android:contentDescription="@null"
             />
 
         <TextView
             android:id="@+id/tv1"
-            android:layout_width="wrap_content"
+            android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_weight="1"
-            android:layout_marginLeft="20dp"
+            android:layout_marginStart="20dp"
             android:fontFamily="@font/roboto"
-            android:gravity="left"
-            android:text="text1"
+            android:gravity="start"
             android:textSize="14sp"
             android:maxLines="1"
             android:layout_gravity="center_vertical"/>
