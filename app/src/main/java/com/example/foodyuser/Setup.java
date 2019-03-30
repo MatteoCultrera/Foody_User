@@ -7,6 +7,7 @@ import android.content.SharedPreferences;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Color;
+import android.graphics.drawable.BitmapDrawable;
 import android.net.Uri;
 import android.os.Environment;
 import android.provider.MediaStore;
@@ -33,8 +34,12 @@ import com.yalantis.ucrop.UCrop;
 import com.yalantis.ucrop.UCropActivity;
 import java.io.ByteArrayOutputStream;
 import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.io.InputStream;
+import java.io.OutputStream;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -52,7 +57,8 @@ public class Setup extends AppCompatActivity {
     private final String PROFILE_IMAGE = "ProfileImage.jpg";
     private final String PLACEHOLDER_CAMERA="PlaceCamera.jpg";
     private String placeholderPath;
-    private boolean unchanged;
+    private File storageDir;
+    private boolean unchanged, checkString = true;
 
     //Shared Preferences definition
     Context context;
@@ -64,6 +70,8 @@ public class Setup extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_setup);
 
+        storageDir = getExternalFilesDir(Environment.DIRECTORY_PICTURES);
+
         init();
 
         editImage.setOnClickListener(new View.OnClickListener() {
@@ -73,20 +81,6 @@ public class Setup extends AppCompatActivity {
             }
         });
 
-    }
-
-    @Override
-    public void onBackPressed() {
-        super.onBackPressed();
-
-        edit.putString("name", name.getText().toString());
-        edit.putString("email", email.getText().toString());
-        edit.putString("address", address.getText().toString());
-        edit.putString("phoneNumber", phoneNumber.getText().toString());
-        edit.putString("bio", bio.getText().toString());
-        edit.apply();
-
-        finish();
     }
 
     @Override
@@ -103,6 +97,11 @@ public class Setup extends AppCompatActivity {
     @Override
     protected void onRestoreInstanceState(Bundle savedInstanceState) {
         super.onRestoreInstanceState(savedInstanceState);
+
+        File f = new File(storageDir, PLACEHOLDER_CAMERA);
+
+        if(f.exists())
+            profilePicture.setImageURI(Uri.fromFile(f));
 
         name.setText(savedInstanceState.getString("name", getResources().getString(R.string.name_hint)));
         email.setText(savedInstanceState.getString("email", getResources().getString(R.string.email_hint)));
@@ -123,17 +122,8 @@ public class Setup extends AppCompatActivity {
     }
 
     private void updateSave(){
-        String username = name.getText().toString();
-        String regx = "^[\\p{L} .'-]+$";
-        Pattern regex = Pattern.compile(regx);
-        Matcher nameMatcher = regex.matcher(username);
 
-        String userNumber = phoneNumber.getText().toString();
-
-        View errorLine = findViewById(R.id.email_error_line);
-
-        if(!nameMatcher.matches() || !PhoneNumberUtils.isGlobalPhoneNumber(userNumber)
-                || userNumber.length() == 0 || !Patterns.EMAIL_ADDRESS.matcher(email.getText()).matches()){
+        if(!checkString){
             save.setImageResource(R.drawable.save_dis);
             save.setEnabled(false);
             save.setClickable(false);
@@ -145,7 +135,6 @@ public class Setup extends AppCompatActivity {
 
     }
 
-
     private void checkName(){
         String username = name.getText().toString();
         String regx = "^[\\p{L} .'-]+$";
@@ -154,17 +143,19 @@ public class Setup extends AppCompatActivity {
         Matcher matcher = regex.matcher(username);
 
         if(!matcher.matches()){
+            checkString = false;
             errorName.setText(getResources().getString(R.string.error_name));
             errorLine.setBackgroundColor(getResources().getColor(R.color.errorColor,this.getTheme()));
             errorLine.setAlpha(1);
+
         }else{
+            checkString = true;
             errorName.setText("");
             errorLine.setAlpha(0.2f);
             errorLine.setBackgroundColor(Color.BLACK);
         }
 
         updateSave();
-
     }
 
     private void checkNumber(){
@@ -174,14 +165,17 @@ public class Setup extends AppCompatActivity {
         View errorLine = findViewById(R.id.number_error_line);
 
         if(!Pattern.compile(regexpPhone).matcher(userNumber).matches()){
+            checkString = false;
             errorPhone.setText(getResources().getString(R.string.error_number));
             errorLine.setBackgroundColor(getResources().getColor(R.color.errorColor,this.getTheme()));
             errorLine.setAlpha(1);
         }else{
+            checkString = true;
             errorPhone.setText("");
             errorLine.setAlpha(0.2f);
             errorLine.setBackgroundColor(Color.BLACK);
         }
+
         updateSave();
     }
 
@@ -192,13 +186,16 @@ public class Setup extends AppCompatActivity {
 
         if(!Pattern.compile(regexpEmail).matcher(emailToCheck).matches()) {
             errorMail.setText(getResources().getString(R.string.error_email));
+            checkString = false;
             errorLine.setBackgroundColor(getResources().getColor(R.color.errorColor, this.getTheme()));
             errorLine.setAlpha(1);
         }else{
+            checkString = true;
             errorMail.setText("");
             errorLine.setAlpha(0.2f);
             errorLine.setBackgroundColor(Color.BLACK);
         }
+
         updateSave();
     }
 
@@ -256,19 +253,19 @@ public class Setup extends AppCompatActivity {
         errorAddress.setText("");
         errorBio.setText("");
 
-        Bitmap b = BitmapFactory.decodeFile(this.getFilesDir() + "/" + PROFILE_IMAGE);
-        profilePicture.setImageBitmap(b);
-        name.setText(sharedPref.getString("name", getResources().getString(R.string.name_hint)));
-        email.setText(sharedPref.getString("email", getResources().getString(R.string.email_hint)));
-        address.setText(sharedPref.getString("address", getResources().getString(R.string.address_hint)));
-        phoneNumber.setText(sharedPref.getString("phoneNumber", getResources().getString(R.string.phone_hint)));
-        bio.setText(sharedPref.getString("bio", getResources().getString(R.string.bio_hint)));
+        File f = new File(storageDir, PROFILE_IMAGE);
+
+        if(f.exists())
+            profilePicture.setImageURI(Uri.fromFile(f));
+
+
+        name.setText(sharedPref.getString("name", getResources().getString(R.string.name_Walter)));
+        email.setText(sharedPref.getString("email", getResources().getString(R.string.mail_Walter)));
+        address.setText(sharedPref.getString("address", getResources().getString(R.string.address_Walter)));
+        phoneNumber.setText(sharedPref.getString("phoneNumber", getResources().getString(R.string.phone_Walter)));
+        bio.setText(sharedPref.getString("bio", getResources().getString(R.string.bio_Walter)));
         edit.apply();
 
-        Bitmap image = getBitmapFromFile();
-
-        if(image != null)
-            profilePicture.setImageBitmap(image);
 
         //onTextChange to notify the user that there are fields that are not saved
         this.name.addTextChangedListener(new TextWatcher() {
@@ -369,7 +366,6 @@ public class Setup extends AppCompatActivity {
 
                 case REQUEST_CAPTURE_IMAGE:
                     File f = new File(placeholderPath);
-                    Log.d("PICTURE", "Entered Request Capture");
                     startCrop(Uri.fromFile(f));
                     break;
 
@@ -387,8 +383,11 @@ public class Setup extends AppCompatActivity {
 
                 case  UCrop.REQUEST_CROP:
                     Bitmap bitmap = getBitmapFromFile();
+
                     if(bitmap != null){
                         profilePicture.setImageBitmap(bitmap);
+                        File placeholder = new File(storageDir, PLACEHOLDER_CAMERA);
+                        saveBitmap(bitmap, placeholder.getPath());
                     }
                     break;
             }
@@ -425,7 +424,6 @@ public class Setup extends AppCompatActivity {
     private File createOrReplacePlaceholder(){
 
         Log.d("PICTURE", "Create or Replace");
-        File storageDir = getExternalFilesDir(Environment.DIRECTORY_PICTURES);
 
         File f = new File(storageDir, PLACEHOLDER_CAMERA);
 
@@ -469,7 +467,7 @@ public class Setup extends AppCompatActivity {
     private Bitmap getBitmapFromFile(){
         BitmapFactory.Options options = new BitmapFactory.Options();
         options.inPreferredConfig = Bitmap.Config.ARGB_8888;
-        File dest = new File(this.getFilesDir(), PROFILE_IMAGE);
+        File dest = new File(storageDir, PLACEHOLDER_CAMERA);
         if(!dest.exists())
             return null;
         return  BitmapFactory.decodeFile(dest.getPath(), options);
@@ -489,7 +487,7 @@ public class Setup extends AppCompatActivity {
             public View getView(int position, View convertView, @NonNull ViewGroup parent) {
                 View v = super.getView(position, convertView, parent);
                 ImageView iv = v.findViewById(R.id.iv1);
-                iv.setImageDrawable(getDrawable(items[position].getIcon()));
+                iv.setImageDrawable(getDrawable(items[position].icon));
                 return v;
             }
         };
@@ -519,7 +517,7 @@ public class Setup extends AppCompatActivity {
     }
 
     private void startCrop(@NonNull Uri uri){
-        UCrop uCrop = UCrop.of(uri, Uri.fromFile(new File(this.getFilesDir(), PROFILE_IMAGE)));
+        UCrop uCrop = UCrop.of(uri, Uri.fromFile(new File(storageDir, PLACEHOLDER_CAMERA)));
         uCrop.withAspectRatio(1,1);
         uCrop.withMaxResultSize(450,450);
         uCrop.withOptions(getCropOptions());
@@ -547,7 +545,7 @@ public class Setup extends AppCompatActivity {
         return options;
     }
 
-    public void backToProfile(View view) {
+    protected void backToProfile(View view) {
         if (unchanged){
             super.onBackPressed();
         }
@@ -573,13 +571,51 @@ public class Setup extends AppCompatActivity {
         }
     }
 
-    public void savedProfile(View view) {
-        super.onBackPressed();
+    protected void savedProfile(View view) {
+
+        File f = new File(storageDir, PLACEHOLDER_CAMERA);
+
+        if(f.exists()){
+            BitmapFactory.Options bmOptions = new BitmapFactory.Options();
+            Bitmap bitmap = BitmapFactory.decodeFile(f.getAbsolutePath(),bmOptions);
+            File profile = new File(storageDir, PROFILE_IMAGE);
+            saveBitmap(bitmap, profile.getPath());
+
+        }
+
         edit.putString("name", name.getText().toString());
         edit.putString("email", email.getText().toString());
         edit.putString("address", address.getText().toString());
         edit.putString("phoneNumber", phoneNumber.getText().toString());
+        edit.putString("bio", bio.getText().toString());
         edit.apply();
         finish();
     }
+
+    private void saveBitmap(Bitmap bitmap,String path){
+        if(bitmap!=null){
+            try {
+                FileOutputStream outputStream = null;
+                try {
+                    outputStream = new FileOutputStream(path); //here is set your file path where you want to save or also here you can set file object directly
+
+                    bitmap.compress(Bitmap.CompressFormat.JPEG, 100, outputStream); // bitmap is your Bitmap instance, if you want to compress it you can compress reduce percentage
+                } catch (Exception e) {
+                    e.printStackTrace();
+                } finally {
+                    try {
+                        if (outputStream != null) {
+                            outputStream.close();
+                        }
+                    } catch (IOException e) {
+                        e.printStackTrace();
+                    }
+                }
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        }
+    }
+
+
 }
