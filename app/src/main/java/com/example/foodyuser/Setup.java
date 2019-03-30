@@ -159,7 +159,7 @@ public class Setup extends AppCompatActivity {
     }
 
     private void checkNumber(){
-        String regexpPhone = "^(([+]|00)39)?((3[1-6][0-9]))(\\d{7})$";
+        String regexpPhone = "^(([+]|00)39)?(3[1-6][0-9])(\\d{7})$";
         final String userNumber = phoneNumber.getText().toString();
 
         View errorLine = findViewById(R.id.number_error_line);
@@ -181,7 +181,7 @@ public class Setup extends AppCompatActivity {
 
     private void checkMail(){
         View errorLine = findViewById(R.id.email_error_line);
-        String regexpEmail = "^[_A-Za-z0-9-\\+]+(\\.[_A-Za-z0-9-]+)*@" + "[A-Za-z0-9-]+(\\.[A-Za-z0-9]+)*(\\.[A-Za-z]{2,})$";
+        String regexpEmail = "^[_A-Za-z0-9-+]+(\\.[_A-Za-z0-9-]+)*@" + "[A-Za-z0-9-]+(\\.[A-Za-z0-9]+)*(\\.[A-Za-z]{2,})$";
         final String emailToCheck = email.getText().toString();
 
         if(!Pattern.compile(regexpEmail).matcher(emailToCheck).matches()) {
@@ -484,6 +484,7 @@ public class Setup extends AppCompatActivity {
                 R.layout.alert_dialog_item,
                 R.id.tv1,
                 items){
+            @NonNull
             public View getView(int position, View convertView, @NonNull ViewGroup parent) {
                 View v = super.getView(position, convertView, parent);
                 ImageView iv = v.findViewById(R.id.iv1);
@@ -643,5 +644,6 @@ public class Setup extends AppCompatActivity {
             }
         }
     }
+
 
 }
