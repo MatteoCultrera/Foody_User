@@ -489,7 +489,7 @@ public class Setup extends AppCompatActivity {
             public View getView(int position, View convertView, @NonNull ViewGroup parent) {
                 View v = super.getView(position, convertView, parent);
                 ImageView iv = v.findViewById(R.id.iv1);
-                iv.setImageDrawable(getDrawable(items[position].icon));
+                iv.setImageDrawable(getDrawable(items[position].getIcon()));
                 return v;
             }
         };
