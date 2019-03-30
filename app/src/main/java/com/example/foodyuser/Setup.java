@@ -487,7 +487,7 @@ public class Setup extends AppCompatActivity {
             public View getView(int position, View convertView, @NonNull ViewGroup parent) {
                 View v = super.getView(position, convertView, parent);
                 ImageView iv = v.findViewById(R.id.iv1);
-                iv.setImageDrawable(getDrawable(items[position].icon));
+                iv.setImageDrawable(getDrawable(items[position].getIcon()));
                 return v;
             }
         };
@@ -571,6 +571,33 @@ public class Setup extends AppCompatActivity {
         }
     }
 
+    @Override
+    public void onBackPressed() {
+        if (unchanged){
+            super.onBackPressed();
+        }
+        else {
+            Log.d("ALERT", "false");
+            AlertDialog.Builder builder = new AlertDialog.Builder(Setup.this);
+            builder.setNegativeButton(getResources().getString(R.string.cancel), new DialogInterface.OnClickListener() {
+                @Override
+                public void onClick(DialogInterface dialog, int which) {
+                    dialog.dismiss();
+                }
+            });
+            builder.setPositiveButton(getResources().getString(R.string.accept), new DialogInterface.OnClickListener() {
+                @Override
+                public void onClick(DialogInterface dialogInterface, int i) {
+                    Setup.super.onBackPressed();
+                }
+            });
+            builder.setTitle(getResources().getString(R.string.alert_dialog_back_title));
+            builder.setMessage(getResources().getString(R.string.alert_dialog_back_message));
+            builder.setCancelable(false);
+            builder.show();
+        }
+    }
+
     protected void savedProfile(View view) {
 
         File f = new File(storageDir, PLACEHOLDER_CAMERA);
@@ -616,6 +643,5 @@ public class Setup extends AppCompatActivity {
             }
         }
     }
-
 
 }

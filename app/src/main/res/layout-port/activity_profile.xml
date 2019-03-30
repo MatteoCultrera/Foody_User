@@ -158,7 +158,8 @@
                     android:background="@android:color/transparent"
                     android:fontFamily="@font/roboto_regular"
                     android:hint="@string/phone_hint"
-                    android:textSize="15sp" />
+                    android:textSize="15sp"
+                    android:textColor="#ff212121"/>
 
             </LinearLayout>
 
@@ -196,7 +197,8 @@
                     android:background="@android:color/transparent"
                     android:fontFamily="@font/roboto_regular"
                     android:hint="@string/email_hint"
-                    android:textSize="15sp" />
+                    android:textSize="15sp"
+                    android:textColor="#ff212121"/>
 
             </LinearLayout>
 
@@ -234,7 +236,8 @@
                     android:background="@android:color/transparent"
                     android:fontFamily="@font/roboto_regular"
                     android:hint="@string/address_hint"
-                    android:textSize="15sp" />
+                    android:textSize="15sp"
+                    android:textColor="#ff212121"/>
 
             </LinearLayout>
 
@@ -273,7 +276,8 @@
                     android:fontFamily="@font/roboto_regular"
                     android:hint="@string/biography"
                     android:maxLines="3"
-                    android:textSize="15sp" />
+                    android:textSize="15sp"
+                    android:textColor="#ff212121"/>
 
             </LinearLayout>
 
