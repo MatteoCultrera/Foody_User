@@ -429,7 +429,7 @@ public class Setup extends AppCompatActivity {
                 return v;
             }
         };
-        AlertDialog.Builder builder = new AlertDialog.Builder(Setup.this);
+        AlertDialog.Builder builder = new AlertDialog.Builder(this, R.style.AppCompatAlertDialogStyle);
         builder.setNegativeButton(getResources().getString(R.string.cancel), new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialog, int which) {
@@ -480,8 +480,7 @@ public class Setup extends AppCompatActivity {
             super.onBackPressed();
         }
         else {
-            Log.d("ALERT", "false");
-            AlertDialog.Builder builder = new AlertDialog.Builder(Setup.this);
+            AlertDialog.Builder builder = new AlertDialog.Builder(this, R.style.AppCompatAlertDialogStyle);
             builder.setNegativeButton(getResources().getString(R.string.cancel), new DialogInterface.OnClickListener() {
                 @Override
                 public void onClick(DialogInterface dialog, int which) {
@@ -508,7 +507,7 @@ public class Setup extends AppCompatActivity {
         }
         else {
             Log.d("ALERT", "false");
-            AlertDialog.Builder builder = new AlertDialog.Builder(Setup.this);
+            AlertDialog.Builder builder = new AlertDialog.Builder(this, R.style.AppCompatAlertDialogStyle);
             builder.setNegativeButton(getResources().getString(R.string.cancel), new DialogInterface.OnClickListener() {
                 @Override
                 public void onClick(DialogInterface dialog, int which) {
