@@ -23,6 +23,7 @@
             android:layout_weight="1"
             android:layout_marginStart="20dp"
             android:fontFamily="@font/roboto"
+            android:textColor="@color/primaryText"
             android:gravity="start"
             android:textSize="14sp"
             android:maxLines="1"
