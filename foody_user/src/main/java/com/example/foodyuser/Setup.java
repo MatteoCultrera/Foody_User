@@ -311,6 +311,14 @@ public class Setup extends AppCompatActivity {
                 if (check != null && check.compareTo(editable.toString()) != 0){
                     unchanged = false;
                 }
+
+                for(int i = editable.length(); i > 0; i--) {
+
+                    if(editable.subSequence(i-1, i).toString().equals("\n"))
+                        editable.replace(i-1, i, "");
+                }
+
+                String myTextString = editable.toString();
             }
         });
         this.phoneNumber.addTextChangedListener(new TextWatcher() {
@@ -342,6 +350,14 @@ public class Setup extends AppCompatActivity {
                 if (check != null && check.compareTo(editable.toString()) != 0){
                     unchanged = false;
                 }
+
+                for(int i = editable.length(); i > 0; i--) {
+
+                    if(editable.subSequence(i-1, i).toString().equals("\n"))
+                        editable.replace(i-1, i, "");
+                }
+
+                String myTextString = editable.toString();
             }
         });
 
@@ -429,7 +445,7 @@ public class Setup extends AppCompatActivity {
                 return v;
             }
         };
-        AlertDialog.Builder builder = new AlertDialog.Builder(Setup.this);
+        AlertDialog.Builder builder = new AlertDialog.Builder(this, R.style.AppCompatAlertDialogStyle);
         builder.setNegativeButton(getResources().getString(R.string.cancel), new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialog, int which) {
@@ -480,8 +496,7 @@ public class Setup extends AppCompatActivity {
             super.onBackPressed();
         }
         else {
-            Log.d("ALERT", "false");
-            AlertDialog.Builder builder = new AlertDialog.Builder(Setup.this);
+            AlertDialog.Builder builder = new AlertDialog.Builder(this, R.style.AppCompatAlertDialogStyle);
             builder.setNegativeButton(getResources().getString(R.string.cancel), new DialogInterface.OnClickListener() {
                 @Override
                 public void onClick(DialogInterface dialog, int which) {
@@ -508,7 +523,7 @@ public class Setup extends AppCompatActivity {
         }
         else {
             Log.d("ALERT", "false");
-            AlertDialog.Builder builder = new AlertDialog.Builder(Setup.this);
+            AlertDialog.Builder builder = new AlertDialog.Builder(this, R.style.AppCompatAlertDialogStyle);
             builder.setNegativeButton(getResources().getString(R.string.cancel), new DialogInterface.OnClickListener() {
                 @Override
                 public void onClick(DialogInterface dialog, int which) {

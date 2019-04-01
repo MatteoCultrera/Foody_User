@@ -12,7 +12,7 @@
 
     <string name="foody_level">Foody Beginner</string>
 
-    <string name="accept">Confirm</string>
+    <string name="accept">Ok</string>
     <string name="alert_dialog_back_message">There are modifications not saved that will be lost. Continue?</string>
     <string name="alert_dialog_image_gallery">Gallery</string>
     <string name="alert_dialog_image_camera">Camera</string>
