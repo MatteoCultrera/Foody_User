@@ -311,6 +311,14 @@ public class Setup extends AppCompatActivity {
                 if (check != null && check.compareTo(editable.toString()) != 0){
                     unchanged = false;
                 }
+
+                for(int i = editable.length(); i > 0; i--) {
+
+                    if(editable.subSequence(i-1, i).toString().equals("\n"))
+                        editable.replace(i-1, i, "");
+                }
+
+                String myTextString = editable.toString();
             }
         });
         this.phoneNumber.addTextChangedListener(new TextWatcher() {
@@ -342,6 +350,14 @@ public class Setup extends AppCompatActivity {
                 if (check != null && check.compareTo(editable.toString()) != 0){
                     unchanged = false;
                 }
+
+                for(int i = editable.length(); i > 0; i--) {
+
+                    if(editable.subSequence(i-1, i).toString().equals("\n"))
+                        editable.replace(i-1, i, "");
+                }
+
+                String myTextString = editable.toString();
             }
         });
 
