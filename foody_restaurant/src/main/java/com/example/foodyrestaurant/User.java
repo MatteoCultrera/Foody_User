@@ -50,7 +50,7 @@ public class User extends AppCompatActivity {
         editMode.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Intent intent = new Intent(User.this, com.example.foodyrestaurant.Setup.class);
+                Intent intent = new Intent(User.this, Setup.class);
                 File pl = new File(storageDir, PLACEHOLDER_CAMERA);
                 if(!pl.delete()){
                     System.out.println("Delete Failure");
@@ -143,7 +143,7 @@ public class User extends AppCompatActivity {
         editMode.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Intent intent = new Intent(User.this, com.example.foodyrestaurant.Setup.class);
+                Intent intent = new Intent(User.this, Setup.class);
                 File pl = new File(storageDir, PLACEHOLDER_CAMERA);
                 if(!pl.delete()){
                     System.out.println("Delete Failure");
@@ -167,7 +167,7 @@ public class User extends AppCompatActivity {
         editMode.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Intent intent = new Intent(User.this, com.example.foodyrestaurant.Setup.class);
+                Intent intent = new Intent(User.this, Setup.class);
                 File pl = new File(storageDir, PLACEHOLDER_CAMERA);
                 if(!pl.delete()){
                     System.out.println("Delete Failure");

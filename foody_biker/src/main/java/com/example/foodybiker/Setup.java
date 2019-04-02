@@ -209,7 +209,7 @@ public class Setup extends AppCompatActivity {
 
             if(photoFile!=null){
                 Uri photoURI = FileProvider.getUriForFile(this,
-                        "com.example.foodyuser",
+                        "com.example.foodybiker",
                         photoFile);
                 pictureIntent.putExtra(MediaStore.EXTRA_OUTPUT, photoURI);
                 startActivityForResult(pictureIntent, REQUEST_CAPTURE_IMAGE);
