@@ -3,6 +3,8 @@ package com.example.foodyrestaurant;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Environment;
@@ -12,6 +14,8 @@ import android.view.View;
 import android.widget.TextView;
 
 import java.io.File;
+import java.io.FileOutputStream;
+import java.io.IOException;
 
 import de.hdodenhof.circleimageview.CircleImageView;
 
@@ -25,7 +29,9 @@ public class User extends AppCompatActivity {
     private TextView email;
     private TextView address;
     private TextView phoneNumber;
+    private TextView monTime, tueTime, wedTime, thuTime, friTime, satTime,sunTime;
     private final String PLACEHOLDER_CAMERA="PlaceCamera.jpg";
+    private final String PROFILE_IMAGE = "ProfileImage.jpg";
     private File storageDir;
 
     private SharedPreferences sharedPref;
@@ -76,8 +82,42 @@ public class User extends AppCompatActivity {
         if(!sharedPref.contains("phoneNumber"))
             edit.putString("phoneNumber",getString(R.string.phone_rosso));
 
+        File f = new File(storageDir, PROFILE_IMAGE);
+
+        if(!f.exists()){
+            Bitmap pizza = BitmapFactory.decodeResource(getResources(), R.drawable.pizza);
+            saveBitmap(pizza, f.getPath());
+
+
+        }
+
         edit.apply();
 
+    }
+
+    private void saveBitmap(Bitmap bitmap, String path){
+        if(bitmap!=null){
+            try {
+                FileOutputStream outputStream = null;
+                try {
+                    outputStream = new FileOutputStream(path); //here is set your file path where you want to save or also here you can set file object directly
+
+                    bitmap.compress(Bitmap.CompressFormat.JPEG, 100, outputStream); // bitmap is your Bitmap instance, if you want to compress it you can compress reduce percentage
+                } catch (Exception e) {
+                    e.printStackTrace();
+                } finally {
+                    try {
+                        if (outputStream != null) {
+                            outputStream.close();
+                        }
+                    } catch (IOException e) {
+                        e.printStackTrace();
+                    }
+                }
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        }
     }
 
     private void init(){
@@ -89,6 +129,14 @@ public class User extends AppCompatActivity {
         this.address = findViewById(R.id.address);
         this.phoneNumber = findViewById(R.id.phoneNumber);
 
+        this.monTime = findViewById(R.id.monTime);
+        this.tueTime = findViewById(R.id.tueTime);
+        this.wedTime = findViewById(R.id.wedTime);
+        this.thuTime = findViewById(R.id.thuTime);
+        this.friTime = findViewById(R.id.friTime);
+        this.satTime = findViewById(R.id.satTime);
+        this.sunTime = findViewById(R.id.sunTime);
+
         //setup of the Shared Preferences to save value in (key, value) format
 
         name.setText(sharedPref.getString("name", getResources().getString(R.string.name_hint)));
@@ -96,7 +144,14 @@ public class User extends AppCompatActivity {
         address.setText(sharedPref.getString("address", getResources().getString(R.string.address_hint)));
         phoneNumber.setText(sharedPref.getString("phoneNumber", getResources().getString(R.string.phone_hint)));
 
-        String PROFILE_IMAGE = "ProfileImage.jpg";
+        monTime.setText(sharedPref.getString("monTime", getResources().getString(R.string.Closed)));
+        tueTime.setText(sharedPref.getString("tueTime", getResources().getString(R.string.Closed)));
+        wedTime.setText(sharedPref.getString("wedTime", getResources().getString(R.string.Closed)));
+        thuTime.setText(sharedPref.getString("thuTime", getResources().getString(R.string.Closed)));
+        friTime.setText(sharedPref.getString("friTime", getResources().getString(R.string.Closed)));
+        satTime.setText(sharedPref.getString("satTime", getResources().getString(R.string.Closed)));
+        sunTime.setText(sharedPref.getString("sunTime", getResources().getString(R.string.Closed)));
+
         File f = new File(storageDir, PROFILE_IMAGE);
 
         if(f.exists()){

@@ -41,7 +41,6 @@
             android:contentDescription="@null"
             android:elevation="1dp"
             android:scaleType="centerCrop"
-            android:src="@drawable/pizza"
             app:layout_constraintBottom_toBottomOf="@+id/constraintLayout3"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintHorizontal_bias="0.0"
@@ -347,6 +346,7 @@
                     app:layout_constraintTop_toBottomOf="@+id/mainDiv" />
 
                 <TextView
+                    android:id="@+id/monTime"
                     android:layout_width="wrap_content"
                     android:layout_height="24dp"
                     android:layout_marginTop="12dp"
@@ -384,6 +384,7 @@
                     app:layout_constraintTop_toBottomOf="@+id/MonDiv" />
 
                 <TextView
+                    android:id="@+id/tueTime"
                     android:layout_width="wrap_content"
                     android:layout_height="24dp"
                     android:layout_marginTop="12dp"
@@ -422,6 +423,7 @@
                     app:layout_constraintTop_toBottomOf="@+id/TueDiv" />
 
                 <TextView
+                    android:id="@+id/wedTime"
                     android:layout_width="wrap_content"
                     android:layout_height="24dp"
                     android:layout_marginTop="12dp"
@@ -459,6 +461,7 @@
                     app:layout_constraintTop_toBottomOf="@+id/WedDiv" />
 
                 <TextView
+                    android:id="@+id/thuTime"
                     android:layout_width="wrap_content"
                     android:layout_height="24dp"
                     android:layout_marginTop="12dp"
@@ -496,6 +499,7 @@
                     app:layout_constraintTop_toBottomOf="@+id/ThuDiv" />
 
                 <TextView
+                    android:id="@+id/friTime"
                     android:layout_width="wrap_content"
                     android:layout_height="24dp"
                     android:layout_marginTop="12dp"
@@ -533,6 +537,7 @@
                     app:layout_constraintTop_toBottomOf="@+id/FriDiv" />
 
                 <TextView
+                    android:id="@+id/satTime"
                     android:layout_width="wrap_content"
                     android:layout_height="24dp"
                     android:layout_marginTop="12dp"
@@ -570,6 +575,7 @@
                     app:layout_constraintTop_toBottomOf="@+id/SatDiv" />
 
                 <TextView
+                    android:id="@+id/sunTime"
                     android:layout_width="wrap_content"
                     android:layout_height="24dp"
                     android:layout_marginTop="12dp"
