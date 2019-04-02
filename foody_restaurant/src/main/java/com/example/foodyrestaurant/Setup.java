@@ -204,7 +204,7 @@ public class Setup extends AppCompatActivity {
     }
 
     private void checkNumber(){
-        String regexpPhone = "^(([+]|00)39)?(3[1-6][0-9])(\\d{7})$";
+        String regexpPhone = "^(([+]|00)39)?(3[1-6][0-9])(\\d{7})$|^[0].{6,11}$";
         final String userNumber = phoneNumber.getText().toString();
 
         View errorLine = findViewById(R.id.number_error_line);
