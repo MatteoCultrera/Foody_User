@@ -757,44 +757,58 @@ public class Setup extends AppCompatActivity {
             case R.id.checkMonday:
                 if (cb.isChecked())
                     findViewById(R.id.editMonday).setClickable(true);
-                else
+                else{
+                    monday.setText(getResources().getString(R.string.Closed));
                     findViewById(R.id.editMonday).setClickable(false);
+                }
                 break;
             case R.id.checkTuesday:
                 if (cb.isChecked())
                     findViewById(R.id.editTuesday).setClickable(true);
-                else
+                else {
+                    tuesday.setText(getResources().getString(R.string.Closed));
                     findViewById(R.id.editTuesday).setClickable(false);
+                }
                 break;
             case R.id.checkWednesday:
                 if (cb.isChecked())
                     findViewById(R.id.editWednesday).setClickable(true);
-                else
+                else {
+                    wednesday.setText(getResources().getString(R.string.Closed));
                     findViewById(R.id.editWednesday).setClickable(false);
+                }
                 break;
             case R.id.checkThursday:
                 if (cb.isChecked())
                     findViewById(R.id.editThursday).setClickable(true);
-                else
+                else {
+                    thursday.setText(getResources().getString(R.string.Closed));
                     findViewById(R.id.editThursday).setClickable(false);
+                }
                 break;
             case R.id.checkFriday:
                 if (cb.isChecked())
                     findViewById(R.id.editFriday).setClickable(true);
-                else
+                else {
+                    friday.setText(getResources().getString(R.string.Closed));
                     findViewById(R.id.editFriday).setClickable(false);
+                }
                 break;
             case R.id.checkSaturday:
                 if (cb.isChecked())
                     findViewById(R.id.editSaturday).setClickable(true);
-                else
+                else {
+                    saturday.setText(getResources().getString(R.string.Closed));
                     findViewById(R.id.editSaturday).setClickable(false);
+                }
                 break;
             case R.id.checkSunday:
                 if (cb.isChecked())
                     findViewById(R.id.editSunday).setClickable(true);
-                else
+                else {
+                    sunday.setText(getResources().getString(R.string.Closed));
                     findViewById(R.id.editSunday).setClickable(false);
+                }
                 break;
         }
     }
