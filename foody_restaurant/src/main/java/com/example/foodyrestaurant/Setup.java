@@ -390,10 +390,10 @@ public class Setup extends AppCompatActivity {
                     Bitmap bitmap = getBitmapFromFile();
 
                     if(bitmap != null){
-                        profilePicture.setImageBitmap(bitmap);
                         File placeholder = new File(storageDir, PLACEHOLDER_CAMERA);
                         saveBitmap(bitmap, placeholder.getPath());
                         unchanged = false;
+                        profilePicture.setImageURI(Uri.fromFile(placeholder));
                     }
                     break;
             }

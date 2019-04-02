@@ -12,6 +12,7 @@ import android.support.design.widget.FloatingActionButton;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.View;
+import android.widget.ImageView;
 import android.widget.TextView;
 
 import java.io.File;
@@ -85,13 +86,46 @@ public class User extends AppCompatActivity {
         if(!sharedPref.contains("phoneNumber"))
             edit.putString("phoneNumber",getString(R.string.phone_rosso));
 
+
+        File f = new File(storageDir, PROFILE_IMAGE);
+
+        if(!f.exists()){
+            Bitmap pizza = BitmapFactory.decodeResource(this.getResources(), R.drawable.pizza);
+            saveBitmap(pizza, f.getPath());
+        }
+
         edit.apply();
 
     }
 
+    private void saveBitmap(Bitmap bitmap,String path){
+        if(bitmap!=null){
+            try {
+                FileOutputStream outputStream = null;
+                try {
+                    outputStream = new FileOutputStream(path); //here is set your file path where you want to save or also here you can set file object directly
+
+                    bitmap.compress(Bitmap.CompressFormat.JPEG, 100, outputStream); // bitmap is your Bitmap instance, if you want to compress it you can compress reduce percentage
+                } catch (Exception e) {
+                    e.printStackTrace();
+                } finally {
+                    try {
+                        if (outputStream != null) {
+                            outputStream.close();
+                        }
+                    } catch (IOException e) {
+                        e.printStackTrace();
+                    }
+                }
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        }
+    }
+
     private void init(){
 
-        CircleImageView profilePicture = findViewById(R.id.profilePicture);
+        ImageView profilePicture = findViewById(R.id.profilePicture);
         this.editMode = findViewById(R.id.edit_mode);
         this.name = findViewById(R.id.userName);
         this.email = findViewById(R.id.emailAddress);
