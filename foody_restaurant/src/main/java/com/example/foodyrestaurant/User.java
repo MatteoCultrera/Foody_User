@@ -10,6 +10,7 @@ import android.os.Bundle;
 import android.os.Environment;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v7.app.AppCompatActivity;
+import android.util.Log;
 import android.view.View;
 import android.widget.TextView;
 
@@ -34,6 +35,8 @@ public class User extends AppCompatActivity {
     private final String PROFILE_IMAGE = "ProfileImage.jpg";
     private File storageDir;
 
+    private Bitmap pizza=null;
+
     private SharedPreferences sharedPref;
 
 
@@ -47,10 +50,10 @@ public class User extends AppCompatActivity {
         Context context = getApplicationContext();
         sharedPref = context.getSharedPreferences("myPreference", MODE_PRIVATE);
 
-        firstStart();
 
         storageDir = getExternalFilesDir(Environment.DIRECTORY_PICTURES);
 
+        firstStart();
         init();
 
         editMode.setOnClickListener(new View.OnClickListener() {
@@ -82,42 +85,8 @@ public class User extends AppCompatActivity {
         if(!sharedPref.contains("phoneNumber"))
             edit.putString("phoneNumber",getString(R.string.phone_rosso));
 
-        File f = new File(storageDir, PROFILE_IMAGE);
-
-        if(!f.exists()){
-            Bitmap pizza = BitmapFactory.decodeResource(getResources(), R.drawable.pizza);
-            saveBitmap(pizza, f.getPath());
-
-
-        }
-
         edit.apply();
 
-    }
-
-    private void saveBitmap(Bitmap bitmap, String path){
-        if(bitmap!=null){
-            try {
-                FileOutputStream outputStream = null;
-                try {
-                    outputStream = new FileOutputStream(path); //here is set your file path where you want to save or also here you can set file object directly
-
-                    bitmap.compress(Bitmap.CompressFormat.JPEG, 100, outputStream); // bitmap is your Bitmap instance, if you want to compress it you can compress reduce percentage
-                } catch (Exception e) {
-                    e.printStackTrace();
-                } finally {
-                    try {
-                        if (outputStream != null) {
-                            outputStream.close();
-                        }
-                    } catch (IOException e) {
-                        e.printStackTrace();
-                    }
-                }
-            } catch (Exception e) {
-                e.printStackTrace();
-            }
-        }
     }
 
     private void init(){
@@ -151,6 +120,7 @@ public class User extends AppCompatActivity {
         friTime.setText(sharedPref.getString("friTime", getResources().getString(R.string.Closed)));
         satTime.setText(sharedPref.getString("satTime", getResources().getString(R.string.Closed)));
         sunTime.setText(sharedPref.getString("sunTime", getResources().getString(R.string.Closed)));
+
 
         File f = new File(storageDir, PROFILE_IMAGE);
 
