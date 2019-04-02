@@ -1,3 +1,9 @@
 <resources>
     <string name="app_name">Foody Biker</string>
+    <string name="foody_level">Biker Beginner</string>
+    <string name="name_foo" translatable="false">John Doe</string>
+    <string name="mail_foo" translatable="false">johndoe@gmail.com</string>
+    <string name="address_foo" translatable="false">Via Europa 22</string>
+    <string name="phone_foo" translatable="false">3383265987</string>
+    <string name="bio_foo" translatable="false">I am a begginer Biker in Foody!</string>
 </resources>

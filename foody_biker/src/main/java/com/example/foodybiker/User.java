@@ -1,28 +1,18 @@
-package com.example.foodyrestaurant;
-
+package com.example.foodybiker;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
-import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Environment;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v7.app.AppCompatActivity;
-import android.util.Log;
 import android.view.View;
-import android.widget.ImageView;
 import android.widget.TextView;
-
 import java.io.File;
-import java.io.FileOutputStream;
-import java.io.IOException;
 
 import de.hdodenhof.circleimageview.CircleImageView;
 
-
-//The image ratio is 7:4
 
 public class User extends AppCompatActivity {
 
@@ -31,12 +21,9 @@ public class User extends AppCompatActivity {
     private TextView email;
     private TextView address;
     private TextView phoneNumber;
-    private TextView monTime, tueTime, wedTime, thuTime, friTime, satTime,sunTime;
+    private TextView bio;
     private final String PLACEHOLDER_CAMERA="PlaceCamera.jpg";
-    private final String PROFILE_IMAGE = "ProfileImage.jpg";
     private File storageDir;
-
-    private Bitmap pizza=null;
 
     private SharedPreferences sharedPref;
 
@@ -51,10 +38,10 @@ public class User extends AppCompatActivity {
         Context context = getApplicationContext();
         sharedPref = context.getSharedPreferences("myPreference", MODE_PRIVATE);
 
+        firstStart();
 
         storageDir = getExternalFilesDir(Environment.DIRECTORY_PICTURES);
 
-        firstStart();
         init();
 
         editMode.setOnClickListener(new View.OnClickListener() {
@@ -75,70 +62,33 @@ public class User extends AppCompatActivity {
         SharedPreferences.Editor edit = sharedPref.edit();
 
         if(!sharedPref.contains("name"))
-            edit.putString("name",getString(R.string.namerosso));
+            edit.putString("name",getString(R.string.name_foo));
 
         if(!sharedPref.contains("email"))
-            edit.putString("email",getString(R.string.mail_rosso));
+            edit.putString("email",getString(R.string.mail_foo));
 
         if(!sharedPref.contains("address"))
-            edit.putString("address",getString(R.string.address_rosso));
+            edit.putString("address",getString(R.string.address_foo));
 
         if(!sharedPref.contains("phoneNumber"))
-            edit.putString("phoneNumber",getString(R.string.phone_rosso));
+            edit.putString("phoneNumber",getString(R.string.phone_foo));
 
-
-        File f = new File(storageDir, PROFILE_IMAGE);
-
-        if(!f.exists()){
-            Bitmap pizza = BitmapFactory.decodeResource(this.getResources(), R.drawable.pizza);
-            saveBitmap(pizza, f.getPath());
-        }
+        if(!sharedPref.contains("bio"))
+            edit.putString("bio",getString(R.string.bio_foo));
 
         edit.apply();
 
     }
 
-    private void saveBitmap(Bitmap bitmap,String path){
-        if(bitmap!=null){
-            try {
-                FileOutputStream outputStream = null;
-                try {
-                    outputStream = new FileOutputStream(path); //here is set your file path where you want to save or also here you can set file object directly
-
-                    bitmap.compress(Bitmap.CompressFormat.JPEG, 100, outputStream); // bitmap is your Bitmap instance, if you want to compress it you can compress reduce percentage
-                } catch (Exception e) {
-                    e.printStackTrace();
-                } finally {
-                    try {
-                        if (outputStream != null) {
-                            outputStream.close();
-                        }
-                    } catch (IOException e) {
-                        e.printStackTrace();
-                    }
-                }
-            } catch (Exception e) {
-                e.printStackTrace();
-            }
-        }
-    }
-
     private void init(){
 
-        ImageView profilePicture = findViewById(R.id.profilePicture);
+        CircleImageView profilePicture = findViewById(R.id.profilePicture);
         this.editMode = findViewById(R.id.edit_mode);
         this.name = findViewById(R.id.userName);
         this.email = findViewById(R.id.emailAddress);
         this.address = findViewById(R.id.address);
         this.phoneNumber = findViewById(R.id.phoneNumber);
-
-        this.monTime = findViewById(R.id.monTime);
-        this.tueTime = findViewById(R.id.tueTime);
-        this.wedTime = findViewById(R.id.wedTime);
-        this.thuTime = findViewById(R.id.thuTime);
-        this.friTime = findViewById(R.id.friTime);
-        this.satTime = findViewById(R.id.satTime);
-        this.sunTime = findViewById(R.id.sunTime);
+        this.bio = findViewById(R.id.bio);
 
         //setup of the Shared Preferences to save value in (key, value) format
 
@@ -146,16 +96,9 @@ public class User extends AppCompatActivity {
         email.setText(sharedPref.getString("email", getResources().getString(R.string.email_hint)));
         address.setText(sharedPref.getString("address", getResources().getString(R.string.address_hint)));
         phoneNumber.setText(sharedPref.getString("phoneNumber", getResources().getString(R.string.phone_hint)));
+        bio.setText(sharedPref.getString("bio", getResources().getString(R.string.bio_hint)));
 
-        monTime.setText(sharedPref.getString("monTime", getResources().getString(R.string.Closed)));
-        tueTime.setText(sharedPref.getString("tueTime", getResources().getString(R.string.Closed)));
-        wedTime.setText(sharedPref.getString("wedTime", getResources().getString(R.string.Closed)));
-        thuTime.setText(sharedPref.getString("thuTime", getResources().getString(R.string.Closed)));
-        friTime.setText(sharedPref.getString("friTime", getResources().getString(R.string.Closed)));
-        satTime.setText(sharedPref.getString("satTime", getResources().getString(R.string.Closed)));
-        sunTime.setText(sharedPref.getString("sunTime", getResources().getString(R.string.Closed)));
-
-
+        String PROFILE_IMAGE = "ProfileImage.jpg";
         File f = new File(storageDir, PROFILE_IMAGE);
 
         if(f.exists()){
@@ -172,6 +115,7 @@ public class User extends AppCompatActivity {
         outState.putString("email", email.getText().toString());
         outState.putString("address", address.getText().toString());
         outState.putString("phoneNumber", phoneNumber.getText().toString());
+        outState.putString("bio", bio.getText().toString());
     }
 
     @Override
@@ -182,6 +126,7 @@ public class User extends AppCompatActivity {
         email.setText(savedInstanceState.getString("email", getResources().getString(R.string.email_hint)));
         address.setText(savedInstanceState.getString("address", getResources().getString(R.string.address_hint)));
         phoneNumber.setText(savedInstanceState.getString("phoneNumber", getResources().getString(R.string.phone_hint)));
+        bio.setText(savedInstanceState.getString("bio", getResources().getString(R.string.biography)));
     }
 
     protected void onPause(){

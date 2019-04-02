@@ -1,4 +1,5 @@
-package com.example.foodyuser;
+package com.example.foodybiker;
+
 import android.app.AlertDialog;
 import android.content.Context;
 import android.content.DialogInterface;
@@ -8,6 +9,7 @@ import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Color;
 import android.net.Uri;
+import android.os.Bundle;
 import android.os.Environment;
 import android.provider.MediaStore;
 import android.support.annotation.NonNull;
@@ -15,7 +17,6 @@ import android.support.annotation.Nullable;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v4.content.FileProvider;
 import android.support.v7.app.AppCompatActivity;
-import android.os.Bundle;
 import android.text.Editable;
 import android.text.TextWatcher;
 import android.util.Log;
@@ -220,7 +221,7 @@ public class Setup extends AppCompatActivity {
 
             if(photoFile!=null){
                 Uri photoURI = FileProvider.getUriForFile(this,
-                        "com.example.foodyuser",
+                        "com.example.foodybiker",
                         photoFile);
                 pictureIntent.putExtra(MediaStore.EXTRA_OUTPUT, photoURI);
                 startActivityForResult(pictureIntent, REQUEST_CAPTURE_IMAGE);
@@ -264,11 +265,11 @@ public class Setup extends AppCompatActivity {
             profilePicture.setImageURI(Uri.fromFile(f));
 
 
-        name.setText(sharedPref.getString("name", getResources().getString(R.string.name_Walter)));
-        email.setText(sharedPref.getString("email", getResources().getString(R.string.mail_Walter)));
-        address.setText(sharedPref.getString("address", getResources().getString(R.string.address_Walter)));
-        phoneNumber.setText(sharedPref.getString("phoneNumber", getResources().getString(R.string.phone_Walter)));
-        bio.setText(sharedPref.getString("bio", getResources().getString(R.string.bio_Walter)));
+        name.setText(sharedPref.getString("name", getResources().getString(R.string.name_foo)));
+        email.setText(sharedPref.getString("email", getResources().getString(R.string.mail_foo)));
+        address.setText(sharedPref.getString("address", getResources().getString(R.string.address_foo)));
+        phoneNumber.setText(sharedPref.getString("phoneNumber", getResources().getString(R.string.phone_foo)));
+        bio.setText(sharedPref.getString("bio", getResources().getString(R.string.bio_foo)));
         edit.apply();
 
 
