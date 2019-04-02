@@ -39,7 +39,7 @@ import de.hdodenhof.circleimageview.CircleImageView;
 
 public class Setup extends AppCompatActivity {
 
-    private CircleImageView profilePicture;
+    private ImageView profilePicture;
     private ImageButton save;
     private FloatingActionButton editImage;
     private EditText name, email, address, phoneNumber;
@@ -457,8 +457,8 @@ public class Setup extends AppCompatActivity {
 
     private void startCrop(@NonNull Uri uri){
         UCrop uCrop = UCrop.of(uri, Uri.fromFile(new File(storageDir, PLACEHOLDER_CAMERA)));
-        uCrop.withAspectRatio(1,1);
-        uCrop.withMaxResultSize(450,450);
+        uCrop.withAspectRatio(7,4);
+        uCrop.withMaxResultSize(960,549);
         uCrop.withOptions(getCropOptions());
         uCrop.start(Setup.this);
     }
@@ -471,7 +471,6 @@ public class Setup extends AppCompatActivity {
         options.setStatusBarColor(getResources().getColor(R.color.colorPrimaryDark, getTheme()));
         options.setToolbarColor(getResources().getColor(R.color.colorPrimary, getTheme()));
         options.setAllowedGestures(UCropActivity.ALL, UCropActivity.ALL, UCropActivity.ALL);
-        options.setCircleDimmedLayer(true);
         options.setToolbarTitle(getResources().getString(R.string.crop_image));
         return options;
     }
