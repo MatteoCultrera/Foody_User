@@ -442,7 +442,7 @@
                     android:layout_width="wrap_content"
                     android:layout_height="24dp"
                     android:layout_marginTop="12dp"
-                    android:layout_marginLeft="54dp"
+                    android:layout_marginStart="54dp"
                     android:gravity="center_vertical"
                     android:text="@string/day"
                     android:textColor="@color/secondaryText"
