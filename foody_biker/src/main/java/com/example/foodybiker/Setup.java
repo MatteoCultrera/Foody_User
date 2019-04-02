@@ -1,4 +1,5 @@
-package com.example.foodyrestaurant;
+package com.example.foodybiker;
+
 import android.app.AlertDialog;
 import android.content.Context;
 import android.content.DialogInterface;
@@ -8,6 +9,7 @@ import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Color;
 import android.net.Uri;
+import android.os.Bundle;
 import android.os.Environment;
 import android.provider.MediaStore;
 import android.support.annotation.NonNull;
@@ -15,7 +17,6 @@ import android.support.annotation.Nullable;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v4.content.FileProvider;
 import android.support.v7.app.AppCompatActivity;
-import android.os.Bundle;
 import android.text.Editable;
 import android.text.TextWatcher;
 import android.util.Log;
@@ -252,10 +253,11 @@ public class Setup extends AppCompatActivity {
             profilePicture.setImageURI(Uri.fromFile(f));
 
 
-        name.setText(sharedPref.getString("name", getResources().getString(R.string.namerosso)));
-        email.setText(sharedPref.getString("email", getResources().getString(R.string.mail_rosso)));
-        address.setText(sharedPref.getString("address", getResources().getString(R.string.address_rosso)));
-        phoneNumber.setText(sharedPref.getString("phoneNumber", getResources().getString(R.string.phone_rosso)));
+        name.setText(sharedPref.getString("name", getResources().getString(R.string.name_foo)));
+        email.setText(sharedPref.getString("email", getResources().getString(R.string.mail_foo)));
+        address.setText(sharedPref.getString("address", getResources().getString(R.string.address_foo)));
+        phoneNumber.setText(sharedPref.getString("phoneNumber", getResources().getString(R.string.phone_foo)));
+        bio.setText(sharedPref.getString("bio", getResources().getString(R.string.bio_foo)));
         edit.apply();
 
 
@@ -413,7 +415,7 @@ public class Setup extends AppCompatActivity {
 
         placeholderPath = f.getPath();
 
-        return f;
+       return f;
     }
 
     private Bitmap getBitmapFromFile(){
@@ -456,12 +458,13 @@ public class Setup extends AppCompatActivity {
         builder.setAdapter(arrayAdapter, new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialog, int which) {
-                switch (which){                    case 0:
-                        pickFromGallery();
-                        break;
-                    case 1:
-                        pickFromCamera();
-                        break;
+                switch (which){
+                case 0:
+                    pickFromGallery();
+                    break;
+                case 1:
+                    pickFromCamera();
+                    break;
                 }
             }
         });
