@@ -53,6 +53,7 @@ public class Setup extends AppCompatActivity {
     private String placeholderPath;
     private File storageDir;
     private boolean unchanged, checkString = true;
+    private String dialogCode = "ok";
 
     private SharedPreferences sharedPref;
     private SharedPreferences.Editor edit;
@@ -84,6 +85,7 @@ public class Setup extends AppCompatActivity {
         outState.putString("address", address.getText().toString());
         outState.putString("phoneNumber", phoneNumber.getText().toString());
         outState.putString("bio", bio.getText().toString());
+        outState.putString("dialog", dialogCode);
     }
 
     @Override
@@ -100,6 +102,16 @@ public class Setup extends AppCompatActivity {
         address.setText(savedInstanceState.getString("address", getResources().getString(R.string.address_hint)));
         phoneNumber.setText(savedInstanceState.getString("phoneNumber", getResources().getString(R.string.phone_hint)));
         bio.setText(savedInstanceState.getString("bio", getResources().getString(R.string.bio_hint)));
+
+        String dialogPrec = savedInstanceState.getString("dialog");
+
+        if (dialogPrec != null && dialogPrec.compareTo("ok") != 0) {
+            if (dialogPrec.compareTo("pickImage") == 0) {
+                showPickImageDialog();
+            } else if (dialogPrec.compareTo("back") == 0) {
+                onBackPressed();
+            }
+        }
 
         name.clearFocus();
         email.clearFocus();
@@ -449,6 +461,7 @@ public class Setup extends AppCompatActivity {
         builder.setNegativeButton(getResources().getString(R.string.cancel), new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialog, int which) {
+                dialogCode = "ok";
                 dialog.dismiss();
             }
         });
@@ -460,13 +473,16 @@ public class Setup extends AppCompatActivity {
                 switch (which){
                 case 0:
                     pickFromGallery();
+                    dialogCode = "ok";
                     break;
                 case 1:
                     pickFromCamera();
+                    dialogCode = "ok";
                     break;
                 }
             }
         });
+        dialogCode = "pickImage";
         builder.show();
     }
 
@@ -500,18 +516,21 @@ public class Setup extends AppCompatActivity {
             builder.setNegativeButton(getResources().getString(R.string.cancel), new DialogInterface.OnClickListener() {
                 @Override
                 public void onClick(DialogInterface dialog, int which) {
+                    dialogCode = "ok";
                     dialog.dismiss();
                 }
             });
             builder.setPositiveButton(getResources().getString(R.string.accept), new DialogInterface.OnClickListener() {
                 @Override
                 public void onClick(DialogInterface dialogInterface, int i) {
+                    dialogCode = "ok";
                     Setup.super.onBackPressed();
                 }
             });
             builder.setTitle(getResources().getString(R.string.alert_dialog_back_title));
             builder.setMessage(getResources().getString(R.string.alert_dialog_back_message));
             builder.setCancelable(false);
+            dialogCode = "back";
             builder.show();
         }
     }
@@ -527,18 +546,21 @@ public class Setup extends AppCompatActivity {
             builder.setNegativeButton(getResources().getString(R.string.cancel), new DialogInterface.OnClickListener() {
                 @Override
                 public void onClick(DialogInterface dialog, int which) {
+                    dialogCode = "ok";
                     dialog.dismiss();
                 }
             });
             builder.setPositiveButton(getResources().getString(R.string.accept), new DialogInterface.OnClickListener() {
                 @Override
                 public void onClick(DialogInterface dialogInterface, int i) {
+                    dialogCode = "ok";
                     Setup.super.onBackPressed();
                 }
             });
             builder.setTitle(getResources().getString(R.string.alert_dialog_back_title));
             builder.setMessage(getResources().getString(R.string.alert_dialog_back_message));
             builder.setCancelable(false);
+            dialogCode = "back";
             builder.show();
         }
     }
