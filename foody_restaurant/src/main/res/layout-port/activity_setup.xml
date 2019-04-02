@@ -478,6 +478,7 @@
                     style="@style/Base.Theme.MaterialComponents.Light"
                     app:layout_constraintTop_toBottomOf="@id/firstDiv"
                     app:layout_constraintStart_toStartOf="parent"
+                    android:onClick="lockUnlock"
                     android:layout_marginTop="12dp"
                     android:layout_marginStart="16dp"
                     android:button="@null"
@@ -543,6 +544,7 @@
                     android:id="@+id/checkTuesday"
                     android:layout_width="24dp"
                     android:layout_height="24dp"
+                    android:onClick="lockUnlock"
                     style="@style/Base.Theme.MaterialComponents.Light"
                     app:layout_constraintTop_toBottomOf="@id/mondayDiv"
                     app:layout_constraintStart_toStartOf="parent"
@@ -617,6 +619,7 @@
                     android:layout_marginTop="12dp"
                     android:layout_marginStart="16dp"
                     android:button="@null"
+                    android:onClick="lockUnlock"
                     android:background="?android:attr/listChoiceIndicatorMultiple"
                     android:gravity="center"
                     />
@@ -684,6 +687,7 @@
                     android:layout_marginTop="12dp"
                     android:layout_marginStart="16dp"
                     android:button="@null"
+                    android:onClick="lockUnlock"
                     android:background="?android:attr/listChoiceIndicatorMultiple"
                     android:gravity="center"
                     />
@@ -751,6 +755,7 @@
                     android:layout_marginTop="12dp"
                     android:layout_marginStart="16dp"
                     android:button="@null"
+                    android:onClick="lockUnlock"
                     android:background="?android:attr/listChoiceIndicatorMultiple"
                     android:gravity="center"
                     />
@@ -818,6 +823,7 @@
                     android:layout_marginTop="12dp"
                     android:layout_marginStart="16dp"
                     android:button="@null"
+                    android:onClick="lockUnlock"
                     android:background="?android:attr/listChoiceIndicatorMultiple"
                     android:gravity="center"
                     />
@@ -885,6 +891,7 @@
                     android:layout_marginTop="12dp"
                     android:layout_marginStart="16dp"
                     android:button="@null"
+                    android:onClick="lockUnlock"
                     android:background="?android:attr/listChoiceIndicatorMultiple"
                     android:gravity="center"
                     />
