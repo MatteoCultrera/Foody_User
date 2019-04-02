@@ -1,4 +1,11 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string name="app_name">Foody_Restaurant</string>
+    <string name="app_name">Foody Restaurant</string>
+
+    <string name="restaurant_maintype">Ristorante Italiano</string>
+
+    <string name="namerosso">RossoPomodoro</string>
+    <string name="phone_rosso">011485959</string>
+    <string name="mail_rosso">info@rossopomodoro.it</string>
+    <string name="address_rosso">via Treviso 42/F, Torino</string>
 </resources>

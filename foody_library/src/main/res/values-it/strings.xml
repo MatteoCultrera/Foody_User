@@ -8,8 +8,6 @@
     <string name="crop_image">Ritaglia</string>
     <string name="biography">Biografia</string>
 
-    <string name="foody_level">Foody Principiante</string>
-
     <string name="alert_dialog_image_gallery">Galleria</string>
     <string name="alert_dialog_image_camera">Fotocamera</string>
     <string name="cancel">Annulla</string>
@@ -25,11 +23,18 @@
     <string name="accept">Confermo</string>
     <string name="alert_dialog_back_message">"Ci sono delle modifiche non salvate che andranno perse. Continuare? "</string>
 
+    <string name="timetable">Orario</string>
 
-    <string name="name_Walter">Walter White</string>
-    <string name="phone_Walter">3312174516</string>
-    <string name="mail_Walter">Heisenberg@gmail.com</string>
-    <string name="address_Walter">308 Negra Arroyo Lane, Albuquerque, New Mexico, 87104</string>
-    <string name="bio_Walter">My name is Walter White and I love to cook!</string>
+    <string name="day">Giorno</string>
+    <string name="time">Ore</string>
+    <string name="Monday">Lun</string>
+    <string name="Tuesday">Mar</string>
+    <string name="Wednesday">Mer</string>
+    <string name="Thursday">Gio</string>
+    <string name="Friday">Ven</string>
+    <string name="Saturday">Sab</string>
+    <string name="Sunday">Dom</string>
+
+    <string name="Closed">Chiuso</string>
 
 </resources>
