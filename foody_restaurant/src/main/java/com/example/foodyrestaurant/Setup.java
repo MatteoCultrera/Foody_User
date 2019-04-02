@@ -752,6 +752,7 @@ public class Setup extends AppCompatActivity {
     }
 
     public void lockUnlock(View view) {
+        unchanged = false;
         CheckBox cb = findViewById(view.getId());
         switch(view.getId()) {
             case R.id.checkMonday:
