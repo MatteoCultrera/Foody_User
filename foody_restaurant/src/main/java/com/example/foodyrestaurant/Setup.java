@@ -721,7 +721,13 @@ public class Setup extends AppCompatActivity {
         timePicker = new TimePickerDialog(this, new TimePickerDialog.OnTimeSetListener() {
             @Override
             public void onTimeSet(TimePicker timePicker, int selectedHour, int selectedMinute) {
-                openHour = selectedHour + ":" + selectedMinute;
+                String selHour = ""+selectedHour;
+                String selMinute = ""+selectedMinute;
+                if(selectedHour < 10)
+                    selHour = "0"+selectedHour;
+                if(selectedMinute < 10)
+                    selMinute = "0"+selectedMinute;
+                openHour = selHour + ":" + selMinute;
                 dialogCode = "secondTime";
                 showSecondPicker();
             }
@@ -739,7 +745,13 @@ public class Setup extends AppCompatActivity {
         timePicker2 = new TimePickerDialog(this, new TimePickerDialog.OnTimeSetListener() {
             @Override
             public void onTimeSet(TimePicker timePicker, int selectedHour, int selectedMinute) {
-                closeHour = selectedHour + ":" + selectedMinute;
+                String selHour = ""+selectedHour;
+                String selMinute = ""+selectedMinute;
+                if(selectedHour < 10)
+                    selHour = "0"+selectedHour;
+                if(selectedMinute < 10)
+                    selMinute = "0"+selectedMinute;
+                closeHour = selHour + ":" + selMinute;
                 unchanged = false;
                 dialogCode = "ok";
                 tv.setText(openHour + "-" + closeHour);
@@ -752,61 +764,70 @@ public class Setup extends AppCompatActivity {
     }
 
     public void lockUnlock(View view) {
+        String standardTime = "08:00" + "-" + "23:00";
         unchanged = false;
         CheckBox cb = findViewById(view.getId());
         switch(view.getId()) {
             case R.id.checkMonday:
-                if (cb.isChecked())
+                if (cb.isChecked()) {
+                    monday.setText(standardTime);
                     findViewById(R.id.editMonday).setClickable(true);
-                else{
+                } else{
+                    Log.d("MAD", "Unchecked");
                     monday.setText(getResources().getString(R.string.Closed));
                     findViewById(R.id.editMonday).setClickable(false);
                 }
                 break;
             case R.id.checkTuesday:
-                if (cb.isChecked())
+                if (cb.isChecked()) {
+                    tuesday.setText(standardTime);
                     findViewById(R.id.editTuesday).setClickable(true);
-                else {
+                } else {
                     tuesday.setText(getResources().getString(R.string.Closed));
                     findViewById(R.id.editTuesday).setClickable(false);
                 }
                 break;
             case R.id.checkWednesday:
-                if (cb.isChecked())
+                if (cb.isChecked()) {
+                    wednesday.setText(standardTime);
                     findViewById(R.id.editWednesday).setClickable(true);
-                else {
+                } else {
                     wednesday.setText(getResources().getString(R.string.Closed));
                     findViewById(R.id.editWednesday).setClickable(false);
                 }
                 break;
             case R.id.checkThursday:
-                if (cb.isChecked())
+                if (cb.isChecked()) {
+                    thursday.setText(standardTime);
                     findViewById(R.id.editThursday).setClickable(true);
-                else {
+                } else {
                     thursday.setText(getResources().getString(R.string.Closed));
                     findViewById(R.id.editThursday).setClickable(false);
                 }
                 break;
             case R.id.checkFriday:
-                if (cb.isChecked())
+                if (cb.isChecked()) {
+                    friday.setText(standardTime);
                     findViewById(R.id.editFriday).setClickable(true);
-                else {
+                } else {
                     friday.setText(getResources().getString(R.string.Closed));
                     findViewById(R.id.editFriday).setClickable(false);
                 }
                 break;
             case R.id.checkSaturday:
-                if (cb.isChecked())
+                if (cb.isChecked()) {
+                    saturday.setText(standardTime);
                     findViewById(R.id.editSaturday).setClickable(true);
-                else {
+                } else {
                     saturday.setText(getResources().getString(R.string.Closed));
                     findViewById(R.id.editSaturday).setClickable(false);
                 }
                 break;
             case R.id.checkSunday:
-                if (cb.isChecked())
+                if (cb.isChecked()) {
+                    sunday.setText(standardTime);
                     findViewById(R.id.editSunday).setClickable(true);
-                else {
+                } else {
                     sunday.setText(getResources().getString(R.string.Closed));
                     findViewById(R.id.editSunday).setClickable(false);
                 }
