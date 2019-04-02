@@ -442,11 +442,11 @@
                     android:layout_width="wrap_content"
                     android:layout_height="24dp"
                     android:layout_marginTop="12dp"
-                    android:layout_marginLeft="54dp"
+                    android:layout_marginStart="54dp"
                     android:gravity="center_vertical"
                     android:text="@string/day"
                     android:textColor="@color/secondaryText"
-                    android:textSize="12dp"
+                    android:textSize="12sp"
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintTop_toTopOf="parent"/>
 
@@ -454,11 +454,11 @@
                     android:layout_width="wrap_content"
                     android:layout_height="24dp"
                     android:layout_marginTop="12dp"
-                    android:layout_marginRight="54dp"
+                    android:layout_marginEnd="54dp"
                     android:gravity="center_vertical"
                     android:text="@string/time"
                     android:textColor="@color/secondaryText"
-                    android:textSize="12dp"
+                    android:textSize="12sp"
                     app:layout_constraintStart_toStartOf="@id/timeMonday"
                     app:layout_constraintTop_toTopOf="parent"/>
 
@@ -479,7 +479,7 @@
                     app:layout_constraintTop_toBottomOf="@id/firstDiv"
                     app:layout_constraintStart_toStartOf="parent"
                     android:layout_marginTop="12dp"
-                    android:layout_marginLeft="16dp"
+                    android:layout_marginStart="16dp"
                     android:button="@null"
                     android:background="?android:attr/listChoiceIndicatorMultiple"
                     android:gravity="center"
@@ -495,7 +495,7 @@
                     android:layout_marginTop="12dp"
                     android:textSize="16sp"
                     app:layout_constraintStart_toEndOf="@id/checkMonday"
-                    android:layout_marginLeft="12dp"
+                    android:layout_marginStart="12dp"
                     android:gravity="center"/>
 
                 <ImageButton
@@ -507,10 +507,12 @@
                     android:scaleType="fitCenter"
                     android:adjustViewBounds="true"
                     android:padding="4dp"
+                    android:onClick="showPickTime"
+                    android:contentDescription="@null"
                     app:layout_constraintTop_toBottomOf="@id/firstDiv"
                     app:layout_constraintEnd_toEndOf="parent"
                     android:layout_marginTop="12dp"
-                    android:layout_marginRight="16dp"
+                    android:layout_marginEnd="16dp"
                     />
 
                 <TextView
@@ -525,7 +527,7 @@
                     app:layout_constraintTop_toBottomOf="@id/firstDiv"
                     app:layout_constraintEnd_toStartOf="@id/editMonday"
                     android:layout_marginTop="12dp"
-                    android:layout_marginRight="12dp"/>
+                    android:layout_marginEnd="12dp"/>
 
                 <View
                     android:id="@+id/mondayDiv"
@@ -545,7 +547,7 @@
                     app:layout_constraintTop_toBottomOf="@id/mondayDiv"
                     app:layout_constraintStart_toStartOf="parent"
                     android:layout_marginTop="12dp"
-                    android:layout_marginLeft="16dp"
+                    android:layout_marginStart="16dp"
                     android:button="@null"
                     android:background="?android:attr/listChoiceIndicatorMultiple"
                     android:gravity="center"
@@ -561,7 +563,7 @@
                     android:layout_marginTop="12dp"
                     android:textSize="16sp"
                     app:layout_constraintStart_toEndOf="@id/checkTuesday"
-                    android:layout_marginLeft="12dp"
+                    android:layout_marginStart="12dp"
                     android:gravity="center"/>
                 
                 <ImageButton
@@ -573,10 +575,12 @@
                     android:scaleType="fitCenter"
                     android:adjustViewBounds="true"
                     android:padding="4dp"
+                    android:onClick="showPickTime"
+                    android:contentDescription="@null"
                     app:layout_constraintTop_toBottomOf="@id/mondayDiv"
                     app:layout_constraintEnd_toEndOf="parent"
                     android:layout_marginTop="12dp"
-                    android:layout_marginRight="16dp"
+                    android:layout_marginEnd="16dp"
                     />
 
                 <TextView
@@ -591,7 +595,7 @@
                     app:layout_constraintEnd_toStartOf="@id/editTuesday"
                     android:layout_marginTop="12dp"
                     android:textColor="@color/primaryText"
-                    android:layout_marginRight="12dp"/>
+                    android:layout_marginEnd="12dp"/>
 
                 <View
                     android:id="@+id/tuesdayDiv"
@@ -611,7 +615,7 @@
                     app:layout_constraintTop_toBottomOf="@id/tuesdayDiv"
                     app:layout_constraintStart_toStartOf="parent"
                     android:layout_marginTop="12dp"
-                    android:layout_marginLeft="16dp"
+                    android:layout_marginStart="16dp"
                     android:button="@null"
                     android:background="?android:attr/listChoiceIndicatorMultiple"
                     android:gravity="center"
@@ -627,7 +631,7 @@
                     android:layout_marginTop="12dp"
                     android:textSize="16sp"
                     app:layout_constraintStart_toEndOf="@id/checkWednesday"
-                    android:layout_marginLeft="12dp"
+                    android:layout_marginStart="12dp"
                     android:gravity="center"/>
 
                 <ImageButton
@@ -639,10 +643,12 @@
                     android:scaleType="fitCenter"
                     android:adjustViewBounds="true"
                     android:padding="4dp"
+                    android:onClick="showPickTime"
+                    android:contentDescription="@null"
                     app:layout_constraintTop_toBottomOf="@id/tuesdayDiv"
                     app:layout_constraintEnd_toEndOf="parent"
                     android:layout_marginTop="12dp"
-                    android:layout_marginRight="16dp"
+                    android:layout_marginEnd="16dp"
                     />
 
                 <TextView
@@ -657,7 +663,7 @@
                     app:layout_constraintTop_toBottomOf="@id/tuesdayDiv"
                     app:layout_constraintEnd_toStartOf="@id/editWednesday"
                     android:layout_marginTop="12dp"
-                    android:layout_marginRight="12dp"/>
+                    android:layout_marginEnd="12dp"/>
 
                 <View
                     android:id="@+id/wednesdayDiv"
@@ -676,7 +682,7 @@
                     app:layout_constraintTop_toBottomOf="@id/wednesdayDiv"
                     app:layout_constraintStart_toStartOf="parent"
                     android:layout_marginTop="12dp"
-                    android:layout_marginLeft="16dp"
+                    android:layout_marginStart="16dp"
                     android:button="@null"
                     android:background="?android:attr/listChoiceIndicatorMultiple"
                     android:gravity="center"
@@ -692,7 +698,7 @@
                     android:layout_marginTop="12dp"
                     android:textSize="16sp"
                     app:layout_constraintStart_toEndOf="@id/checkThursday"
-                    android:layout_marginLeft="12dp"
+                    android:layout_marginStart="12dp"
                     android:gravity="center"/>
 
                 <ImageButton
@@ -704,10 +710,12 @@
                     android:scaleType="fitCenter"
                     android:adjustViewBounds="true"
                     android:padding="4dp"
+                    android:onClick="showPickTime"
+                    android:contentDescription="@null"
                     app:layout_constraintTop_toBottomOf="@id/wednesdayDiv"
                     app:layout_constraintEnd_toEndOf="parent"
                     android:layout_marginTop="12dp"
-                    android:layout_marginRight="16dp"
+                    android:layout_marginEnd="16dp"
                     />
 
                 <TextView
@@ -722,7 +730,7 @@
                     app:layout_constraintTop_toBottomOf="@id/wednesdayDiv"
                     app:layout_constraintEnd_toStartOf="@id/editThursday"
                     android:layout_marginTop="12dp"
-                    android:layout_marginRight="12dp"/>
+                    android:layout_marginEnd="12dp"/>
 
                 <View
                     android:id="@+id/thursdayDiv"
@@ -741,7 +749,7 @@
                     app:layout_constraintTop_toBottomOf="@id/thursdayDiv"
                     app:layout_constraintStart_toStartOf="parent"
                     android:layout_marginTop="12dp"
-                    android:layout_marginLeft="16dp"
+                    android:layout_marginStart="16dp"
                     android:button="@null"
                     android:background="?android:attr/listChoiceIndicatorMultiple"
                     android:gravity="center"
@@ -757,7 +765,7 @@
                     android:layout_marginTop="12dp"
                     android:textSize="16sp"
                     app:layout_constraintStart_toEndOf="@id/checkFriday"
-                    android:layout_marginLeft="12dp"
+                    android:layout_marginStart="12dp"
                     android:gravity="center"/>
 
                 <ImageButton
@@ -769,10 +777,12 @@
                     android:scaleType="fitCenter"
                     android:adjustViewBounds="true"
                     android:padding="4dp"
+                    android:onClick="showPickTime"
+                    android:contentDescription="@null"
                     app:layout_constraintTop_toBottomOf="@id/thursdayDiv"
                     app:layout_constraintEnd_toEndOf="parent"
                     android:layout_marginTop="12dp"
-                    android:layout_marginRight="16dp"
+                    android:layout_marginEnd="16dp"
                     />
 
                 <TextView
@@ -787,7 +797,7 @@
                     app:layout_constraintTop_toBottomOf="@id/thursdayDiv"
                     app:layout_constraintEnd_toStartOf="@id/editFriday"
                     android:layout_marginTop="12dp"
-                    android:layout_marginRight="12dp"/>
+                    android:layout_marginEnd="12dp"/>
 
                 <View
                     android:id="@+id/fridayDiv"
@@ -806,7 +816,7 @@
                     app:layout_constraintTop_toBottomOf="@id/fridayDiv"
                     app:layout_constraintStart_toStartOf="parent"
                     android:layout_marginTop="12dp"
-                    android:layout_marginLeft="16dp"
+                    android:layout_marginStart="16dp"
                     android:button="@null"
                     android:background="?android:attr/listChoiceIndicatorMultiple"
                     android:gravity="center"
@@ -822,7 +832,7 @@
                     android:layout_marginTop="12dp"
                     android:textSize="16sp"
                     app:layout_constraintStart_toEndOf="@id/checkSaturday"
-                    android:layout_marginLeft="12dp"
+                    android:layout_marginStart="12dp"
                     android:gravity="center"/>
 
                 <ImageButton
@@ -834,10 +844,12 @@
                     android:scaleType="fitCenter"
                     android:adjustViewBounds="true"
                     android:padding="4dp"
+                    android:onClick="showPickTime"
+                    android:contentDescription="@null"
                     app:layout_constraintTop_toBottomOf="@id/fridayDiv"
                     app:layout_constraintEnd_toEndOf="parent"
                     android:layout_marginTop="12dp"
-                    android:layout_marginRight="16dp"
+                    android:layout_marginEnd="16dp"
                     />
 
                 <TextView
@@ -852,7 +864,7 @@
                     app:layout_constraintTop_toBottomOf="@id/fridayDiv"
                     app:layout_constraintEnd_toStartOf="@id/editSaturday"
                     android:layout_marginTop="12dp"
-                    android:layout_marginRight="12dp"/>
+                    android:layout_marginEnd="12dp"/>
 
                 <View
                     android:id="@+id/saturdayDiv"
@@ -871,7 +883,7 @@
                     app:layout_constraintTop_toBottomOf="@id/saturdayDiv"
                     app:layout_constraintStart_toStartOf="parent"
                     android:layout_marginTop="12dp"
-                    android:layout_marginLeft="16dp"
+                    android:layout_marginStart="16dp"
                     android:button="@null"
                     android:background="?android:attr/listChoiceIndicatorMultiple"
                     android:gravity="center"
@@ -887,7 +899,7 @@
                     android:layout_marginTop="12dp"
                     android:textSize="16sp"
                     app:layout_constraintStart_toEndOf="@id/checkSunday"
-                    android:layout_marginLeft="12dp"
+                    android:layout_marginStart="12dp"
                     android:gravity="center"/>
 
                 <ImageButton
@@ -899,10 +911,12 @@
                     android:scaleType="fitCenter"
                     android:adjustViewBounds="true"
                     android:padding="4dp"
+                    android:onClick="showPickTime"
+                    android:contentDescription="@null"
                     app:layout_constraintTop_toBottomOf="@id/saturdayDiv"
                     app:layout_constraintEnd_toEndOf="parent"
                     android:layout_marginTop="12dp"
-                    android:layout_marginRight="16dp"
+                    android:layout_marginEnd="16dp"
                     />
 
                 <TextView
@@ -917,7 +931,7 @@
                     app:layout_constraintTop_toBottomOf="@id/saturdayDiv"
                     app:layout_constraintEnd_toStartOf="@id/editSunday"
                     android:layout_marginTop="12dp"
-                    android:layout_marginRight="12dp"/>
+                    android:layout_marginEnd="12dp"/>
 
                 <View
                     android:id="@+id/sundayDiv"

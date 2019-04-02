@@ -8,7 +8,7 @@
     <string name="phone_rosso">011485959</string>
     <string name="mail_rosso">info@rossopomodoro.it</string>
     <string name="address_rosso">via Treviso 42/F, Torino</string>
-
-
     <string name="timetable">Orario</string>
+    <string name="opening_time">Seleziona l\'orario di apertura</string>
+    <string name="closing_time">Selezione l\'orario di chiusura</string>
 </resources>

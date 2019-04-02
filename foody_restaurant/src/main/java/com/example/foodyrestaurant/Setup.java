@@ -1,5 +1,6 @@
 package com.example.foodyrestaurant;
 import android.app.AlertDialog;
+import android.app.TimePickerDialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
@@ -27,8 +28,13 @@ import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.ListAdapter;
 import android.widget.TextView;
+import android.widget.TimePicker;
+
 import com.yalantis.ucrop.UCrop;
 import com.yalantis.ucrop.UCropActivity;
+
+import org.w3c.dom.Text;
+
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
@@ -52,8 +58,10 @@ public class Setup extends AppCompatActivity {
     private final String PLACEHOLDER_CAMERA="PlaceCamera.jpg";
     private String placeholderPath;
     private File storageDir;
+    private TextView tv;
     private boolean unchanged, checkString = true;
     private String dialogCode = "ok";
+    private String openHour, closeHour;
 
     private SharedPreferences sharedPref;
     private SharedPreferences.Editor edit;
@@ -578,4 +586,61 @@ public class Setup extends AppCompatActivity {
         }
     }
 
+    public void showPickTime(View view) {
+        int hour = 0;
+        int minute = 0;
+
+        switch(view.getId()) {
+            case R.id.editMonday:
+                tv = findViewById(R.id.timeMonday);
+                break;
+            case R.id.editTuesday:
+                tv = findViewById(R.id.timeTuesday);
+                break;
+            case R.id.editWednesday:
+                tv = findViewById(R.id.timeWednesday);
+                break;
+            case R.id.editThursday:
+                tv = findViewById(R.id.timeThursday);
+                break;
+            case R.id.editFriday:
+                tv = findViewById(R.id.timeFriday);
+                break;
+            case R.id.editSaturday:
+                tv = findViewById(R.id.timeSaturday);
+                break;
+            case R.id.editSunday:
+                tv = findViewById(R.id.timeSunday);
+                break;
+        }
+
+        TimePickerDialog timePicker;
+
+        timePicker = new TimePickerDialog(this, new TimePickerDialog.OnTimeSetListener() {
+            @Override
+            public void onTimeSet(TimePicker timePicker, int selectedHour, int selectedMinute) {
+                openHour = selectedHour + ":" + selectedMinute;
+                showSecondPicker();
+            }
+        }, hour, minute, true);
+        timePicker.setTitle(getResources().getString(R.string.opening_time));
+        timePicker.setCancelable(false);
+        timePicker.show();
+    }
+
+    public void showSecondPicker(){
+        int hour = 0;
+        int minute = 0;
+        TimePickerDialog timePicker2;
+        timePicker2 = new TimePickerDialog(this, new TimePickerDialog.OnTimeSetListener() {
+            @Override
+            public void onTimeSet(TimePicker timePicker, int selectedHour, int selectedMinute) {
+                closeHour = selectedHour + ":" + selectedMinute;
+                tv.setText(openHour + "-" + closeHour);
+            }
+        }, hour, minute, true);
+        timePicker2.setTitle(getResources().getString(R.string.closing_time));
+        timePicker2.setCancelable(false);
+        timePicker2.show();
+    }
 }
