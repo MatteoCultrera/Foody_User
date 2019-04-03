@@ -103,13 +103,13 @@ public class Setup extends AppCompatActivity {
         outState.putString("friTime", friday.getText().toString());
         outState.putString("satTime", saturday.getText().toString());
         outState.putString("sunTime", sunday.getText().toString());
-        outState.putBoolean("monTime", monC.isChecked());
-        outState.putBoolean("tueTime", tueC.isChecked());
-        outState.putBoolean("wedTime", wedC.isChecked());
-        outState.putBoolean("thuTime", thuC.isChecked());
-        outState.putBoolean("friTime", friC.isChecked());
-        outState.putBoolean("satTime", satC.isChecked());
-        outState.putBoolean("sunTime", sunC.isChecked());
+        outState.putBoolean("monState", monC.isChecked());
+        outState.putBoolean("tueState", tueC.isChecked());
+        outState.putBoolean("wedState", wedC.isChecked());
+        outState.putBoolean("thuState", thuC.isChecked());
+        outState.putBoolean("friState", friC.isChecked());
+        outState.putBoolean("satState", satC.isChecked());
+        outState.putBoolean("sunState", sunC.isChecked());
         outState.putString("dialog", dialogCode);
     }
 
@@ -126,8 +126,8 @@ public class Setup extends AppCompatActivity {
         email.setText(savedInstanceState.getString("email", getResources().getString(R.string.email_hint)));
         address.setText(savedInstanceState.getString("address", getResources().getString(R.string.address_hint)));
         phoneNumber.setText(savedInstanceState.getString("phoneNumber", getResources().getString(R.string.phone_hint)));
-        monday.setText(savedInstanceState.getString("mondTime", getResources().getString(R.string.Closed)));
-        tuesday.setText(savedInstanceState.getString("tueime", getResources().getString(R.string.Closed)));
+        monday.setText(savedInstanceState.getString("monTime", getResources().getString(R.string.Closed)));
+        tuesday.setText(savedInstanceState.getString("tueTime", getResources().getString(R.string.Closed)));
         wednesday.setText(savedInstanceState.getString("wedTime", getResources().getString(R.string.Closed)));
         thursday.setText(savedInstanceState.getString("thuTime", getResources().getString(R.string.Closed)));
         friday.setText(savedInstanceState.getString("friTime", getResources().getString(R.string.Closed)));
@@ -754,7 +754,8 @@ public class Setup extends AppCompatActivity {
                 closeHour = selHour + ":" + selMinute;
                 unchanged = false;
                 dialogCode = "ok";
-                tv.setText(openHour + "-" + closeHour);
+                String defHour = openHour + " - " + closeHour;
+                tv.setText(defHour);
             }
         }, hour, minute, true);
         timePicker2.setTitle(getResources().getString(R.string.closing_time));
@@ -764,7 +765,7 @@ public class Setup extends AppCompatActivity {
     }
 
     public void lockUnlock(View view) {
-        String standardTime = "08:00" + "-" + "23:00";
+        String standardTime = "08:00" + " - " + "23:00";
         unchanged = false;
         CheckBox cb = findViewById(view.getId());
         switch(view.getId()) {

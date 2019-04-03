@@ -36,8 +36,6 @@ public class User extends AppCompatActivity {
     private final String PROFILE_IMAGE = "ProfileImage.jpg";
     private File storageDir;
 
-    private Bitmap pizza=null;
-
     private SharedPreferences sharedPref;
 
 
@@ -172,6 +170,13 @@ public class User extends AppCompatActivity {
         outState.putString("email", email.getText().toString());
         outState.putString("address", address.getText().toString());
         outState.putString("phoneNumber", phoneNumber.getText().toString());
+        outState.putString("monTime", monTime.getText().toString());
+        outState.putString("tueTime", tueTime.getText().toString());
+        outState.putString("wedTime", wedTime.getText().toString());
+        outState.putString("thuTime", thuTime.getText().toString());
+        outState.putString("friTime", friTime.getText().toString());
+        outState.putString("satTime", satTime.getText().toString());
+        outState.putString("sunTime", sunTime.getText().toString());
     }
 
     @Override
@@ -182,6 +187,13 @@ public class User extends AppCompatActivity {
         email.setText(savedInstanceState.getString("email", getResources().getString(R.string.email_hint)));
         address.setText(savedInstanceState.getString("address", getResources().getString(R.string.address_hint)));
         phoneNumber.setText(savedInstanceState.getString("phoneNumber", getResources().getString(R.string.phone_hint)));
+        monTime.setText(savedInstanceState.getString("monTime", getResources().getString(R.string.Closed)));
+        tueTime.setText(savedInstanceState.getString("tueTime", getResources().getString(R.string.Closed)));
+        wedTime.setText(savedInstanceState.getString("wedTime", getResources().getString(R.string.Closed)));
+        thuTime.setText(savedInstanceState.getString("thuTime", getResources().getString(R.string.Closed)));
+        friTime.setText(savedInstanceState.getString("friTime", getResources().getString(R.string.Closed)));
+        satTime.setText(savedInstanceState.getString("satTime", getResources().getString(R.string.Closed)));
+        sunTime.setText(savedInstanceState.getString("sunTime", getResources().getString(R.string.Closed)));
     }
 
     protected void onPause(){
