@@ -44,6 +44,7 @@ import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.TreeMap;
 import java.util.regex.Matcher;
@@ -887,38 +888,52 @@ public class Setup extends AppCompatActivity {
         }
     }
 
+    public boolean[] checkedFoods = new boolean[27];
+    public ArrayList<String> selectedFoods = new ArrayList<>();
+
+
+    public int numFoods(){
+        int i = 0;
+        for (boolean food:checkedFoods) {
+            if(food)
+                i++;
+        }
+        return i;
+    }
+
     public void showPickFood(View view) {
         Log.d("MAD", "PRESSED");
         final String[] foodCategories;
-        final ArrayList<Boolean> checkedFoods = new ArrayList<>();
-        final ArrayList<String> selectedFoods = new ArrayList<>();
 
         foodCategories = getResources().getStringArray(R.array.foodcategory_array);
+        //final boolean[] checkedFoods = new boolean[foodCategories.length];
+        //Arrays.fill(checkedFoods, Boolean.FALSE);
 
-        AlertDialog.Builder builder = new AlertDialog.Builder(this,  R.style.AppCompatAlertDialogStyle);
+        final AlertDialog.Builder builder = new AlertDialog.Builder(this,  R.style.AppCompatAlertDialogStyle);
 
-        builder.setMultiChoiceItems(foodCategories, null, new DialogInterface.OnMultiChoiceClickListener() {
-
-            int count = 0;
+        builder.setMultiChoiceItems(foodCategories, checkedFoods, new DialogInterface.OnMultiChoiceClickListener() {
+            int count = numFoods();
             @Override
             public void onClick(DialogInterface dialog, int which, boolean isChecked) {
+                Log.d("SELFOF",selectedFoods.size()+"");
                 if (isChecked) {
                     if (!selectedFoods.contains(String.valueOf(foodCategories[which])))
                         if (selectedFoods.size() < 3) {
                             selectedFoods.add(String.valueOf(foodCategories[which]));
-                            checkedFoods.add(which, true);
+                            checkedFoods[which] = true;
                         } else {
                             count--;
                             ((AlertDialog) dialog).getListView().setItemChecked(which, false);
-                            checkedFoods.add(which, false);
+                            checkedFoods[which] = false;
                             Toast.makeText(getApplicationContext(), "you can't add more than 3", Toast.LENGTH_LONG).show();
                         }
                 } else if (selectedFoods.contains(String.valueOf(foodCategories[which]))) {
                     selectedFoods.remove(String.valueOf(foodCategories[which]));
-                    checkedFoods.add(which, false);
+                    checkedFoods[which] = false;
                 }
             }
         });
+
 
         builder.setPositiveButton("Done", new DialogInterface.OnClickListener() {
             @Override
