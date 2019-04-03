@@ -43,10 +43,11 @@ public class Setup extends AppCompatActivity {
     private CircleImageView profilePicture;
     private ImageButton save;
     private FloatingActionButton editImage;
-    private EditText name, email, address, phoneNumber, bio;
+    private EditText name, email, address, phoneNumber, city;
     private TextView errorName;
     private TextView errorMail;
     private TextView errorPhone;
+    private TextView errorCity;
     private final int GALLERY_REQUEST_CODE = 1;
     private final int REQUEST_CAPTURE_IMAGE = 100;
     private final String PROFILE_IMAGE = "ProfileImage.jpg";
@@ -85,7 +86,7 @@ public class Setup extends AppCompatActivity {
         outState.putString("email", email.getText().toString());
         outState.putString("address", address.getText().toString());
         outState.putString("phoneNumber", phoneNumber.getText().toString());
-        outState.putString("bio", bio.getText().toString());
+        outState.putString("city", city.getText().toString());
         outState.putString("dialog", dialogCode);
     }
 
@@ -102,7 +103,7 @@ public class Setup extends AppCompatActivity {
         email.setText(savedInstanceState.getString("email", getResources().getString(R.string.email_hint)));
         address.setText(savedInstanceState.getString("address", getResources().getString(R.string.address_hint)));
         phoneNumber.setText(savedInstanceState.getString("phoneNumber", getResources().getString(R.string.phone_hint)));
-        bio.setText(savedInstanceState.getString("bio", getResources().getString(R.string.bio_hint)));
+        city.setText(savedInstanceState.getString("city", getResources().getString(R.string.city_hint)));
 
         String dialogPrec = savedInstanceState.getString("dialog");
 
@@ -118,7 +119,7 @@ public class Setup extends AppCompatActivity {
         email.clearFocus();
         address.clearFocus();
         phoneNumber.clearFocus();
-        bio.clearFocus();
+        city.clearFocus();
     }
 
     protected void onPause(){
@@ -204,6 +205,29 @@ public class Setup extends AppCompatActivity {
         updateSave();
     }
 
+    private void checkCity(){
+        String c = city.getText().toString();
+        String regx = "^[\\p{L} .'-]+$";
+        View errorLine = findViewById(R.id.city_error_line);
+        Pattern regex = Pattern.compile(regx);
+        Matcher matcher = regex.matcher(c);
+
+        if(!matcher.matches()){
+            checkString = false;
+            errorCity.setText(getResources().getString(R.string.invalid_city));
+            errorLine.setBackgroundColor(getResources().getColor(R.color.errorColor,this.getTheme()));
+            errorLine.setAlpha(1);
+
+        }else{
+            checkString = true;
+            errorCity.setText("");
+            errorLine.setAlpha(0.2f);
+            errorLine.setBackgroundColor(Color.BLACK);
+        }
+
+        updateSave();
+    }
+
     private  void pickFromGallery(){
         Intent intent = new Intent(Intent.ACTION_PICK);
         intent.setType("image/*");
@@ -237,7 +261,7 @@ public class Setup extends AppCompatActivity {
         this.email = findViewById(R.id.emailAddress);
         this.address = findViewById(R.id.address);
         this.phoneNumber = findViewById(R.id.phoneNumber);
-        this.bio = findViewById(R.id.bio);
+        this.city = findViewById(R.id.city);
 
         //setup of the Shared Preferences to save value in (key, value) format
         //Shared Preferences definition
@@ -248,8 +272,8 @@ public class Setup extends AppCompatActivity {
         this.errorName = findViewById(R.id.name_error);
         this.errorMail = findViewById(R.id.email_error);
         this.errorPhone = findViewById(R.id.number_error);
+        this.errorCity = findViewById(R.id.city_error);
         TextView errorAddress = findViewById(R.id.address_error);
-        TextView errorBio = findViewById(R.id.bio_error);
         //ImageButton back = findViewById(R.id.backButton);
         this.save = findViewById(R.id.saveButton);
 
@@ -257,7 +281,7 @@ public class Setup extends AppCompatActivity {
         errorMail.setText("");
         errorPhone.setText("");
         errorAddress.setText("");
-        errorBio.setText("");
+        errorCity.setText("");
 
         File f = new File(storageDir, PROFILE_IMAGE);
 
@@ -269,7 +293,7 @@ public class Setup extends AppCompatActivity {
         email.setText(sharedPref.getString("email", getResources().getString(R.string.mail_foo)));
         address.setText(sharedPref.getString("address", getResources().getString(R.string.address_foo)));
         phoneNumber.setText(sharedPref.getString("phoneNumber", getResources().getString(R.string.phone_foo)));
-        bio.setText(sharedPref.getString("bio", getResources().getString(R.string.bio_foo)));
+        city.setText(sharedPref.getString("city", getResources().getString(R.string.city_foo)));
         edit.apply();
 
 
@@ -350,27 +374,22 @@ public class Setup extends AppCompatActivity {
                 }
             }
         });
-        this.bio.addTextChangedListener(new TextWatcher() {
+        this.city.addTextChangedListener(new TextWatcher() {
             @Override
             public void beforeTextChanged(CharSequence charSequence, int i, int i1, int i2) {
             }
+
             @Override
             public void onTextChanged(CharSequence charSequence, int i, int i1, int i2) {
+                checkCity();
             }
+
             @Override
             public void afterTextChanged(Editable editable) {
-                String check = sharedPref.getString("bio", null);
+                String check = sharedPref.getString("city", null);
                 if (check != null && check.compareTo(editable.toString()) != 0){
                     unchanged = false;
                 }
-
-                for(int i = editable.length(); i > 0; i--) {
-
-                    if(editable.subSequence(i-1, i).toString().equals("\n"))
-                        editable.replace(i-1, i, "");
-                }
-
-                String myTextString = editable.toString();
             }
         });
 
@@ -582,7 +601,7 @@ public class Setup extends AppCompatActivity {
         edit.putString("email", email.getText().toString());
         edit.putString("address", address.getText().toString());
         edit.putString("phoneNumber", phoneNumber.getText().toString());
-        edit.putString("bio", bio.getText().toString());
+        edit.putString("city", city.getText().toString());
         edit.apply();
         finish();
     }

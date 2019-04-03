@@ -21,7 +21,8 @@ public class User extends AppCompatActivity {
     private TextView email;
     private TextView address;
     private TextView phoneNumber;
-    private TextView bio;
+    private TextView city;
+    private TextView monTime, tueTime, wedTime, thuTime, friTime, satTime,sunTime;
     private final String PLACEHOLDER_CAMERA="PlaceCamera.jpg";
     private File storageDir;
 
@@ -73,8 +74,8 @@ public class User extends AppCompatActivity {
         if(!sharedPref.contains("phoneNumber"))
             edit.putString("phoneNumber",getString(R.string.phone_foo));
 
-        if(!sharedPref.contains("bio"))
-            edit.putString("bio",getString(R.string.bio_foo));
+        if(!sharedPref.contains("city"))
+            edit.putString("city",getString(R.string.city_foo));
 
         edit.apply();
 
@@ -88,7 +89,15 @@ public class User extends AppCompatActivity {
         this.email = findViewById(R.id.emailAddress);
         this.address = findViewById(R.id.address);
         this.phoneNumber = findViewById(R.id.phoneNumber);
-        this.bio = findViewById(R.id.bio);
+        this.city = findViewById(R.id.city);
+
+        this.monTime = findViewById(R.id.monTime);
+        this.tueTime = findViewById(R.id.tueTime);
+        this.wedTime = findViewById(R.id.wedTime);
+        this.thuTime = findViewById(R.id.thuTime);
+        this.friTime = findViewById(R.id.friTime);
+        this.satTime = findViewById(R.id.satTime);
+        this.sunTime = findViewById(R.id.sunTime);
 
         //setup of the Shared Preferences to save value in (key, value) format
 
@@ -96,7 +105,16 @@ public class User extends AppCompatActivity {
         email.setText(sharedPref.getString("email", getResources().getString(R.string.email_hint)));
         address.setText(sharedPref.getString("address", getResources().getString(R.string.address_hint)));
         phoneNumber.setText(sharedPref.getString("phoneNumber", getResources().getString(R.string.phone_hint)));
-        bio.setText(sharedPref.getString("bio", getResources().getString(R.string.bio_hint)));
+        city.setText(sharedPref.getString("city", getResources().getString(R.string.city_hint)));
+
+        monTime.setText(sharedPref.getString("monTime", getResources().getString(R.string.free)));
+        tueTime.setText(sharedPref.getString("tueTime", getResources().getString(R.string.free)));
+        wedTime.setText(sharedPref.getString("wedTime", getResources().getString(R.string.free)));
+        thuTime.setText(sharedPref.getString("thuTime", getResources().getString(R.string.free)));
+        friTime.setText(sharedPref.getString("friTime", getResources().getString(R.string.free)));
+        satTime.setText(sharedPref.getString("satTime", getResources().getString(R.string.free)));
+        sunTime.setText(sharedPref.getString("sunTime", getResources().getString(R.string.free)));
+
 
         String PROFILE_IMAGE = "ProfileImage.jpg";
         File f = new File(storageDir, PROFILE_IMAGE);
@@ -115,7 +133,14 @@ public class User extends AppCompatActivity {
         outState.putString("email", email.getText().toString());
         outState.putString("address", address.getText().toString());
         outState.putString("phoneNumber", phoneNumber.getText().toString());
-        outState.putString("bio", bio.getText().toString());
+        outState.putString("city", city.getText().toString());
+        outState.putString("monTime", monTime.getText().toString());
+        outState.putString("tueTime", tueTime.getText().toString());
+        outState.putString("wedTime", wedTime.getText().toString());
+        outState.putString("thuTime", thuTime.getText().toString());
+        outState.putString("friTime", friTime.getText().toString());
+        outState.putString("satTime", satTime.getText().toString());
+        outState.putString("sunTime", sunTime.getText().toString());
     }
 
     @Override
@@ -126,7 +151,14 @@ public class User extends AppCompatActivity {
         email.setText(savedInstanceState.getString("email", getResources().getString(R.string.email_hint)));
         address.setText(savedInstanceState.getString("address", getResources().getString(R.string.address_hint)));
         phoneNumber.setText(savedInstanceState.getString("phoneNumber", getResources().getString(R.string.phone_hint)));
-        bio.setText(savedInstanceState.getString("bio", getResources().getString(R.string.biography)));
+        city.setText(savedInstanceState.getString("city", getResources().getString(R.string.city_hint)));
+        monTime.setText(savedInstanceState.getString("monTime", getResources().getString(R.string.free)));
+        tueTime.setText(savedInstanceState.getString("tueTime", getResources().getString(R.string.free)));
+        wedTime.setText(savedInstanceState.getString("wedTime", getResources().getString(R.string.free)));
+        thuTime.setText(savedInstanceState.getString("thuTime", getResources().getString(R.string.free)));
+        friTime.setText(savedInstanceState.getString("friTime", getResources().getString(R.string.free)));
+        satTime.setText(savedInstanceState.getString("satTime", getResources().getString(R.string.free)));
+        sunTime.setText(savedInstanceState.getString("sunTime", getResources().getString(R.string.free)));
     }
 
     protected void onPause(){

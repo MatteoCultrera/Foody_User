@@ -1,5 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string name="app_name">Foody Biker</string>
+    <string name="city_hint">Città</string>
     <string name="foody_level">Biker Beginner</string>
+    <string name="free">Libero</string>
+    <string name="invalid_city">Città non valida</string>
 </resources>

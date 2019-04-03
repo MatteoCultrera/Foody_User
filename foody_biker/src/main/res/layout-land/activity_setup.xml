@@ -150,6 +150,8 @@
                     android:layout_marginTop="8dp"
                     android:layout_marginEnd="161dp"
                     android:scaleType="fitCenter"
+                    android:adjustViewBounds="true"
+                    android:padding="2dp"
                     android:src="@drawable/name_black"
                     android:contentDescription="@null"
                     app:layout_constraintEnd_toEndOf="parent"
@@ -217,6 +219,8 @@
                     android:layout_marginTop="8dp"
                     android:layout_marginEnd="161dp"
                     android:scaleType="fitCenter"
+                    android:adjustViewBounds="true"
+                    android:padding="2dp"
                     android:src="@drawable/phone_black"
                     android:contentDescription="@null"
                     app:layout_constraintEnd_toEndOf="parent"
@@ -289,6 +293,8 @@
                     android:layout_marginTop="8dp"
                     android:layout_marginEnd="161dp"
                     android:scaleType="fitCenter"
+                    android:adjustViewBounds="true"
+                    android:padding="2dp"
                     android:src="@drawable/mail_black"
                     android:contentDescription="@null"
                     app:layout_constraintEnd_toEndOf="parent"
@@ -359,9 +365,11 @@
                     android:layout_height="30dp"
                     android:layout_marginTop="8dp"
                     android:layout_marginEnd="161dp"
-                    android:scaleType="fitCenter"
-                    android:src="@drawable/location_black"
+                    android:adjustViewBounds="true"
                     android:contentDescription="@null"
+                    android:padding="2dp"
+                    android:scaleType="fitCenter"
+                    android:src="@drawable/address2_black"
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintHorizontal_bias="0.0"
                     app:layout_constraintStart_toStartOf="parent"
@@ -430,7 +438,9 @@
                     android:layout_marginTop="8dp"
                     android:layout_marginEnd="161dp"
                     android:scaleType="fitCenter"
-                    android:src="@drawable/edit_black"
+                    android:adjustViewBounds="true"
+                    android:padding="2dp"
+                    android:src="@drawable/city_black"
                     android:contentDescription="@null"
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintHorizontal_bias="0.0"
@@ -438,7 +448,7 @@
                     app:layout_constraintTop_toTopOf="parent" />
 
                 <EditText
-                    android:id="@+id/bio"
+                    android:id="@+id/city"
                     style="@android:style/Widget.Material.EditText"
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
@@ -446,8 +456,8 @@
                     android:layout_marginTop="14dp"
                     android:background="@android:color/transparent"
                     android:fontFamily="@font/roboto_regular"
-                    android:hint="@string/bio_hint"
-                    android:inputType="text|textMultiLine|textCapSentences"
+                    android:hint="@string/city_hint"
+                    android:inputType="textPersonName|textCapWords"
                     android:maxLength="140"
                     android:scrollHorizontally="false"
                     android:textSize="15sp"
@@ -458,23 +468,23 @@
                     app:layout_constraintTop_toTopOf="parent" />
 
                 <View
-                    android:id="@+id/bio_error_line"
+                    android:id="@+id/city_error_line"
                     android:layout_width="match_parent"
                     android:layout_height="1dp"
                     android:layout_marginTop="6dp"
                     android:alpha="0.2"
                     android:background="@android:color/black"
-                    app:layout_constraintTop_toBottomOf="@+id/bio"
+                    app:layout_constraintTop_toBottomOf="@+id/city"
                     tools:layout_editor_absoluteX="16dp" />
 
                 <TextView
-                    android:id="@+id/bio_error"
+                    android:id="@+id/city_error"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="@string/error_bio"
+                    android:text="@string/invalid_city"
                     android:textColor="#C90006"
                     app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toBottomOf="@+id/bio_error_line" />
+                    app:layout_constraintTop_toBottomOf="@+id/city_error_line" />
 
             </android.support.constraint.ConstraintLayout>
         </android.support.constraint.ConstraintLayout>
