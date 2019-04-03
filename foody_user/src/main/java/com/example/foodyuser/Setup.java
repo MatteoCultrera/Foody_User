@@ -1,5 +1,6 @@
 package com.example.foodyuser;
 import android.app.AlertDialog;
+import android.app.TimePickerDialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
@@ -52,6 +53,7 @@ public class Setup extends AppCompatActivity {
     private final String PLACEHOLDER_CAMERA="PlaceCamera.jpg";
     private String placeholderPath;
     private File storageDir;
+    private AlertDialog dialogDism;
     private boolean unchanged, checkString = true;
     private String dialogCode = "ok";
 
@@ -122,7 +124,9 @@ public class Setup extends AppCompatActivity {
 
     protected void onPause(){
         super.onPause();
-
+        if (dialogDism != null){
+            dialogDism.dismiss();
+        }
     }
 
     private void updateSave(){
@@ -483,7 +487,7 @@ public class Setup extends AppCompatActivity {
             }
         });
         dialogCode = "pickImage";
-        builder.show();
+        dialogDism = builder.show();
     }
 
     private void startCrop(@NonNull Uri uri){
@@ -531,7 +535,7 @@ public class Setup extends AppCompatActivity {
             builder.setMessage(getResources().getString(R.string.alert_dialog_back_message));
             builder.setCancelable(false);
             dialogCode = "back";
-            builder.show();
+            dialogDism = builder.show();
         }
     }
 
@@ -561,7 +565,7 @@ public class Setup extends AppCompatActivity {
             builder.setMessage(getResources().getString(R.string.alert_dialog_back_message));
             builder.setCancelable(false);
             dialogCode = "back";
-            builder.show();
+            dialogDism = builder.show();
         }
     }
 

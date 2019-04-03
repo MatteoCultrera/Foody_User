@@ -57,6 +57,9 @@ public class Setup extends AppCompatActivity {
     private TextView errorName;
     private TextView errorMail;
     private TextView errorPhone;
+    private int caller;
+    private AlertDialog dialogDism;
+    private TimePickerDialog timePicker;
     private final int GALLERY_REQUEST_CODE = 1;
     private final int REQUEST_CAPTURE_IMAGE = 100;
     private final String PROFILE_IMAGE = "ProfileImage.jpg";
@@ -117,6 +120,8 @@ public class Setup extends AppCompatActivity {
         outState.putString("delivery", delivPrice.getText().toString());
         outState.putInt("delivInt", deliveryPrice);
         outState.putString("dialog", dialogCode);
+        outState.putString("openHour", openHour);
+        outState.putInt("caller", caller);
     }
 
     @Override
@@ -148,6 +153,8 @@ public class Setup extends AppCompatActivity {
         sunC.setChecked(savedInstanceState.getBoolean("sunState", false));
         delivPrice.setText(savedInstanceState.getString("delivery", getResources().getString(R.string.placeholder_price)));
         deliveryPrice = savedInstanceState.getInt("delivInt", 5);
+        caller = savedInstanceState.getInt("caller", 0);
+        openHour = savedInstanceState.getString("openHour", null);
 
         String dialogPrec = savedInstanceState.getString("dialog");
 
@@ -156,11 +163,15 @@ public class Setup extends AppCompatActivity {
                 showPickImageDialog();
             } else if (dialogPrec.compareTo("back") == 0) {
                         onBackPressed();
-            } /*else if (dialogPrec.compareTo("firstTime") == 0) {
-                showPickTime(caller);
+            } else if (dialogPrec.compareTo("firstTime") == 0) {
+                if (caller != 0) {
+                    showPickTime(findViewById(caller));
+                }
             } else if (dialogPrec.compareTo("secondTime") == 0){
-                showSecondPicker();
-            }*/
+                if (caller != 0) {
+                    showSecondPicker();
+                }
+            }
         }
 
         name.clearFocus();
@@ -171,7 +182,12 @@ public class Setup extends AppCompatActivity {
 
     protected void onPause(){
         super.onPause();
-
+        if (dialogDism != null){
+            dialogDism.dismiss();
+        }
+        if (timePicker != null){
+            timePicker.dismiss();
+        }
     }
 
     private void updateSave(){
@@ -630,7 +646,7 @@ public class Setup extends AppCompatActivity {
             builder.setMessage(getResources().getString(R.string.alert_dialog_back_message));
             builder.setCancelable(false);
             dialogCode = "back";
-            builder.show();
+            dialogDism = builder.show();
         }
     }
 
@@ -660,7 +676,7 @@ public class Setup extends AppCompatActivity {
             builder.setMessage(getResources().getString(R.string.alert_dialog_back_message));
             builder.setCancelable(false);
             dialogCode = "back";
-            builder.show();
+            dialogDism = builder.show();
         }
     }
 
@@ -727,10 +743,8 @@ public class Setup extends AppCompatActivity {
     public void showPickTime(View view) {
         int hour = 0;
         int minute = 0;
-
-        //caller = view;
-
-        switch(view.getId()) {
+        caller = view.getId();
+        switch(caller) {
             case R.id.editMonday:
                 tv = findViewById(R.id.timeMonday);
                 break;
@@ -753,9 +767,6 @@ public class Setup extends AppCompatActivity {
                 tv = findViewById(R.id.timeSunday);
                 break;
         }
-
-        TimePickerDialog timePicker;
-
         timePicker = new TimePickerDialog(this, new TimePickerDialog.OnTimeSetListener() {
             @Override
             public void onTimeSet(TimePicker timePicker, int selectedHour, int selectedMinute) {
@@ -779,8 +790,31 @@ public class Setup extends AppCompatActivity {
     public void showSecondPicker(){
         int hour = 0;
         int minute = 0;
-        TimePickerDialog timePicker2;
-        timePicker2 = new TimePickerDialog(this, new TimePickerDialog.OnTimeSetListener() {
+        Log.d("DIALOG", Integer.toString(caller));
+        switch(caller) {
+            case R.id.editMonday:
+                tv = findViewById(R.id.timeMonday);
+                break;
+            case R.id.editTuesday:
+                tv = findViewById(R.id.timeTuesday);
+                break;
+            case R.id.editWednesday:
+                tv = findViewById(R.id.timeWednesday);
+                break;
+            case R.id.editThursday:
+                tv = findViewById(R.id.timeThursday);
+                break;
+            case R.id.editFriday:
+                tv = findViewById(R.id.timeFriday);
+                break;
+            case R.id.editSaturday:
+                tv = findViewById(R.id.timeSaturday);
+                break;
+            case R.id.editSunday:
+                tv = findViewById(R.id.timeSunday);
+                break;
+        }
+        timePicker = new TimePickerDialog(this, new TimePickerDialog.OnTimeSetListener() {
             @Override
             public void onTimeSet(TimePicker timePicker, int selectedHour, int selectedMinute) {
                 String selHour = ""+selectedHour;
@@ -793,13 +827,14 @@ public class Setup extends AppCompatActivity {
                 unchanged = false;
                 dialogCode = "ok";
                 String defHour = openHour + " - " + closeHour;
+                caller = 0;
                 tv.setText(defHour);
             }
         }, hour, minute, true);
-        timePicker2.setTitle(getResources().getString(R.string.closing_time));
-        timePicker2.setCancelable(false);
+        timePicker.setTitle(getResources().getString(R.string.closing_time));
+        timePicker.setCancelable(false);
         dialogCode = "secondTime";
-        timePicker2.show();
+        timePicker.show();
     }
 
     public void lockUnlock(View view) {
