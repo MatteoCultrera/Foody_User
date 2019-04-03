@@ -11,4 +11,8 @@
     <string name="timetable">Orario</string>
     <string name="opening_time">Seleziona l\'orario di apertura</string>
     <string name="closing_time">Selezione l\'orario di chiusura</string>
+
+    <string name="placeholder_price">0,00 €</string>
+
+    <string name="delivery_price">Costo di Consegna</string>
 </resources>

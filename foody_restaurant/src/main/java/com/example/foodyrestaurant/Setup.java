@@ -28,6 +28,7 @@ import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.ListAdapter;
+import android.widget.SeekBar;
 import android.widget.TextView;
 import android.widget.TimePicker;
 
@@ -51,11 +52,11 @@ public class Setup extends AppCompatActivity {
     private FloatingActionButton editImage;
     private EditText name, email, address, phoneNumber;
     private TextView monday, thursday, wednesday, tuesday, friday, saturday, sunday;
+    private TextView delivPrice;
     private CheckBox monC, thuC, wedC, tueC, friC, satC, sunC;
     private TextView errorName;
     private TextView errorMail;
     private TextView errorPhone;
-    //private View caller;
     private final int GALLERY_REQUEST_CODE = 1;
     private final int REQUEST_CAPTURE_IMAGE = 100;
     private final String PROFILE_IMAGE = "ProfileImage.jpg";
@@ -66,9 +67,12 @@ public class Setup extends AppCompatActivity {
     private boolean unchanged, checkString = true;
     private String dialogCode = "ok";
     private String openHour, closeHour;
+    private int deliveryPrice;
+    private SeekBar seekBarPrice;
 
     private SharedPreferences sharedPref;
     private SharedPreferences.Editor edit;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -110,6 +114,8 @@ public class Setup extends AppCompatActivity {
         outState.putBoolean("friState", friC.isChecked());
         outState.putBoolean("satState", satC.isChecked());
         outState.putBoolean("sunState", sunC.isChecked());
+        outState.putString("delivery", delivPrice.getText().toString());
+        outState.putInt("delivInt", deliveryPrice);
         outState.putString("dialog", dialogCode);
     }
 
@@ -140,6 +146,8 @@ public class Setup extends AppCompatActivity {
         friC.setChecked(savedInstanceState.getBoolean("friState", false));
         satC.setChecked(savedInstanceState.getBoolean("satState", false));
         sunC.setChecked(savedInstanceState.getBoolean("sunState", false));
+        delivPrice.setText(savedInstanceState.getString("delivery", getResources().getString(R.string.placeholder_price)));
+        deliveryPrice = savedInstanceState.getInt("delivInt", 5);
 
         String dialogPrec = savedInstanceState.getString("dialog");
 
@@ -291,6 +299,8 @@ public class Setup extends AppCompatActivity {
         this.friC = findViewById(R.id.checkFriday);
         this.satC = findViewById(R.id.checkSaturday);
         this.sunC = findViewById(R.id.checkSunday);
+        this.delivPrice = findViewById(R.id.delivPrice);
+        this.seekBarPrice = findViewById(R.id.seekBarPrice);
 
         //setup of the Shared Preferences to save value in (key, value) format
         //Shared Preferences definition
@@ -327,6 +337,7 @@ public class Setup extends AppCompatActivity {
         friday.setText(sharedPref.getString("friTime", getResources().getString(R.string.Closed)));
         saturday.setText(sharedPref.getString("satTime", getResources().getString(R.string.Closed)));
         sunday.setText(sharedPref.getString("sunTime", getResources().getString(R.string.Closed)));
+        deliveryPrice = sharedPref.getInt("delivPrice", 5);
         monC.setChecked(sharedPref.getBoolean("monState", false));
         tueC.setChecked(sharedPref.getBoolean("tueState", false));
         wedC.setChecked(sharedPref.getBoolean("wedState", false));
@@ -336,6 +347,10 @@ public class Setup extends AppCompatActivity {
         sunC.setChecked(sharedPref.getBoolean("sunState", false));
         edit.apply();
 
+        double price = deliveryPrice * 0.5;
+        String text = String.format("%.2f",price) + " €";
+        delivPrice.setText(text);
+        seekBarPrice.setProgress(deliveryPrice);
 
         ImageButton mon = findViewById(R.id.editMonday);
         if (!monC.isChecked())
@@ -434,6 +449,28 @@ public class Setup extends AppCompatActivity {
                 if (check != null && check.compareTo(editable.toString()) != 0){
                     unchanged = false;
                 }
+            }
+        });
+
+        seekBarPrice.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
+            @Override
+            public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
+                deliveryPrice = progress;
+                double price = deliveryPrice * 0.5;
+                String text = String.format("%.2f",price) + " €";
+                delivPrice.setText(text);
+                unchanged = false;
+
+            }
+
+            @Override
+            public void onStartTrackingTouch(SeekBar seekBar) {
+
+            }
+
+            @Override
+            public void onStopTrackingTouch(SeekBar seekBar) {
+
             }
         });
 
@@ -657,6 +694,7 @@ public class Setup extends AppCompatActivity {
         edit.putBoolean("friState", friC.isChecked());
         edit.putBoolean("satState", satC.isChecked());
         edit.putBoolean("sunState", sunC.isChecked());
+        edit.putInt("delivPrice", deliveryPrice);
         edit.apply();
         finish();
     }

@@ -66,6 +66,7 @@
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_margin="16dp"
+                android:layout_marginEnd="16dp"
                 android:background="@android:color/transparent"
                 android:clickable="false"
                 android:fontFamily="@font/roboto_bold"
@@ -75,6 +76,8 @@
                 android:textColor="#ffffffff"
                 android:textColorHint="#bbffffff"
                 android:textSize="30sp"
+                app:layout_constraintEnd_toStartOf="@+id/imageView5"
+                app:layout_constraintHorizontal_bias="0.0"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toTopOf="parent" />
 
@@ -93,6 +96,33 @@
                 android:textSize="15sp"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toBottomOf="@+id/userName" />
+
+            <TextView
+                android:id="@+id/delivery"
+                style="@android:style/Widget.Material.TextView"
+                android:layout_width="49dp"
+                android:layout_height="20dp"
+                android:layout_marginEnd="16dp"
+                android:background="@android:color/transparent"
+                android:fontFamily="@font/roboto_regular"
+                android:gravity="center"
+                android:maxLines="1"
+                android:text="@string/placeholder_price"
+                android:textColor="#ffffffff"
+                android:textColorHint="#bbffffff"
+                android:textSize="15sp"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/imageView5" />
+
+            <ImageView
+                android:id="@+id/imageView5"
+                android:layout_width="49dp"
+                android:layout_height="49dp"
+                android:layout_marginTop="16dp"
+                android:layout_marginEnd="16dp"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintTop_toTopOf="parent"
+                app:srcCompat="@drawable/bike_white" />
 
 
         </android.support.constraint.ConstraintLayout>

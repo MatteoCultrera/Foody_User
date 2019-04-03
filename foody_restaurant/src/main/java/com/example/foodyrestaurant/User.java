@@ -32,11 +32,15 @@ public class User extends AppCompatActivity {
     private TextView address;
     private TextView phoneNumber;
     private TextView monTime, tueTime, wedTime, thuTime, friTime, satTime,sunTime;
+    private TextView delivPrice;
     private final String PLACEHOLDER_CAMERA="PlaceCamera.jpg";
     private final String PROFILE_IMAGE = "ProfileImage.jpg";
     private File storageDir;
 
+    private int deliveryPrice;
+
     private SharedPreferences sharedPref;
+
 
 
     @Override
@@ -137,6 +141,7 @@ public class User extends AppCompatActivity {
         this.friTime = findViewById(R.id.friTime);
         this.satTime = findViewById(R.id.satTime);
         this.sunTime = findViewById(R.id.sunTime);
+        this.delivPrice = findViewById(R.id.delivery);
 
         //setup of the Shared Preferences to save value in (key, value) format
 
@@ -144,6 +149,9 @@ public class User extends AppCompatActivity {
         email.setText(sharedPref.getString("email", getResources().getString(R.string.email_hint)));
         address.setText(sharedPref.getString("address", getResources().getString(R.string.address_hint)));
         phoneNumber.setText(sharedPref.getString("phoneNumber", getResources().getString(R.string.phone_hint)));
+
+
+        deliveryPrice = sharedPref.getInt("delivPrice",5);
 
         monTime.setText(sharedPref.getString("monTime", getResources().getString(R.string.Closed)));
         tueTime.setText(sharedPref.getString("tueTime", getResources().getString(R.string.Closed)));
@@ -153,6 +161,10 @@ public class User extends AppCompatActivity {
         satTime.setText(sharedPref.getString("satTime", getResources().getString(R.string.Closed)));
         sunTime.setText(sharedPref.getString("sunTime", getResources().getString(R.string.Closed)));
 
+        double price = 0.5 * deliveryPrice;
+
+        String text = String.format("%.2f", price) + " €";
+        delivPrice.setText(text);
 
         File f = new File(storageDir, PROFILE_IMAGE);
 
@@ -177,6 +189,7 @@ public class User extends AppCompatActivity {
         outState.putString("friTime", friTime.getText().toString());
         outState.putString("satTime", satTime.getText().toString());
         outState.putString("sunTime", sunTime.getText().toString());
+        outState.putString("delivPrice", delivPrice.getText().toString());
     }
 
     @Override
@@ -194,6 +207,7 @@ public class User extends AppCompatActivity {
         friTime.setText(savedInstanceState.getString("friTime", getResources().getString(R.string.Closed)));
         satTime.setText(savedInstanceState.getString("satTime", getResources().getString(R.string.Closed)));
         sunTime.setText(savedInstanceState.getString("sunTime", getResources().getString(R.string.Closed)));
+        delivPrice.setText(savedInstanceState.getString("delivPrice", getResources().getString(R.string.placeholder_price)));
     }
 
     protected void onPause(){

@@ -290,12 +290,17 @@
                     android:id="@+id/imageView3"
                     android:layout_width="30dp"
                     android:layout_height="30dp"
+                    android:layout_marginTop="8dp"
+                    android:layout_marginEnd="161dp"
                     android:adjustViewBounds="true"
                     android:contentDescription="@null"
                     android:padding="2dp"
                     android:scaleType="fitCenter"
                     android:src="@drawable/mail_black"
-                    tools:layout_editor_absoluteY="8dp" />
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintHorizontal_bias="0.0"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toTopOf="parent" />
 
                 <EditText
                     android:id="@+id/emailAddress"
@@ -358,12 +363,17 @@
                     android:id="@+id/imageView4"
                     android:layout_width="30dp"
                     android:layout_height="30dp"
+                    android:layout_marginTop="8dp"
+                    android:layout_marginEnd="161dp"
                     android:adjustViewBounds="true"
                     android:contentDescription="@null"
                     android:padding="2dp"
                     android:scaleType="fitCenter"
                     android:src="@drawable/address2_black"
-                    tools:layout_editor_absoluteY="8dp" />
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintHorizontal_bias="0.0"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toTopOf="parent" />
 
                 <EditText
                     android:id="@+id/address"
