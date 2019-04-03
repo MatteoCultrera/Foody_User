@@ -13,6 +13,40 @@
     <string name="closing_time">Selezione l\'orario di chiusura</string>
 
     <string name="placeholder_price">0,00 €</string>
+    <string name="delivery_price">Costo di consegna</string>
+    <string name="food_type">Seleziona la cucina (max. 3)</string>
+    <string name="food_rosso">Italiano, Pizza, Pasta</string>
+    <string name="food_type_unselect">Tipo 1</string>
 
-    <string name="delivery_price">Costo di Consegna</string>
+    <string-array name="foodcategory_array">
+        <item>Americano</item>
+        <item>Brasiliano</item>
+        <item>Cinese</item>
+        <item>Coreano</item>
+        <item>Crepes</item>
+        <item>Dolci</item>
+        <item>Fritti</item>
+        <item>Giapponese</item>
+        <item>Senza Glutine</item>
+        <item>Greco</item>
+        <item>Hamburger</item>
+        <item>Indiano</item>
+        <item>Kebab</item>
+        <item>Medio oriente</item>
+        <item>Mediterranea</item>
+        <item>Messicano</item>
+        <item>Noodle</item>
+        <item>Pasta e Riso</item>
+        <item>Piadine</item>
+        <item>Pizza</item>
+        <item>Rosticceria</item>
+        <item>Steakhouse</item>
+        <item>Thai</item>
+        <item>Vegano</item>
+        <item>Vegetariano</item>
+        <item>Zuppe</item>
+    </string-array>
+
+    <string name="alert_dialog_choose_food">"Scegli max. 3 tipi di cucina"</string>
+
 </resources>
