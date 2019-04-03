@@ -24,11 +24,14 @@ import android.util.Log;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
+import android.widget.CheckBox;
 import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.ListAdapter;
 import android.widget.TextView;
+import android.widget.TimePicker;
+
 import com.yalantis.ucrop.UCrop;
 import com.yalantis.ucrop.UCropActivity;
 import java.io.File;
@@ -49,14 +52,18 @@ public class Setup extends AppCompatActivity {
     private TextView errorMail;
     private TextView errorPhone;
     private TextView errorCity;
+    private TextView monday, thursday, wednesday, tuesday, friday, saturday, sunday;
+    private CheckBox monC, thuC, wedC, tueC, friC, satC, sunC;
     private final int GALLERY_REQUEST_CODE = 1;
     private final int REQUEST_CAPTURE_IMAGE = 100;
     private final String PROFILE_IMAGE = "ProfileImage.jpg";
     private final String PLACEHOLDER_CAMERA="PlaceCamera.jpg";
     private String placeholderPath;
     private File storageDir;
+    private TextView tv;
     private boolean unchanged, checkString = true;
     private String dialogCode = "ok";
+    private String openHour, closeHour;
     private AlertDialog dialogDism;
 
     private SharedPreferences sharedPref;
@@ -89,6 +96,20 @@ public class Setup extends AppCompatActivity {
         outState.putString("address", address.getText().toString());
         outState.putString("phoneNumber", phoneNumber.getText().toString());
         outState.putString("city", city.getText().toString());
+        outState.putString("monTime", monday.getText().toString());
+        outState.putString("tueTime", tuesday.getText().toString());
+        outState.putString("wedTime", wednesday.getText().toString());
+        outState.putString("thuTime", thursday.getText().toString());
+        outState.putString("friTime", friday.getText().toString());
+        outState.putString("satTime", saturday.getText().toString());
+        outState.putString("sunTime", sunday.getText().toString());
+        outState.putBoolean("monState", monC.isChecked());
+        outState.putBoolean("tueState", tueC.isChecked());
+        outState.putBoolean("wedState", wedC.isChecked());
+        outState.putBoolean("thuState", thuC.isChecked());
+        outState.putBoolean("friState", friC.isChecked());
+        outState.putBoolean("satState", satC.isChecked());
+        outState.putBoolean("sunState", sunC.isChecked());
         outState.putString("dialog", dialogCode);
     }
 
@@ -106,6 +127,20 @@ public class Setup extends AppCompatActivity {
         address.setText(savedInstanceState.getString("address", getResources().getString(R.string.address_hint)));
         phoneNumber.setText(savedInstanceState.getString("phoneNumber", getResources().getString(R.string.phone_hint)));
         city.setText(savedInstanceState.getString("city", getResources().getString(R.string.city_hint)));
+        monday.setText(savedInstanceState.getString("monTime", getResources().getString(R.string.Closed)));
+        tuesday.setText(savedInstanceState.getString("tueTime", getResources().getString(R.string.Closed)));
+        wednesday.setText(savedInstanceState.getString("wedTime", getResources().getString(R.string.Closed)));
+        thursday.setText(savedInstanceState.getString("thuTime", getResources().getString(R.string.Closed)));
+        friday.setText(savedInstanceState.getString("friTime", getResources().getString(R.string.Closed)));
+        saturday.setText(savedInstanceState.getString("satTime", getResources().getString(R.string.Closed)));
+        sunday.setText(savedInstanceState.getString("sunTime", getResources().getString(R.string.Closed)));
+        monC.setChecked(savedInstanceState.getBoolean("monState", false));
+        tueC.setChecked(savedInstanceState.getBoolean("tueState", false));
+        wedC.setChecked(savedInstanceState.getBoolean("wedState", false));
+        thuC.setChecked(savedInstanceState.getBoolean("thuState", false));
+        friC.setChecked(savedInstanceState.getBoolean("friState", false));
+        satC.setChecked(savedInstanceState.getBoolean("satState", false));
+        sunC.setChecked(savedInstanceState.getBoolean("sunState", false));
 
         String dialogPrec = savedInstanceState.getString("dialog");
 
@@ -266,6 +301,20 @@ public class Setup extends AppCompatActivity {
         this.address = findViewById(R.id.address);
         this.phoneNumber = findViewById(R.id.phoneNumber);
         this.city = findViewById(R.id.city);
+        this.monday = findViewById(R.id.timeMonday);
+        this.tuesday = findViewById(R.id.timeTuesday);
+        this.wednesday = findViewById(R.id.timeWednesday);
+        this.thursday = findViewById(R.id.timeThursday);
+        this.friday = findViewById(R.id.timeFriday);
+        this.saturday = findViewById(R.id.timeSaturday);
+        this.sunday = findViewById(R.id.timeSunday);
+        this.monC = findViewById(R.id.checkMonday);
+        this.tueC = findViewById(R.id.checkTuesday);
+        this.wedC = findViewById(R.id.checkWednesday);
+        this.thuC = findViewById(R.id.checkThursday);
+        this.friC = findViewById(R.id.checkFriday);
+        this.satC = findViewById(R.id.checkSaturday);
+        this.sunC = findViewById(R.id.checkSunday);
 
         //setup of the Shared Preferences to save value in (key, value) format
         //Shared Preferences definition
@@ -298,7 +347,43 @@ public class Setup extends AppCompatActivity {
         address.setText(sharedPref.getString("address", getResources().getString(R.string.address_foo)));
         phoneNumber.setText(sharedPref.getString("phoneNumber", getResources().getString(R.string.phone_foo)));
         city.setText(sharedPref.getString("city", getResources().getString(R.string.city_foo)));
+        monday.setText(sharedPref.getString("monTime", getResources().getString(R.string.Closed)));
+        tuesday.setText(sharedPref.getString("tueTime", getResources().getString(R.string.Closed)));
+        wednesday.setText(sharedPref.getString("wedTime", getResources().getString(R.string.Closed)));
+        thursday.setText(sharedPref.getString("thuTime", getResources().getString(R.string.Closed)));
+        friday.setText(sharedPref.getString("friTime", getResources().getString(R.string.Closed)));
+        saturday.setText(sharedPref.getString("satTime", getResources().getString(R.string.Closed)));
+        sunday.setText(sharedPref.getString("sunTime", getResources().getString(R.string.Closed)));
+        monC.setChecked(sharedPref.getBoolean("monState", false));
+        tueC.setChecked(sharedPref.getBoolean("tueState", false));
+        wedC.setChecked(sharedPref.getBoolean("wedState", false));
+        thuC.setChecked(sharedPref.getBoolean("thuState", false));
+        friC.setChecked(sharedPref.getBoolean("friState", false));
+        satC.setChecked(sharedPref.getBoolean("satState", false));
+        sunC.setChecked(sharedPref.getBoolean("sunState", false));
         edit.apply();
+
+        ImageButton mon = findViewById(R.id.editMonday);
+        if (!monC.isChecked())
+            mon.setClickable(false);
+        ImageButton tue = findViewById(R.id.editTuesday);
+        if (!tueC.isChecked())
+            tue.setClickable(false);
+        ImageButton wed = findViewById(R.id.editWednesday);
+        if (!wedC.isChecked())
+            wed.setClickable(false);
+        ImageButton thu = findViewById(R.id.editThursday);
+        if (!thuC.isChecked())
+            thu.setClickable(false);
+        ImageButton fri = findViewById(R.id.editFriday);
+        if (!friC.isChecked())
+            fri.setClickable(false);
+        ImageButton sat = findViewById(R.id.editSaturday);
+        if (!satC.isChecked())
+            sat.setClickable(false);
+        ImageButton sun = findViewById(R.id.editSunday);
+        if (sunC.isChecked())
+            sun.setClickable(false);
 
 
         //onTextChange to notify the user that there are fields that are not saved
@@ -606,6 +691,20 @@ public class Setup extends AppCompatActivity {
         edit.putString("address", address.getText().toString());
         edit.putString("phoneNumber", phoneNumber.getText().toString());
         edit.putString("city", city.getText().toString());
+        edit.putString("monTime", monday.getText().toString());
+        edit.putString("tueTime", tuesday.getText().toString());
+        edit.putString("wedTime", wednesday.getText().toString());
+        edit.putString("thuTime", thursday.getText().toString());
+        edit.putString("friTime", friday.getText().toString());
+        edit.putString("satTime", saturday.getText().toString());
+        edit.putString("sunTime", sunday.getText().toString());
+        edit.putBoolean("monState", monC.isChecked());
+        edit.putBoolean("tueState", tueC.isChecked());
+        edit.putBoolean("wedState", wedC.isChecked());
+        edit.putBoolean("thuState", thuC.isChecked());
+        edit.putBoolean("friState", friC.isChecked());
+        edit.putBoolean("satState", satC.isChecked());
+        edit.putBoolean("sunState", sunC.isChecked());
         edit.apply();
         finish();
     }
@@ -632,6 +731,156 @@ public class Setup extends AppCompatActivity {
             } catch (Exception e) {
                 e.printStackTrace();
             }
+        }
+    }
+
+    public void showPickTime(View view) {
+        int hour = 0;
+        int minute = 0;
+
+        //caller = view;
+
+        switch(view.getId()) {
+            case R.id.editMonday:
+                tv = findViewById(R.id.timeMonday);
+                break;
+            case R.id.editTuesday:
+                tv = findViewById(R.id.timeTuesday);
+                break;
+            case R.id.editWednesday:
+                tv = findViewById(R.id.timeWednesday);
+                break;
+            case R.id.editThursday:
+                tv = findViewById(R.id.timeThursday);
+                break;
+            case R.id.editFriday:
+                tv = findViewById(R.id.timeFriday);
+                break;
+            case R.id.editSaturday:
+                tv = findViewById(R.id.timeSaturday);
+                break;
+            case R.id.editSunday:
+                tv = findViewById(R.id.timeSunday);
+                break;
+        }
+
+        TimePickerDialog timePicker;
+
+        timePicker = new TimePickerDialog(this, new TimePickerDialog.OnTimeSetListener() {
+            @Override
+            public void onTimeSet(TimePicker timePicker, int selectedHour, int selectedMinute) {
+                String selHour = ""+selectedHour;
+                String selMinute = ""+selectedMinute;
+                if(selectedHour < 10)
+                    selHour = "0"+selectedHour;
+                if(selectedMinute < 10)
+                    selMinute = "0"+selectedMinute;
+                openHour = selHour + ":" + selMinute;
+                dialogCode = "secondTime";
+                showSecondPicker();
+            }
+        }, hour, minute, true);
+        timePicker.setTitle(getResources().getString(R.string.opening_time));
+        timePicker.setCancelable(false);
+        dialogCode = "firstTime";
+        timePicker.show();
+    }
+
+    public void showSecondPicker(){
+        int hour = 0;
+        int minute = 0;
+        TimePickerDialog timePicker2;
+        timePicker2 = new TimePickerDialog(this, new TimePickerDialog.OnTimeSetListener() {
+            @Override
+            public void onTimeSet(TimePicker timePicker, int selectedHour, int selectedMinute) {
+                String selHour = ""+selectedHour;
+                String selMinute = ""+selectedMinute;
+                if(selectedHour < 10)
+                    selHour = "0"+selectedHour;
+                if(selectedMinute < 10)
+                    selMinute = "0"+selectedMinute;
+                closeHour = selHour + ":" + selMinute;
+                unchanged = false;
+                dialogCode = "ok";
+                String defHour = openHour + " - " + closeHour;
+                tv.setText(defHour);
+            }
+        }, hour, minute, true);
+        timePicker2.setTitle(getResources().getString(R.string.closing_time));
+        timePicker2.setCancelable(false);
+        dialogCode = "secondTime";
+        timePicker2.show();
+    }
+
+    public void lockUnlock(View view) {
+        String standardTime = "08:00" + " - " + "23:00";
+        unchanged = false;
+        CheckBox cb = findViewById(view.getId());
+        switch(view.getId()) {
+            case R.id.checkMonday:
+                if (cb.isChecked()) {
+                    monday.setText(standardTime);
+                    findViewById(R.id.editMonday).setClickable(true);
+                } else {
+                    Log.d("MAD", "Unchecked");
+                    monday.setText(getResources().getString(R.string.Closed));
+                    findViewById(R.id.editMonday).setClickable(false);
+                }
+                break;
+            case R.id.checkTuesday:
+                if (cb.isChecked()) {
+                    tuesday.setText(standardTime);
+                    findViewById(R.id.editTuesday).setClickable(true);
+                } else {
+                    tuesday.setText(getResources().getString(R.string.Closed));
+                    findViewById(R.id.editTuesday).setClickable(false);
+                }
+                break;
+            case R.id.checkWednesday:
+                if (cb.isChecked()) {
+                    wednesday.setText(standardTime);
+                    findViewById(R.id.editWednesday).setClickable(true);
+                } else {
+                    wednesday.setText(getResources().getString(R.string.Closed));
+                    findViewById(R.id.editWednesday).setClickable(false);
+                }
+                break;
+            case R.id.checkThursday:
+                if (cb.isChecked()) {
+                    thursday.setText(standardTime);
+                    findViewById(R.id.editThursday).setClickable(true);
+                } else {
+                    thursday.setText(getResources().getString(R.string.Closed));
+                    findViewById(R.id.editThursday).setClickable(false);
+                }
+                break;
+            case R.id.checkFriday:
+                if (cb.isChecked()) {
+                    friday.setText(standardTime);
+                    findViewById(R.id.editFriday).setClickable(true);
+                } else {
+                    friday.setText(getResources().getString(R.string.Closed));
+                    findViewById(R.id.editFriday).setClickable(false);
+                }
+                break;
+            case R.id.checkSaturday:
+                if (cb.isChecked()) {
+                    saturday.setText(standardTime);
+                    findViewById(R.id.editSaturday).setClickable(true);
+                } else {
+                    saturday.setText(getResources().getString(R.string.Closed));
+                    findViewById(R.id.editSaturday).setClickable(false);
+                }
+                break;
+            case R.id.checkSunday:
+                if (cb.isChecked()) {
+                    sunday.setText(standardTime);
+                    findViewById(R.id.editSunday).setClickable(true);
+                } else {
+                    sunday.setText(getResources().getString(R.string.Closed));
+                    findViewById(R.id.editSunday).setClickable(false);
+                }
+                break;
         }
     }
 
