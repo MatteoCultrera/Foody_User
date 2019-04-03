@@ -12,6 +12,40 @@
     <string name="timetable" translatable="false">Timetable</string>
 
     <string name="placeholder_price">0,00 €</string>
+    <string name="delivery_price">Delivery price</string>
+    <string name="food_type">Select cuisines (max. 3)</string>
+    <string name="food_rosso">Italian, Pizza, Pasta</string>
+    <string name="food_type_unselect">Type 1</string>
 
-    <string name="delivery_price">Delivery Price</string>
+    <string-array name="foodcategory_array">
+        <item>American</item>
+        <item>Brazilian</item>
+        <item>Chinese</item>
+        <item>Korean</item>
+        <item>Crepes</item>
+        <item>Desserts</item>
+        <item>Fried</item>
+        <item>Japanese</item>
+        <item>Gluten Free</item>
+        <item>Greek</item>
+        <item>Hamburger</item>
+        <item>Indian</item>
+        <item>Kebab</item>
+        <item>Middle East</item>
+        <item>Mediterranean</item>
+        <item>Mexican</item>
+        <item>Noodle</item>
+        <item>Pasta and Rice</item>
+        <item>Wraps</item>
+        <item>Pizza</item>
+        <item>Fry Shop</item>
+        <item>Steakhouse</item>
+        <item>Thai</item>
+        <item>Vegan</item>
+        <item>Vegetarian</item>
+        <item>Soups</item>
+    </string-array>
+
+    <string name="alert_dialog_choose_food">"Choose max. 3 cuisine"</string>
+
 </resources>

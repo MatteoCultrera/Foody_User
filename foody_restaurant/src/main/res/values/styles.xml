@@ -13,7 +13,7 @@
     </style>
 
     <style name="AppCompatAlertDialogStyle" parent="Theme.MaterialComponents.Light.Dialog.Alert">
-        <item name="colorAccent">#FFFFFF</item>
+        <item name="colorAccent">@color/colorAccent</item>
         <item name="android:buttonBarNegativeButtonStyle">@style/ButtonColor</item>
         <item name="android:buttonBarPositiveButtonStyle">@style/ButtonColor</item>
         <item name="android:background">#FFFFFF</item>

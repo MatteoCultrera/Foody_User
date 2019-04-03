@@ -32,7 +32,7 @@ public class User extends AppCompatActivity {
     private TextView address;
     private TextView phoneNumber;
     private TextView monTime, tueTime, wedTime, thuTime, friTime, satTime,sunTime;
-    private TextView delivPrice;
+    private TextView delivPrice, foodType;
     private final String PLACEHOLDER_CAMERA="PlaceCamera.jpg";
     private final String PROFILE_IMAGE = "ProfileImage.jpg";
     private File storageDir;
@@ -142,6 +142,7 @@ public class User extends AppCompatActivity {
         this.satTime = findViewById(R.id.satTime);
         this.sunTime = findViewById(R.id.sunTime);
         this.delivPrice = findViewById(R.id.delivery);
+        this.foodType = findViewById(R.id.food_type);
 
         //setup of the Shared Preferences to save value in (key, value) format
 
@@ -150,8 +151,8 @@ public class User extends AppCompatActivity {
         address.setText(sharedPref.getString("address", getResources().getString(R.string.address_hint)));
         phoneNumber.setText(sharedPref.getString("phoneNumber", getResources().getString(R.string.phone_hint)));
 
-
         deliveryPrice = sharedPref.getInt("delivPrice",5);
+        foodType.setText(sharedPref.getString("foodType", getResources().getString(R.string.food_type_unselect)));
 
         monTime.setText(sharedPref.getString("monTime", getResources().getString(R.string.Closed)));
         tueTime.setText(sharedPref.getString("tueTime", getResources().getString(R.string.Closed)));
@@ -190,6 +191,7 @@ public class User extends AppCompatActivity {
         outState.putString("satTime", satTime.getText().toString());
         outState.putString("sunTime", sunTime.getText().toString());
         outState.putString("delivPrice", delivPrice.getText().toString());
+        outState.putString("foodType", foodType.getText().toString());
     }
 
     @Override
@@ -208,6 +210,7 @@ public class User extends AppCompatActivity {
         satTime.setText(savedInstanceState.getString("satTime", getResources().getString(R.string.Closed)));
         sunTime.setText(savedInstanceState.getString("sunTime", getResources().getString(R.string.Closed)));
         delivPrice.setText(savedInstanceState.getString("delivPrice", getResources().getString(R.string.placeholder_price)));
+        foodType.setText(savedInstanceState.getString("foodType", getResources().getString(R.string.food_type_unselect)));
     }
 
     protected void onPause(){
