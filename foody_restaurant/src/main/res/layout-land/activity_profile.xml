@@ -152,6 +152,8 @@
                     android:layout_marginTop="8dp"
                     android:contentDescription="@null"
                     android:scaleType="fitCenter"
+                    android:adjustViewBounds="true"
+                    android:padding="2dp"
                     android:src="@drawable/phone_black" />
 
                 <TextView
@@ -192,6 +194,8 @@
                     android:layout_marginTop="8dp"
                     android:contentDescription="@null"
                     android:scaleType="fitCenter"
+                    android:adjustViewBounds="true"
+                    android:padding="2dp"
                     android:src="@drawable/mail_black" />
 
                 <TextView
@@ -232,7 +236,9 @@
                     android:layout_marginTop="8dp"
                     android:contentDescription="@null"
                     android:scaleType="fitCenter"
-                    android:src="@drawable/location_black" />
+                    android:adjustViewBounds="true"
+                    android:padding="2dp"
+                    android:src="@drawable/address2_black" />
 
                 <TextView
                     android:id="@+id/address"
@@ -273,6 +279,8 @@
                     android:layout_marginTop="8dp"
                     android:contentDescription="@null"
                     android:scaleType="fitCenter"
+                    android:adjustViewBounds="true"
+                    android:padding="2dp"
                     android:src="@drawable/clock" />
 
                 <TextView
