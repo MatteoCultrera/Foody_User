@@ -8,5 +8,7 @@
     <string name="phone_foo" translatable="false">3383265987</string>
     <string name="city_foo" translatable="false">Torino</string>
     <string name="invalid_city">Invalid City</string>
+    <string name="opening_time">Select opening time</string>
+    <string name="closing_time">Select closing time</string>
     <string name="free">Free</string>
 </resources>
