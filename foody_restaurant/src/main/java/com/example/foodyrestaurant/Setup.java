@@ -781,7 +781,7 @@ public class Setup extends AppCompatActivity {
         int hour = 0;
         int minute = 0;
         TimePickerDialog timePicker2;
-        timePicker2 = new TimePickerDialog(this, android.R.style.Theme_Material_Light_Dialog_NoActionBar,new TimePickerDialog.OnTimeSetListener() {
+        timePicker2 = new TimePickerDialog(this, new TimePickerDialog.OnTimeSetListener() {
             @Override
             public void onTimeSet(TimePicker timePicker, int selectedHour, int selectedMinute) {
                 String selHour = ""+selectedHour;
