@@ -146,6 +146,8 @@
                     android:layout_height="30dp"
                     android:layout_marginTop="8dp"
                     android:scaleType="fitCenter"
+                    android:adjustViewBounds="true"
+                    android:padding="2dp"
                     android:contentDescription="@null"
                     android:src="@drawable/phone_black" />
 
@@ -186,6 +188,8 @@
                     android:layout_height="30dp"
                     android:layout_marginTop="8dp"
                     android:scaleType="fitCenter"
+                    android:adjustViewBounds="true"
+                    android:padding="2dp"
                     android:contentDescription="@null"
                     android:src="@drawable/mail_black" />
 
@@ -226,8 +230,10 @@
                     android:layout_height="30dp"
                     android:layout_marginTop="8dp"
                     android:scaleType="fitCenter"
+                    android:adjustViewBounds="true"
+                    android:padding="2dp"
                     android:contentDescription="@null"
-                    android:src="@drawable/location_black" />
+                    android:src="@drawable/address2_black" />
 
                 <TextView
                     android:id="@+id/address"
@@ -266,8 +272,10 @@
                     android:layout_height="30dp"
                     android:layout_marginTop="8dp"
                     android:scaleType="fitCenter"
+                    android:adjustViewBounds="true"
+                    android:padding="2dp"
                     android:contentDescription="@null"
-                    android:src="@drawable/name_black" />
+                    android:src="@drawable/description_black" />
 
                 <TextView
                     android:id="@+id/bio"
