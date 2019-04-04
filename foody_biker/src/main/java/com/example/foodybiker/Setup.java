@@ -526,8 +526,6 @@ public class Setup extends AppCompatActivity {
     protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
 
-        Log.d("PICTURE", "End Picture");
-
         if(resultCode == RESULT_OK){
             switch (requestCode){
 
@@ -560,8 +558,6 @@ public class Setup extends AppCompatActivity {
     }
 
     private File createOrReplacePlaceholder(){
-
-        Log.d("PICTURE", "Create or Replace");
 
         File f = new File(storageDir, PLACEHOLDER_CAMERA);
 

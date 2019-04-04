@@ -402,8 +402,6 @@ public class Setup extends AppCompatActivity {
     protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
 
-        Log.d("PICTURE", "End Picture");
-
         if(resultCode == RESULT_OK){
             switch (requestCode){
 
@@ -436,8 +434,6 @@ public class Setup extends AppCompatActivity {
     }
 
     private File createOrReplacePlaceholder(){
-
-        Log.d("PICTURE", "Create or Replace");
 
         File f = new File(storageDir, PLACEHOLDER_CAMERA);
 
@@ -563,7 +559,6 @@ public class Setup extends AppCompatActivity {
             super.onBackPressed();
         }
         else {
-            Log.d("ALERT", "false");
             AlertDialog.Builder builder = new AlertDialog.Builder(this, R.style.AppCompatAlertDialogStyle);
             builder.setNegativeButton(getResources().getString(R.string.cancel), new DialogInterface.OnClickListener() {
                 @Override
