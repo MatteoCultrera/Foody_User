@@ -40,7 +40,6 @@ import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.TreeMap;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -189,7 +188,7 @@ public class Setup extends AppCompatActivity {
         indexFoods = new ArrayList<>();
         foodCategories = getResources().getStringArray(R.array.foodcategory_array);
 
-        int prova = 0;
+        int prova;
         prova = savedInstanceState.getInt("foodIndexOne", -1);
         if(prova != -1) {
             indexFoods.add(prova);
@@ -437,7 +436,7 @@ public class Setup extends AppCompatActivity {
         indexFoods = new ArrayList<>();
         foodCategories = getResources().getStringArray(R.array.foodcategory_array);
 
-        int prova = 0;
+        int prova;
         prova = sharedPref.getInt("foodIndexOne", -1);
         if(prova != -1) {
             indexFoods.add(prova);
@@ -1123,7 +1122,7 @@ public class Setup extends AppCompatActivity {
 
         builder.setTitle(R.string.alert_dialog_choose_food);
 
-        AlertDialog foodChooseType = builder.create();;
+        AlertDialog foodChooseType = builder.create();
         foodChooseType.show();
 
     }

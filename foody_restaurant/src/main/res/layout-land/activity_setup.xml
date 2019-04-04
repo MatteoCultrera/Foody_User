@@ -119,8 +119,8 @@
         <ImageView
             android:id="@+id/profilePicture"
             style="@style/Widget.MaterialComponents.Toolbar"
-            android:layout_width="0dp"
-            android:layout_height="0dp"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
             android:contentDescription="@null"
             android:scaleType="centerCrop"
             app:layout_constraintBottom_toBottomOf="parent"
@@ -533,7 +533,7 @@
                     android:contentDescription="@null"
                     android:padding="2dp"
                     android:scaleType="fitCenter"
-                    android:src="@drawable/address2_black"
+                    android:src="@drawable/restaurant_black"
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintHorizontal_bias="0.0"
                     app:layout_constraintStart_toStartOf="parent"
@@ -600,7 +600,7 @@
                 android:id="@+id/table"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginLeft="16dp"
+                android:layout_marginStart="16dp"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintLeft_toLeftOf="parent"
                 app:layout_constraintTop_toBottomOf="@+id/tableText">

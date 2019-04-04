@@ -51,6 +51,7 @@ public class Setup extends AppCompatActivity {
     private TextView errorName;
     private TextView errorMail;
     private TextView errorPhone;
+    private TextView errorAddress;
     private TextView errorCity;
     private TextView monday, thursday, wednesday, tuesday, friday, saturday, sunday;
     private CheckBox monC, thuC, wedC, tueC, friC, satC, sunC;
@@ -244,6 +245,26 @@ public class Setup extends AppCompatActivity {
         updateSave();
     }
 
+    private void checkAddress(){
+        View errorLine = findViewById(R.id.address_error_line);
+        String regexpAddress = "^(?=\\s*\\S).*$";
+        final String addressToCheck = address.getText().toString();
+
+        if(!Pattern.compile(regexpAddress).matcher(addressToCheck).matches()) {
+            errorAddress.setText(getResources().getString(R.string.error_address));
+            checkString = false;
+            errorLine.setBackgroundColor(getResources().getColor(R.color.errorColor, this.getTheme()));
+            errorLine.setAlpha(1);
+        }else{
+            checkString = true;
+            errorAddress.setText("");
+            errorLine.setAlpha(0.2f);
+            errorLine.setBackgroundColor(Color.BLACK);
+        }
+
+        updateSave();
+    }
+
     private void checkCity(){
         String c = city.getText().toString();
         String regx = "^[\\p{L} .'-]+$";
@@ -325,9 +346,8 @@ public class Setup extends AppCompatActivity {
         this.errorName = findViewById(R.id.name_error);
         this.errorMail = findViewById(R.id.email_error);
         this.errorPhone = findViewById(R.id.number_error);
+        this.errorAddress = findViewById(R.id.address_error);
         this.errorCity = findViewById(R.id.city_error);
-        TextView errorAddress = findViewById(R.id.address_error);
-        //ImageButton back = findViewById(R.id.backButton);
         this.save = findViewById(R.id.saveButton);
 
         errorName.setText("");
@@ -430,6 +450,7 @@ public class Setup extends AppCompatActivity {
             }
             @Override
             public void onTextChanged(CharSequence charSequence, int i, int i1, int i2) {
+                checkAddress();
             }
             @Override
             public void afterTextChanged(Editable editable) {
