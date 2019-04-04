@@ -608,8 +608,6 @@ public class Setup extends AppCompatActivity {
     protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
 
-        Log.d("PICTURE", "End Picture");
-
         if(resultCode == RESULT_OK){
             switch (requestCode){
 
@@ -642,8 +640,6 @@ public class Setup extends AppCompatActivity {
     }
 
     private File createOrReplacePlaceholder(){
-
-        Log.d("PICTURE", "Create or Replace");
 
         File f = new File(storageDir, PLACEHOLDER_CAMERA);
 
@@ -997,7 +993,6 @@ public class Setup extends AppCompatActivity {
                     monday.setText(standardTime);
                     findViewById(R.id.editMonday).setClickable(true);
                 } else{
-                    Log.d("MAD", "Unchecked");
                     monday.setText(getResources().getString(R.string.Closed));
                     findViewById(R.id.editMonday).setClickable(false);
                 }
@@ -1079,9 +1074,7 @@ public class Setup extends AppCompatActivity {
             @Override
             public void onClick(DialogInterface dialog, int which, boolean isChecked) {
                 if (isChecked) {
-                    //if (!selectedFoods.contains(String.valueOf(foodCategories[which]))) {
                     if (selectedFoods.size() < 3) {
-                        //Log.d("MAD", "selectedFood " + selectedFoods.size());
                         selectedFoods.add(String.valueOf(foodCategories[which]));
                         indexFoods.add(which);
                         checkedFoods[which] = true;
@@ -1093,10 +1086,8 @@ public class Setup extends AppCompatActivity {
                 } else {
                     if(selectedFoods.contains(String.valueOf(foodCategories[which])))
                         selectedFoods.remove(String.valueOf(foodCategories[which]));
-                    //Log.d("MAD", "selectedFood DESELECT " + selectedFoods.size());
                     if(indexFoods.contains(which))
                         indexFoods.remove(Integer.valueOf(which));
-                    //Log.d("MAD", ""+ indexFoods.size());
                     checkedFoods[which] = false;
                 }
             }
