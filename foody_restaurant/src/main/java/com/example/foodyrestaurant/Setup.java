@@ -56,11 +56,11 @@ public class Setup extends AppCompatActivity {
     private TextView errorName;
     private TextView errorMail;
     private TextView errorPhone;
+    private TextView errorAddress;
     private int caller;
     private AlertDialog dialogDism;
     private TimePickerDialog timePicker;
     private AlertDialog foodChooseType;
-    private TextView errorAddress;
     private final int GALLERY_REQUEST_CODE = 1;
     private final int REQUEST_CAPTURE_IMAGE = 100;
     private final String PROFILE_IMAGE = "ProfileImage.jpg";
@@ -460,7 +460,7 @@ public class Setup extends AppCompatActivity {
         edit.apply();
 
         double price = deliveryPrice * 0.5;
-        String text = String.format("%.2f",price) + " €";
+        String text = String.format("%.2f",price) + R.string.value;
         delivPrice.setText(text);
         seekBarPrice.setProgress(deliveryPrice);
 
@@ -586,7 +586,7 @@ public class Setup extends AppCompatActivity {
             public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
                 deliveryPrice = progress;
                 double price = deliveryPrice * 0.5;
-                String text = String.format("%.2f",price) + " €";
+                String text = String.format("%.2f",price) + R.string.value;
                 delivPrice.setText(text);
                 unchanged = false;
 
@@ -633,10 +633,10 @@ public class Setup extends AppCompatActivity {
                     Bitmap bitmap = getBitmapFromFile();
 
                     if(bitmap != null){
+                        profilePicture.setImageBitmap(bitmap);
                         File placeholder = new File(storageDir, PLACEHOLDER_CAMERA);
                         saveBitmap(bitmap, placeholder.getPath());
                         unchanged = false;
-                        profilePicture.setImageURI(Uri.fromFile(placeholder));
                     }
                     break;
             }
@@ -700,7 +700,8 @@ public class Setup extends AppCompatActivity {
         builder.setAdapter(arrayAdapter, new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialog, int which) {
-                switch (which){                    case 0:
+                switch (which){
+                    case 0:
                         pickFromGallery();
                         dialogCode = "ok";
                         break;

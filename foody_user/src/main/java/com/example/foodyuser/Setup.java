@@ -333,8 +333,6 @@ public class Setup extends AppCompatActivity {
                     if(editable.subSequence(i-1, i).toString().equals("\n"))
                         editable.replace(i-1, i, "");
                 }
-
-                String myTextString = editable.toString();
             }
         });
         this.phoneNumber.addTextChangedListener(new TextWatcher() {
@@ -372,8 +370,6 @@ public class Setup extends AppCompatActivity {
                     if(editable.subSequence(i-1, i).toString().equals("\n"))
                         editable.replace(i-1, i, "");
                 }
-
-                String myTextString = editable.toString();
             }
         });
 
