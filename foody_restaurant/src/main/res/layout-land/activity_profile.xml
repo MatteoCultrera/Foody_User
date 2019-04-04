@@ -81,6 +81,7 @@
                 app:layout_constraintTop_toTopOf="parent" />
 
             <TextView
+                android:id="@+id/food_type"
                 style="@android:style/Widget.Material.TextView"
                 android:layout_width="0dp"
                 android:layout_height="20dp"
@@ -89,7 +90,7 @@
                 android:fontFamily="@font/roboto_regular"
                 android:gravity="center_vertical"
                 android:maxLines="1"
-                android:text="@string/restaurant_maintype"
+                android:hint="@string/food_type_unselect"
                 android:textColor="#ffffffff"
                 android:textColorHint="#bbffffff"
                 android:textSize="15sp"

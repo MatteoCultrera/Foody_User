@@ -92,6 +92,91 @@
 
 
             <android.support.constraint.ConstraintLayout
+                android:id="@+id/constraintLayout9"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="16dp"
+                android:layout_marginTop="21dp"
+                android:layout_marginEnd="16dp"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintHorizontal_bias="0.0"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/constraintLayout8">
+
+                <ImageView
+                    android:id="@+id/imageView6"
+                    android:layout_width="30dp"
+                    android:layout_height="30dp"
+                    android:layout_marginTop="8dp"
+                    android:layout_marginEnd="161dp"
+                    android:adjustViewBounds="true"
+                    android:contentDescription="@null"
+                    android:padding="2dp"
+                    android:scaleType="fitCenter"
+                    android:src="@drawable/address2_black"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintHorizontal_bias="0.0"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toTopOf="parent" />
+
+                <TextView
+                    android:id="@+id/food"
+                    android:layout_width="0dp"
+                    android:layout_height="23dp"
+                    android:layout_marginStart="8dp"
+                    android:layout_marginTop="11dp"
+                    android:background="@android:color/transparent"
+                    android:fontFamily="@font/roboto_regular"
+                    android:text="@string/food_type"
+                    android:textColor="@color/primaryText"
+                    android:textSize="15sp"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toEndOf="@+id/imageView6"
+                    app:layout_constraintTop_toTopOf="parent" />
+
+                <ImageButton
+                    android:id="@+id/editFood"
+                    android:layout_width="24dp"
+                    android:layout_height="24dp"
+                    android:layout_marginTop="8dp"
+                    android:layout_marginEnd="16dp"
+                    android:adjustViewBounds="true"
+                    android:background="@android:color/transparent"
+                    android:contentDescription="@null"
+                    android:onClick="showPickFood"
+                    android:padding="2dp"
+                    android:scaleType="fitCenter"
+                    android:src="@drawable/edit_black"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintTop_toBottomOf="@+id/food" />
+
+                <TextView
+                    android:id="@+id/food_type"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="38dp"
+                    android:layout_marginTop="8dp"
+                    android:layout_marginEnd="8dp"
+                    android:hint="@string/food_type_unselect"
+                    android:textColor="@color/primaryText"
+                    android:textSize="15sp"
+                    app:layout_constraintEnd_toStartOf="@+id/editFood"
+                    app:layout_constraintHorizontal_bias="0.0"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toBottomOf="@+id/food" />
+
+                <View
+                    android:layout_width="match_parent"
+                    android:layout_height="1dp"
+                    android:layout_marginTop="12dp"
+                    android:alpha="0.2"
+                    android:background="@android:color/black"
+                    app:layout_constraintTop_toBottomOf="@+id/food_type"
+                    tools:layout_editor_absoluteX="16dp" />
+
+            </android.support.constraint.ConstraintLayout>
+
+            <android.support.constraint.ConstraintLayout
                 android:id="@+id/constraintLayout8"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
@@ -157,13 +242,11 @@
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
                     android:layout_marginTop="16dp"
-                    android:max="17"
+                    android:max="16"
                     android:progress="6"
-                    
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintTop_toBottomOf="@+id/deliv" />
-
 
             </android.support.constraint.ConstraintLayout>
 
@@ -222,7 +305,7 @@
                 android:layout_width="0dp"
                 android:layout_height="61dp"
                 android:layout_marginStart="16dp"
-                android:layout_marginTop="42dp"
+                android:layout_marginTop="16dp"
                 android:layout_marginEnd="16dp"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
@@ -234,10 +317,10 @@
                     android:layout_height="30dp"
                     android:layout_marginTop="8dp"
                     android:layout_marginEnd="161dp"
-                    android:contentDescription="@null"
-                    android:scaleType="fitCenter"
                     android:adjustViewBounds="true"
+                    android:contentDescription="@null"
                     android:padding="2dp"
+                    android:scaleType="fitCenter"
                     android:src="@drawable/name_black"
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintHorizontal_bias="0.0"
@@ -429,7 +512,7 @@
             <android.support.constraint.ConstraintLayout
                 android:id="@+id/constraintLayout7"
                 android:layout_width="0dp"
-                android:layout_height="59dp"
+                android:layout_height="61dp"
                 android:layout_marginStart="16dp"
                 android:layout_marginTop="21dp"
                 android:layout_marginEnd="16dp"
@@ -475,6 +558,7 @@
                     app:layout_constraintTop_toTopOf="parent" />
 
                 <View
+                    android:id="@+id/address_error_line"
                     android:layout_width="match_parent"
                     android:layout_height="1dp"
                     android:layout_marginTop="6dp"
@@ -509,7 +593,7 @@
                 android:textSize="18sp"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@+id/constraintLayout8" />
+                app:layout_constraintTop_toBottomOf="@+id/constraintLayout9" />
 
             <android.support.constraint.ConstraintLayout
                 android:id="@+id/table"
