@@ -47,6 +47,7 @@ public class Setup extends AppCompatActivity {
     private TextView errorName;
     private TextView errorMail;
     private TextView errorPhone;
+    private TextView errorAddress;
     private final int GALLERY_REQUEST_CODE = 1;
     private final int REQUEST_CAPTURE_IMAGE = 100;
     private final String PROFILE_IMAGE = "ProfileImage.jpg";
@@ -207,6 +208,26 @@ public class Setup extends AppCompatActivity {
         updateSave();
     }
 
+    private void checkAddress(){
+        View errorLine = findViewById(R.id.address_error_line);
+        String regexpAddress = "^(?=\\s*\\S).*$";
+        final String addressToCheck = address.getText().toString();
+
+        if(!Pattern.compile(regexpAddress).matcher(addressToCheck).matches()) {
+            errorAddress.setText(getResources().getString(R.string.error_address));
+            checkString = false;
+            errorLine.setBackgroundColor(getResources().getColor(R.color.errorColor, this.getTheme()));
+            errorLine.setAlpha(1);
+        }else{
+            checkString = true;
+            errorAddress.setText("");
+            errorLine.setAlpha(0.2f);
+            errorLine.setBackgroundColor(Color.BLACK);
+        }
+
+        updateSave();
+    }
+
     private  void pickFromGallery(){
         Intent intent = new Intent(Intent.ACTION_PICK);
         intent.setType("image/*");
@@ -251,7 +272,7 @@ public class Setup extends AppCompatActivity {
         this.errorName = findViewById(R.id.name_error);
         this.errorMail = findViewById(R.id.email_error);
         this.errorPhone = findViewById(R.id.number_error);
-        TextView errorAddress = findViewById(R.id.address_error);
+        this.errorAddress = findViewById(R.id.address_error);
         TextView errorBio = findViewById(R.id.bio_error);
         //ImageButton back = findViewById(R.id.backButton);
         this.save = findViewById(R.id.saveButton);
@@ -320,6 +341,7 @@ public class Setup extends AppCompatActivity {
             }
             @Override
             public void onTextChanged(CharSequence charSequence, int i, int i1, int i2) {
+                checkAddress();
             }
             @Override
             public void afterTextChanged(Editable editable) {
@@ -333,8 +355,6 @@ public class Setup extends AppCompatActivity {
                     if(editable.subSequence(i-1, i).toString().equals("\n"))
                         editable.replace(i-1, i, "");
                 }
-
-                String myTextString = editable.toString();
             }
         });
         this.phoneNumber.addTextChangedListener(new TextWatcher() {
@@ -372,8 +392,6 @@ public class Setup extends AppCompatActivity {
                     if(editable.subSequence(i-1, i).toString().equals("\n"))
                         editable.replace(i-1, i, "");
                 }
-
-                String myTextString = editable.toString();
             }
         });
 

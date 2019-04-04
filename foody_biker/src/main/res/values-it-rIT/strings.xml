@@ -2,9 +2,10 @@
 <resources>
     <string name="app_name">Foody Biker</string>
     <string name="city_hint">Città</string>
-    <string name="foody_level">Biker Beginner</string>
+    <string name="foody_level">Biker Principiante</string>
     <string name="free">Libero</string>
     <string name="invalid_city">Città non valida</string>
     <string name="opening_time">Seleziona l\'orario di apertura</string>
     <string name="closing_time">Selezione l\'orario di chiusura</string>
+    <string name="okButton">Ok</string>
 </resources>

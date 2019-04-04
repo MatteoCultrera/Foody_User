@@ -51,6 +51,7 @@ public class Setup extends AppCompatActivity {
     private TextView errorName;
     private TextView errorMail;
     private TextView errorPhone;
+    private TextView errorAddress;
     private TextView errorCity;
     private TextView monday, thursday, wednesday, tuesday, friday, saturday, sunday;
     private CheckBox monC, thuC, wedC, tueC, friC, satC, sunC;
@@ -166,6 +167,7 @@ public class Setup extends AppCompatActivity {
             }
         }
 
+        updateButtons();
         name.clearFocus();
         email.clearFocus();
         address.clearFocus();
@@ -261,6 +263,26 @@ public class Setup extends AppCompatActivity {
         updateSave();
     }
 
+    private void checkAddress(){
+        View errorLine = findViewById(R.id.address_error_line);
+        String regexpAddress = "^(?=\\s*\\S).*$";
+        final String addressToCheck = address.getText().toString();
+
+        if(!Pattern.compile(regexpAddress).matcher(addressToCheck).matches()) {
+            errorAddress.setText(getResources().getString(R.string.error_address));
+            checkString = false;
+            errorLine.setBackgroundColor(getResources().getColor(R.color.errorColor, this.getTheme()));
+            errorLine.setAlpha(1);
+        }else{
+            checkString = true;
+            errorAddress.setText("");
+            errorLine.setAlpha(0.2f);
+            errorLine.setBackgroundColor(Color.BLACK);
+        }
+
+        updateSave();
+    }
+
     private void checkCity(){
         String c = city.getText().toString();
         String regx = "^[\\p{L} .'-]+$";
@@ -342,9 +364,8 @@ public class Setup extends AppCompatActivity {
         this.errorName = findViewById(R.id.name_error);
         this.errorMail = findViewById(R.id.email_error);
         this.errorPhone = findViewById(R.id.number_error);
+        this.errorAddress = findViewById(R.id.address_error);
         this.errorCity = findViewById(R.id.city_error);
-        TextView errorAddress = findViewById(R.id.address_error);
-        //ImageButton back = findViewById(R.id.backButton);
         this.save = findViewById(R.id.saveButton);
 
         errorName.setText("");
@@ -441,29 +462,6 @@ public class Setup extends AppCompatActivity {
                 }
             }
         });
-        this.address.addTextChangedListener(new TextWatcher() {
-            @Override
-            public void beforeTextChanged(CharSequence charSequence, int i, int i1, int i2) {
-            }
-            @Override
-            public void onTextChanged(CharSequence charSequence, int i, int i1, int i2) {
-            }
-            @Override
-            public void afterTextChanged(Editable editable) {
-                String check = sharedPref.getString("address", null);
-                if (check != null && check.compareTo(editable.toString()) != 0){
-                    unchanged = false;
-                }
-
-                for(int i = editable.length(); i > 0; i--) {
-
-                    if(editable.subSequence(i-1, i).toString().equals("\n"))
-                        editable.replace(i-1, i, "");
-                }
-
-                String myTextString = editable.toString();
-            }
-        });
         this.phoneNumber.addTextChangedListener(new TextWatcher() {
             @Override
             public void beforeTextChanged(CharSequence charSequence, int i, int i1, int i2) {
@@ -477,6 +475,28 @@ public class Setup extends AppCompatActivity {
                 String check = sharedPref.getString("phoneNumber", null);
                 if (check != null && check.compareTo(editable.toString()) != 0){
                     unchanged = false;
+                }
+            }
+        });
+        this.address.addTextChangedListener(new TextWatcher() {
+            @Override
+            public void beforeTextChanged(CharSequence charSequence, int i, int i1, int i2) {
+            }
+            @Override
+            public void onTextChanged(CharSequence charSequence, int i, int i1, int i2) {
+                checkAddress();
+            }
+            @Override
+            public void afterTextChanged(Editable editable) {
+                String check = sharedPref.getString("address", null);
+                if (check != null && check.compareTo(editable.toString()) != 0){
+                    unchanged = false;
+                }
+
+                for(int i = editable.length(); i > 0; i--) {
+
+                    if(editable.subSequence(i-1, i).toString().equals("\n"))
+                        editable.replace(i-1, i, "");
                 }
             }
         });
@@ -597,14 +617,14 @@ public class Setup extends AppCompatActivity {
             @Override
             public void onClick(DialogInterface dialog, int which) {
                 switch (which){
-                case 0:
-                    pickFromGallery();
-                    dialogCode = "ok";
-                    break;
-                case 1:
-                    pickFromCamera();
-                    dialogCode = "ok";
-                    break;
+                    case 0:
+                        pickFromGallery();
+                        dialogCode = "ok";
+                        break;
+                    case 1:
+                        pickFromCamera();
+                        dialogCode = "ok";
+                        break;
                 }
             }
         });
@@ -667,7 +687,6 @@ public class Setup extends AppCompatActivity {
             super.onBackPressed();
         }
         else {
-            Log.d("ALERT", "false");
             AlertDialog.Builder builder = new AlertDialog.Builder(this, R.style.AppCompatAlertDialogStyle);
             builder.setNegativeButton(getResources().getString(R.string.cancel), new DialogInterface.OnClickListener() {
                 @Override
@@ -778,7 +797,10 @@ public class Setup extends AppCompatActivity {
                 tv = findViewById(R.id.timeSunday);
                 break;
         }
-        timePicker = new TimePickerDialog(this, new TimePickerDialog.OnTimeSetListener() {
+
+        TimePickerDialog timePicker;
+
+        timePicker = new TimePickerDialog(this, R.style.DateTimeDialog, new TimePickerDialog.OnTimeSetListener() {
             @Override
             public void onTimeSet(TimePicker timePicker, int selectedHour, int selectedMinute) {
                 String selHour = ""+selectedHour;
@@ -794,6 +816,7 @@ public class Setup extends AppCompatActivity {
         }, hour, minute, true);
         timePicker.setTitle(getResources().getString(R.string.opening_time));
         timePicker.setCancelable(false);
+        timePicker.setButton(DialogInterface.BUTTON_POSITIVE,getResources().getString(R.string.okButton), timePicker);
         timePicker.setOnCancelListener(new DialogInterface.OnCancelListener() {
             @Override
             public void onCancel(DialogInterface dialogInterface) {
@@ -807,6 +830,7 @@ public class Setup extends AppCompatActivity {
     public void showSecondPicker(){
         int hour = 0;
         int minute = 0;
+
         switch(caller) {
             case R.id.editMonday:
                 tv = findViewById(R.id.timeMonday);
@@ -830,7 +854,9 @@ public class Setup extends AppCompatActivity {
                 tv = findViewById(R.id.timeSunday);
                 break;
         }
-        timePicker = new TimePickerDialog(this, new TimePickerDialog.OnTimeSetListener() {
+
+        TimePickerDialog timePicker2;
+        timePicker2 = new TimePickerDialog(this, R.style.DateTimeDialog, new TimePickerDialog.OnTimeSetListener() {
             @Override
             public void onTimeSet(TimePicker timePicker, int selectedHour, int selectedMinute) {
                 String selHour = ""+selectedHour;
@@ -847,16 +873,17 @@ public class Setup extends AppCompatActivity {
                 tv.setText(defHour);
             }
         }, hour, minute, true);
-        timePicker.setTitle(getResources().getString(R.string.closing_time));
-        timePicker.setCancelable(false);
-        timePicker.setOnCancelListener(new DialogInterface.OnCancelListener() {
+        timePicker2.setTitle(getResources().getString(R.string.closing_time));
+        timePicker2.setCancelable(false);
+        timePicker2.setButton(DialogInterface.BUTTON_POSITIVE,getResources().getString(R.string.okButton), timePicker2);
+        timePicker2.setOnCancelListener(new DialogInterface.OnCancelListener() {
             @Override
             public void onCancel(DialogInterface dialogInterface) {
                 dialogCode = "ok";
             }
         });
         dialogCode = "secondTime";
-        timePicker.show();
+        timePicker2.show();
     }
 
     public void lockUnlock(View view) {
@@ -930,4 +957,49 @@ public class Setup extends AppCompatActivity {
         }
     }
 
+    public void updateButtons() {
+        CheckBox cb;
+        cb =findViewById(R.id.checkMonday);
+        if (cb.isChecked()) {
+            findViewById(R.id.editMonday).setClickable(true);
+        } else {
+            findViewById(R.id.editMonday).setClickable(false);
+        }
+        cb=findViewById(R.id.checkTuesday);
+        if (cb.isChecked()) {
+            findViewById(R.id.editTuesday).setClickable(true);
+        } else {
+            findViewById(R.id.editTuesday).setClickable(false);
+        }
+        cb = findViewById(R.id.checkWednesday);
+        if (cb.isChecked()) {
+            findViewById(R.id.editWednesday).setClickable(true);
+        } else {
+            findViewById(R.id.editWednesday).setClickable(false);
+        }
+        cb = findViewById(R.id.checkThursday);
+        if (cb.isChecked()) {
+            findViewById(R.id.editThursday).setClickable(true);
+        } else {
+            findViewById(R.id.editThursday).setClickable(false);
+        }
+        cb = findViewById(R.id.checkFriday);
+        if (cb.isChecked()) {
+            findViewById(R.id.editFriday).setClickable(true);
+        } else {
+            findViewById(R.id.editFriday).setClickable(false);
+        }
+        cb=findViewById(R.id.checkSaturday);
+        if (cb.isChecked()) {
+            findViewById(R.id.editSaturday).setClickable(true);
+        } else {
+            findViewById(R.id.editSaturday).setClickable(false);
+        }
+        cb=findViewById(R.id.checkSunday);
+        if (cb.isChecked()) {
+            findViewById(R.id.editSunday).setClickable(true);
+        } else {
+            findViewById(R.id.editSunday).setClickable(false);
+        }
+    }
 }

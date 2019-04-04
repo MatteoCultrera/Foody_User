@@ -40,7 +40,6 @@ import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.TreeMap;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -56,11 +55,11 @@ public class Setup extends AppCompatActivity {
     private TextView errorName;
     private TextView errorMail;
     private TextView errorPhone;
+    private TextView errorAddress;
     private int caller;
     private AlertDialog dialogDism;
     private TimePickerDialog timePicker;
     private AlertDialog foodChooseType;
-    private TextView errorAddress;
     private final int GALLERY_REQUEST_CODE = 1;
     private final int REQUEST_CAPTURE_IMAGE = 100;
     private final String PROFILE_IMAGE = "ProfileImage.jpg";
@@ -229,6 +228,8 @@ public class Setup extends AppCompatActivity {
         email.clearFocus();
         address.clearFocus();
         phoneNumber.clearFocus();
+        updateButtons();
+
     }
 
     protected void onPause(){
@@ -543,8 +544,6 @@ public class Setup extends AppCompatActivity {
                     if(editable.subSequence(i-1, i).toString().equals("\n"))
                         editable.replace(i-1, i, "");
                 }
-
-                String myTextString = editable.toString();
             }
         });
         this.phoneNumber.addTextChangedListener(new TextWatcher() {
@@ -632,10 +631,10 @@ public class Setup extends AppCompatActivity {
                     Bitmap bitmap = getBitmapFromFile();
 
                     if(bitmap != null){
+                        profilePicture.setImageBitmap(bitmap);
                         File placeholder = new File(storageDir, PLACEHOLDER_CAMERA);
                         saveBitmap(bitmap, placeholder.getPath());
                         unchanged = false;
-                        profilePicture.setImageURI(Uri.fromFile(placeholder));
                     }
                     break;
             }
@@ -699,7 +698,8 @@ public class Setup extends AppCompatActivity {
         builder.setAdapter(arrayAdapter, new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialog, int which) {
-                switch (which){                    case 0:
+                switch (which){
+                    case 0:
                         pickFromGallery();
                         dialogCode = "ok";
                         break;
@@ -904,7 +904,7 @@ public class Setup extends AppCompatActivity {
                 tv = findViewById(R.id.timeSunday);
                 break;
         }
-        timePicker = new TimePickerDialog(this, new TimePickerDialog.OnTimeSetListener() {
+        timePicker = new TimePickerDialog(this, R.style.DateTimeDialog, new TimePickerDialog.OnTimeSetListener() {
             @Override
             public void onTimeSet(TimePicker timePicker, int selectedHour, int selectedMinute) {
                 String selHour = ""+selectedHour;
@@ -920,6 +920,7 @@ public class Setup extends AppCompatActivity {
         }, hour, minute, true);
         timePicker.setTitle(getResources().getString(R.string.opening_time));
         timePicker.setCancelable(false);
+        timePicker.setButton(DialogInterface.BUTTON_POSITIVE,getResources().getString(R.string.okButton), timePicker);
         timePicker.setOnCancelListener(new DialogInterface.OnCancelListener() {
             @Override
             public void onCancel(DialogInterface dialogInterface) {
@@ -956,7 +957,7 @@ public class Setup extends AppCompatActivity {
                 tv = findViewById(R.id.timeSunday);
                 break;
         }
-        timePicker = new TimePickerDialog(this, new TimePickerDialog.OnTimeSetListener() {
+        timePicker = new TimePickerDialog(this, R.style.DateTimeDialog, new TimePickerDialog.OnTimeSetListener() {
             @Override
             public void onTimeSet(TimePicker timePicker, int selectedHour, int selectedMinute) {
                 String selHour = ""+selectedHour;
@@ -975,6 +976,7 @@ public class Setup extends AppCompatActivity {
         }, hour, minute, true);
         timePicker.setTitle(getResources().getString(R.string.closing_time));
         timePicker.setCancelable(false);
+        timePicker.setButton(DialogInterface.BUTTON_POSITIVE,getResources().getString(R.string.okButton), timePicker);
         timePicker.setOnCancelListener(new DialogInterface.OnCancelListener() {
             @Override
             public void onCancel(DialogInterface dialogInterface) {
@@ -1057,15 +1059,6 @@ public class Setup extends AppCompatActivity {
         }
     }
 
-    public int numFoods(){
-        int i = 0;
-        for (boolean food:checkedFoods) {
-            if(food)
-                i++;
-        }
-        return i;
-    }
-
     public void populateCheckedFoods() {
         for(int i = 0; i < 27; i++)
             checkedFoods[i] = false;
@@ -1085,7 +1078,6 @@ public class Setup extends AppCompatActivity {
         builder.setMultiChoiceItems(foodCategories, checkedFoods, new DialogInterface.OnMultiChoiceClickListener() {
             @Override
             public void onClick(DialogInterface dialog, int which, boolean isChecked) {
-                unchanged = false;
                 if (isChecked) {
                     //if (!selectedFoods.contains(String.valueOf(foodCategories[which]))) {
                     if (selectedFoods.size() < 3) {
@@ -1140,6 +1132,53 @@ public class Setup extends AppCompatActivity {
         foodChooseType = builder.create();
         dialogCode = "foodDialog";
         foodChooseType.show();
+
+    }
+
+    public void updateButtons() {
+        CheckBox cb;
+        cb =findViewById(R.id.checkMonday);
+        if (cb.isChecked()) {
+            findViewById(R.id.editMonday).setClickable(true);
+        } else {
+            findViewById(R.id.editMonday).setClickable(false);
+        }
+        cb=findViewById(R.id.checkTuesday);
+        if (cb.isChecked()) {
+            findViewById(R.id.editTuesday).setClickable(true);
+        } else {
+            findViewById(R.id.editTuesday).setClickable(false);
+        }
+        cb = findViewById(R.id.checkWednesday);
+        if (cb.isChecked()) {
+            findViewById(R.id.editWednesday).setClickable(true);
+        } else {
+            findViewById(R.id.editWednesday).setClickable(false);
+        }
+        cb = findViewById(R.id.checkThursday);
+        if (cb.isChecked()) {
+            findViewById(R.id.editThursday).setClickable(true);
+        } else {
+            findViewById(R.id.editThursday).setClickable(false);
+        }
+        cb = findViewById(R.id.checkFriday);
+        if (cb.isChecked()) {
+            findViewById(R.id.editFriday).setClickable(true);
+        } else {
+            findViewById(R.id.editFriday).setClickable(false);
+        }
+        cb=findViewById(R.id.checkSaturday);
+        if (cb.isChecked()) {
+            findViewById(R.id.editSaturday).setClickable(true);
+        } else {
+            findViewById(R.id.editSaturday).setClickable(false);
+        }
+        cb=findViewById(R.id.checkSunday);
+        if (cb.isChecked()) {
+            findViewById(R.id.editSunday).setClickable(true);
+        } else {
+            findViewById(R.id.editSunday).setClickable(false);
+        }
 
     }
 }
