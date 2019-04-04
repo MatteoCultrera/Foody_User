@@ -224,12 +224,12 @@ public class Setup extends AppCompatActivity {
             }
                 onBackPressed();
             }
-        }
 
         name.clearFocus();
         email.clearFocus();
         address.clearFocus();
         phoneNumber.clearFocus();
+
     }
 
     protected void onPause(){
