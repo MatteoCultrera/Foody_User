@@ -794,6 +794,12 @@ public class Setup extends AppCompatActivity {
         }, hour, minute, true);
         timePicker.setTitle(getResources().getString(R.string.opening_time));
         timePicker.setCancelable(false);
+        timePicker.setOnCancelListener(new DialogInterface.OnCancelListener() {
+            @Override
+            public void onCancel(DialogInterface dialogInterface) {
+                dialogCode = "ok";
+            }
+        });
         dialogCode = "firstTime";
         timePicker.show();
     }
@@ -801,7 +807,6 @@ public class Setup extends AppCompatActivity {
     public void showSecondPicker(){
         int hour = 0;
         int minute = 0;
-        Log.d("DIALOG", Integer.toString(caller));
         switch(caller) {
             case R.id.editMonday:
                 tv = findViewById(R.id.timeMonday);
@@ -844,6 +849,12 @@ public class Setup extends AppCompatActivity {
         }, hour, minute, true);
         timePicker.setTitle(getResources().getString(R.string.closing_time));
         timePicker.setCancelable(false);
+        timePicker.setOnCancelListener(new DialogInterface.OnCancelListener() {
+            @Override
+            public void onCancel(DialogInterface dialogInterface) {
+                dialogCode = "ok";
+            }
+        });
         dialogCode = "secondTime";
         timePicker.show();
     }
@@ -858,7 +869,6 @@ public class Setup extends AppCompatActivity {
                     monday.setText(standardTime);
                     findViewById(R.id.editMonday).setClickable(true);
                 } else {
-                    Log.d("MAD", "Unchecked");
                     monday.setText(getResources().getString(R.string.free));
                     findViewById(R.id.editMonday).setClickable(false);
                 }

@@ -77,7 +77,6 @@ public class Setup extends AppCompatActivity {
     private ArrayList<String> selectedFoods;
     private String[] foodCategories;
     private ArrayList<Integer> indexFoods;
-
     private SharedPreferences sharedPref;
     private SharedPreferences.Editor edit;
 
@@ -214,11 +213,11 @@ public class Setup extends AppCompatActivity {
                 showPickImageDialog();
             } else if (dialogPrec.compareTo("back") == 0) {
                         onBackPressed();
-            } else if (dialogPrec.compareTo("firstTime") == 0) {
+            } else if (dialogPrec.compareTo("firstTime") == 0 ) {
                 if (caller != 0) {
                     showPickTime(findViewById(caller));
                 }
-            } else if (dialogPrec.compareTo("secondTime") == 0){
+            } else if (dialogPrec.compareTo("secondTime") == 0 ){
                 if (caller != 0) {
                     showSecondPicker();
                 }
@@ -921,6 +920,12 @@ public class Setup extends AppCompatActivity {
         }, hour, minute, true);
         timePicker.setTitle(getResources().getString(R.string.opening_time));
         timePicker.setCancelable(false);
+        timePicker.setOnCancelListener(new DialogInterface.OnCancelListener() {
+            @Override
+            public void onCancel(DialogInterface dialogInterface) {
+                dialogCode = "ok";
+            }
+        });
         dialogCode = "firstTime";
         timePicker.show();
     }
@@ -928,7 +933,6 @@ public class Setup extends AppCompatActivity {
     public void showSecondPicker(){
         int hour = 0;
         int minute = 0;
-        Log.d("DIALOG", Integer.toString(caller));
         switch(caller) {
             case R.id.editMonday:
                 tv = findViewById(R.id.timeMonday);
@@ -971,6 +975,12 @@ public class Setup extends AppCompatActivity {
         }, hour, minute, true);
         timePicker.setTitle(getResources().getString(R.string.closing_time));
         timePicker.setCancelable(false);
+        timePicker.setOnCancelListener(new DialogInterface.OnCancelListener() {
+            @Override
+            public void onCancel(DialogInterface dialogInterface) {
+                dialogCode = "ok";
+            }
+        });
         dialogCode = "secondTime";
         timePicker.show();
     }
