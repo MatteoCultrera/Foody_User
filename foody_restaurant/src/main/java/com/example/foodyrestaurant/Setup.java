@@ -228,6 +228,7 @@ public class Setup extends AppCompatActivity {
         email.clearFocus();
         address.clearFocus();
         phoneNumber.clearFocus();
+        updateButtons();
 
     }
 
@@ -1117,6 +1118,53 @@ public class Setup extends AppCompatActivity {
 
         AlertDialog foodChooseType = builder.create();
         foodChooseType.show();
+
+    }
+
+    public void updateButtons() {
+        CheckBox cb;
+        cb =findViewById(R.id.checkMonday);
+        if (cb.isChecked()) {
+            findViewById(R.id.editMonday).setClickable(true);
+        } else {
+            findViewById(R.id.editMonday).setClickable(false);
+        }
+        cb=findViewById(R.id.checkTuesday);
+        if (cb.isChecked()) {
+            findViewById(R.id.editTuesday).setClickable(true);
+        } else {
+            findViewById(R.id.editTuesday).setClickable(false);
+        }
+        cb = findViewById(R.id.checkWednesday);
+        if (cb.isChecked()) {
+            findViewById(R.id.editWednesday).setClickable(true);
+        } else {
+            findViewById(R.id.editWednesday).setClickable(false);
+        }
+        cb = findViewById(R.id.checkThursday);
+        if (cb.isChecked()) {
+            findViewById(R.id.editThursday).setClickable(true);
+        } else {
+            findViewById(R.id.editThursday).setClickable(false);
+        }
+        cb = findViewById(R.id.checkFriday);
+        if (cb.isChecked()) {
+            findViewById(R.id.editFriday).setClickable(true);
+        } else {
+            findViewById(R.id.editFriday).setClickable(false);
+        }
+        cb=findViewById(R.id.checkSaturday);
+        if (cb.isChecked()) {
+            findViewById(R.id.editSaturday).setClickable(true);
+        } else {
+            findViewById(R.id.editSaturday).setClickable(false);
+        }
+        cb=findViewById(R.id.checkSunday);
+        if (cb.isChecked()) {
+            findViewById(R.id.editSunday).setClickable(true);
+        } else {
+            findViewById(R.id.editSunday).setClickable(false);
+        }
 
     }
 }
