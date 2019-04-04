@@ -1,0 +1,1112 @@
+<?xml version="1.0" encoding="utf-8"?>
+<android.support.constraint.ConstraintLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:focusable="false"
+    android:focusableInTouchMode="true">
+
+
+    <FrameLayout
+        android:id="@+id/frameLayout"
+        android:layout_width="88dp"
+        android:layout_height="88dp"
+        android:layout_marginStart="8dp"
+        android:layout_marginEnd="8dp"
+        android:layout_marginBottom="8dp"
+        android:elevation="32dp"
+        app:layout_constraintBottom_toBottomOf="@+id/imageLayout"
+        app:layout_constraintEnd_toEndOf="@+id/imageLayout"
+        app:layout_constraintStart_toEndOf="@+id/imageLayout"
+        app:layout_constraintTop_toTopOf="@+id/imageLayout"
+        app:layout_constraintVertical_bias="1.0">
+
+        <android.support.design.widget.FloatingActionButton
+            android:id="@+id/edit_profile_picture"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="16dp"
+            android:layout_marginTop="16dp"
+            android:src="@drawable/camera_black"
+            app:fabSize="normal"
+            app:maxImageSize="26dp" />
+    </FrameLayout>
+
+    <android.support.constraint.ConstraintLayout
+        android:id="@+id/constraintLayout2"
+        android:layout_width="0dp"
+        android:layout_height="56dp"
+        android:background="@color/colorPrimaryLight"
+        android:elevation="16dp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="0.0">
+
+        <ImageButton
+            android:id="@+id/backButton"
+            android:layout_width="36dp"
+            android:layout_height="36dp"
+            android:layout_marginStart="16dp"
+            android:background="@android:color/transparent"
+            android:onClick="backToProfile"
+            android:padding="6dp"
+            android:scaleType="fitCenter"
+            android:src="@drawable/back_white"
+            android:contentDescription="@null"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
+
+        <TextView
+            android:id="@+id/textView"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="32dp"
+            android:layout_marginTop="10dp"
+            android:layout_marginEnd="156dp"
+            android:layout_marginBottom="10dp"
+            android:fontFamily="@font/roboto_regular"
+            android:text="@string/edit_profile"
+            android:textColor="@android:color/white"
+            android:textSize="20sp"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintHorizontal_bias="0.0"
+            app:layout_constraintStart_toEndOf="@+id/backButton"
+            app:layout_constraintTop_toTopOf="parent" />
+
+        <ImageButton
+            android:id="@+id/saveButton"
+            android:layout_width="36dp"
+            android:layout_height="36dp"
+            android:layout_marginEnd="16dp"
+            android:background="@android:color/transparent"
+            android:onClick="savedProfile"
+            android:padding="6dp"
+            android:scaleType="fitCenter"
+            android:src="@drawable/save_white"
+            android:contentDescription="@null"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
+
+    </android.support.constraint.ConstraintLayout>
+
+
+    <android.support.constraint.ConstraintLayout
+        android:id="@+id/imageLayout"
+        android:layout_width="302dp"
+        android:layout_height="0dp"
+        android:background="@color/colorPrimary"
+        android:elevation="16dp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="@+id/scrollView3"
+        app:layout_constraintHorizontal_bias="0.0"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="@+id/scrollView3">
+
+        <ImageView
+            android:id="@+id/profilePicture"
+            style="@style/Widget.MaterialComponents.Toolbar"
+            android:layout_width="0dp"
+            android:layout_height="0dp"
+            android:contentDescription="@null"
+            android:scaleType="centerCrop"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintHorizontal_bias="0.0"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintVertical_bias="1.0" />
+
+
+    </android.support.constraint.ConstraintLayout>
+
+
+    <ScrollView
+        android:id="@+id/scrollView3"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.0"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/constraintLayout2"
+        app:layout_constraintVertical_bias="0.0">
+
+        <android.support.constraint.ConstraintLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="326dp"
+            android:layout_marginEnd="20dp">
+
+            <android.support.constraint.ConstraintLayout
+                android:id="@+id/constraintLayout3"
+                android:layout_width="0dp"
+                android:layout_height="61dp"
+                android:layout_marginStart="16dp"
+                android:layout_marginTop="16dp"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent">
+
+                <ImageView
+                    android:id="@+id/imageView"
+                    android:layout_width="30dp"
+                    android:layout_height="30dp"
+                    android:layout_marginTop="8dp"
+                    android:layout_marginEnd="161dp"
+                    android:adjustViewBounds="true"
+                    android:contentDescription="@null"
+                    android:padding="2dp"
+                    android:scaleType="fitCenter"
+                    android:src="@drawable/name_black"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintHorizontal_bias="0.0"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toTopOf="parent" />
+
+                <EditText
+                    android:id="@+id/userName"
+                    style="@android:style/Widget.Material.EditText"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="8dp"
+                    android:layout_marginTop="11dp"
+                    android:background="@android:color/transparent"
+                    android:fontFamily="@font/roboto_regular"
+                    android:hint="@string/name_hint"
+                    android:inputType="textPersonName|textCapWords"
+                    android:lines="1"
+                    android:maxLength="27"
+                    android:maxLines="1"
+                    android:textColor="@color/primaryText"
+                    android:textSize="15sp"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toEndOf="@+id/imageView"
+                    app:layout_constraintTop_toTopOf="parent" />
+
+                <View
+                    android:id="@+id/name_error_line"
+                    android:layout_width="match_parent"
+                    android:layout_height="1dp"
+                    android:layout_marginTop="3dp"
+                    android:alpha="0.2"
+                    android:background="@android:color/black"
+                    app:layout_constraintTop_toBottomOf="@+id/imageView"
+                    tools:layout_editor_absoluteX="16dp" />
+
+                <TextView
+                    android:id="@+id/name_error"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/error_name"
+                    android:textColor="#C90006"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintStart_toStartOf="parent" />
+
+
+            </android.support.constraint.ConstraintLayout>
+
+            <android.support.constraint.ConstraintLayout
+                android:id="@+id/phoneLayout"
+                android:layout_width="0dp"
+                android:layout_height="61dp"
+                android:layout_marginStart="16dp"
+                android:layout_marginTop="21dp"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/constraintLayout3">
+
+                <ImageView
+                    android:id="@+id/imageView2"
+                    android:layout_width="30dp"
+                    android:layout_height="30dp"
+                    android:layout_marginTop="8dp"
+                    android:layout_marginEnd="161dp"
+                    android:adjustViewBounds="true"
+                    android:contentDescription="@null"
+                    android:padding="2dp"
+                    android:scaleType="fitCenter"
+                    android:src="@drawable/phone_black"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintHorizontal_bias="0.0"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toTopOf="parent" />
+
+                <EditText
+                    android:id="@+id/phoneNumber"
+                    style="@android:style/Widget.Material.EditText"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="8dp"
+                    android:layout_marginTop="11dp"
+                    android:background="@android:color/transparent"
+                    android:fontFamily="@font/roboto_regular"
+                    android:hint="@string/phone_hint"
+                    android:inputType="phone"
+                    android:maxLength="15"
+                    android:maxLines="1"
+                    android:textColor="@color/primaryText"
+                    android:textSize="15sp"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintHorizontal_bias="0.0"
+                    app:layout_constraintStart_toEndOf="@+id/imageView2"
+                    app:layout_constraintTop_toTopOf="parent" />
+
+                <View
+                    android:id="@+id/number_error_line"
+                    android:layout_width="match_parent"
+                    android:layout_height="1dp"
+                    android:layout_marginTop="3dp"
+                    android:alpha="0.2"
+                    android:background="@android:color/black"
+                    app:layout_constraintTop_toBottomOf="@+id/imageView2"
+                    tools:layout_editor_absoluteX="16dp" />
+
+                <TextView
+                    android:id="@+id/number_error"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/error_number"
+                    android:textColor="#C90006"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintStart_toStartOf="parent" />
+
+
+            </android.support.constraint.ConstraintLayout>
+
+
+            <android.support.constraint.ConstraintLayout
+                android:id="@+id/constraintLayout6"
+                android:layout_width="0dp"
+                android:layout_height="61dp"
+                android:layout_marginStart="16dp"
+                android:layout_marginTop="21dp"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintHorizontal_bias="0.0"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/phoneLayout">
+
+                <ImageView
+                    android:id="@+id/imageView3"
+                    android:layout_width="30dp"
+                    android:layout_height="30dp"
+                    android:layout_marginTop="8dp"
+                    android:layout_marginEnd="161dp"
+                    android:adjustViewBounds="true"
+                    android:contentDescription="@null"
+                    android:padding="2dp"
+                    android:scaleType="fitCenter"
+                    android:src="@drawable/mail_black"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintHorizontal_bias="0.0"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toTopOf="parent" />
+
+                <EditText
+                    android:id="@+id/emailAddress"
+                    style="@android:style/Widget.Material.EditText"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="8dp"
+                    android:layout_marginTop="11dp"
+                    android:background="@android:color/transparent"
+                    android:fontFamily="@font/roboto_regular"
+                    android:hint="@string/email_hint"
+                    android:inputType="textEmailAddress"
+                    android:maxLength="254"
+                    android:maxLines="1"
+                    android:textColor="@color/primaryText"
+                    android:textSize="15sp"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintHorizontal_bias="0.0"
+                    app:layout_constraintStart_toEndOf="@+id/imageView3"
+                    app:layout_constraintTop_toTopOf="parent" />
+
+                <View
+                    android:id="@+id/email_error_line"
+                    android:layout_width="match_parent"
+                    android:layout_height="1dp"
+                    android:layout_marginTop="3dp"
+                    android:alpha="0.2"
+                    android:background="@android:color/black"
+                    app:layout_constraintTop_toBottomOf="@+id/imageView3"
+                    tools:layout_editor_absoluteX="16dp" />
+
+                <TextView
+                    android:id="@+id/email_error"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/error_email"
+                    android:textColor="#C90006"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintStart_toStartOf="parent" />
+
+
+            </android.support.constraint.ConstraintLayout>
+
+            <android.support.constraint.ConstraintLayout
+                android:id="@+id/constraintLayout7"
+                android:layout_width="0dp"
+                android:layout_height="61dp"
+                android:layout_marginStart="16dp"
+                android:layout_marginTop="21dp"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintHorizontal_bias="0.0"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/constraintLayout6">
+
+                <ImageView
+                    android:id="@+id/imageView4"
+                    android:layout_width="30dp"
+                    android:layout_height="30dp"
+                    android:layout_marginTop="8dp"
+                    android:layout_marginEnd="161dp"
+                    android:adjustViewBounds="true"
+                    android:contentDescription="@null"
+                    android:padding="2dp"
+                    android:scaleType="fitCenter"
+                    android:src="@drawable/address2_black"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintHorizontal_bias="0.0"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toTopOf="parent" />
+
+                <EditText
+                    android:id="@+id/address"
+                    style="@android:style/Widget.Material.EditText"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="8dp"
+                    android:layout_marginTop="11dp"
+                    android:background="@android:color/transparent"
+                    android:fontFamily="@font/roboto_regular"
+                    android:hint="@string/address_hint"
+                    android:inputType="textPostalAddress|textMultiLine|textCapSentences"
+                    android:maxLength="254"
+                    android:scrollHorizontally="false"
+                    android:textColor="@color/primaryText"
+                    android:textSize="15sp"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintHorizontal_bias="0.0"
+                    app:layout_constraintStart_toEndOf="@+id/imageView4"
+                    app:layout_constraintTop_toTopOf="parent" />
+
+                <View
+                    android:id="@+id/address_error_line"
+                    android:layout_width="match_parent"
+                    android:layout_height="1dp"
+                    android:layout_marginTop="6dp"
+                    android:alpha="0.2"
+                    android:background="@android:color/black"
+                    app:layout_constraintTop_toBottomOf="@+id/address"
+                    tools:layout_editor_absoluteX="16dp" />
+
+                <TextView
+                    android:id="@+id/address_error"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/error_address"
+                    android:textColor="#C90006"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintStart_toStartOf="parent" />
+
+
+            </android.support.constraint.ConstraintLayout>
+
+            <android.support.constraint.ConstraintLayout
+                android:id="@+id/constraintLayout8"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="16dp"
+                android:layout_marginTop="21dp"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintHorizontal_bias="0.0"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/constraintLayout7">
+
+                <ImageView
+                    android:id="@+id/imageView5"
+                    android:layout_width="30dp"
+                    android:layout_height="30dp"
+                    android:layout_marginTop="8dp"
+                    android:layout_marginEnd="161dp"
+                    android:adjustViewBounds="true"
+                    android:contentDescription="@null"
+                    android:padding="2dp"
+                    android:scaleType="fitCenter"
+                    android:src="@drawable/bike_black"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintHorizontal_bias="0.0"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toTopOf="parent" />
+
+                <TextView
+                    android:id="@+id/deliv"
+                    style="@android:style/Widget.Material.EditText"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="8dp"
+                    android:layout_marginTop="11dp"
+                    android:layout_marginEnd="8dp"
+                    android:background="@android:color/transparent"
+                    android:fontFamily="@font/roboto_regular"
+                    android:text="@string/delivery_price"
+                    android:textColor="@color/primaryText"
+                    android:textSize="15sp"
+                    app:layout_constraintEnd_toStartOf="@+id/delivPrice"
+                    app:layout_constraintStart_toEndOf="@+id/imageView5"
+                    app:layout_constraintTop_toTopOf="parent" />
+
+                <TextView
+                    android:id="@+id/delivPrice"
+                    style="@android:style/Widget.Material.EditText"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="11dp"
+                    android:layout_marginEnd="8dp"
+                    android:background="@android:color/transparent"
+                    android:fontFamily="@font/roboto_regular"
+                    android:text="@string/placeholder_price"
+                    android:textColor="@color/primaryText"
+                    android:textSize="15sp"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintTop_toTopOf="parent" />
+
+                <SeekBar
+                    android:id="@+id/seekBarPrice"
+                    style="@style/Widget.AppCompat.SeekBar.Discrete"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="16dp"
+                    android:max="16"
+                    android:progress="6"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toBottomOf="@+id/deliv" />
+
+            </android.support.constraint.ConstraintLayout>
+
+            <TextView
+                android:id="@+id/tableText"
+                android:layout_width="wrap_content"
+                android:layout_height="21dp"
+
+                android:layout_marginTop="21dp"
+                android:fontFamily="@font/roboto_regular"
+                android:gravity="center_vertical"
+                android:text="@string/timetable"
+                android:textColor="@color/primaryText"
+                android:textSize="18sp"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/constraintLayout9" />
+
+            <android.support.constraint.ConstraintLayout
+                android:id="@+id/constraintLayout9"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="16dp"
+                android:layout_marginTop="21dp"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintHorizontal_bias="0.0"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/constraintLayout8">
+
+                <ImageView
+                    android:id="@+id/imageView6"
+                    android:layout_width="30dp"
+                    android:layout_height="30dp"
+                    android:layout_marginTop="8dp"
+                    android:layout_marginEnd="161dp"
+                    android:adjustViewBounds="true"
+                    android:contentDescription="@null"
+                    android:padding="2dp"
+                    android:scaleType="fitCenter"
+                    android:src="@drawable/address2_black"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintHorizontal_bias="0.0"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toTopOf="parent" />
+
+                <TextView
+                    android:id="@+id/food"
+                    android:layout_width="0dp"
+                    android:layout_height="23dp"
+                    android:layout_marginStart="8dp"
+                    android:layout_marginTop="11dp"
+                    android:background="@android:color/transparent"
+                    android:fontFamily="@font/roboto_regular"
+                    android:text="@string/food_type"
+                    android:textColor="@color/primaryText"
+                    android:textSize="15sp"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toEndOf="@+id/imageView6"
+                    app:layout_constraintTop_toTopOf="parent" />
+
+                <ImageButton
+                    android:id="@+id/editFood"
+                    android:layout_width="24dp"
+                    android:layout_height="24dp"
+                    android:layout_marginTop="8dp"
+                    android:layout_marginEnd="16dp"
+                    android:adjustViewBounds="true"
+                    android:background="@android:color/transparent"
+                    android:contentDescription="@null"
+                    android:onClick="showPickFood"
+                    android:padding="2dp"
+                    android:scaleType="fitCenter"
+                    android:src="@drawable/edit_black"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintTop_toBottomOf="@+id/food" />
+
+                <TextView
+                    android:id="@+id/food_type"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="38dp"
+                    android:layout_marginTop="8dp"
+                    android:layout_marginEnd="8dp"
+                    android:hint="@string/food_type_unselect"
+                    android:textColor="@color/primaryText"
+                    android:textSize="15sp"
+                    app:layout_constraintEnd_toStartOf="@+id/editFood"
+                    app:layout_constraintHorizontal_bias="0.0"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toBottomOf="@+id/food" />
+
+                <View
+                    android:layout_width="match_parent"
+                    android:layout_height="1dp"
+                    android:layout_marginTop="12dp"
+                    android:alpha="0.2"
+                    android:background="@android:color/black"
+                    app:layout_constraintTop_toBottomOf="@+id/food_type"
+                    tools:layout_editor_absoluteX="16dp" />
+
+            </android.support.constraint.ConstraintLayout>
+
+            <android.support.constraint.ConstraintLayout
+                android:id="@+id/table"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="16dp"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintLeft_toLeftOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/tableText">
+
+                <TextView
+                    android:id="@+id/dayString"
+                    android:layout_width="wrap_content"
+                    android:layout_height="24dp"
+                    android:layout_marginStart="48dp"
+                    android:layout_marginTop="12dp"
+                    android:gravity="center_vertical"
+                    android:text="@string/day"
+                    android:textColor="@color/secondaryText"
+                    android:textSize="12sp"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toTopOf="parent" />
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="24dp"
+                    android:layout_marginTop="12dp"
+                    android:layout_marginEnd="80dp"
+                    android:gravity="center_vertical"
+                    android:text="@string/time"
+                    android:textColor="@color/secondaryText"
+                    android:textSize="12sp"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintTop_toTopOf="parent" />
+
+                <View
+                    android:id="@+id/firstDiv"
+                    android:layout_width="match_parent"
+                    android:layout_height="1.5dp"
+                    android:layout_marginTop="12dp"
+                    android:background="#707070"
+                    app:layout_constraintTop_toBottomOf="@id/dayString"
+                    tools:layout_editor_absoluteX="16dp" />
+
+                <CheckBox
+                    android:id="@+id/checkMonday"
+                    style="@style/Base.Theme.MaterialComponents.Light"
+                    android:layout_width="24dp"
+                    android:layout_height="24dp"
+                    android:layout_marginStart="16dp"
+                    android:layout_marginTop="12dp"
+                    android:background="?android:attr/listChoiceIndicatorMultiple"
+                    android:button="@null"
+                    android:gravity="center"
+                    android:onClick="lockUnlock"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toBottomOf="@id/firstDiv" />
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="24dp"
+                    android:layout_marginStart="12dp"
+                    android:layout_marginTop="12dp"
+                    android:fontFamily="@font/roboto_regular"
+                    android:gravity="center"
+                    android:text="@string/Monday"
+                    android:textColor="@color/primaryText"
+                    android:textSize="16sp"
+                    app:layout_constraintStart_toEndOf="@id/checkMonday"
+                    app:layout_constraintTop_toBottomOf="@id/firstDiv" />
+
+                <ImageButton
+                    android:id="@+id/editMonday"
+                    android:layout_width="24dp"
+                    android:layout_height="24dp"
+                    android:layout_marginTop="12dp"
+                    android:layout_marginEnd="16dp"
+                    android:adjustViewBounds="true"
+                    android:background="@android:color/transparent"
+                    android:contentDescription="@null"
+                    android:onClick="showPickTime"
+                    android:padding="2dp"
+                    android:scaleType="fitCenter"
+                    android:src="@drawable/edit_black"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintTop_toBottomOf="@id/firstDiv" />
+
+                <TextView
+                    android:id="@+id/timeMonday"
+                    android:layout_width="wrap_content"
+                    android:layout_height="24dp"
+                    android:layout_marginTop="12dp"
+                    android:layout_marginEnd="12dp"
+                    android:fontFamily="@font/roboto_regular"
+                    android:gravity="center"
+                    android:text="@string/Closed"
+                    android:textColor="@color/primaryText"
+                    android:textSize="16sp"
+                    app:layout_constraintEnd_toStartOf="@id/editMonday"
+                    app:layout_constraintTop_toBottomOf="@id/firstDiv" />
+
+                <View
+                    android:id="@+id/mondayDiv"
+                    android:layout_width="match_parent"
+                    android:layout_height="0.5dp"
+                    android:layout_marginTop="12dp"
+                    android:background="#707070"
+                    app:layout_constraintTop_toBottomOf="@id/timeMonday"
+                    tools:layout_editor_absoluteX="16dp" />
+
+
+                <CheckBox
+                    android:id="@+id/checkTuesday"
+                    style="@style/Base.Theme.MaterialComponents.Light"
+                    android:layout_width="24dp"
+                    android:layout_height="24dp"
+                    android:layout_marginStart="16dp"
+                    android:layout_marginTop="12dp"
+                    android:background="?android:attr/listChoiceIndicatorMultiple"
+                    android:button="@null"
+                    android:gravity="center"
+                    android:onClick="lockUnlock"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toBottomOf="@id/mondayDiv" />
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="24dp"
+                    android:layout_marginStart="12dp"
+                    android:layout_marginTop="12dp"
+                    android:fontFamily="@font/roboto_regular"
+                    android:gravity="center"
+                    android:text="@string/Tuesday"
+                    android:textColor="@color/primaryText"
+                    android:textSize="16sp"
+                    app:layout_constraintStart_toEndOf="@id/checkTuesday"
+                    app:layout_constraintTop_toBottomOf="@id/mondayDiv" />
+
+                <ImageButton
+                    android:id="@+id/editTuesday"
+                    android:layout_width="24dp"
+                    android:layout_height="24dp"
+                    android:layout_marginTop="12dp"
+                    android:layout_marginEnd="16dp"
+                    android:adjustViewBounds="true"
+                    android:background="@android:color/transparent"
+                    android:contentDescription="@null"
+                    android:onClick="showPickTime"
+                    android:padding="2dp"
+                    android:scaleType="fitCenter"
+                    android:src="@drawable/edit_black"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintTop_toBottomOf="@id/mondayDiv" />
+
+                <TextView
+                    android:id="@+id/timeTuesday"
+                    android:layout_width="wrap_content"
+                    android:layout_height="24dp"
+                    android:layout_marginTop="12dp"
+                    android:layout_marginEnd="12dp"
+                    android:fontFamily="@font/roboto_regular"
+                    android:gravity="center"
+                    android:text="@string/Closed"
+                    android:textColor="@color/primaryText"
+                    android:textSize="16sp"
+                    app:layout_constraintEnd_toStartOf="@id/editTuesday"
+                    app:layout_constraintTop_toBottomOf="@id/mondayDiv" />
+
+                <View
+                    android:id="@+id/tuesdayDiv"
+                    android:layout_width="match_parent"
+                    android:layout_height="0.5dp"
+                    android:layout_marginTop="12dp"
+                    android:background="#707070"
+                    app:layout_constraintTop_toBottomOf="@id/timeTuesday"
+                    tools:layout_editor_absoluteX="16dp" />
+
+
+                <CheckBox
+                    android:id="@+id/checkWednesday"
+                    style="@style/Base.Theme.MaterialComponents.Light"
+                    android:layout_width="24dp"
+                    android:layout_height="24dp"
+                    android:layout_marginStart="16dp"
+                    android:layout_marginTop="12dp"
+                    android:background="?android:attr/listChoiceIndicatorMultiple"
+                    android:button="@null"
+                    android:gravity="center"
+                    android:onClick="lockUnlock"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toBottomOf="@id/tuesdayDiv" />
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="24dp"
+                    android:layout_marginStart="12dp"
+                    android:layout_marginTop="12dp"
+                    android:fontFamily="@font/roboto_regular"
+                    android:gravity="center"
+                    android:text="@string/Wednesday"
+                    android:textColor="@color/primaryText"
+                    android:textSize="16sp"
+                    app:layout_constraintStart_toEndOf="@id/checkWednesday"
+                    app:layout_constraintTop_toBottomOf="@id/tuesdayDiv" />
+
+                <ImageButton
+                    android:id="@+id/editWednesday"
+                    android:layout_width="24dp"
+                    android:layout_height="24dp"
+                    android:layout_marginTop="12dp"
+                    android:layout_marginEnd="16dp"
+                    android:adjustViewBounds="true"
+                    android:background="@android:color/transparent"
+                    android:contentDescription="@null"
+                    android:onClick="showPickTime"
+                    android:padding="2dp"
+                    android:scaleType="fitCenter"
+                    android:src="@drawable/edit_black"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintTop_toBottomOf="@id/tuesdayDiv" />
+
+                <TextView
+                    android:id="@+id/timeWednesday"
+                    android:layout_width="wrap_content"
+                    android:layout_height="24dp"
+                    android:layout_marginTop="12dp"
+                    android:layout_marginEnd="12dp"
+                    android:fontFamily="@font/roboto_regular"
+                    android:gravity="center"
+                    android:text="@string/Closed"
+                    android:textColor="@color/primaryText"
+                    android:textSize="16sp"
+                    app:layout_constraintEnd_toStartOf="@id/editWednesday"
+                    app:layout_constraintTop_toBottomOf="@id/tuesdayDiv" />
+
+                <View
+                    android:id="@+id/wednesdayDiv"
+                    android:layout_width="match_parent"
+                    android:layout_height="0.5dp"
+                    android:layout_marginTop="12dp"
+                    android:background="#707070"
+                    app:layout_constraintTop_toBottomOf="@id/timeWednesday"
+                    tools:layout_editor_absoluteX="16dp" />
+
+                <CheckBox
+                    android:id="@+id/checkThursday"
+                    style="@style/Base.Theme.MaterialComponents.Light"
+                    android:layout_width="24dp"
+                    android:layout_height="24dp"
+                    android:layout_marginStart="16dp"
+                    android:layout_marginTop="12dp"
+                    android:background="?android:attr/listChoiceIndicatorMultiple"
+                    android:button="@null"
+                    android:gravity="center"
+                    android:onClick="lockUnlock"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toBottomOf="@id/wednesdayDiv" />
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="24dp"
+                    android:layout_marginStart="12dp"
+                    android:layout_marginTop="12dp"
+                    android:fontFamily="@font/roboto_regular"
+                    android:gravity="center"
+                    android:text="@string/Thursday"
+                    android:textColor="@color/primaryText"
+                    android:textSize="16sp"
+                    app:layout_constraintStart_toEndOf="@id/checkThursday"
+                    app:layout_constraintTop_toBottomOf="@id/wednesdayDiv" />
+
+                <ImageButton
+                    android:id="@+id/editThursday"
+                    android:layout_width="24dp"
+                    android:layout_height="24dp"
+                    android:layout_marginTop="12dp"
+                    android:layout_marginEnd="16dp"
+                    android:adjustViewBounds="true"
+                    android:background="@android:color/transparent"
+                    android:contentDescription="@null"
+                    android:onClick="showPickTime"
+                    android:padding="2dp"
+                    android:scaleType="fitCenter"
+                    android:src="@drawable/edit_black"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintTop_toBottomOf="@id/wednesdayDiv" />
+
+                <TextView
+                    android:id="@+id/timeThursday"
+                    android:layout_width="wrap_content"
+                    android:layout_height="24dp"
+                    android:layout_marginTop="12dp"
+                    android:layout_marginEnd="12dp"
+                    android:fontFamily="@font/roboto_regular"
+                    android:gravity="center"
+                    android:text="@string/Closed"
+                    android:textColor="@color/primaryText"
+                    android:textSize="16sp"
+                    app:layout_constraintEnd_toStartOf="@id/editThursday"
+                    app:layout_constraintTop_toBottomOf="@id/wednesdayDiv" />
+
+                <View
+                    android:id="@+id/thursdayDiv"
+                    android:layout_width="match_parent"
+                    android:layout_height="0.5dp"
+                    android:layout_marginTop="12dp"
+                    android:background="#707070"
+                    app:layout_constraintTop_toBottomOf="@id/timeThursday"
+                    tools:layout_editor_absoluteX="16dp" />
+
+                <CheckBox
+                    android:id="@+id/checkFriday"
+                    style="@style/Base.Theme.MaterialComponents.Light"
+                    android:layout_width="24dp"
+                    android:layout_height="24dp"
+                    android:layout_marginStart="16dp"
+                    android:layout_marginTop="12dp"
+                    android:background="?android:attr/listChoiceIndicatorMultiple"
+                    android:button="@null"
+                    android:gravity="center"
+                    android:onClick="lockUnlock"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toBottomOf="@id/thursdayDiv" />
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="24dp"
+                    android:layout_marginStart="12dp"
+                    android:layout_marginTop="12dp"
+                    android:fontFamily="@font/roboto_regular"
+                    android:gravity="center"
+                    android:text="@string/Friday"
+                    android:textColor="@color/primaryText"
+                    android:textSize="16sp"
+                    app:layout_constraintStart_toEndOf="@id/checkFriday"
+                    app:layout_constraintTop_toBottomOf="@id/thursdayDiv" />
+
+                <ImageButton
+                    android:id="@+id/editFriday"
+                    android:layout_width="24dp"
+                    android:layout_height="24dp"
+                    android:layout_marginTop="12dp"
+                    android:layout_marginEnd="16dp"
+                    android:adjustViewBounds="true"
+                    android:background="@android:color/transparent"
+                    android:contentDescription="@null"
+                    android:onClick="showPickTime"
+                    android:padding="2dp"
+                    android:scaleType="fitCenter"
+                    android:src="@drawable/edit_black"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintTop_toBottomOf="@id/thursdayDiv" />
+
+                <TextView
+                    android:id="@+id/timeFriday"
+                    android:layout_width="wrap_content"
+                    android:layout_height="24dp"
+                    android:layout_marginTop="12dp"
+                    android:layout_marginEnd="12dp"
+                    android:fontFamily="@font/roboto_regular"
+                    android:gravity="center"
+                    android:text="@string/Closed"
+                    android:textColor="@color/primaryText"
+                    android:textSize="16sp"
+                    app:layout_constraintEnd_toStartOf="@id/editFriday"
+                    app:layout_constraintTop_toBottomOf="@id/thursdayDiv" />
+
+                <View
+                    android:id="@+id/fridayDiv"
+                    android:layout_width="match_parent"
+                    android:layout_height="0.5dp"
+                    android:layout_marginTop="12dp"
+                    android:background="#707070"
+                    app:layout_constraintTop_toBottomOf="@id/timeFriday"
+                    tools:layout_editor_absoluteX="16dp" />
+
+                <CheckBox
+                    android:id="@+id/checkSaturday"
+                    style="@style/Base.Theme.MaterialComponents.Light"
+                    android:layout_width="24dp"
+                    android:layout_height="24dp"
+                    android:layout_marginStart="16dp"
+                    android:layout_marginTop="12dp"
+                    android:background="?android:attr/listChoiceIndicatorMultiple"
+                    android:button="@null"
+                    android:gravity="center"
+                    android:onClick="lockUnlock"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toBottomOf="@id/fridayDiv" />
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="24dp"
+                    android:layout_marginStart="12dp"
+                    android:layout_marginTop="12dp"
+                    android:fontFamily="@font/roboto_regular"
+                    android:gravity="center"
+                    android:text="@string/Saturday"
+                    android:textColor="@color/primaryText"
+                    android:textSize="16sp"
+                    app:layout_constraintStart_toEndOf="@id/checkSaturday"
+                    app:layout_constraintTop_toBottomOf="@id/fridayDiv" />
+
+                <ImageButton
+                    android:id="@+id/editSaturday"
+                    android:layout_width="24dp"
+                    android:layout_height="24dp"
+                    android:layout_marginTop="12dp"
+                    android:layout_marginEnd="16dp"
+                    android:adjustViewBounds="true"
+                    android:background="@android:color/transparent"
+                    android:contentDescription="@null"
+                    android:onClick="showPickTime"
+                    android:padding="2dp"
+                    android:scaleType="fitCenter"
+                    android:src="@drawable/edit_black"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintTop_toBottomOf="@id/fridayDiv" />
+
+                <TextView
+                    android:id="@+id/timeSaturday"
+                    android:layout_width="wrap_content"
+                    android:layout_height="24dp"
+                    android:layout_marginTop="12dp"
+                    android:layout_marginEnd="12dp"
+                    android:fontFamily="@font/roboto_regular"
+                    android:gravity="center"
+                    android:text="@string/Closed"
+                    android:textColor="@color/primaryText"
+                    android:textSize="16sp"
+                    app:layout_constraintEnd_toStartOf="@id/editSaturday"
+                    app:layout_constraintTop_toBottomOf="@id/fridayDiv" />
+
+                <View
+                    android:id="@+id/saturdayDiv"
+                    android:layout_width="match_parent"
+                    android:layout_height="0.5dp"
+                    android:layout_marginTop="12dp"
+                    android:background="#707070"
+                    app:layout_constraintTop_toBottomOf="@id/timeSaturday"
+                    tools:layout_editor_absoluteX="16dp" />
+
+                <CheckBox
+                    android:id="@+id/checkSunday"
+                    style="@style/Base.Theme.MaterialComponents.Light"
+                    android:layout_width="24dp"
+                    android:layout_height="24dp"
+                    android:layout_marginStart="16dp"
+                    android:layout_marginTop="12dp"
+                    android:background="?android:attr/listChoiceIndicatorMultiple"
+                    android:button="@null"
+                    android:gravity="center"
+                    android:onClick="lockUnlock"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toBottomOf="@id/saturdayDiv" />
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="24dp"
+                    android:layout_marginStart="12dp"
+                    android:layout_marginTop="12dp"
+                    android:fontFamily="@font/roboto_regular"
+                    android:gravity="center"
+                    android:text="@string/Sunday"
+                    android:textColor="@color/primaryText"
+                    android:textSize="16sp"
+                    app:layout_constraintStart_toEndOf="@id/checkSunday"
+                    app:layout_constraintTop_toBottomOf="@id/saturdayDiv" />
+
+                <ImageButton
+                    android:id="@+id/editSunday"
+                    android:layout_width="24dp"
+                    android:layout_height="24dp"
+                    android:layout_marginTop="12dp"
+                    android:layout_marginEnd="16dp"
+                    android:adjustViewBounds="true"
+                    android:background="@android:color/transparent"
+                    android:contentDescription="@null"
+                    android:onClick="showPickTime"
+                    android:padding="2dp"
+                    android:scaleType="fitCenter"
+                    android:src="@drawable/edit_black"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintTop_toBottomOf="@id/saturdayDiv" />
+
+                <TextView
+                    android:id="@+id/timeSunday"
+                    android:layout_width="wrap_content"
+                    android:layout_height="24dp"
+                    android:layout_marginTop="12dp"
+                    android:layout_marginEnd="12dp"
+                    android:fontFamily="@font/roboto_regular"
+                    android:gravity="center"
+                    android:text="@string/Closed"
+                    android:textColor="@color/primaryText"
+                    android:textSize="16sp"
+                    app:layout_constraintEnd_toStartOf="@id/editSunday"
+                    app:layout_constraintTop_toBottomOf="@id/saturdayDiv" />
+
+                <View
+                    android:id="@+id/sundayDiv"
+                    android:layout_width="match_parent"
+                    android:layout_height="0.5dp"
+                    android:layout_marginTop="12dp"
+                    android:layout_marginBottom="20dp"
+                    android:background="#707070"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintTop_toBottomOf="@id/timeSunday"
+                    tools:layout_editor_absoluteX="16dp" />
+
+            </android.support.constraint.ConstraintLayout>
+
+        </android.support.constraint.ConstraintLayout>
+
+    </ScrollView>
+
+
+
+
+</android.support.constraint.ConstraintLayout>
