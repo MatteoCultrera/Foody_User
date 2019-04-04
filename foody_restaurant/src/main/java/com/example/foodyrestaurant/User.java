@@ -10,7 +10,6 @@ import android.os.Bundle;
 import android.os.Environment;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v7.app.AppCompatActivity;
-import android.util.Log;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.TextView;
@@ -18,8 +17,6 @@ import android.widget.TextView;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
-
-import de.hdodenhof.circleimageview.CircleImageView;
 
 
 //The image ratio is 7:4
@@ -37,11 +34,7 @@ public class User extends AppCompatActivity {
     private final String PROFILE_IMAGE = "ProfileImage.jpg";
     private File storageDir;
 
-    private int deliveryPrice;
-
     private SharedPreferences sharedPref;
-
-
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -151,6 +144,8 @@ public class User extends AppCompatActivity {
         address.setText(sharedPref.getString("address", getResources().getString(R.string.address_hint)));
         phoneNumber.setText(sharedPref.getString("phoneNumber", getResources().getString(R.string.phone_hint)));
 
+        int deliveryPrice;
+
         deliveryPrice = sharedPref.getInt("delivPrice",5);
         foodType.setText(sharedPref.getString("foodType", getResources().getString(R.string.food_type_unselect)));
 
@@ -164,7 +159,7 @@ public class User extends AppCompatActivity {
 
         double price = 0.5 * deliveryPrice;
 
-        String text = String.format("%.2f", price) + " €";
+        String text = String.format("%.2f", price) + getResources().getString(R.string.value);
         delivPrice.setText(text);
 
         File f = new File(storageDir, PROFILE_IMAGE);

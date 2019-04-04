@@ -1,6 +1,5 @@
 package com.example.foodyrestaurant;
 import android.app.AlertDialog;
-import android.app.Notification;
 import android.app.TimePickerDialog;
 import android.content.Context;
 import android.content.DialogInterface;
@@ -16,7 +15,6 @@ import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v4.content.FileProvider;
-import android.support.v4.widget.ListViewAutoScrollHelper;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.text.Editable;
@@ -38,19 +36,13 @@ import android.widget.Toast;
 import com.yalantis.ucrop.UCrop;
 import com.yalantis.ucrop.UCropActivity;
 
-import org.w3c.dom.Text;
-
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.HashMap;
 import java.util.TreeMap;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
-
-import de.hdodenhof.circleimageview.CircleImageView;
 
 public class Setup extends AppCompatActivity {
 
@@ -64,6 +56,7 @@ public class Setup extends AppCompatActivity {
     private TextView errorName;
     private TextView errorMail;
     private TextView errorPhone;
+    private TextView errorAddress;
     private final int GALLERY_REQUEST_CODE = 1;
     private final int REQUEST_CAPTURE_IMAGE = 100;
     private final String PROFILE_IMAGE = "ProfileImage.jpg";
@@ -76,6 +69,10 @@ public class Setup extends AppCompatActivity {
     private String openHour, closeHour;
     private int deliveryPrice;
     private SeekBar seekBarPrice;
+    private boolean[] checkedFoods = new boolean[27];
+    private ArrayList<String> selectedFoods;
+    private String[] foodCategories;
+    private ArrayList<Integer> indexFoods;
 
     private SharedPreferences sharedPref;
     private SharedPreferences.Editor edit;
@@ -96,7 +93,6 @@ public class Setup extends AppCompatActivity {
                 showPickImageDialog();
             }
         });
-
     }
 
     @Override
@@ -122,9 +118,33 @@ public class Setup extends AppCompatActivity {
         outState.putBoolean("satState", satC.isChecked());
         outState.putBoolean("sunState", sunC.isChecked());
         outState.putString("delivery", delivPrice.getText().toString());
-        outState.putString("foodType", foodType.getText().toString());
         outState.putInt("delivInt", deliveryPrice);
         outState.putString("dialog", dialogCode);
+        outState.putString("foodType", foodType.getText().toString());
+
+        int lung = indexFoods.size();
+        switch (lung) {
+            case 0:
+                break;
+            case 1: {
+                outState.putInt("foodIndexOne", indexFoods.get(0));
+                outState.putInt("foodIndexTwo", -1);
+                outState.putInt("foodIndexThree", -1);
+                break;
+            }
+            case 2: {
+                outState.putInt("foodIndexOne", indexFoods.get(0));
+                outState.putInt("foodIndexTwo", indexFoods.get(1));
+                outState.putInt("foodIndexThree", -1);
+                break;
+            }
+            case 3: {
+                outState.putInt("foodIndexOne", indexFoods.get(0));
+                outState.putInt("foodIndexTwo", indexFoods.get(1));
+                outState.putInt("foodIndexThree", indexFoods.get(2));
+                break;
+            }
+        }
     }
 
     @Override
@@ -158,18 +178,35 @@ public class Setup extends AppCompatActivity {
         deliveryPrice = savedInstanceState.getInt("delivInt", 5);
         foodType.setText(savedInstanceState.getString("foodType", getResources().getString(R.string.food_type_unselect)));
 
+        selectedFoods = new ArrayList<>();
+        indexFoods = new ArrayList<>();
+        foodCategories = getResources().getStringArray(R.array.foodcategory_array);
+
+        int prova = 0;
+        prova = savedInstanceState.getInt("foodIndexOne", -1);
+        if(prova != -1) {
+            indexFoods.add(prova);
+            selectedFoods.add(String.valueOf(foodCategories[prova]));
+        }
+        prova = savedInstanceState.getInt("foodIndexTwo", -1);
+        if(prova != -1) {
+            indexFoods.add(prova);
+            selectedFoods.add(String.valueOf(foodCategories[prova]));
+        }
+        prova = savedInstanceState.getInt("foodIndexThree", -1);
+        if(prova != -1) {
+            indexFoods.add(prova);
+            selectedFoods.add(String.valueOf(foodCategories[prova]));
+        }
+
         String dialogPrec = savedInstanceState.getString("dialog");
 
         if (dialogPrec != null && dialogPrec.compareTo("ok") != 0) {
             if (dialogPrec.compareTo("pickImage") == 0) {
                 showPickImageDialog();
             } else if (dialogPrec.compareTo("back") == 0) {
-                        onBackPressed();
-            } /*else if (dialogPrec.compareTo("firstTime") == 0) {
-                showPickTime(caller);
-            } else if (dialogPrec.compareTo("secondTime") == 0){
-                showSecondPicker();
-            }*/
+                onBackPressed();
+            }
         }
 
         name.clearFocus();
@@ -180,7 +217,6 @@ public class Setup extends AppCompatActivity {
 
     protected void onPause(){
         super.onPause();
-
     }
 
     private void updateSave(){
@@ -209,7 +245,6 @@ public class Setup extends AppCompatActivity {
             errorName.setText(getResources().getString(R.string.error_name));
             errorLine.setBackgroundColor(getResources().getColor(R.color.errorColor,this.getTheme()));
             errorLine.setAlpha(1);
-
         }else{
             checkString = true;
             errorName.setText("");
@@ -254,6 +289,26 @@ public class Setup extends AppCompatActivity {
         }else{
             checkString = true;
             errorMail.setText("");
+            errorLine.setAlpha(0.2f);
+            errorLine.setBackgroundColor(Color.BLACK);
+        }
+
+        updateSave();
+    }
+
+    private void checkAddress(){
+        View errorLine = findViewById(R.id.address_error_line);
+        String regexpAddress = "^(?=\\s*\\S).*$";
+        final String addressToCheck = address.getText().toString();
+
+        if(!Pattern.compile(regexpAddress).matcher(addressToCheck).matches()) {
+            errorAddress.setText(getResources().getString(R.string.error_address));
+            checkString = false;
+            errorLine.setBackgroundColor(getResources().getColor(R.color.errorColor, this.getTheme()));
+            errorLine.setAlpha(1);
+        }else{
+            checkString = true;
+            errorAddress.setText("");
             errorLine.setAlpha(0.2f);
             errorLine.setBackgroundColor(Color.BLACK);
         }
@@ -321,8 +376,7 @@ public class Setup extends AppCompatActivity {
         this.errorName = findViewById(R.id.name_error);
         this.errorMail = findViewById(R.id.email_error);
         this.errorPhone = findViewById(R.id.number_error);
-        TextView errorAddress = findViewById(R.id.address_error);
-        //ImageButton back = findViewById(R.id.backButton);
+        this.errorAddress = findViewById(R.id.address_error);
         this.save = findViewById(R.id.saveButton);
 
         errorName.setText("");
@@ -334,7 +388,6 @@ public class Setup extends AppCompatActivity {
 
         if(f.exists())
             profilePicture.setImageURI(Uri.fromFile(f));
-
 
         name.setText(sharedPref.getString("name", getResources().getString(R.string.namerosso)));
         email.setText(sharedPref.getString("email", getResources().getString(R.string.mail_rosso)));
@@ -356,6 +409,28 @@ public class Setup extends AppCompatActivity {
         friC.setChecked(sharedPref.getBoolean("friState", false));
         satC.setChecked(sharedPref.getBoolean("satState", false));
         sunC.setChecked(sharedPref.getBoolean("sunState", false));
+
+        selectedFoods = new ArrayList<>();
+        indexFoods = new ArrayList<>();
+        foodCategories = getResources().getStringArray(R.array.foodcategory_array);
+
+        int prova = 0;
+        prova = sharedPref.getInt("foodIndexOne", -1);
+        if(prova != -1) {
+            indexFoods.add(prova);
+            selectedFoods.add(String.valueOf(foodCategories[prova]));
+        }
+        prova = sharedPref.getInt("foodIndexTwo", -1);
+        if(prova != -1) {
+            indexFoods.add(prova);
+            selectedFoods.add(String.valueOf(foodCategories[prova]));
+        }
+        prova = sharedPref.getInt("foodIndexThree", -1);
+        if(prova != -1) {
+            indexFoods.add(prova);
+            selectedFoods.add(String.valueOf(foodCategories[prova]));
+        }
+
         edit.apply();
 
         double price = deliveryPrice * 0.5;
@@ -363,7 +438,6 @@ public class Setup extends AppCompatActivity {
         delivPrice.setText(text);
         seekBarPrice.setProgress(deliveryPrice);
 
-        ImageButton food = findViewById(R.id.editFood);
 
         ImageButton mon = findViewById(R.id.editMonday);
         if (!monC.isChecked())
@@ -462,6 +536,22 @@ public class Setup extends AppCompatActivity {
                 if (check != null && check.compareTo(editable.toString()) != 0){
                     unchanged = false;
                 }
+            }
+        });
+        this.address.addTextChangedListener(new TextWatcher() {
+            @Override
+            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+
+            }
+
+            @Override
+            public void onTextChanged(CharSequence s, int start, int before, int count) {
+                checkAddress();
+            }
+
+            @Override
+            public void afterTextChanged(Editable s) {
+
             }
         });
 
@@ -653,7 +743,6 @@ public class Setup extends AppCompatActivity {
             super.onBackPressed();
         }
         else {
-            Log.d("ALERT", "false");
             AlertDialog.Builder builder = new AlertDialog.Builder(this, R.style.AppCompatAlertDialogStyle);
             builder.setNegativeButton(getResources().getString(R.string.cancel), new DialogInterface.OnClickListener() {
                 @Override
@@ -709,6 +798,31 @@ public class Setup extends AppCompatActivity {
         edit.putBoolean("sunState", sunC.isChecked());
         edit.putInt("delivPrice", deliveryPrice);
         edit.putString("foodType", foodType.getText().toString());
+
+        int lung = indexFoods.size();
+        switch (lung) {
+            case 0:
+                break;
+            case 1: {
+                edit.putInt("foodIndexOne", indexFoods.get(0));
+                edit.putInt("foodIndexTwo", -1);
+                edit.putInt("foodIndexThree", -1);
+                break;
+            }
+            case 2: {
+                edit.putInt("foodIndexOne", indexFoods.get(0));
+                edit.putInt("foodIndexTwo", indexFoods.get(1));
+                edit.putInt("foodIndexThree", -1);
+                break;
+            }
+            case 3: {
+                edit.putInt("foodIndexOne", indexFoods.get(0));
+                edit.putInt("foodIndexTwo", indexFoods.get(1));
+                edit.putInt("foodIndexThree", indexFoods.get(2));
+                break;
+            }
+        }
+
         edit.apply();
         finish();
     }
@@ -888,10 +1002,6 @@ public class Setup extends AppCompatActivity {
         }
     }
 
-    public boolean[] checkedFoods = new boolean[27];
-    public ArrayList<String> selectedFoods = new ArrayList<>();
-
-
     public int numFoods(){
         int i = 0;
         for (boolean food:checkedFoods) {
@@ -901,62 +1011,74 @@ public class Setup extends AppCompatActivity {
         return i;
     }
 
-    public void showPickFood(View view) {
-        Log.d("MAD", "PRESSED");
-        final String[] foodCategories;
+    public void populateCheckedFoods() {
+        for(int i = 0; i < 27; i++)
+            checkedFoods[i] = false;
 
-        foodCategories = getResources().getStringArray(R.array.foodcategory_array);
-        //final boolean[] checkedFoods = new boolean[foodCategories.length];
-        //Arrays.fill(checkedFoods, Boolean.FALSE);
+        int index = indexFoods.size();
+
+        for(int i = 0; i < index; i++) {
+            checkedFoods[indexFoods.get(i)] = true;
+        }
+    }
+
+    public void showPickFood(View view) {
+        populateCheckedFoods();
 
         final AlertDialog.Builder builder = new AlertDialog.Builder(this,  R.style.AppCompatAlertDialogStyle);
 
         builder.setMultiChoiceItems(foodCategories, checkedFoods, new DialogInterface.OnMultiChoiceClickListener() {
-            int count = numFoods();
             @Override
             public void onClick(DialogInterface dialog, int which, boolean isChecked) {
-                Log.d("SELFOF",selectedFoods.size()+"");
                 if (isChecked) {
-                    if (!selectedFoods.contains(String.valueOf(foodCategories[which])))
-                        if (selectedFoods.size() < 3) {
-                            selectedFoods.add(String.valueOf(foodCategories[which]));
-                            checkedFoods[which] = true;
-                        } else {
-                            count--;
-                            ((AlertDialog) dialog).getListView().setItemChecked(which, false);
-                            checkedFoods[which] = false;
-                            Toast.makeText(getApplicationContext(), "you can't add more than 3", Toast.LENGTH_LONG).show();
-                        }
-                } else if (selectedFoods.contains(String.valueOf(foodCategories[which]))) {
-                    selectedFoods.remove(String.valueOf(foodCategories[which]));
+                    //if (!selectedFoods.contains(String.valueOf(foodCategories[which]))) {
+                    if (selectedFoods.size() < 3) {
+                        //Log.d("MAD", "selectedFood " + selectedFoods.size());
+                        selectedFoods.add(String.valueOf(foodCategories[which]));
+                        indexFoods.add(which);
+                        checkedFoods[which] = true;
+                    } else {
+                        ((AlertDialog) dialog).getListView().setItemChecked(which, false);
+                        checkedFoods[which] = false;
+                        Toast.makeText(getApplicationContext(), R.string.max_cuisine, Toast.LENGTH_SHORT).show();
+                    }
+                } else {
+                    if(selectedFoods.contains(String.valueOf(foodCategories[which])))
+                        selectedFoods.remove(String.valueOf(foodCategories[which]));
+                    //Log.d("MAD", "selectedFood DESELECT " + selectedFoods.size());
+                    if(indexFoods.contains(which))
+                        indexFoods.remove(Integer.valueOf(which));
+                    //Log.d("MAD", ""+ indexFoods.size());
                     checkedFoods[which] = false;
                 }
             }
         });
 
-
-        builder.setPositiveButton("Done", new DialogInterface.OnClickListener() {
+        builder.setPositiveButton(R.string.accept, new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialog, int which) {
+                unchanged = false;
+
                 int size = selectedFoods.size();
                 String text = "";
                 for(int i = 0; i < size; i++) {
-                    if(i == size-1)
+                    if(i == size-1) {
                         text = text + (selectedFoods.get(i));
-                    else
+                    } else {
                         text = text + (selectedFoods.get(i)) + ", ";
+                    }
                 }
                 foodType.setText(text);
-                dialog.dismiss();
             }
         });
 
-        builder.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
+        builder.setNegativeButton(R.string.cancel, new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialog, int which) {
                 dialog.dismiss();
             }
         });
+
         builder.setTitle(R.string.alert_dialog_choose_food);
 
         AlertDialog foodChooseType = builder.create();;

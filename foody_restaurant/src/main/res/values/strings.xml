@@ -14,8 +14,10 @@
     <string name="placeholder_price">0,00 €</string>
     <string name="delivery_price">Delivery price</string>
     <string name="food_type">Select cuisines (max. 3)</string>
-    <string name="food_rosso">Italian, Pizza, Pasta</string>
-    <string name="food_type_unselect">Type 1</string>
+    <string name="food_type_unselect">Type 1, Type 2, Type 3</string>
+    <string name="value">$</string>
+    <string name="max_cuisine">Maximum 3 cuisines</string>
+
 
     <string-array name="foodcategory_array">
         <item>American</item>

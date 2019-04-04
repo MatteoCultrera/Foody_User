@@ -91,7 +91,7 @@
                 android:fontFamily="@font/roboto_regular"
                 android:gravity="center_vertical"
                 android:maxLines="1"
-                android:text="@string/food_rosso"
+                android:hint="@string/food_type_unselect"
                 android:textColor="#ffffffff"
                 android:textColorHint="#bbffffff"
                 android:textSize="15sp"

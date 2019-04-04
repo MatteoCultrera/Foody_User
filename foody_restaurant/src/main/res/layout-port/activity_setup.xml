@@ -152,12 +152,12 @@
 
                 <TextView
                     android:id="@+id/food_type"
-                    android:layout_width="wrap_content"
+                    android:layout_width="0dp"
                     android:layout_height="wrap_content"
                     android:layout_marginStart="38dp"
                     android:layout_marginTop="8dp"
                     android:layout_marginEnd="8dp"
-                    android:text="@string/food_rosso"
+                    android:hint="@string/food_type_unselect"
                     android:textColor="@color/primaryText"
                     android:textSize="15sp"
                     app:layout_constraintEnd_toStartOf="@+id/editFood"
@@ -173,8 +173,6 @@
                     android:background="@android:color/black"
                     app:layout_constraintTop_toBottomOf="@+id/food_type"
                     tools:layout_editor_absoluteX="16dp" />
-
-
 
             </android.support.constraint.ConstraintLayout>
 
@@ -244,13 +242,11 @@
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
                     android:layout_marginTop="16dp"
-                    android:max="17"
+                    android:max="16"
                     android:progress="6"
-
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintTop_toBottomOf="@+id/deliv" />
-
 
             </android.support.constraint.ConstraintLayout>
 
@@ -309,7 +305,7 @@
                 android:layout_width="0dp"
                 android:layout_height="61dp"
                 android:layout_marginStart="16dp"
-                android:layout_marginTop="42dp"
+                android:layout_marginTop="16dp"
                 android:layout_marginEnd="16dp"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
@@ -321,10 +317,10 @@
                     android:layout_height="30dp"
                     android:layout_marginTop="8dp"
                     android:layout_marginEnd="161dp"
-                    android:contentDescription="@null"
-                    android:scaleType="fitCenter"
                     android:adjustViewBounds="true"
+                    android:contentDescription="@null"
                     android:padding="2dp"
+                    android:scaleType="fitCenter"
                     android:src="@drawable/name_black"
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintHorizontal_bias="0.0"
@@ -516,7 +512,7 @@
             <android.support.constraint.ConstraintLayout
                 android:id="@+id/constraintLayout7"
                 android:layout_width="0dp"
-                android:layout_height="59dp"
+                android:layout_height="61dp"
                 android:layout_marginStart="16dp"
                 android:layout_marginTop="21dp"
                 android:layout_marginEnd="16dp"
@@ -562,6 +558,7 @@
                     app:layout_constraintTop_toTopOf="parent" />
 
                 <View
+                    android:id="@+id/address_error_line"
                     android:layout_width="match_parent"
                     android:layout_height="1dp"
                     android:layout_marginTop="6dp"
