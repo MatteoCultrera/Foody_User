@@ -2,17 +2,14 @@
 
 <layer-list xmlns:android="http://schemas.android.com/apk/res/android">
 
-    <item>
-        <shape android:shape="rectangle">
-            <solid android:color="@color/colorPrimaryLight">
-            </solid>
-        </shape>
+    <item android:drawable="@color/colorPrimaryLight">
     </item>
     <item>
-        <bitmap android:src="@drawable/foody_white"
-            android:gravity="center">
-
-        </bitmap>
+        <inset android:drawable="@drawable/foody_white"
+            android:insetRight="32dp"
+            android:insetTop="265dp"
+            android:insetLeft="32dp"
+            android:insetBottom="265dp"/>
     </item>
 
 </layer-list>
