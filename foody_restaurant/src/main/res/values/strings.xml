@@ -1,6 +1,5 @@
 <resources>
     <string name="app_name">Foody Restaurant</string>
-
     <string name="restaurant_maintype">Italian Restaurant</string>
 
     <string name="namerosso">RossoPomodoro</string>
@@ -49,5 +48,4 @@
     </string-array>
 
     <string name="alert_dialog_choose_food">"Choose max. 3 cuisine"</string>
-
 </resources>
