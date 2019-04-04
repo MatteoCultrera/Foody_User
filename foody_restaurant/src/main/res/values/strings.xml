@@ -1,5 +1,6 @@
 <resources>
     <string name="app_name">Foody Restaurant</string>
+
     <string name="restaurant_maintype">Italian Restaurant</string>
 
     <string name="namerosso">RossoPomodoro</string>
@@ -13,7 +14,7 @@
     <string name="placeholder_price">0,00 €</string>
     <string name="delivery_price">Delivery price</string>
     <string name="food_type">Select cuisines (max. 3)</string>
-    <string name="food_type_unselect">Type 1, Type 2, Type 3</string>
+    <string name="food_type_unselect"> </string>
     <string name="value">$</string>
     <string name="max_cuisine">Maximum 3 cuisines</string>
 
@@ -48,4 +49,6 @@
     </string-array>
 
     <string name="alert_dialog_choose_food">"Choose max. 3 cuisine"</string>
+
+    <string name="okButton">Ok</string>
 </resources>

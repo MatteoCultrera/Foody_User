@@ -15,7 +15,7 @@
     <string name="placeholder_price">0,00 €</string>
     <string name="delivery_price">Costo di consegna</string>
     <string name="food_type">Seleziona la cucina (max. 3)</string>
-    <string name="food_type_unselect">Tipo 1, Tipo 2, Tipo 3</string>
+    <string name="food_type_unselect"> </string>
     <string name="value">€</string>
     <string name="max_cuisine">Massimo 3 tipi di cucina</string>
 
@@ -49,4 +49,6 @@
     </string-array>
 
     <string name="alert_dialog_choose_food">"Scegli max. 3 tipi di cucina"</string>
+
+    <string name="okButton">Ok</string>
 </resources>

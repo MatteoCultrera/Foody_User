@@ -40,7 +40,6 @@ import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.TreeMap;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -60,8 +59,8 @@ public class Setup extends AppCompatActivity {
     private int caller;
     private AlertDialog dialogDism;
     private TimePickerDialog timePicker;
-    private AlertDialog foodChooseType;
     private final int GALLERY_REQUEST_CODE = 1;
+    private AlertDialog foodChooseType;
     private final int REQUEST_CAPTURE_IMAGE = 100;
     private final String PROFILE_IMAGE = "ProfileImage.jpg";
     private final String PLACEHOLDER_CAMERA="PlaceCamera.jpg";
@@ -230,6 +229,8 @@ public class Setup extends AppCompatActivity {
         email.clearFocus();
         address.clearFocus();
         phoneNumber.clearFocus();
+        updateButtons();
+
     }
 
     protected void onPause(){
@@ -906,7 +907,7 @@ public class Setup extends AppCompatActivity {
                 tv = findViewById(R.id.timeSunday);
                 break;
         }
-        timePicker = new TimePickerDialog(this, new TimePickerDialog.OnTimeSetListener() {
+        timePicker = new TimePickerDialog(this, R.style.DateTimeDialog, new TimePickerDialog.OnTimeSetListener() {
             @Override
             public void onTimeSet(TimePicker timePicker, int selectedHour, int selectedMinute) {
                 String selHour = ""+selectedHour;
@@ -922,6 +923,7 @@ public class Setup extends AppCompatActivity {
         }, hour, minute, true);
         timePicker.setTitle(getResources().getString(R.string.opening_time));
         timePicker.setCancelable(false);
+        timePicker.setButton(DialogInterface.BUTTON_POSITIVE,getResources().getString(R.string.okButton), timePicker);
         dialogCode = "firstTime";
         timePicker.show();
     }
@@ -953,7 +955,7 @@ public class Setup extends AppCompatActivity {
                 tv = findViewById(R.id.timeSunday);
                 break;
         }
-        timePicker = new TimePickerDialog(this, new TimePickerDialog.OnTimeSetListener() {
+        timePicker = new TimePickerDialog(this, R.style.DateTimeDialog, new TimePickerDialog.OnTimeSetListener() {
             @Override
             public void onTimeSet(TimePicker timePicker, int selectedHour, int selectedMinute) {
                 String selHour = ""+selectedHour;
@@ -972,6 +974,7 @@ public class Setup extends AppCompatActivity {
         }, hour, minute, true);
         timePicker.setTitle(getResources().getString(R.string.closing_time));
         timePicker.setCancelable(false);
+        timePicker.setButton(DialogInterface.BUTTON_POSITIVE,getResources().getString(R.string.okButton), timePicker);
         dialogCode = "secondTime";
         timePicker.show();
     }
@@ -1048,15 +1051,6 @@ public class Setup extends AppCompatActivity {
         }
     }
 
-    public int numFoods(){
-        int i = 0;
-        for (boolean food:checkedFoods) {
-            if(food)
-                i++;
-        }
-        return i;
-    }
-
     public void populateCheckedFoods() {
         for(int i = 0; i < 27; i++)
             checkedFoods[i] = false;
@@ -1076,7 +1070,6 @@ public class Setup extends AppCompatActivity {
         builder.setMultiChoiceItems(foodCategories, checkedFoods, new DialogInterface.OnMultiChoiceClickListener() {
             @Override
             public void onClick(DialogInterface dialog, int which, boolean isChecked) {
-                unchanged = false;
                 if (isChecked) {
                     //if (!selectedFoods.contains(String.valueOf(foodCategories[which]))) {
                     if (selectedFoods.size() < 3) {
@@ -1131,6 +1124,53 @@ public class Setup extends AppCompatActivity {
         foodChooseType = builder.create();
         dialogCode = "foodDialog";
         foodChooseType.show();
+
+    }
+
+    public void updateButtons() {
+        CheckBox cb;
+        cb =findViewById(R.id.checkMonday);
+        if (cb.isChecked()) {
+            findViewById(R.id.editMonday).setClickable(true);
+        } else {
+            findViewById(R.id.editMonday).setClickable(false);
+        }
+        cb=findViewById(R.id.checkTuesday);
+        if (cb.isChecked()) {
+            findViewById(R.id.editTuesday).setClickable(true);
+        } else {
+            findViewById(R.id.editTuesday).setClickable(false);
+        }
+        cb = findViewById(R.id.checkWednesday);
+        if (cb.isChecked()) {
+            findViewById(R.id.editWednesday).setClickable(true);
+        } else {
+            findViewById(R.id.editWednesday).setClickable(false);
+        }
+        cb = findViewById(R.id.checkThursday);
+        if (cb.isChecked()) {
+            findViewById(R.id.editThursday).setClickable(true);
+        } else {
+            findViewById(R.id.editThursday).setClickable(false);
+        }
+        cb = findViewById(R.id.checkFriday);
+        if (cb.isChecked()) {
+            findViewById(R.id.editFriday).setClickable(true);
+        } else {
+            findViewById(R.id.editFriday).setClickable(false);
+        }
+        cb=findViewById(R.id.checkSaturday);
+        if (cb.isChecked()) {
+            findViewById(R.id.editSaturday).setClickable(true);
+        } else {
+            findViewById(R.id.editSaturday).setClickable(false);
+        }
+        cb=findViewById(R.id.checkSunday);
+        if (cb.isChecked()) {
+            findViewById(R.id.editSunday).setClickable(true);
+        } else {
+            findViewById(R.id.editSunday).setClickable(false);
+        }
 
     }
 }

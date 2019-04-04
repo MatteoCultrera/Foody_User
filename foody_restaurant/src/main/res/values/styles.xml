@@ -20,7 +20,7 @@
         <item name="android:background">#FFFFFF</item>
         <item name="android:textSize">16sp</item>
         <item name="dialogCornerRadius">16dp</item>
-        <item name="android:windowTitleSize">20dp</item>
+        <item name="android:windowTitleStyle">@style/DialogTitle</item>
     </style>
 
     <style name="ButtonColor" parent="Widget.MaterialComponents.Button.TextButton">
@@ -48,6 +48,19 @@
         <item name="android:minHeight">52dp</item>
         <item name="android:textSize">15sp</item>
         <item name="cornerRadius">32dp</item>
+    </style>
+
+    <style name="DateTimeDialog" parent="Theme.MaterialComponents.Light.Dialog">
+        <item name="android:buttonBarPositiveButtonStyle">@style/ButtonColor</item>
+        <item name="android:buttonBarNegativeButtonStyle">@style/ButtonColor</item>
+        <item name="colorAccent">@color/colorAccent</item>
+        <item name="dialogCornerRadius">16dp</item>
+        <item name="android:windowTitleStyle">@style/DialogTitle</item>
+    </style>
+
+    <style name="DialogTitle" parent="@android:style/TextAppearance.DialogWindowTitle">
+        <item name="android:gravity">center</item>
+        <item name="android:textSize">20dp</item>
     </style>
 
 </resources>
