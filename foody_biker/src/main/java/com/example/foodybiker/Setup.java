@@ -385,13 +385,13 @@ public class Setup extends AppCompatActivity {
         address.setText(sharedPref.getString("address", getResources().getString(R.string.address_foo)));
         phoneNumber.setText(sharedPref.getString("phoneNumber", getResources().getString(R.string.phone_foo)));
         city.setText(sharedPref.getString("city", getResources().getString(R.string.city_foo)));
-        monday.setText(sharedPref.getString("monTime", getResources().getString(R.string.Closed)));
-        tuesday.setText(sharedPref.getString("tueTime", getResources().getString(R.string.Closed)));
-        wednesday.setText(sharedPref.getString("wedTime", getResources().getString(R.string.Closed)));
-        thursday.setText(sharedPref.getString("thuTime", getResources().getString(R.string.Closed)));
-        friday.setText(sharedPref.getString("friTime", getResources().getString(R.string.Closed)));
-        saturday.setText(sharedPref.getString("satTime", getResources().getString(R.string.Closed)));
-        sunday.setText(sharedPref.getString("sunTime", getResources().getString(R.string.Closed)));
+        monday.setText(sharedPref.getString("monTime", getResources().getString(R.string.free)));
+        tuesday.setText(sharedPref.getString("tueTime", getResources().getString(R.string.free)));
+        wednesday.setText(sharedPref.getString("wedTime", getResources().getString(R.string.free)));
+        thursday.setText(sharedPref.getString("thuTime", getResources().getString(R.string.free)));
+        friday.setText(sharedPref.getString("friTime", getResources().getString(R.string.free)));
+        saturday.setText(sharedPref.getString("satTime", getResources().getString(R.string.free)));
+        sunday.setText(sharedPref.getString("sunTime", getResources().getString(R.string.free)));
         monC.setChecked(sharedPref.getBoolean("monState", false));
         tueC.setChecked(sharedPref.getBoolean("tueState", false));
         wedC.setChecked(sharedPref.getBoolean("wedState", false));
@@ -687,7 +687,6 @@ public class Setup extends AppCompatActivity {
             super.onBackPressed();
         }
         else {
-            Log.d("ALERT", "false");
             AlertDialog.Builder builder = new AlertDialog.Builder(this, R.style.AppCompatAlertDialogStyle);
             builder.setNegativeButton(getResources().getString(R.string.cancel), new DialogInterface.OnClickListener() {
                 @Override
@@ -818,6 +817,12 @@ public class Setup extends AppCompatActivity {
         timePicker.setTitle(getResources().getString(R.string.opening_time));
         timePicker.setCancelable(false);
         timePicker.setButton(DialogInterface.BUTTON_POSITIVE,getResources().getString(R.string.okButton), timePicker);
+        timePicker.setOnCancelListener(new DialogInterface.OnCancelListener() {
+            @Override
+            public void onCancel(DialogInterface dialogInterface) {
+                dialogCode = "ok";
+            }
+        });
         dialogCode = "firstTime";
         timePicker.show();
     }
@@ -871,6 +876,12 @@ public class Setup extends AppCompatActivity {
         timePicker2.setTitle(getResources().getString(R.string.closing_time));
         timePicker2.setCancelable(false);
         timePicker2.setButton(DialogInterface.BUTTON_POSITIVE,getResources().getString(R.string.okButton), timePicker2);
+        timePicker2.setOnCancelListener(new DialogInterface.OnCancelListener() {
+            @Override
+            public void onCancel(DialogInterface dialogInterface) {
+                dialogCode = "ok";
+            }
+        });
         dialogCode = "secondTime";
         timePicker2.show();
     }
@@ -885,7 +896,6 @@ public class Setup extends AppCompatActivity {
                     monday.setText(standardTime);
                     findViewById(R.id.editMonday).setClickable(true);
                 } else {
-                    Log.d("MAD", "Unchecked");
                     monday.setText(getResources().getString(R.string.free));
                     findViewById(R.id.editMonday).setClickable(false);
                 }
@@ -991,7 +1001,5 @@ public class Setup extends AppCompatActivity {
         } else {
             findViewById(R.id.editSunday).setClickable(false);
         }
-
     }
-
 }
