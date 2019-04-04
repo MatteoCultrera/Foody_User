@@ -901,7 +901,7 @@ public class Setup extends AppCompatActivity {
                 tv = findViewById(R.id.timeSunday);
                 break;
         }
-        timePicker = new TimePickerDialog(this, new TimePickerDialog.OnTimeSetListener() {
+        timePicker = new TimePickerDialog(this, R.style.DateTimeDialog, new TimePickerDialog.OnTimeSetListener() {
             @Override
             public void onTimeSet(TimePicker timePicker, int selectedHour, int selectedMinute) {
                 String selHour = ""+selectedHour;
@@ -917,6 +917,7 @@ public class Setup extends AppCompatActivity {
         }, hour, minute, true);
         timePicker.setTitle(getResources().getString(R.string.opening_time));
         timePicker.setCancelable(false);
+        timePicker.setButton(DialogInterface.BUTTON_POSITIVE,getResources().getString(R.string.okButton), timePicker);
         dialogCode = "firstTime";
         timePicker.show();
     }
@@ -948,7 +949,7 @@ public class Setup extends AppCompatActivity {
                 tv = findViewById(R.id.timeSunday);
                 break;
         }
-        timePicker = new TimePickerDialog(this, new TimePickerDialog.OnTimeSetListener() {
+        timePicker = new TimePickerDialog(this, R.style.DateTimeDialog, new TimePickerDialog.OnTimeSetListener() {
             @Override
             public void onTimeSet(TimePicker timePicker, int selectedHour, int selectedMinute) {
                 String selHour = ""+selectedHour;
@@ -967,6 +968,7 @@ public class Setup extends AppCompatActivity {
         }, hour, minute, true);
         timePicker.setTitle(getResources().getString(R.string.closing_time));
         timePicker.setCancelable(false);
+        timePicker.setButton(DialogInterface.BUTTON_POSITIVE,getResources().getString(R.string.okButton), timePicker);
         dialogCode = "secondTime";
         timePicker.show();
     }
@@ -1041,15 +1043,6 @@ public class Setup extends AppCompatActivity {
                 }
                 break;
         }
-    }
-
-    public int numFoods(){
-        int i = 0;
-        for (boolean food:checkedFoods) {
-            if(food)
-                i++;
-        }
-        return i;
     }
 
     public void populateCheckedFoods() {

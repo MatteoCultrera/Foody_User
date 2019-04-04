@@ -50,4 +50,5 @@
 
     <string name="alert_dialog_choose_food">"Scegli max. 3 tipi di cucina"</string>
 
+    <string name="okButton">Ok</string>
 </resources>
