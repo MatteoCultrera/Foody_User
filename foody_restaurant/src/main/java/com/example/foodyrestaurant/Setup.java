@@ -59,6 +59,7 @@ public class Setup extends AppCompatActivity {
     private int caller;
     private AlertDialog dialogDism;
     private TimePickerDialog timePicker;
+    private AlertDialog foodChooseType;
     private TextView errorAddress;
     private final int GALLERY_REQUEST_CODE = 1;
     private final int REQUEST_CAPTURE_IMAGE = 100;
@@ -221,9 +222,8 @@ public class Setup extends AppCompatActivity {
                 if (caller != 0) {
                     showSecondPicker();
                 }
-            }
-                onBackPressed();
-            }
+            } else if (dialogPrec.compareTo("foodDialog") == 0)
+                showPickFood(findViewById(R.id.editFood));
         }
 
         name.clearFocus();
@@ -239,6 +239,9 @@ public class Setup extends AppCompatActivity {
         }
         if (timePicker != null){
             timePicker.dismiss();
+        }
+        if (foodChooseType != null){
+            foodChooseType.dismiss();
         }
     }
 
@@ -1072,6 +1075,7 @@ public class Setup extends AppCompatActivity {
         builder.setMultiChoiceItems(foodCategories, checkedFoods, new DialogInterface.OnMultiChoiceClickListener() {
             @Override
             public void onClick(DialogInterface dialog, int which, boolean isChecked) {
+                unchanged = false;
                 if (isChecked) {
                     //if (!selectedFoods.contains(String.valueOf(foodCategories[which]))) {
                     if (selectedFoods.size() < 3) {
@@ -1110,6 +1114,7 @@ public class Setup extends AppCompatActivity {
                         text = text + (selectedFoods.get(i)) + ", ";
                     }
                 }
+                dialogCode = "ok";
                 foodType.setText(text);
             }
         });
@@ -1117,13 +1122,13 @@ public class Setup extends AppCompatActivity {
         builder.setNegativeButton(R.string.cancel, new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialog, int which) {
+                dialogCode = "ok";
                 dialog.dismiss();
             }
         });
-
         builder.setTitle(R.string.alert_dialog_choose_food);
-
-        AlertDialog foodChooseType = builder.create();;
+        foodChooseType = builder.create();
+        dialogCode = "foodDialog";
         foodChooseType.show();
 
     }

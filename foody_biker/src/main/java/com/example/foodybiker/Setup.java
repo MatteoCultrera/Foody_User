@@ -61,10 +61,12 @@ public class Setup extends AppCompatActivity {
     private String placeholderPath;
     private File storageDir;
     private TextView tv;
+    private int caller;
     private boolean unchanged, checkString = true;
     private String dialogCode = "ok";
     private String openHour, closeHour;
     private AlertDialog dialogDism;
+    private TimePickerDialog timePicker;
 
     private SharedPreferences sharedPref;
     private SharedPreferences.Editor edit;
@@ -111,6 +113,8 @@ public class Setup extends AppCompatActivity {
         outState.putBoolean("satState", satC.isChecked());
         outState.putBoolean("sunState", sunC.isChecked());
         outState.putString("dialog", dialogCode);
+        outState.putString("openHour", openHour);
+        outState.putInt("caller", caller);
     }
 
     @Override
@@ -127,13 +131,13 @@ public class Setup extends AppCompatActivity {
         address.setText(savedInstanceState.getString("address", getResources().getString(R.string.address_hint)));
         phoneNumber.setText(savedInstanceState.getString("phoneNumber", getResources().getString(R.string.phone_hint)));
         city.setText(savedInstanceState.getString("city", getResources().getString(R.string.city_hint)));
-        monday.setText(savedInstanceState.getString("monTime", getResources().getString(R.string.Closed)));
-        tuesday.setText(savedInstanceState.getString("tueTime", getResources().getString(R.string.Closed)));
-        wednesday.setText(savedInstanceState.getString("wedTime", getResources().getString(R.string.Closed)));
-        thursday.setText(savedInstanceState.getString("thuTime", getResources().getString(R.string.Closed)));
-        friday.setText(savedInstanceState.getString("friTime", getResources().getString(R.string.Closed)));
-        saturday.setText(savedInstanceState.getString("satTime", getResources().getString(R.string.Closed)));
-        sunday.setText(savedInstanceState.getString("sunTime", getResources().getString(R.string.Closed)));
+        monday.setText(savedInstanceState.getString("monTime", getResources().getString(R.string.free)));
+        tuesday.setText(savedInstanceState.getString("tueTime", getResources().getString(R.string.free)));
+        wednesday.setText(savedInstanceState.getString("wedTime", getResources().getString(R.string.free)));
+        thursday.setText(savedInstanceState.getString("thuTime", getResources().getString(R.string.free)));
+        friday.setText(savedInstanceState.getString("friTime", getResources().getString(R.string.free)));
+        saturday.setText(savedInstanceState.getString("satTime", getResources().getString(R.string.free)));
+        sunday.setText(savedInstanceState.getString("sunTime", getResources().getString(R.string.free)));
         monC.setChecked(savedInstanceState.getBoolean("monState", false));
         tueC.setChecked(savedInstanceState.getBoolean("tueState", false));
         wedC.setChecked(savedInstanceState.getBoolean("wedState", false));
@@ -141,6 +145,8 @@ public class Setup extends AppCompatActivity {
         friC.setChecked(savedInstanceState.getBoolean("friState", false));
         satC.setChecked(savedInstanceState.getBoolean("satState", false));
         sunC.setChecked(savedInstanceState.getBoolean("sunState", false));
+        caller = savedInstanceState.getInt("caller", 0);
+        openHour = savedInstanceState.getString("openHour", null);
 
         String dialogPrec = savedInstanceState.getString("dialog");
 
@@ -149,6 +155,14 @@ public class Setup extends AppCompatActivity {
                 showPickImageDialog();
             } else if (dialogPrec.compareTo("back") == 0) {
                 onBackPressed();
+            } else if (dialogPrec.compareTo("firstTime") == 0) {
+                if (caller != 0) {
+                    showPickTime(findViewById(caller));
+                }
+            } else if (dialogPrec.compareTo("secondTime") == 0){
+                if (caller != 0) {
+                    showSecondPicker();
+                }
             }
         }
 
@@ -163,6 +177,9 @@ public class Setup extends AppCompatActivity {
         super.onPause();
         if (dialogDism != null){
             dialogDism.dismiss();
+        }
+        if (timePicker != null){
+            timePicker.dismiss();
         }
     }
 
@@ -347,13 +364,13 @@ public class Setup extends AppCompatActivity {
         address.setText(sharedPref.getString("address", getResources().getString(R.string.address_foo)));
         phoneNumber.setText(sharedPref.getString("phoneNumber", getResources().getString(R.string.phone_foo)));
         city.setText(sharedPref.getString("city", getResources().getString(R.string.city_foo)));
-        monday.setText(sharedPref.getString("monTime", getResources().getString(R.string.Closed)));
-        tuesday.setText(sharedPref.getString("tueTime", getResources().getString(R.string.Closed)));
-        wednesday.setText(sharedPref.getString("wedTime", getResources().getString(R.string.Closed)));
-        thursday.setText(sharedPref.getString("thuTime", getResources().getString(R.string.Closed)));
-        friday.setText(sharedPref.getString("friTime", getResources().getString(R.string.Closed)));
-        saturday.setText(sharedPref.getString("satTime", getResources().getString(R.string.Closed)));
-        sunday.setText(sharedPref.getString("sunTime", getResources().getString(R.string.Closed)));
+        monday.setText(sharedPref.getString("monTime", getResources().getString(R.string.free)));
+        tuesday.setText(sharedPref.getString("tueTime", getResources().getString(R.string.free)));
+        wednesday.setText(sharedPref.getString("wedTime", getResources().getString(R.string.free)));
+        thursday.setText(sharedPref.getString("thuTime", getResources().getString(R.string.free)));
+        friday.setText(sharedPref.getString("friTime", getResources().getString(R.string.free)));
+        saturday.setText(sharedPref.getString("satTime", getResources().getString(R.string.free)));
+        sunday.setText(sharedPref.getString("sunTime", getResources().getString(R.string.free)));
         monC.setChecked(sharedPref.getBoolean("monState", false));
         tueC.setChecked(sharedPref.getBoolean("tueState", false));
         wedC.setChecked(sharedPref.getBoolean("wedState", false));
@@ -737,10 +754,8 @@ public class Setup extends AppCompatActivity {
     public void showPickTime(View view) {
         int hour = 0;
         int minute = 0;
-
-        //caller = view;
-
-        switch(view.getId()) {
+        caller = view.getId();
+        switch(caller) {
             case R.id.editMonday:
                 tv = findViewById(R.id.timeMonday);
                 break;
@@ -763,9 +778,6 @@ public class Setup extends AppCompatActivity {
                 tv = findViewById(R.id.timeSunday);
                 break;
         }
-
-        TimePickerDialog timePicker;
-
         timePicker = new TimePickerDialog(this, new TimePickerDialog.OnTimeSetListener() {
             @Override
             public void onTimeSet(TimePicker timePicker, int selectedHour, int selectedMinute) {
@@ -789,8 +801,31 @@ public class Setup extends AppCompatActivity {
     public void showSecondPicker(){
         int hour = 0;
         int minute = 0;
-        TimePickerDialog timePicker2;
-        timePicker2 = new TimePickerDialog(this, new TimePickerDialog.OnTimeSetListener() {
+        Log.d("DIALOG", Integer.toString(caller));
+        switch(caller) {
+            case R.id.editMonday:
+                tv = findViewById(R.id.timeMonday);
+                break;
+            case R.id.editTuesday:
+                tv = findViewById(R.id.timeTuesday);
+                break;
+            case R.id.editWednesday:
+                tv = findViewById(R.id.timeWednesday);
+                break;
+            case R.id.editThursday:
+                tv = findViewById(R.id.timeThursday);
+                break;
+            case R.id.editFriday:
+                tv = findViewById(R.id.timeFriday);
+                break;
+            case R.id.editSaturday:
+                tv = findViewById(R.id.timeSaturday);
+                break;
+            case R.id.editSunday:
+                tv = findViewById(R.id.timeSunday);
+                break;
+        }
+        timePicker = new TimePickerDialog(this, new TimePickerDialog.OnTimeSetListener() {
             @Override
             public void onTimeSet(TimePicker timePicker, int selectedHour, int selectedMinute) {
                 String selHour = ""+selectedHour;
@@ -803,13 +838,14 @@ public class Setup extends AppCompatActivity {
                 unchanged = false;
                 dialogCode = "ok";
                 String defHour = openHour + " - " + closeHour;
+                caller = 0;
                 tv.setText(defHour);
             }
         }, hour, minute, true);
-        timePicker2.setTitle(getResources().getString(R.string.closing_time));
-        timePicker2.setCancelable(false);
+        timePicker.setTitle(getResources().getString(R.string.closing_time));
+        timePicker.setCancelable(false);
         dialogCode = "secondTime";
-        timePicker2.show();
+        timePicker.show();
     }
 
     public void lockUnlock(View view) {
@@ -823,7 +859,7 @@ public class Setup extends AppCompatActivity {
                     findViewById(R.id.editMonday).setClickable(true);
                 } else {
                     Log.d("MAD", "Unchecked");
-                    monday.setText(getResources().getString(R.string.Closed));
+                    monday.setText(getResources().getString(R.string.free));
                     findViewById(R.id.editMonday).setClickable(false);
                 }
                 break;
@@ -832,7 +868,7 @@ public class Setup extends AppCompatActivity {
                     tuesday.setText(standardTime);
                     findViewById(R.id.editTuesday).setClickable(true);
                 } else {
-                    tuesday.setText(getResources().getString(R.string.Closed));
+                    tuesday.setText(getResources().getString(R.string.free));
                     findViewById(R.id.editTuesday).setClickable(false);
                 }
                 break;
@@ -841,7 +877,7 @@ public class Setup extends AppCompatActivity {
                     wednesday.setText(standardTime);
                     findViewById(R.id.editWednesday).setClickable(true);
                 } else {
-                    wednesday.setText(getResources().getString(R.string.Closed));
+                    wednesday.setText(getResources().getString(R.string.free));
                     findViewById(R.id.editWednesday).setClickable(false);
                 }
                 break;
@@ -850,7 +886,7 @@ public class Setup extends AppCompatActivity {
                     thursday.setText(standardTime);
                     findViewById(R.id.editThursday).setClickable(true);
                 } else {
-                    thursday.setText(getResources().getString(R.string.Closed));
+                    thursday.setText(getResources().getString(R.string.free));
                     findViewById(R.id.editThursday).setClickable(false);
                 }
                 break;
@@ -859,7 +895,7 @@ public class Setup extends AppCompatActivity {
                     friday.setText(standardTime);
                     findViewById(R.id.editFriday).setClickable(true);
                 } else {
-                    friday.setText(getResources().getString(R.string.Closed));
+                    friday.setText(getResources().getString(R.string.free));
                     findViewById(R.id.editFriday).setClickable(false);
                 }
                 break;
@@ -868,7 +904,7 @@ public class Setup extends AppCompatActivity {
                     saturday.setText(standardTime);
                     findViewById(R.id.editSaturday).setClickable(true);
                 } else {
-                    saturday.setText(getResources().getString(R.string.Closed));
+                    saturday.setText(getResources().getString(R.string.free));
                     findViewById(R.id.editSaturday).setClickable(false);
                 }
                 break;
@@ -877,7 +913,7 @@ public class Setup extends AppCompatActivity {
                     sunday.setText(standardTime);
                     findViewById(R.id.editSunday).setClickable(true);
                 } else {
-                    sunday.setText(getResources().getString(R.string.Closed));
+                    sunday.setText(getResources().getString(R.string.free));
                     findViewById(R.id.editSunday).setClickable(false);
                 }
                 break;
