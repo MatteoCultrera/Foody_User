@@ -461,7 +461,7 @@ public class Setup extends AppCompatActivity {
         edit.apply();
 
         double price = deliveryPrice * 0.5;
-        String text = String.format("%.2f",price) + R.string.value;
+        String text = String.format("%.2f",price) + " €";
         delivPrice.setText(text);
         seekBarPrice.setProgress(deliveryPrice);
 
@@ -587,7 +587,7 @@ public class Setup extends AppCompatActivity {
             public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
                 deliveryPrice = progress;
                 double price = deliveryPrice * 0.5;
-                String text = String.format("%.2f",price) + R.string.value;
+                String text = String.format("%.2f",price) + " €";
                 delivPrice.setText(text);
                 unchanged = false;
 

@@ -18,7 +18,6 @@
     <string name="value">$</string>
     <string name="max_cuisine">Maximum 3 cuisines</string>
 
-
     <string-array name="foodcategory_array">
         <item>American</item>
         <item>Brazilian</item>
