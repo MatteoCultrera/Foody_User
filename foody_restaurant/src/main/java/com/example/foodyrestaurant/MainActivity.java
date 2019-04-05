@@ -9,7 +9,6 @@ public class MainActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        startActivity(new Intent(this, User.class));
-        finish();
+        setContentView(R.layout.bottom_bar);
     }
 }
