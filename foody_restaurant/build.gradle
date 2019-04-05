@@ -51,5 +51,6 @@ dependencies {
     //Card View
 
     implementation 'com.android.support:recyclerview-v7:28.0.+ '
+    implementation 'org.jetbrains:annotations-java5:15.0'
 
 }
