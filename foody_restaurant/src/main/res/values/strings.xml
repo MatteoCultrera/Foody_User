@@ -9,7 +9,7 @@
     <string name="address_rosso">via Treviso 42/F, Torino</string>
     <string name="opening_time">Select opening time</string>
     <string name="closing_time">Select closing time</string>
-    <string name="timetable" translatable="false">Timetable</string>
+    <string name="timetable">Timetable</string>
 
     <string name="placeholder_price">0,00 €</string>
     <string name="delivery_price">Delivery price</string>
