@@ -160,8 +160,17 @@ public class Setup extends AppCompatActivity {
 
         File f = new File(storageDir, PLACEHOLDER_CAMERA);
 
+
+        RequestOptions glideOptions = new RequestOptions()
+                .signature(new ObjectKey(f.getPath()+f.lastModified()));
+
         if(f.exists())
-            profilePicture.setImageURI(Uri.fromFile(f));
+
+            Glide
+                    .with(this)
+            .load(f)
+            .apply(glideOptions)
+            .into(profilePicture);
 
         name.setText(savedInstanceState.getString("name", getResources().getString(R.string.name_hint)));
         email.setText(savedInstanceState.getString("email", getResources().getString(R.string.email_hint)));
