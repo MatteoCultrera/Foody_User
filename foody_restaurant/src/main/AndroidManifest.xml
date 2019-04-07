@@ -18,7 +18,9 @@
             android:windowSoftInputMode="adjustResize">
         </activity>
 
-        <activity android:name="com.example.foodyrestaurant.MainActivity">
+        <activity android:name="com.example.foodyrestaurant.MainActivity"
+            android:hardwareAccelerated="true">
+
             <intent-filter>
                 <action android:name="android.intent.action.MAIN"/>
                 <category android:name="android.intent.category.LAUNCHER"/>

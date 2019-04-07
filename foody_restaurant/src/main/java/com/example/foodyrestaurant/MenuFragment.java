@@ -57,7 +57,7 @@ public class MenuFragment extends Fragment {
         dishes.add(new Dish("Margerita","pizza","2", null));
 
 
-        for(int i =0; i < 101;i++){
+        for(int i =0; i < 20;i++){
             Card c = new Card("Pizza "+i);
             c.setDishes(dishes);
             cards.add(c);
