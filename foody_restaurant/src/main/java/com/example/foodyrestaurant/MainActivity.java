@@ -49,17 +49,25 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public boolean onNavigationItemSelected(@NonNull MenuItem menuItem) {
                 int id = menuItem.getItemId();
-                if(id == R.id.menu){
+                if(id == R.id.menu && active != menu){
                     FragmentTransaction transaction =fm.beginTransaction();
                     transaction.setCustomAnimations(R.anim.enter_from_left,R.anim.exit_to_right);
                     transaction.hide(active).show(menu).commit();
                     active = menu;
                     return true;
-                }else if(id == R.id.orders){
-                    fm.beginTransaction().hide(active).show(orders).commit();
+                }else if(id == R.id.orders && active != orders){
+                    if(active == menu){
+                        FragmentTransaction transaction =fm.beginTransaction();
+                        transaction.setCustomAnimations(R.anim.enter_from_right,R.anim.exit_to_left);
+                        transaction.hide(active).show(orders).commit();
+                    }else if(active == user) {
+                        FragmentTransaction transaction = fm.beginTransaction();
+                        transaction.setCustomAnimations(R.anim.enter_from_left, R.anim.exit_to_right);
+                        transaction.hide(active).show(orders).commit();
+                    }
                     active = orders;
                     return true;
-                }else if(id == R.id.prof){
+                }else if(id == R.id.prof && active != user){
                     FragmentTransaction transaction = fm.beginTransaction();
                     transaction.setCustomAnimations(R.anim.enter_from_right,R.anim.exit_to_left);
                     transaction.hide(active).show(user).commit();
