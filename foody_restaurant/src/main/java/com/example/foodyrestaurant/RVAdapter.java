@@ -65,12 +65,6 @@ public class RVAdapter extends RecyclerView.Adapter<RVAdapter.CardViewHolder>{
             cardViewHolder.menuDishes.addView(dish);
         }
 
-        if (i == 0){
-            ViewGroup.MarginLayoutParams layoutParams =
-                    (ViewGroup.MarginLayoutParams) cardViewHolder.cv.getLayoutParams();
-            layoutParams.setMargins(0, getPixelValue(context,50), 0, getPixelValue(context,6));
-            cardViewHolder.cv.requestLayout();
-        }
 
     }
 

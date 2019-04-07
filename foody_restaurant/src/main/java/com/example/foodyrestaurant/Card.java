@@ -22,6 +22,7 @@ public class Card {
         this.title = title;
     }
 
+
     public ArrayList<Dish> getDishes() {
         return dishes;
     }
@@ -29,5 +30,6 @@ public class Card {
     public void setDishes(ArrayList<Dish> dishes) {
         this.dishes = dishes;
     }
+
 
 }

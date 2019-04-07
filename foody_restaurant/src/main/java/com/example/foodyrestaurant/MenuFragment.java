@@ -9,7 +9,9 @@ import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageView;
 
+import com.bumptech.glide.Glide;
 import com.example.foodyrestaurant.R;
 
 import java.util.ArrayList;
@@ -23,6 +25,7 @@ public class MenuFragment extends Fragment {
     RecyclerView menu;
     private ArrayList<Card> cards;
     LinearLayoutManager llm;
+    ImageView profileImage, profileShadow;
 
 
     public MenuFragment() {
@@ -49,6 +52,18 @@ public class MenuFragment extends Fragment {
         llm = new LinearLayoutManager(view.getContext());
         menu.setLayoutManager(llm);
 
+        this.profileImage = view.findViewById(R.id.mainImage);
+        this.profileShadow = view.findViewById(R.id.shadow);
+
+        Glide
+                .with(this)
+                .load(R.drawable.shadow)
+                .into(profileShadow);
+        Glide
+                .with(this)
+                .load(R.drawable.pizza)
+                .into(profileImage);
+
         cards = new ArrayList<>();
         ArrayList<Dish> dishes = new ArrayList<>();
         dishes.add(new Dish("Margerita","pizza","2", null));
@@ -62,6 +77,8 @@ public class MenuFragment extends Fragment {
             c.setDishes(dishes);
             cards.add(c);
         }
+
+
 
 
         RVAdapter adapter = new RVAdapter(cards);
