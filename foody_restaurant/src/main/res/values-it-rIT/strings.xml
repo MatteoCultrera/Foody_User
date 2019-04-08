@@ -49,6 +49,10 @@
     </string-array>
 
     <string name="alert_dialog_choose_food">"Scegli max. 3 tipi di cucina"</string>
+
     <string name="okButton">Ok</string>
+    <string name="menu">Menu</string>
+    <string name="orders">Ordini</string>
+    <string name="profile">Profilo</string>
 
 </resources>

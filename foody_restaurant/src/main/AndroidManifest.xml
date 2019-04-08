@@ -18,8 +18,7 @@
             android:windowSoftInputMode="adjustResize">
         </activity>
 
-        <activity android:name="com.example.foodyrestaurant.MainActivity"
-            android:theme="@style/SplashTheme">
+        <activity android:name="com.example.foodyrestaurant.MainActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN"/>
                 <category android:name="android.intent.category.LAUNCHER"/>
@@ -32,6 +31,10 @@
         </activity>
 
         <activity android:name="com.example.foodyrestaurant.User">
+        </activity>
+
+        <activity android:name="com.example.foodyrestaurant.Menu">
+
         </activity>
 
         <provider
