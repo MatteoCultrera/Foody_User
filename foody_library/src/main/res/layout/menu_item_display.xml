@@ -71,7 +71,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="4,00 €"
-        android:textSize="16dp"
+        android:textSize="16sp"
         android:fontFamily="@font/roboto_regular"
         android:textColor="@color/primaryText"
         app:layout_constraintEnd_toEndOf="parent"
