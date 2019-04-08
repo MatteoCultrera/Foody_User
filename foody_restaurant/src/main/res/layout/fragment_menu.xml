@@ -44,6 +44,30 @@
 
         </android.support.constraint.ConstraintLayout>
 
+
+        <FrameLayout
+            android:id="@+id/frameLayout"
+            android:layout_width="88dp"
+            android:layout_height="88dp"
+            android:elevation="32dp"
+            app:layout_constraintBottom_toBottomOf="@+id/constraintLayout5"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintHorizontal_bias="1.0"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/constraintLayout5">
+
+            <android.support.design.widget.FloatingActionButton
+                android:id="@+id/edit_mode"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="16dp"
+                android:layout_marginTop="16dp"
+                android:src="@drawable/edit_black"
+                app:fabSize="normal"
+                app:maxImageSize="26dp" />
+
+        </FrameLayout>
+
         <android.support.v7.widget.RecyclerView
             android:id="@+id/menu_display"
             android:layout_width="0dp"

@@ -1,8 +1,10 @@
 package com.example.foodyrestaurant;
 
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
+import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.Fragment;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -14,6 +16,7 @@ import android.widget.ImageView;
 import com.bumptech.glide.Glide;
 import com.example.foodyrestaurant.R;
 
+import java.io.File;
 import java.util.ArrayList;
 
 /**
@@ -22,6 +25,7 @@ import java.util.ArrayList;
 public class MenuFragment extends Fragment {
 
 
+    private FloatingActionButton editMode;
     RecyclerView menu;
     private ArrayList<Card> cards;
     LinearLayoutManager llm;
@@ -52,6 +56,7 @@ public class MenuFragment extends Fragment {
         llm = new LinearLayoutManager(view.getContext());
         menu.setLayoutManager(llm);
 
+        this.editMode = view.findViewById(R.id.edit_mode);
         this.profileImage = view.findViewById(R.id.mainImage);
         this.profileShadow = view.findViewById(R.id.shadow);
 
@@ -83,6 +88,14 @@ public class MenuFragment extends Fragment {
 
         RVAdapter adapter = new RVAdapter(cards);
         menu.setAdapter(adapter);
+
+        editMode.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(getActivity(), MenuEdit.class);
+                startActivity(intent);
+            }
+        });
 
     }
 

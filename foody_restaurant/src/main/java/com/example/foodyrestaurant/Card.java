@@ -22,7 +22,6 @@ public class Card {
         this.title = title;
     }
 
-
     public ArrayList<Dish> getDishes() {
         return dishes;
     }

@@ -172,8 +172,6 @@ public class UserFragment extends Fragment {
 
         File f = new File(storageDir, PROFILE_IMAGE);
 
-
-
         RequestOptions glideOptions = new RequestOptions()
                 .signature(new ObjectKey(f.getPath()+f.lastModified()));
 

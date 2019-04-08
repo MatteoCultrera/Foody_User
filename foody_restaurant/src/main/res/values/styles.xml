@@ -63,4 +63,14 @@
         <item name="android:textSize">20dp</item>
     </style>
 
+    <style name="editTextHintTitle" parent="TextAppearance.Design.Hint">
+        <item name="android:textSize">12dp</item>
+    </style>
+
+    <style name="LoginTextInputLayoutStyle" parent="Widget.MaterialComponents.TextInputLayout.OutlinedBox">
+        <item name="boxStrokeColor">@color/errorColor</item>
+        <item name="boxStrokeWidth">1dp</item>
+    </style>
+
+
 </resources>

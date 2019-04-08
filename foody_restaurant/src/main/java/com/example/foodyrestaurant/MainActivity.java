@@ -50,7 +50,7 @@ public class MainActivity extends AppCompatActivity {
             public boolean onNavigationItemSelected(@NonNull MenuItem menuItem) {
                 int id = menuItem.getItemId();
                 if(id == R.id.menu && active != menu){
-                    FragmentTransaction transaction =fm.beginTransaction();
+                    FragmentTransaction transaction = fm.beginTransaction();
                     transaction.setCustomAnimations(R.anim.enter_from_left,R.anim.exit_to_right);
                     transaction.hide(active).show(menu).commit();
                     active = menu;
