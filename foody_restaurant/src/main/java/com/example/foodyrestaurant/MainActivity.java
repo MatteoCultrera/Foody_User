@@ -4,7 +4,6 @@ import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.design.widget.BottomNavigationView;
 import android.support.v4.app.Fragment;
-import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
@@ -15,7 +14,7 @@ public class MainActivity extends AppCompatActivity {
     BottomNavigationView bottomBar;
     MenuFragment menu;
     UserFragment user;
-
+    ReservationFragment reservation;
 
 
     @Override
@@ -35,6 +34,7 @@ public class MainActivity extends AppCompatActivity {
 
         menu = new MenuFragment();
         user = new UserFragment();
+        reservation = new ReservationFragment();
 
         bottomBar.setOnNavigationItemSelectedListener(new BottomNavigationView.OnNavigationItemSelectedListener() {
             @Override
@@ -44,7 +44,7 @@ public class MainActivity extends AppCompatActivity {
                     setFragment(menu);
                     return true;
                 }else if(id == R.id.orders){
-
+                    setFragment(reservation);
                     return true;
                 }else if(id == R.id.prof){
                     setFragment(user);

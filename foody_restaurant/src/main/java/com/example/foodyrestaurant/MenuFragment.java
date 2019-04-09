@@ -1,12 +1,8 @@
 package com.example.foodyrestaurant;
 
 
-import android.content.Context;
-import android.content.res.Resources;
 import android.net.Uri;
 import android.os.Bundle;
-import android.os.Environment;
-import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -22,27 +18,20 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import java.io.BufferedReader;
-import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileInputStream;
-import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
-import java.io.FileReader;
-import java.io.FileWriter;
 import java.io.IOException;
-import java.io.InputStream;
 import java.io.InputStreamReader;
-import java.io.OutputStream;
-import java.io.OutputStreamWriter;
+import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.Iterator;
+import java.util.Objects;
 
 /**
  * A simple {@link Fragment} subclass.
  */
 public class MenuFragment extends Fragment {
-
 
     RecyclerView menu;
     private ArrayList<Card> cards, cards2;
@@ -61,7 +50,7 @@ public class MenuFragment extends Fragment {
         // Inflate the layout for this fragment
 
         View view = inflater.inflate(R.layout.fragment_menu, container, false);
-        menu = (RecyclerView) view.findViewById(R.id.menu_display);
+        menu = view.findViewById(R.id.menu_display);
         return view;
     }
 
@@ -74,7 +63,7 @@ public class MenuFragment extends Fragment {
     private void init(View view){
         llm = new LinearLayoutManager(view.getContext());
         menu.setLayoutManager(llm);
-        storageDir = getContext().getFilesDir();
+        storageDir = Objects.requireNonNull(getContext()).getFilesDir();
         File file = new File(storageDir, JSON_PATH);
         cards = new ArrayList<>();
 
@@ -110,7 +99,7 @@ public class MenuFragment extends Fragment {
         ArrayList<Card> cards = new ArrayList<>();
         FileInputStream fin = new FileInputStream(path);
 
-        JsonReader reader = new JsonReader(new InputStreamReader(fin, "UTF-8"));
+        JsonReader reader = new JsonReader(new InputStreamReader(fin, StandardCharsets.UTF_8));
         try {
             reader.beginObject();
             if (reader.nextName().equals("Card"))
@@ -144,12 +133,16 @@ public class MenuFragment extends Fragment {
         reader.beginObject();
         while(reader.hasNext()){
             String name = reader.nextName();
-            if (name.equals("title")){
-                title = reader.nextString();
-            } else if (name.equals("Dish")){
-                dishes = readMultipleDishes(reader);
-            } else {
-                reader.skipValue();
+            switch (name) {
+                case "title":
+                    title = reader.nextString();
+                    break;
+                case "Dish":
+                    dishes = readMultipleDishes(reader);
+                    break;
+                default:
+                    reader.skipValue();
+                    break;
             }
         }
         reader.endObject();
@@ -177,16 +170,22 @@ public class MenuFragment extends Fragment {
         reader.beginObject();
         while(reader.hasNext()){
             String name = reader.nextName();
-            if (name.equals("dishName")){
-                dishName = reader.nextString();
-            } else if (name.equals("dishDescription")){
-                dishDescription = reader.nextString();
-            } else if (name.equals("price")){
-                price = reader.nextString();
-            } else if (name.equals("image")) {
-                image.parse(reader.nextString().replace('\\', Character.MIN_VALUE));
-            } else {
-                reader.skipValue();
+            switch (name) {
+                case "dishName":
+                    dishName = reader.nextString();
+                    break;
+                case "dishDescription":
+                    dishDescription = reader.nextString();
+                    break;
+                case "price":
+                    price = reader.nextString();
+                    break;
+                case "image":
+                    Uri.parse(reader.nextString().replace('\\', Character.MIN_VALUE));
+                    break;
+                default:
+                    reader.skipValue();
+                    break;
             }
         }
         reader.endObject();
@@ -197,14 +196,13 @@ public class MenuFragment extends Fragment {
         JSONObject obj = new JSONObject();
         JSONArray objCardArray = new JSONArray();
         try {
-            for (Iterator<Card> c = cards.iterator(); c.hasNext();) {
+            for (Card card1 : cards) {
                 JSONObject objCard = new JSONObject();
-                Card card = c.next();
+                Card card = card1;
                 objCard.put("title", card.getTitle());
                 ArrayList<Dish> dishes = card.getDishes();
                 JSONArray objDishArray = new JSONArray();
-                for (Iterator<Dish> d = dishes.iterator(); d.hasNext();){
-                    Dish dish = d.next();
+                for (Dish dish : dishes) {
                     JSONObject objDish = new JSONObject();
                     objDish.put("dishName", dish.getDishName());
                     objDish.put("dishDescription", dish.getDishDescription());
@@ -218,6 +216,7 @@ public class MenuFragment extends Fragment {
             obj.put("Card", objCardArray);
         }
         catch (JSONException e){
+            e.getMessage();
         }
         return obj.toString();
     }

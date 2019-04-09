@@ -1,7 +1,5 @@
 package com.example.foodyrestaurant;
 
-import android.widget.ArrayAdapter;
-
 import org.json.JSONException;
 import org.json.JSONObject;
 
