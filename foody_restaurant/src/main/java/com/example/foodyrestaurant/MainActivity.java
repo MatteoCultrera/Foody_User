@@ -83,6 +83,7 @@ public class MainActivity extends AppCompatActivity {
         fm.beginTransaction().add(R.id.mainFrame, menu, "1").commit();
 
 
+
     }
 
     private void updateFragment(Fragment f){

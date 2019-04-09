@@ -6,6 +6,7 @@ import android.content.res.Resources;
 import android.graphics.PorterDuff;
 import android.support.annotation.NonNull;
 import android.support.constraint.ConstraintLayout;
+import android.support.design.button.MaterialButton;
 import android.support.design.widget.TextInputEditText;
 import android.support.design.widget.TextInputLayout;
 import android.support.v4.content.ContextCompat;
@@ -51,10 +52,10 @@ public class RVAdapterEdit extends RecyclerView.Adapter<RVAdapterEdit.CardEdit>{
     }
 
     @Override
-    public CardEdit onCreateViewHolder(ViewGroup viewGroup, final int i) {
+    public CardEdit onCreateViewHolder(ViewGroup viewGroup,final int i) {
+
         View v = LayoutInflater.from(viewGroup.getContext()).inflate(R.layout.menu_card_edit, viewGroup, false);
         final CardEdit pvh = new CardEdit(v);
-
 
         pvh.title.setOnFocusChangeListener(new View.OnFocusChangeListener() {
             @Override
@@ -84,11 +85,9 @@ public class RVAdapterEdit extends RecyclerView.Adapter<RVAdapterEdit.CardEdit>{
             public void onTextChanged(CharSequence s, int start, int before, int count) {
                 cards.get(i).setTitle(s.toString());
                 if(s.length() > 0) {
-                    Log.d("SIMONA", "Putte image ");
                     pvh.title.setCompoundDrawablesWithIntrinsicBounds(0, 0, 0, 0);
                     pvh.title.setCompoundDrawablesWithIntrinsicBounds(0, 0, R.drawable.delete_fill_black, 0);
                 } else {
-                    Log.d("SIMONA", "removed image ");
                     pvh.title.setCompoundDrawablesWithIntrinsicBounds(0, 0, 0, 0);
                 }
             }
@@ -121,28 +120,44 @@ public class RVAdapterEdit extends RecyclerView.Adapter<RVAdapterEdit.CardEdit>{
         pvh.title.setImeOptions(EditorInfo.IME_ACTION_DONE);
         pvh.title.setRawInputType(InputType.TYPE_CLASS_TEXT);
 
-        return pvh;
-    }
-
-    @Override
-    public void onBindViewHolder(final CardEdit cardViewHolder, final int i) {
-        cardViewHolder.title.setText(cards.get(i).getTitle().toUpperCase());
         final ArrayList<Dish> dishes = cards.get(i).getDishes();
-        final Context context = cardViewHolder.cv.getContext();
+        final Context context = pvh.cv.getContext();
         LayoutInflater inflater = LayoutInflater.from(context);
 
-
         for (int j = 0; j < dishes.size(); j++){
-            View dish = inflater.inflate(R.layout.menu_item_edit, cardViewHolder.menuDishes, false);
+            final View dish = inflater.inflate(R.layout.menu_item_edit, pvh.menuDishes, false);
             final TextInputEditText title = dish.findViewById(R.id.food_title);
-            EditText subtitle = dish.findViewById(R.id.food_subtitle);
-            EditText price = dish.findViewById(R.id.price);
+            final EditText subtitle = dish.findViewById(R.id.food_subtitle);
+            final EditText price = dish.findViewById(R.id.price);
             ImageView image = dish.findViewById(R.id.food_image);
             title.setText(dishes.get(j).getDishName());
             subtitle.setText(dishes.get(j).getDishDescription());
             price.setText(dishes.get(j).getPrice());
 
-            /*
+
+            title.setImeOptions(EditorInfo.IME_ACTION_DONE);
+            title.setRawInputType(InputType.TYPE_CLASS_TEXT);
+
+            subtitle.setImeOptions(EditorInfo.IME_ACTION_DONE);
+            subtitle.setRawInputType(InputType.TYPE_CLASS_TEXT);
+
+            title.setOnFocusChangeListener(new View.OnFocusChangeListener() {
+                @Override
+                public void onFocusChange(View v, boolean hasFocus) {
+                    if(hasFocus){
+                        title.setSelection(title.getText().length());
+                        if(title.length() > 0)
+                            title.setCompoundDrawablesWithIntrinsicBounds(0, 0, R.drawable.delete_fill_black, 0);
+                        title.setError(null);
+                    }else{
+                        title.setCompoundDrawablesWithIntrinsicBounds(0, 0, 0, 0);
+                        if(title.length() == 0){
+                            title.setError("ERRORE");
+                        }
+                    }
+                }
+            });
+
 
             title.addTextChangedListener(new TextWatcher() {
                 @Override
@@ -153,7 +168,6 @@ public class RVAdapterEdit extends RecyclerView.Adapter<RVAdapterEdit.CardEdit>{
                 @Override
                 public void onTextChanged(CharSequence s, int start, int before, int count) {
                     dishes.get(i).setDishName(s.toString());
-                    Log.d("EDITBIATCH", "dishes "+dishes.get(i).getDishName());
                     if(s.length() > 0) {
                         Log.d("SIMONA", "Putte image ");
                         title.setCompoundDrawablesWithIntrinsicBounds(0, 0, 0, 0);
@@ -169,13 +183,169 @@ public class RVAdapterEdit extends RecyclerView.Adapter<RVAdapterEdit.CardEdit>{
 
                 }
             });
-            */
-            cardViewHolder.menuDishes.addView(dish);
+
+            title.setOnTouchListener(new View.OnTouchListener() {
+                @Override
+                public boolean onTouch(View v, MotionEvent event) {
+                    final int DRAWABLE_LEFT = 0;
+                    final int DRAWABLE_TOP = 1;
+                    final int DRAWABLE_RIGHT = 2;
+                    final int DRAWABLE_BOTTOM = 3;
+
+                    if(event.getAction() == MotionEvent.ACTION_UP && title.length() > 0 && title.hasFocus()) {
+                        if(event.getRawX() >= (title.getRight() - title.getCompoundDrawables()[DRAWABLE_RIGHT].getBounds().width())) {
+                            // your action here
+                            title.setText("");
+                            return true;
+                        }
+                    }
+                    return false;
+                }
+            });
+
+            subtitle.setOnFocusChangeListener(new View.OnFocusChangeListener() {
+                @Override
+                public void onFocusChange(View v, boolean hasFocus) {
+                    if(hasFocus){
+                        subtitle.setSelection(subtitle.getText().length());
+                        if(subtitle.length() > 0)
+                            subtitle.setCompoundDrawablesWithIntrinsicBounds(0, 0, R.drawable.delete_fill_black, 0);
+                        subtitle.setError(null);
+                    }else{
+                        subtitle.setCompoundDrawablesWithIntrinsicBounds(0, 0, 0, 0);
+                        if(subtitle.length() == 0){
+                            subtitle.setError("ERRORE");
+                        }
+                    }
+                }
+            });
+
+
+            subtitle.addTextChangedListener(new TextWatcher() {
+                @Override
+                public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+                    subtitle.setSelection(subtitle.getText().length());
+                }
+
+                @Override
+                public void onTextChanged(CharSequence s, int start, int before, int count) {
+                    dishes.get(i).setDishDescription(s.toString());
+                    if(s.length() > 0) {
+                        subtitle.setCompoundDrawablesWithIntrinsicBounds(0, 0, 0, 0);
+                        subtitle.setCompoundDrawablesWithIntrinsicBounds(0, 0, R.drawable.delete_fill_black, 0);
+                    } else {
+                        subtitle.setCompoundDrawablesWithIntrinsicBounds(0, 0, 0, 0);
+                    }
+                }
+
+                @Override
+                public void afterTextChanged(Editable s) {
+
+                }
+            });
+
+            subtitle.setOnTouchListener(new View.OnTouchListener() {
+                @Override
+                public boolean onTouch(View v, MotionEvent event) {
+                    final int DRAWABLE_LEFT = 0;
+                    final int DRAWABLE_TOP = 1;
+                    final int DRAWABLE_RIGHT = 2;
+                    final int DRAWABLE_BOTTOM = 3;
+
+                    if(event.getAction() == MotionEvent.ACTION_UP && subtitle.length() > 0 && subtitle.hasFocus()) {
+                        if(event.getRawX() >= (subtitle.getRight() - subtitle.getCompoundDrawables()[DRAWABLE_RIGHT].getBounds().width())) {
+                            // your action here
+                            subtitle.setText("");
+                            return true;
+                        }
+                    }
+                    return false;
+                }
+            });
+
+            price.setOnFocusChangeListener(new View.OnFocusChangeListener() {
+                @Override
+                public void onFocusChange(View v, boolean hasFocus) {
+                    if(hasFocus){
+                        price.setSelection(price.getText().length());
+                        if(price.length() > 0)
+                            price.setCompoundDrawablesWithIntrinsicBounds(0, 0, R.drawable.delete_fill_black, 0);
+                        price.setError(null);
+                    }else{
+                        price.setCompoundDrawablesWithIntrinsicBounds(0, 0, 0, 0);
+                        if(price.length() == 0){
+                            price.setError("ERRORE");
+                        }
+                    }
+                }
+            });
+
+
+            price.addTextChangedListener(new TextWatcher() {
+                @Override
+                public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+                    price.setSelection(price.getText().length());
+                }
+
+                @Override
+                public void onTextChanged(CharSequence s, int start, int before, int count) {
+                    dishes.get(i).setPrice(s.toString()+" €");
+                    if(s.length() > 0) {
+                        Log.d("SIMONA", "Putte image ");
+                        price.setCompoundDrawablesWithIntrinsicBounds(0, 0, 0, 0);
+                        price.setCompoundDrawablesWithIntrinsicBounds(0, 0, R.drawable.delete_fill_black, 0);
+                    } else {
+                        Log.d("SIMONA", "removed image ");
+                        price.setCompoundDrawablesWithIntrinsicBounds(0, 0, 0, 0);
+                    }
+                }
+
+                @Override
+                public void afterTextChanged(Editable s) {
+
+                }
+            });
+
+            subtitle.setOnTouchListener(new View.OnTouchListener() {
+                @Override
+                public boolean onTouch(View v, MotionEvent event) {
+                    final int DRAWABLE_LEFT = 0;
+                    final int DRAWABLE_TOP = 1;
+                    final int DRAWABLE_RIGHT = 2;
+                    final int DRAWABLE_BOTTOM = 3;
+
+                    if(event.getAction() == MotionEvent.ACTION_UP && price.length() > 0 && price.hasFocus()) {
+                        if(event.getRawX() >= (price.getRight() - price.getCompoundDrawables()[DRAWABLE_RIGHT].getBounds().width())) {
+                            // your action here
+                            price.setText("");
+                            return true;
+                        }
+                    }
+                    return false;
+                }
+            });
+
+            MaterialButton delete = dish.findViewById(R.id.delete);
+
+            final Dish selected = dishes.get(j);
+
+            delete.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    cards.get(i).removeDish(selected);
+                    ((LinearLayout)dish.getParent()).removeView(dish);
+                }
+            });
+
+            pvh.menuDishes.addView(dish);
         }
 
-        cardViewHolder.title.setCompoundDrawablesWithIntrinsicBounds(0, 0, 0, 0);
 
-        cardViewHolder.delete.setOnClickListener(new View.OnClickListener() {
+        pvh.title.setCompoundDrawablesWithIntrinsicBounds(0, 0, 0, 0);
+
+        Log.d("CREATIONINDEX", ""+i);
+
+        pvh.delete.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 cards.remove(i);
@@ -184,6 +354,16 @@ public class RVAdapterEdit extends RecyclerView.Adapter<RVAdapterEdit.CardEdit>{
                 Toast.makeText(context, "item "+i+" removed", Toast.LENGTH_SHORT).show();
             }
         });
+
+
+        return pvh;
+    }
+
+    @Override
+    public void onBindViewHolder(final CardEdit cardViewHolder, final int i) {
+        cardViewHolder.title.setText(cards.get(i).getTitle().toUpperCase());
+
+
 
 
 

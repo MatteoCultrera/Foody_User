@@ -35,14 +35,14 @@ public class MenuEdit extends AppCompatActivity {
         recyclerMenu.setLayoutManager(llm);
 
         cards = new ArrayList<>();
-        ArrayList<Dish> dishes = new ArrayList<>();
-        dishes.add(new Dish("Margerita","pizza","2", null));
-        dishes.add(new Dish("Paperino","pizza","2", null));
-        dishes.add(new Dish("Fottiti","pizza","2", null));
-        dishes.add(new Dish("Margerita","pizza","2", null));
 
 
         for(int i =0; i < 20;i++){
+            ArrayList<Dish> dishes = new ArrayList<>();
+            dishes.add(new Dish("Margerita","Pomodoro, Mozzarella, Basilico","3,50 €", null));
+            dishes.add(new Dish("Vegetariana","Verdure di Stagione, Pomodoro, Mozzarella","8,00 €", null));
+            dishes.add(new Dish("Quattro Stagioni","Pomodoro, Mozzarella, Prosciutto, Carciofi, Funghi, Olive, Grana a Scaglie","6,50 €", null));
+            dishes.add(new Dish("Quattro Formaggi","Mozzarella, Gorgonzola, Fontina, Stracchino","7,00 €", null));
             Card c = new Card("Pizza "+i);
             c.setDishes(dishes);
             cards.add(c);

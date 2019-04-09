@@ -35,10 +35,10 @@
             android:id="@+id/food_title"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:padding="5dp"
+            android:padding="7dp"
             android:layout_marginTop="23dp"
-            android:hint="@string/title_edit"
-            android:inputType="textCapCharacters|textMultiLine"
+            android:hint="@string/dish_edit"
+            android:inputType="textMultiLine"
             android:textSize="14sp" />
 
     </android.support.design.widget.TextInputLayout>
@@ -59,12 +59,12 @@
         <android.support.design.widget.TextInputEditText
             android:id="@+id/food_subtitle"
             android:layout_width="match_parent"
-            android:layout_height="30dp"
+            android:layout_height="wrap_content"
+            android:padding="7dp"
             android:layout_marginTop="23dp"
-            android:hint="@string/title_edit"
-            android:inputType="textCapCharacters|textMultiLine"
+            android:hint="@string/desc_edit"
+            android:inputType="textMultiLine"
             android:textSize="14sp" />
-
 
     </android.support.design.widget.TextInputLayout>
 
@@ -85,14 +85,33 @@
             android:id="@+id/price"
             android:layout_width="match_parent"
             android:layout_height="30dp"
+            android:padding="7dp"
             android:layout_marginTop="23dp"
-            android:hint="@string/title_edit"
-            android:inputType="textCapCharacters|textMultiLine"
+            android:hint="@string/price_edit"
+            android:inputType="numberDecimal"
             android:textSize="14sp" />
 
 
 
     </android.support.design.widget.TextInputLayout>
+
+
+    <android.support.design.button.MaterialButton
+        android:id="@+id/delete"
+        android:layout_width="wrap_content"
+        style="@style/Widget.MaterialComponents.Button.TextButton"
+        android:textAllCaps="false"
+        android:layout_height="wrap_content"
+        app:icon="@drawable/delete_red"
+        android:drawableTint="@color/errorColor"
+        app:iconSize="12dp"
+        android:textColor="@color/errorColor"
+        android:text="Delete"
+        android:background="@android:color/transparent"
+        app:layout_constraintEnd_toEndOf="@id/food_title_layout"
+        app:layout_constraintBottom_toTopOf="@id/separator"
+        app:iconGravity="textStart"
+        android:backgroundTint="@android:color/transparent"/>
 
 
     <View

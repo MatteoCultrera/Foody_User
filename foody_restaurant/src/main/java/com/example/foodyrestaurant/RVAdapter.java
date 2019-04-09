@@ -39,20 +39,16 @@ public class RVAdapter extends RecyclerView.Adapter<RVAdapter.CardViewHolder>{
 
     @Override
     public CardViewHolder onCreateViewHolder(ViewGroup viewGroup, int i) {
-        View v = LayoutInflater.from(viewGroup.getContext()).inflate(R.layout.menu_card_display, viewGroup, false);
-        CardViewHolder pvh = new CardViewHolder(v);
-        return pvh;
-    }
 
-    @Override
-    public void onBindViewHolder(CardViewHolder cardViewHolder, int i) {
-        cardViewHolder.title.setText(cards.get(i).getTitle());
+        View v = LayoutInflater.from(viewGroup.getContext()).inflate(R.layout.menu_card_display, viewGroup, false);
         ArrayList<Dish> dishes = cards.get(i).getDishes();
-        Context context = cardViewHolder.cv.getContext();
+        CardViewHolder pvh = new CardViewHolder(v);
+        Context context = pvh.cv.getContext();
         LayoutInflater inflater = LayoutInflater.from(context);
 
+
         for (int j = 0; j < dishes.size(); j++){
-            View dish = inflater.inflate(R.layout.menu_item_display, cardViewHolder.menuDishes, false);
+            View dish = inflater.inflate(R.layout.menu_item_display, pvh.menuDishes, false);
             TextView title = dish.findViewById(R.id.food_title);
             TextView subtitle = dish.findViewById(R.id.food_subtitle);
             TextView price = dish.findViewById(R.id.price);
@@ -62,20 +58,42 @@ public class RVAdapter extends RecyclerView.Adapter<RVAdapter.CardViewHolder>{
             price.setText(dishes.get(j).getPrice());
             if(dishes.get(j).getImage() == null)
                 image.setVisibility(View.GONE);
-            cardViewHolder.menuDishes.addView(dish);
+            pvh.menuDishes.addView(dish);
+            dishes.get(j).setAdded(true);
+
         }
 
 
+
+        return pvh;
     }
 
-    public static int getPixelValue(Context context, int dimenId) {
-        Resources resources = context.getResources();
-        return (int) TypedValue.applyDimension(
-                TypedValue.COMPLEX_UNIT_DIP,
-                dimenId,
-                resources.getDisplayMetrics()
-        );
+    @Override
+    public void onBindViewHolder(CardViewHolder cardViewHolder, int i) {
+        cardViewHolder.title.setText(cards.get(i).getTitle());
+        //ArrayList<Dish> dishes = cards.get(i).getDishes();
+
+        /*
+        for (int j = 0; j < dishes.size(); j++){
+            if(!dishes.get(j).getAdded()){
+                View dish = inflater.inflate(R.layout.menu_item_display, cardViewHolder.menuDishes, false);
+                TextView title = dish.findViewById(R.id.food_title);
+                TextView subtitle = dish.findViewById(R.id.food_subtitle);
+                TextView price = dish.findViewById(R.id.price);
+                ImageView image = dish.findViewById(R.id.food_image);
+                title.setText(dishes.get(j).getDishName());
+                subtitle.setText(dishes.get(j).getDishDescription());
+                price.setText(dishes.get(j).getPrice());
+                if(dishes.get(j).getImage() == null)
+                    image.setVisibility(View.GONE);
+                cardViewHolder.menuDishes.addView(dish);
+                dishes.get(j).setAdded(true);
+            }
+        }*/
+
+
     }
+
 
     @Override
     public void onAttachedToRecyclerView(RecyclerView recyclerView) {

@@ -8,12 +8,18 @@ public class Dish {
     private String dishDescription;
     private String price;
     private Uri image;
+    private boolean added;
 
     public Dish(String name, String description, String price, Uri image){
         dishName = name;
         dishDescription = description;
         this.price = price;
         this.image = image;
+        added = false;
+    }
+
+    public boolean getAdded(){
+        return added;
     }
 
     public String getDishName(){
@@ -46,6 +52,10 @@ public class Dish {
 
     public void setImage(Uri image) {
         this.image = image;
+    }
+
+    public void setAdded(boolean added){
+        this.added = added;
     }
 
 }

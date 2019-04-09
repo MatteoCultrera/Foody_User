@@ -30,5 +30,9 @@ public class Card {
         this.dishes = dishes;
     }
 
+    public void removeDish(Dish toRemove){
+        dishes.remove(toRemove);
+    }
+
 
 }
