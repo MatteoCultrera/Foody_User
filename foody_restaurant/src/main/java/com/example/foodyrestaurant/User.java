@@ -17,6 +17,7 @@ import android.widget.TextView;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.util.Locale;
 
 
 //The image ratio is 7:4
@@ -159,7 +160,7 @@ public class User extends AppCompatActivity {
 
         double price = 0.5 * deliveryPrice;
 
-        String text = String.format("%.2f", price) + getResources().getString(R.string.value);
+        String text = String.format(Locale.getDefault(), "%.2f", price) + getResources().getString(R.string.value);
         delivPrice.setText(text);
 
         File f = new File(storageDir, PROFILE_IMAGE);

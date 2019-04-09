@@ -2,13 +2,11 @@ package com.example.foodyrestaurant;
 
 import android.net.Uri;
 import android.os.Bundle;
-import android.os.Environment;
 import android.support.annotation.Nullable;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.util.JsonReader;
-import android.util.Log;
 
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -16,11 +14,9 @@ import org.json.JSONObject;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
-import java.io.InputStream;
 import java.io.InputStreamReader;
-import java.lang.reflect.Array;
+import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
-import java.util.List;
 
 public class Menu extends AppCompatActivity {
 
@@ -74,7 +70,7 @@ public class Menu extends AppCompatActivity {
         ArrayList<Card> cards;
         FileInputStream fin = new FileInputStream(path);
 
-        JsonReader reader = new JsonReader(new InputStreamReader(fin, "UTF-8"));
+        JsonReader reader = new JsonReader(new InputStreamReader(fin, StandardCharsets.UTF_8));
         try {
             cards = readMultipleCards(reader);
         } finally {
@@ -106,12 +102,16 @@ public class Menu extends AppCompatActivity {
         reader.beginObject();
         while(reader.hasNext()){
             String name = reader.nextName();
-            if (name.equals("title")){
-                title = reader.nextString();
-            } else if (name.equals("dishes")){
-                dishes = readMultipleDishes(reader);
-            } else {
-                reader.skipValue();
+            switch (name) {
+                case "title":
+                    title = reader.nextString();
+                    break;
+                case "dishes":
+                    dishes = readMultipleDishes(reader);
+                    break;
+                default:
+                    reader.skipValue();
+                    break;
             }
         }
         reader.endObject();
@@ -138,16 +138,22 @@ public class Menu extends AppCompatActivity {
         reader.beginObject();
         while(reader.hasNext()){
             String name = reader.nextName();
-            if (name.equals("dishName")){
-                dishName = reader.nextString();
-            } else if (name.equals("dishDescription")){
-                dishDescription = reader.nextString();
-            } else if (name.equals("price")){
-                price = reader.nextString();
-            } else if (name.equals("image")) {
-                image.parse(reader.nextString().replace('\\', Character.MIN_VALUE));
-            } else {
-                reader.skipValue();
+            switch (name) {
+                case "dishName":
+                    dishName = reader.nextString();
+                    break;
+                case "dishDescription":
+                    dishDescription = reader.nextString();
+                    break;
+                case "price":
+                    price = reader.nextString();
+                    break;
+                case "image":
+                    Uri.parse(reader.nextString().replace('\\', Character.MIN_VALUE));
+                    break;
+                default:
+                    reader.skipValue();
+                    break;
             }
         }
         reader.endObject();
@@ -160,6 +166,7 @@ public class Menu extends AppCompatActivity {
             obj.put("Dishes", cards);
         }
         catch (JSONException e){
+            e.getMessage();
         }
         return obj.toString();
     }

@@ -9,24 +9,23 @@ import android.util.TypedValue;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import java.util.ArrayList;
 import java.util.List;
 
-public class RVAdapter extends RecyclerView.Adapter<RVAdapter.CardViewHolder>{
+public class RVAdapterRes extends RecyclerView.Adapter<RVAdapterRes.CardViewHolder>{
 
-    List<Card> cards;
+    List<Reservation> reservations;
 
-    public RVAdapter(List<Card> cards){
-        this.cards = cards;
+    public RVAdapterRes(List<Reservation> reservations){
+        this.reservations = reservations;
     }
 
     @Override
     public int getItemCount() {
-        return cards.size();
+        return reservations.size();
     }
 
     @Override
@@ -38,22 +37,15 @@ public class RVAdapter extends RecyclerView.Adapter<RVAdapter.CardViewHolder>{
 
     @Override
     public void onBindViewHolder(CardViewHolder cardViewHolder, int i) {
-        cardViewHolder.title.setText(cards.get(i).getTitle());
-        ArrayList<Dish> dishes = cards.get(i).getDishes();
+        cardViewHolder.title.setText(reservations.get(i).getReservationID());
+        ArrayList<Dish> dishes = reservations.get(i).getDishesOrdered();
         Context context = cardViewHolder.cv.getContext();
         LayoutInflater inflater = LayoutInflater.from(context);
 
         for (int j = 0; j < dishes.size(); j++){
-            View dish = inflater.inflate(R.layout.menu_item_display, cardViewHolder.menuDishes, false);
-            TextView title = dish.findViewById(R.id.food_title);
-            TextView subtitle = dish.findViewById(R.id.food_subtitle);
-            TextView price = dish.findViewById(R.id.price);
-            ImageView image = dish.findViewById(R.id.food_image);
+            View dish = inflater.inflate(R.layout.reservation_item_display, cardViewHolder.menuDishes, false);
+            TextView title = dish.findViewById(R.id.food_title_res);
             title.setText(dishes.get(j).getDishName());
-            subtitle.setText(dishes.get(j).getDishDescription());
-            price.setText(dishes.get(j).getPrice());
-            if(dishes.get(j).getImage() == null)
-                image.setVisibility(View.GONE);
             cardViewHolder.menuDishes.addView(dish);
         }
 
