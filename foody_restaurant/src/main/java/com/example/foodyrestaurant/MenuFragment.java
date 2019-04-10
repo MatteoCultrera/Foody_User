@@ -73,16 +73,88 @@ public class MenuFragment extends Fragment {
 
         cards = new ArrayList<>();
 
-        for(int i =0; i < 20;i++){
-            ArrayList<Dish> dishes = new ArrayList<>();
-            dishes.add(new Dish("Margerita","Pomodoro, Mozzarella, Basilico","3,50 €", null));
-            dishes.add(new Dish("Vegetariana","Verdure di Stagione, Pomodoro, Mozzarella","8,00 €", null));
-            dishes.add(new Dish("Quattro Stagioni","Pomodoro, Mozzarella, Prosciutto, Carciofi, Funghi, Olive, Grana a Scaglie","6,50 €", null));
-            dishes.add(new Dish("Quattro Formaggi","Mozzarella, Gorgonzola, Fontina, Stracchino","7,00 €", null));
-            Card c = new Card("Pizza "+i);
-            c.setDishes(dishes);
-            cards.add(c);
-        }
+
+        ArrayList<Dish> dishes = new ArrayList<>();
+        dishes.add(new Dish("Margerita","Pomodoro, Mozzarella, Basilico","3,50 €", null));
+        dishes.add(new Dish("Vegetariana","Verdure di Stagione, Pomodoro, Mozzarella","8,00 €", null));
+        dishes.add(new Dish("Quattro Stagioni","Pomodoro, Mozzarella, Prosciutto, Carciofi, Funghi, Olive, Grana a Scaglie","6,50 €", null));
+        dishes.add(new Dish("Quattro Formaggi","Mozzarella, Gorgonzola, Fontina, Stracchino","7,00 €", null));
+        Card c = new Card("PIZZA");
+        c.setDishes(dishes);
+        cards.add(c);
+
+        dishes = new ArrayList<>();
+        dishes.add(new Dish("Pasta al Pomodoro","Rigationi, Pomodoro, Parmigiano, Basilico","3,50 €", null));
+        dishes.add(new Dish("Carbonara","Spaghetti, Uova, Guanciale, Pecorino, Pepe Nero","8,00 €", null));
+        dishes.add(new Dish("Pasta alla Norma","Pomodoro, Pancetta, Melanzane, Grana a Scaglie","6,50 €", null));
+        dishes.add(new Dish("Puttanesca","Pomodoro, Peperoncino, Pancetta, Parmigiano","7,00 €", null));
+        c = new Card("PRIMI");
+        c.setDishes(dishes);
+        cards.add(c);
+
+        dishes = new ArrayList<>();
+        dishes.add(new Dish("Braciola Di Maiale","Braciola, Spezie","3,50 €", null));
+        dishes.add(new Dish("Stinco Alla Birra","Stinco di Maiale, Birra","8,00 €", null));
+        dishes.add(new Dish("Cotoletta e Patatine","Cotoletta di Maiale, Patatine","6,50 €", null));
+        dishes.add(new Dish("Filetto al pepe verde","Filetto di Maiale, Salsa alla Senape, Pepe verde in grani","7,00 €", null));
+        c = new Card("SECONDI");
+        c.setDishes(dishes);
+        cards.add(c);
+
+        dishes = new ArrayList<>();
+        dishes.add(new Dish("Pasta al Pomodoro","Rigationi, Pomodoro, Parmigiano, Basilico","3,50 €", null));
+        dishes.add(new Dish("Carbonara","Spaghetti, Uova, Guanciale, Pecorino, Pepe Nero","8,00 €", null));
+        dishes.add(new Dish("Pasta alla Norma","Pomodoro, Pancetta, Melanzane, Grana a Scaglie","6,50 €", null));
+        dishes.add(new Dish("Puttanesca","Pomodoro, Peperoncino, Pancetta, Parmigiano","7,00 €", null));
+        c = new Card("PRIMI");
+        c.setDishes(dishes);
+        cards.add(c);
+
+        dishes = new ArrayList<>();
+        dishes.add(new Dish("Braciola Di Maiale","Braciola, Spezie","3,50 €", null));
+        dishes.add(new Dish("Stinco Alla Birra","Stinco di Maiale, Birra","8,00 €", null));
+        dishes.add(new Dish("Cotoletta e Patatine","Cotoletta di Maiale, Patatine","6,50 €", null));
+        dishes.add(new Dish("Filetto al pepe verde","Filetto di Maiale, Salsa alla Senape, Pepe verde in grani","7,00 €", null));
+        c = new Card("SECONDI");
+        c.setDishes(dishes);
+        cards.add(c);
+
+        dishes = new ArrayList<>();
+        dishes.add(new Dish("Pasta al Pomodoro","Rigationi, Pomodoro, Parmigiano, Basilico","3,50 €", null));
+        dishes.add(new Dish("Carbonara","Spaghetti, Uova, Guanciale, Pecorino, Pepe Nero","8,00 €", null));
+        dishes.add(new Dish("Pasta alla Norma","Pomodoro, Pancetta, Melanzane, Grana a Scaglie","6,50 €", null));
+        dishes.add(new Dish("Puttanesca","Pomodoro, Peperoncino, Pancetta, Parmigiano","7,00 €", null));
+        c = new Card("PRIMI");
+        c.setDishes(dishes);
+        cards.add(c);
+
+        dishes = new ArrayList<>();
+        dishes.add(new Dish("Braciola Di Maiale","Braciola, Spezie","3,50 €", null));
+        dishes.add(new Dish("Stinco Alla Birra","Stinco di Maiale, Birra","8,00 €", null));
+        dishes.add(new Dish("Cotoletta e Patatine","Cotoletta di Maiale, Patatine","6,50 €", null));
+        dishes.add(new Dish("Filetto al pepe verde","Filetto di Maiale, Salsa alla Senape, Pepe verde in grani","7,00 €", null));
+        c = new Card("SECONDI");
+        c.setDishes(dishes);
+        cards.add(c);
+
+        dishes = new ArrayList<>();
+        dishes.add(new Dish("Pasta al Pomodoro","Rigationi, Pomodoro, Parmigiano, Basilico","3,50 €", null));
+        dishes.add(new Dish("Carbonara","Spaghetti, Uova, Guanciale, Pecorino, Pepe Nero","8,00 €", null));
+        dishes.add(new Dish("Pasta alla Norma","Pomodoro, Pancetta, Melanzane, Grana a Scaglie","6,50 €", null));
+        dishes.add(new Dish("Puttanesca","Pomodoro, Peperoncino, Pancetta, Parmigiano","7,00 €", null));
+        c = new Card("PRIMI");
+        c.setDishes(dishes);
+        cards.add(c);
+
+        dishes = new ArrayList<>();
+        dishes.add(new Dish("Braciola Di Maiale","Braciola, Spezie","3,50 €", null));
+        dishes.add(new Dish("Stinco Alla Birra","Stinco di Maiale, Birra","8,00 €", null));
+        dishes.add(new Dish("Cotoletta e Patatine","Cotoletta di Maiale, Patatine","6,50 €", null));
+        dishes.add(new Dish("Filetto al pepe verde","Filetto di Maiale, Salsa alla Senape, Pepe verde in grani","7,00 €", null));
+        c = new Card("SECONDI");
+        c.setDishes(dishes);
+        cards.add(c);
+
 
 
 
