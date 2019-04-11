@@ -8,6 +8,7 @@ import java.util.ArrayList;
 public class Card {
     public String title;
     public ArrayList<Dish> dishes;
+    private boolean editing;
 
     public Card(String title) {
         this.title = title;
@@ -17,6 +18,7 @@ public class Card {
     public Card(String title, ArrayList<Dish> dishes){
         this.title = title;
         this.dishes = dishes;
+        editing = false;
     }
 
     public String getTitle() {
@@ -39,5 +41,12 @@ public class Card {
         dishes.remove(toRemove);
     }
 
+    public boolean getEditing(){
+        return editing;
+    }
+
+    public void setEditing(boolean ed){
+        editing=ed;
+    }
 
 }

@@ -17,18 +17,17 @@
         <CheckBox
             android:id="@+id/checkFood"
             android:layout_width="wrap_content"
-            android:layout_height="24dp"
+            android:layout_height="wrap_content"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent"
-            android:layout_marginTop="10dp"
-            android:paddingEnd="12dp"
+            app:layout_constraintTop_toTopOf="@id/edit_title"
+            app:layout_constraintBottom_toBottomOf="@id/edit_title"
             android:visibility="gone"
             />
 
         <EditText
             android:id="@+id/edit_title"
             android:layout_width="wrap_content"
-            android:inputType="none"
+            android:inputType="textNoSuggestions"
             android:focusable="false"
             android:layout_height="24dp"
             android:layout_marginTop="10dp"
@@ -37,10 +36,11 @@
             android:background="@android:color/transparent"
             android:gravity="center_vertical"
             android:text="Pizza"
-            app:layout_constraintStart_toEndOf="@id/checkFood"
+            app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent" />
 
         <ImageView
+            android:id="@+id/frontArrow"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:src="@drawable/next_black"

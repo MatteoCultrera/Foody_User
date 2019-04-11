@@ -1,6 +1,9 @@
 package com.example.foodyrestaurant;
 
+import android.animation.Animator;
+import android.animation.AnimatorListenerAdapter;
 import android.content.DialogInterface;
+import android.media.Image;
 import android.os.Environment;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v7.app.AlertDialog;
@@ -33,6 +36,8 @@ public class MenuEdit extends AppCompatActivity {
     private File storageDir;
     private ImageButton back;
     private ImageButton save;
+    private ImageButton edit;
+    private ImageButton exit;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -57,6 +62,8 @@ public class MenuEdit extends AppCompatActivity {
         cards = jsonHandler.getCards();
         save = findViewById(R.id.saveButton);
         back = findViewById(R.id.backButton);
+        edit = findViewById(R.id.editButton);
+        exit = findViewById(R.id.endButton);
 
         save.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -71,6 +78,21 @@ public class MenuEdit extends AppCompatActivity {
                 back();
             }
         });
+
+        edit.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                edit();
+            }
+        });
+
+        exit.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                exitEdit();
+            }
+        });
+
 
         /*
         cards = new ArrayList<>();
@@ -127,8 +149,80 @@ public class MenuEdit extends AppCompatActivity {
         finish();
     }
 
+    private void edit(){
+        for(int i = 0; i < cards.size(); i++){
+                cards.get(i).setEditing(true);
+        }
+
+        recyclerMenu.getAdapter().notifyDataSetChanged();
+
+        animateToEdit(edit, save, exit);
+    }
+
+    private void exitEdit(){
+        for(int i = 0; i < cards.size(); i++){
+                cards.get(i).setEditing(false);
+        }
+
+        recyclerMenu.getAdapter().notifyDataSetChanged();
+
+        animateToNormal(edit, save, exit);
+    }
+
+    private void animateToEdit(final ImageButton edit,final ImageButton save,final ImageButton end){
+        int shortAnimDuration = getResources().getInteger(android.R.integer.config_shortAnimTime);
 
 
+        edit.animate().alpha(0.0f).setDuration(shortAnimDuration).setListener(new AnimatorListenerAdapter() {
+            @Override
+            public void onAnimationEnd(Animator animation) {
+                edit.setVisibility(View.GONE);
+            }
+        }).start();
+        edit.animate().scaleX(0.2f).scaleY(0.2f).setDuration(shortAnimDuration).start();
 
+        save.animate().alpha(0.0f).setDuration(shortAnimDuration).setListener(new AnimatorListenerAdapter() {
+            @Override
+            public void onAnimationEnd(Animator animation) {
+                save.setVisibility(View.GONE);
+            }
+        }).start();
+        save.animate().scaleX(0.2f).scaleY(0.2f).setDuration(shortAnimDuration).start();
+
+        end.setScaleY(0.2f);
+        end.setScaleX(0.2f);
+        end.setAlpha(0.0f);
+        end.setVisibility(View.VISIBLE);
+        end.animate().alpha(1.0f).setDuration(shortAnimDuration).start();
+        end.animate().scaleX(1f).scaleY(1f).setDuration(shortAnimDuration).setListener(null).start();
+
+    }
+
+    private void animateToNormal(final ImageButton edit,final ImageButton save,final ImageButton end){
+        int shortAnimDuration = getResources().getInteger(android.R.integer.config_shortAnimTime);
+
+        edit.setScaleY(0.2f);
+        edit.setScaleX(0.2f);
+        edit.setAlpha(0.0f);
+        edit.setVisibility(View.VISIBLE);
+        edit.animate().alpha(1.0f).setDuration(shortAnimDuration).setListener(null).start();
+        edit.animate().scaleX(1.f).scaleY(1.f).setDuration(shortAnimDuration).setListener(null).start();
+
+        save.setScaleY(0.2f);
+        save.setScaleX(0.2f);
+        save.setAlpha(0.0f);
+        save.setVisibility(View.VISIBLE);
+        save.animate().alpha(1.0f).setDuration(shortAnimDuration).setListener(null).start();
+        save.animate().scaleX(1.f).scaleY(1.f).setDuration(shortAnimDuration).setListener(null).start();
+
+        end.animate().alpha(0.0f).setDuration(shortAnimDuration).setListener(new AnimatorListenerAdapter() {
+            @Override
+            public void onAnimationEnd(Animator animation) {
+                end.setVisibility(View.GONE);
+            }
+        }).start();
+        end.animate().scaleX(0.2f).scaleY(0.2f).setDuration(shortAnimDuration).start();
+
+    }
 
 }

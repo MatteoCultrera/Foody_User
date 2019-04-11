@@ -1,5 +1,7 @@
 package com.example.foodyrestaurant;
 
+import android.animation.Animator;
+import android.animation.AnimatorListenerAdapter;
 import android.content.Context;
 import android.content.Intent;
 import android.content.res.ColorStateList;
@@ -68,16 +70,68 @@ public class RVAdapterEdit extends RecyclerView.Adapter<RVAdapterEdit.CardEdit>{
         final Context context = cardViewHolder.title.getContext();
        cardViewHolder.title.setText(cards.get(i).getTitle());
 
-       cardViewHolder.layout.setOnClickListener(new View.OnClickListener() {
-           @Override
-           public void onClick(View v) {
-               /*
-               Intent intent = new Intent(context.getApplicationContext(), MenuEdit.class);
-               context.startActivity(intent);
-               */
-           }
-       });
+       if(cards.get(i).getEditing()){
+            normalToEdit(cardViewHolder.box,cardViewHolder.title, cardViewHolder.arrow);
+
+
+       }else{
+
+           editToNormal(cardViewHolder.box,cardViewHolder.title, cardViewHolder.arrow);
+           cardViewHolder.layout.setOnClickListener(new View.OnClickListener() {
+
+               @Override
+               public void onClick(View v) {
+                   /*
+                   Intent intent = new Intent(context.getApplicationContext(), MenuEdit.class);
+                   context.startActivity(intent);
+                   */
+               }
+           });
+       }
     }
+
+    private void normalToEdit(CheckBox box, EditText text, ImageView arrow){
+        if(box.getVisibility() == View.VISIBLE)
+            return;
+
+        float distance = box.getContext().getResources().getDimensionPixelSize(R.dimen.short36);
+        int shortAnimDuration = box.getContext().getResources().getInteger(android.R.integer.config_shortAnimTime);
+
+        box.setAlpha(0.0f);
+        box.setVisibility(View.VISIBLE);
+        box.animate().alpha(1.0f).setDuration(shortAnimDuration).setListener(null);
+
+        box.setX(-distance);
+
+        text.animate().translationX(distance).setDuration(shortAnimDuration).start();
+        box.animate().translationX(0).setDuration(shortAnimDuration).start();
+
+        arrow.animate().alpha(0.0f).setDuration(shortAnimDuration).setListener(null);
+
+    }
+
+    private void editToNormal(final CheckBox box, EditText text, ImageView arrow){
+        if(box.getVisibility() == View.GONE)
+            return;
+
+        float distance = box.getContext().getResources().getDimensionPixelSize(R.dimen.short36);
+        int shortAnimDuration = box.getContext().getResources().getInteger(android.R.integer.config_shortAnimTime);
+
+        box.setAlpha(1.0f);
+        box.animate().alpha(0.0f).setDuration(shortAnimDuration).setListener(new AnimatorListenerAdapter() {
+            @Override
+            public void onAnimationEnd(Animator animation) {
+                box.setVisibility(View.GONE);
+            }
+        });
+
+        text.animate().translationX(0).setDuration(shortAnimDuration).start();
+        box.animate().translationX(-distance).setDuration(shortAnimDuration).start();
+
+        arrow.animate().alpha(1.0f).setDuration(shortAnimDuration).setListener(null);
+    }
+
+
 
     @Override
     public void onAttachedToRecyclerView(RecyclerView recyclerView) {
@@ -89,12 +143,14 @@ public class RVAdapterEdit extends RecyclerView.Adapter<RVAdapterEdit.CardEdit>{
         ConstraintLayout layout;
         EditText title;
         CheckBox box;
+        ImageView arrow;
 
         public CardEdit(View itemView) {
             super(itemView);
             layout = itemView.findViewById(R.id.mainLayout);
             title = itemView.findViewById(R.id.edit_title);
             box = itemView.findViewById(R.id.checkFood);
+            arrow = itemView.findViewById(R.id.frontArrow);
         }
     }
 
