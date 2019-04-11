@@ -30,50 +30,48 @@ public class RVAdapter extends RecyclerView.Adapter<RVAdapter.CardViewHolder>{
     }
 
     @Override
-    public CardViewHolder onCreateViewHolder(ViewGroup viewGroup, int i) {
+    public CardViewHolder onCreateViewHolder(ViewGroup viewGroup, int viewType) {
+
         View v = LayoutInflater.from(viewGroup.getContext()).inflate(R.layout.menu_card_display, viewGroup, false);
         CardViewHolder pvh = new CardViewHolder(v);
+
         return pvh;
     }
 
     @Override
-    public void onBindViewHolder(CardViewHolder cardViewHolder, int i) {
-        cardViewHolder.title.setText(cards.get(i).getTitle());
-        ArrayList<Dish> dishes = cards.get(i).getDishes();
-        Context context = cardViewHolder.cv.getContext();
+    public void onBindViewHolder(CardViewHolder pvh, int i) {
+
+        Context context = pvh.cv.getContext();
         LayoutInflater inflater = LayoutInflater.from(context);
+        final int pos = pvh.getAdapterPosition();
 
-        for (int j = 0; j < dishes.size(); j++){
-            View dish = inflater.inflate(R.layout.menu_item_display, cardViewHolder.menuDishes, false);
-            TextView title = dish.findViewById(R.id.food_title);
-            TextView subtitle = dish.findViewById(R.id.food_subtitle);
-            TextView price = dish.findViewById(R.id.price);
-            ImageView image = dish.findViewById(R.id.food_image);
-            title.setText(dishes.get(j).getDishName());
-            subtitle.setText(dishes.get(j).getDishDescription());
-            price.setText(dishes.get(j).getPrice());
-            if(dishes.get(j).getImage() == null)
-                image.setVisibility(View.GONE);
-            cardViewHolder.menuDishes.addView(dish);
+        ArrayList<Dish> dishes = cards.get(pos).getDishes();
+
+
+        if(!pvh.isInflated){
+            for (int j = 0; j < dishes.size(); j++){
+                View dish = inflater.inflate(R.layout.menu_item_display, pvh.menuDishes, false);
+                TextView title = dish.findViewById(R.id.food_title);
+                TextView subtitle = dish.findViewById(R.id.food_subtitle);
+                TextView price = dish.findViewById(R.id.price);
+                ImageView image = dish.findViewById(R.id.food_image);
+                title.setText(dishes.get(j).getDishName());
+                subtitle.setText(dishes.get(j).getDishDescription());
+                price.setText(dishes.get(j).getPrice());
+                if(dishes.get(j).getImage() == null)
+                    image.setVisibility(View.GONE);
+                pvh.menuDishes.addView(dish);
+                dishes.get(j).setAdded(true);
+
+            }
         }
 
-        if (i == 0){
-            ViewGroup.MarginLayoutParams layoutParams =
-                    (ViewGroup.MarginLayoutParams) cardViewHolder.cv.getLayoutParams();
-            layoutParams.setMargins(0, getPixelValue(context,50), 0, getPixelValue(context,6));
-            cardViewHolder.cv.requestLayout();
-        }
+        pvh.title.setText(cards.get(pos).getTitle());
+
+        pvh.isInflated = true;
 
     }
 
-    public static int getPixelValue(Context context, int dimenId) {
-        Resources resources = context.getResources();
-        return (int) TypedValue.applyDimension(
-                TypedValue.COMPLEX_UNIT_DIP,
-                dimenId,
-                resources.getDisplayMetrics()
-        );
-    }
 
     @Override
     public void onAttachedToRecyclerView(RecyclerView recyclerView) {
@@ -86,13 +84,16 @@ public class RVAdapter extends RecyclerView.Adapter<RVAdapter.CardViewHolder>{
         TextView title;
         LinearLayout menuDishes;
         ConstraintLayout outside;
+        boolean isInflated;
 
         public CardViewHolder(View itemView) {
             super(itemView);
-            cv = itemView.findViewById(R.id.cv);
-            title = itemView.findViewById(R.id.title);
-            menuDishes = itemView.findViewById(R.id.menu_dishes);
-            outside = itemView.findViewById(R.id.outside);
+
+            cv = (CardView)itemView.findViewById(R.id.cv);
+            title = (TextView)itemView.findViewById(R.id.title);
+            menuDishes = (LinearLayout) itemView.findViewById(R.id.menu_dishes);
+            outside = (ConstraintLayout) itemView.findViewById(R.id.outside);
+            isInflated = false;
         }
     }
 

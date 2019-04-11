@@ -17,6 +17,9 @@ import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import com.bumptech.glide.Glide;
+import com.bumptech.glide.request.RequestOptions;
+import com.bumptech.glide.signature.ObjectKey;
 import com.example.foodyrestaurant.R;
 
 import java.io.File;
@@ -39,7 +42,7 @@ public class UserFragment extends Fragment {
     private TextView phoneNumber;
     private TextView monTime, tueTime, wedTime, thuTime, friTime, satTime,sunTime;
     private TextView delivPrice, foodType;
-    private ImageView profilePicture;
+    private ImageView profilePicture, profileShadow;
     private final String PLACEHOLDER_CAMERA="PlaceCamera.jpg";
     private final String PROFILE_IMAGE = "ProfileImage.jpg";
     private File storageDir;
@@ -125,6 +128,7 @@ public class UserFragment extends Fragment {
     private void init(View view){
 
         this.profilePicture = view.findViewById(R.id.profilePicture);
+        this.profileShadow = view.findViewById(R.id.shadow);
         this.editMode = view.findViewById(R.id.edit_mode);
         this.name = view.findViewById(R.id.userName);
         this.email = view.findViewById(R.id.emailAddress);
@@ -166,11 +170,24 @@ public class UserFragment extends Fragment {
         String text = String.format(Locale.getDefault(),"%.2f", price) + getResources().getString(R.string.value);
         delivPrice.setText(text);
 
+
         File f = new File(storageDir, PROFILE_IMAGE);
 
+        RequestOptions glideOptions = new RequestOptions()
+                .signature(new ObjectKey(f.getPath()+f.lastModified()));
+
         if(f.exists()){
-            profilePicture.setImageURI(Uri.fromFile(f));
+            Glide
+                    .with(this)
+                    .load(f)
+                    .apply(glideOptions)
+                    .into(profilePicture);
         }
+
+        Glide
+                .with(this)
+                .load(R.drawable.shadow)
+                .into(profileShadow);
 
         editMode.setOnClickListener(new View.OnClickListener() {
             @Override

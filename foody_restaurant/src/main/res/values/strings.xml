@@ -55,5 +55,15 @@
     <string name="orders">Orders</string>
     <string name="profile">Profile</string>
 
+    <string name="edit_menu">Edit Menu</string>
+
+    <string name="title_edit">Title</string>
+    <string name="dish_edit">Dish Name</string>
+    <string name="desc_edit">Dish Description</string>
+    <string name="price_edit">Price</string>
+
+    <!-- TODO: Remove or change this placeholder text -->
+    <string name="hello_blank_fragment" translatable="false">Hello blank fragment</string>
+
 
 </resources>

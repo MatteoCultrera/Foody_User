@@ -32,6 +32,9 @@ import android.widget.TextView;
 import android.widget.TimePicker;
 import android.widget.Toast;
 
+import com.bumptech.glide.Glide;
+import com.bumptech.glide.request.RequestOptions;
+import com.bumptech.glide.signature.ObjectKey;
 import com.yalantis.ucrop.UCrop;
 import com.yalantis.ucrop.UCropActivity;
 
@@ -157,8 +160,17 @@ public class Setup extends AppCompatActivity {
 
         File f = new File(storageDir, PLACEHOLDER_CAMERA);
 
+
+        RequestOptions glideOptions = new RequestOptions()
+                .signature(new ObjectKey(f.getPath()+f.lastModified()));
+
         if(f.exists())
-            profilePicture.setImageURI(Uri.fromFile(f));
+
+            Glide
+                    .with(this)
+            .load(f)
+            .apply(glideOptions)
+            .into(profilePicture);
 
         name.setText(savedInstanceState.getString("name", getResources().getString(R.string.name_hint)));
         email.setText(savedInstanceState.getString("email", getResources().getString(R.string.email_hint)));
@@ -412,8 +424,16 @@ public class Setup extends AppCompatActivity {
 
         File f = new File(storageDir, PROFILE_IMAGE);
 
-        if(f.exists())
-            profilePicture.setImageURI(Uri.fromFile(f));
+        RequestOptions glideOptions = new RequestOptions()
+                .signature(new ObjectKey(f.getPath()+f.lastModified()));
+
+        if(f.exists()){
+            Glide
+                    .with(this)
+                    .load(f)
+                    .apply(glideOptions)
+                    .into(profilePicture);
+        }
 
         name.setText(sharedPref.getString("name", getResources().getString(R.string.namerosso)));
         email.setText(sharedPref.getString("email", getResources().getString(R.string.mail_rosso)));
@@ -629,9 +649,11 @@ public class Setup extends AppCompatActivity {
                     Bitmap bitmap = getBitmapFromFile();
 
                     if(bitmap != null){
-                        profilePicture.setImageBitmap(bitmap);
                         File placeholder = new File(storageDir, PLACEHOLDER_CAMERA);
                         saveBitmap(bitmap, placeholder.getPath());
+                        RequestOptions glideOptions = new RequestOptions()
+                                .signature(new ObjectKey(placeholder.getPath()+placeholder.lastModified()));
+                        Glide.with(this).load(placeholder).apply(glideOptions).into(profilePicture);
                         unchanged = false;
                     }
                     break;
@@ -794,6 +816,7 @@ public class Setup extends AppCompatActivity {
         if(f.exists()){
             BitmapFactory.Options bmOptions = new BitmapFactory.Options();
             Bitmap bitmap = BitmapFactory.decodeFile(f.getAbsolutePath(),bmOptions);
+            edit.putString("profileSignature", String.valueOf(System.currentTimeMillis()));
             File profile = new File(storageDir, PROFILE_IMAGE);
             saveBitmap(bitmap, profile.getPath());
 
