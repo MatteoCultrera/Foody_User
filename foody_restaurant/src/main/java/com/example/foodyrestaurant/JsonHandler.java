@@ -21,21 +21,11 @@ import static java.security.AccessController.getContext;
 
 public class JsonHandler {
 
-    private String JSON_PATH;
-    private File storageDir;
-
-    public JsonHandler(String filename, File storageDir){
-        JSON_PATH = filename;
-        this.storageDir = storageDir;
-
-    }
-
-    public ArrayList<Card> getCards(){
-        File file = new File(storageDir, JSON_PATH);
+    public ArrayList<Card> getCards(File file){
         ArrayList<Card> cards;
-        try{
+        try {
             cards = readFromJSON(file);
-        }catch (IOException e){
+        } catch (IOException e) {
             e.getMessage();
             return new ArrayList<Card>();
         }
@@ -45,7 +35,6 @@ public class JsonHandler {
     private ArrayList<Card> readFromJSON (File path) throws IOException {
         ArrayList<Card> cards = new ArrayList<>();
         FileInputStream fin = new FileInputStream(path);
-
         JsonReader reader = new JsonReader(new InputStreamReader(fin, StandardCharsets.UTF_8));
         try {
             reader.beginObject();
@@ -139,7 +128,7 @@ public class JsonHandler {
         return new Dish(dishName, dishDescription, price, image);
     }
 
-    private String toJSON (ArrayList<Card> cards){
+    public String toJSON (ArrayList<Card> cards){
         JSONObject obj = new JSONObject();
         JSONArray objCardArray = new JSONArray();
         try {
@@ -164,11 +153,12 @@ public class JsonHandler {
         }
         catch (JSONException e){
             e.getMessage();
+            return "Error String";
         }
         return obj.toString();
     }
 
-    private void saveStringToFile(String json, File file){
+    public void saveStringToFile(String json, File file){
         try{
             FileOutputStream outputStream = new FileOutputStream(file);
             outputStream.write(json.getBytes());
@@ -176,11 +166,5 @@ public class JsonHandler {
         } catch (IOException e){
             e.getMessage();
         }
-    }
-
-    public void save(ArrayList<Card> cards){
-        String json = toJSON(cards);
-        File file = new File(storageDir, JSON_PATH);
-        saveStringToFile(json, file);
     }
 }
