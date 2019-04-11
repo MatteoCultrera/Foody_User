@@ -1,6 +1,6 @@
 <resources>
     <string name="app_name">Foody Restaurant</string>
-
+    <string name="reservation">Reservation</string>
     <string name="restaurant_maintype">Italian Restaurant</string>
 
     <string name="namerosso">RossoPomodoro</string>
@@ -9,7 +9,7 @@
     <string name="address_rosso">via Treviso 42/F, Torino</string>
     <string name="opening_time">Select opening time</string>
     <string name="closing_time">Select closing time</string>
-    <string name="timetable" translatable="false">Timetable</string>
+    <string name="timetable">Timetable</string>
 
     <string name="placeholder_price">0,00 €</string>
     <string name="delivery_price">Delivery price</string>
@@ -49,7 +49,7 @@
 
     <string name="alert_dialog_choose_food">"Choose max. 3 cuisine"</string>
 
-    <string name="okButton">Ok</string>
+    <string name="okButton">OK</string>
 
     <string name="menu">Menu</string>
     <string name="orders">Orders</string>

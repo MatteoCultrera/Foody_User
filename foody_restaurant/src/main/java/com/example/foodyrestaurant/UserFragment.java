@@ -11,7 +11,6 @@ import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.os.Environment;
 import android.support.design.widget.FloatingActionButton;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -26,6 +25,8 @@ import com.example.foodyrestaurant.R;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.util.Locale;
+import java.util.Objects;
 
 import static android.content.Context.MODE_PRIVATE;
 
@@ -166,7 +167,7 @@ public class UserFragment extends Fragment {
 
         double price = 0.5 * deliveryPrice;
 
-        String text = String.format("%.2f", price) + getResources().getString(R.string.value);
+        String text = String.format(Locale.getDefault(),"%.2f", price) + getResources().getString(R.string.value);
         delivPrice.setText(text);
 
 
@@ -205,14 +206,12 @@ public class UserFragment extends Fragment {
     @Override
     public void onResume() {
         super.onResume();
-        Context context = getActivity().getApplicationContext();
+        Context context = Objects.requireNonNull(getActivity()).getApplicationContext();
         sharedPref = context.getSharedPreferences("myPreference", MODE_PRIVATE);
         storageDir = getActivity().getExternalFilesDir(Environment.DIRECTORY_PICTURES);
 
         firstStart();
 
-        init(getView());
-
-
+        init(Objects.requireNonNull(getView()));
     }
 }
