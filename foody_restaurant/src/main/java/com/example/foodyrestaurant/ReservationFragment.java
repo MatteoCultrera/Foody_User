@@ -4,9 +4,13 @@ import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageView;
+
+import com.bumptech.glide.Glide;
 
 import java.util.ArrayList;
 
@@ -15,6 +19,9 @@ public class ReservationFragment extends Fragment {
     RecyclerView reservation;
     private ArrayList<Reservation> reservations;
     LinearLayoutManager llm;
+
+    ImageView profileImage, profileShadow;
+
 
     public ReservationFragment() {
 
@@ -37,8 +44,20 @@ public class ReservationFragment extends Fragment {
     private void init(View view){
         llm = new LinearLayoutManager(view.getContext());
         reservation.setLayoutManager(llm);
-        reservations = new ArrayList<>();
 
+        this.profileImage = view.findViewById(R.id.mainImage);
+        this.profileShadow = view.findViewById(R.id.shadow);
+
+        Glide
+                .with(this)
+                .load(R.drawable.shadow)
+                .into(profileShadow);
+        Glide
+                .with(this)
+                .load(R.drawable.pizza)
+                .into(profileImage);
+
+        reservations = new ArrayList<>();
         ArrayList<Dish> dishes = new ArrayList<>();
         dishes.add(new Dish("Margherita","pizza","2", null));
         dishes.add(new Dish("Paperino","pizza","2", null));

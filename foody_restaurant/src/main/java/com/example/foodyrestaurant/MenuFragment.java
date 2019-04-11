@@ -85,13 +85,8 @@ public class MenuFragment extends Fragment {
                 .load(R.drawable.pizza)
                 .into(profileImage);
 
-
-
-        cards = new ArrayList<>();
-
         storageDir = Objects.requireNonNull(getContext()).getFilesDir();
         File file = new File(storageDir, JSON_PATH);
-        cards = new ArrayList<>();
 
         if (file.exists()) {
             try {
@@ -101,7 +96,7 @@ public class MenuFragment extends Fragment {
             }
         }
 
-        /*cards = new ArrayList<>();
+        cards = new ArrayList<>();
 
         ArrayList<Dish> dishes = new ArrayList<>();
         dishes.add(new Dish("Margerita","Pomodoro, Mozzarella, Basilico","3,50 €", null));
@@ -184,25 +179,20 @@ public class MenuFragment extends Fragment {
         c.setDishes(dishes);
         cards.add(c);
 
-        for(int i =0; i < 3;i++){
-            Card c = new Card("Pizza "+i);
-            c.setDishes(dishes);
-            cards.add(c);
-        }*/
-      
-      //TODO _ is in the right place?
-        editMode.setOnClickListener(new View.OnClickListener() {
-          @Override
-          public void onClick(View v) {
-            Intent intent = new Intent(getActivity(), MenuEdit.class);
-            startActivity(intent);
-           }
-        });
 
         json = toJSON();
         saveStringToFile(json, file);
+
         RVAdapter adapter = new RVAdapter(cards);
         menu.setAdapter(adapter);
+
+        editMode.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(getActivity(), MenuEdit.class);
+                startActivity(intent);
+            }
+        });
     }
 
     public ArrayList<Card> readFromJSON (File path) throws IOException {
