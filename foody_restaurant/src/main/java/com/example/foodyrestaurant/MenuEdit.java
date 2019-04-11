@@ -1,6 +1,7 @@
 package com.example.foodyrestaurant;
 
 import android.content.DialogInterface;
+import android.os.Environment;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
@@ -10,8 +11,13 @@ import android.support.v7.widget.RecyclerView;
 import android.text.InputType;
 import android.view.View;
 import android.widget.EditText;
+import android.widget.ImageButton;
 
+import java.io.File;
 import java.util.ArrayList;
+import java.util.Objects;
+
+import static java.security.AccessController.getContext;
 
 public class MenuEdit extends AppCompatActivity {
 
@@ -20,6 +26,13 @@ public class MenuEdit extends AppCompatActivity {
     LinearLayoutManager llm;
     private FloatingActionButton mainFAB;
     private ArrayList<Card> cards;
+    private JsonHandler jsonHandler;
+    private JsonHandler jsonPlaceholder;
+    private final String JSON_PATH = "menu.json";
+    private final String JSON_COPY = "menuCopy.json";
+    private File storageDir;
+    private ImageButton back;
+    private ImageButton save;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -27,9 +40,6 @@ public class MenuEdit extends AppCompatActivity {
         setContentView(R.layout.activity_menu_edit);
 
         init();
-
-        loadCards();
-
 
 
     }
@@ -41,7 +51,28 @@ public class MenuEdit extends AppCompatActivity {
         llm = new LinearLayoutManager(this);
         recyclerMenu.setLayoutManager(llm);
         mainFAB = findViewById(R.id.mainFAB);
+        storageDir =  getExternalFilesDir(Environment.DIRECTORY_DOCUMENTS);
 
+        jsonHandler = new JsonHandler(JSON_PATH, storageDir);
+        cards = jsonHandler.getCards();
+        save = findViewById(R.id.saveButton);
+        back = findViewById(R.id.backButton);
+
+        save.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                saveAll();
+            }
+        });
+
+        back.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                back();
+            }
+        });
+
+        /*
         cards = new ArrayList<>();
 
         ArrayList<Dish> dishes = new ArrayList<>();
@@ -70,6 +101,8 @@ public class MenuEdit extends AppCompatActivity {
         c = new Card("Secondi");
         c.setDishes(dishes);
         cards.add(c);
+        */
+
 
         final RVAdapterEdit adapter = new RVAdapterEdit(cards);
         recyclerMenu.setAdapter(adapter);
@@ -85,9 +118,17 @@ public class MenuEdit extends AppCompatActivity {
 
     }
 
-    private void loadCards(){
-
+    private void saveAll(){
+        jsonHandler.save(cards);
+        finish();
     }
+
+    private void back(){
+        finish();
+    }
+
+
+
 
 
 }
