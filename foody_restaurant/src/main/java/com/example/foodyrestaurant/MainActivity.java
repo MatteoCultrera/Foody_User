@@ -4,6 +4,7 @@ import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.design.widget.BottomNavigationView;
 import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
@@ -21,16 +22,13 @@ public class MainActivity extends AppCompatActivity {
     };
 
     BottomNavigationView bottomBar;
+
     final Fragment menu = new MenuFragment();
-    final Fragment orders = new OrdersFragment();
+    final Fragment reservations = new ReservationFragment();
     final Fragment user = new UserFragment();
     final FragmentManager fm = getSupportFragmentManager();
     Fragment active = menu;
     TabState stateApp;
-    //TODO _ to be checked
-    MenuFragment menu;
-    UserFragment user;
-    ReservationFragment reservation;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -45,10 +43,10 @@ public class MainActivity extends AppCompatActivity {
 
         bottomBar = findViewById(R.id.bottom_navigation);
 
-        menu = new MenuFragment();
+        /*menu = new MenuFragment();
         user = new UserFragment();
         reservation = new ReservationFragment();
-
+*/
         bottomBar.setOnNavigationItemSelectedListener(new BottomNavigationView.OnNavigationItemSelectedListener() {
             @Override
             public boolean onNavigationItemSelected(@NonNull MenuItem menuItem) {
@@ -59,17 +57,17 @@ public class MainActivity extends AppCompatActivity {
                     transaction.hide(active).show(menu).commit();
                     active = menu;
                     return true;
-                }else if(id == R.id.orders && active != orders){
+                }else if(id == R.id.orders && active != reservations){
                     if(active == menu){
                         FragmentTransaction transaction =fm.beginTransaction();
                         transaction.setCustomAnimations(R.anim.enter_from_right,R.anim.exit_to_left);
-                        transaction.hide(active).show(orders).commit();
+                        transaction.hide(active).show(reservations).commit();
                     }else if(active == user) {
                         FragmentTransaction transaction = fm.beginTransaction();
                         transaction.setCustomAnimations(R.anim.enter_from_left, R.anim.exit_to_right);
-                        transaction.hide(active).show(orders).commit();
+                        transaction.hide(active).show(reservations).commit();
                     }
-                    active = orders;
+                    active = reservations;
                     return true;
                 }else if(id == R.id.prof && active != user){
                     FragmentTransaction transaction = fm.beginTransaction();
@@ -83,10 +81,8 @@ public class MainActivity extends AppCompatActivity {
         });
 
         fm.beginTransaction().add(R.id.mainFrame, user, "3").hide(user).commit();
-        fm.beginTransaction().add(R.id.mainFrame, orders, "2").hide(orders).commit();
+        fm.beginTransaction().add(R.id.mainFrame, reservations, "2").hide(reservations).commit();
         fm.beginTransaction().add(R.id.mainFrame, menu, "1").commit();
-
-
 
     }
 
