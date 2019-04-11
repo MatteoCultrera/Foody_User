@@ -7,20 +7,6 @@
     android:layout_marginEnd="8dp"
     android:layout_marginTop="8dp">
 
-
-    <de.hdodenhof.circleimageview.CircleImageView
-        android:id="@+id/food_image"
-        android:layout_width="72dp"
-        android:layout_height="60dp"
-        android:src="@drawable/profile_placeholder"
-        android:layout_marginTop="4dp"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintBottom_toTopOf="@id/separator"
-        android:paddingEnd="12dp"
-        android:layout_marginBottom="4dp"/>
-
-
     <View
         android:id="@+id/separator"
         android:layout_width="match_parent"
@@ -42,7 +28,7 @@
         app:layout_constraintTop_toTopOf="parent">
 
         <TextView
-            android:id="@+id/food_title"
+            android:id="@+id/food_title_res"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginBottom="4dp"
@@ -51,33 +37,9 @@
             android:textColor="@color/primaryText"
             android:textSize="16sp" />
 
-        <TextView
-            android:id="@+id/food_subtitle"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginBottom="4dp"
-            android:fontFamily="@font/roboto_regular"
-            android:text="Pomodoro, Mozzarella, Basilico"
-            android:textColor="@color/secondaryText"
-            android:textSize="12sp" />
-
 
 
 
     </LinearLayout>
 
-    <TextView
-        android:id="@+id/price"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="4,00 €"
-        android:textSize="16sp"
-        android:fontFamily="@font/roboto_regular"
-        android:textColor="@color/primaryText"
-        app:layout_constraintEnd_toEndOf="parent"
-        android:layout_marginTop="8dp"
-        app:layout_constraintTop_toTopOf="parent"/>
-
-
 </android.support.constraint.ConstraintLayout>
-

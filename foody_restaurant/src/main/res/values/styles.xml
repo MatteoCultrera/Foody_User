@@ -60,7 +60,7 @@
 
     <style name="DialogTitle" parent="@android:style/TextAppearance.DialogWindowTitle">
         <item name="android:gravity">center</item>
-        <item name="android:textSize">20dp</item>
+        <item name="android:textSize">20sp</item>
     </style>
 
     <style name="editTextHintTitle" parent="TextAppearance.Design.Hint">

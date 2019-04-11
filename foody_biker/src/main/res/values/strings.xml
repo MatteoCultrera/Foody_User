@@ -11,5 +11,5 @@
     <string name="opening_time">Select opening time</string>
     <string name="closing_time">Select closing time</string>
     <string name="free">Free</string>
-    <string name="okButton">Ok</string>
+    <string name="okButton">OK</string>
 </resources>

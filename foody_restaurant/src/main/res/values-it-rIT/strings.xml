@@ -54,6 +54,7 @@
     <string name="menu">Menu</string>
     <string name="orders">Ordini</string>
     <string name="profile">Profilo</string>
+    <string name="reservation">Ordine</string>
 
 
     <string name="edit_menu">Modifica Menu</string>

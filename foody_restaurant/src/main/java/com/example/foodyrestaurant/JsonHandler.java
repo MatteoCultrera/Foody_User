@@ -1,78 +1,56 @@
 package com.example.foodyrestaurant;
 
 import android.net.Uri;
-import android.os.Bundle;
-import android.support.annotation.Nullable;
-import android.support.v7.app.AppCompatActivity;
-import android.support.v7.widget.LinearLayoutManager;
-import android.support.v7.widget.RecyclerView;
 import android.util.JsonReader;
+import android.util.Log;
 
+import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.io.File;
 import java.io.FileInputStream;
+import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
+import java.util.Objects;
 
-public class Menu extends AppCompatActivity {
+import static java.security.AccessController.getContext;
 
-    RecyclerView menu;
-    private ArrayList<Card> cards;
-    LinearLayoutManager llm;
-    private final String JSON_PATH = "menu.json";
+public class JsonHandler {
+
+    private String JSON_PATH;
     private File storageDir;
 
-    @Override
-    protected void onCreate(@Nullable Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_menu);
-        storageDir = getFilesDir();
-        init();
+    public JsonHandler(String filename, File storageDir){
+        JSON_PATH = filename;
+        this.storageDir = storageDir;
+
     }
 
-    private void init(){
-        menu = findViewById(R.id.menu_display);
-        llm = new LinearLayoutManager(this);
-        menu.setLayoutManager(llm);
-        /*File file = new File(storageDir, JSON_PATH);
-        if (file.exists()) {
-            try {
-                cards = readFromJSON(file);
-            } catch (IOException e) {
-                e.getMessage();
-            }
-        }*/
-
-        /*ArrayList<Dish> dishes = new ArrayList<>();
-        dishes.add(new Dish("Margherita","pizza","2", null));
-        dishes.add(new Dish("Paperino","pizza","2", null));
-        dishes.add(new Dish("Topolino","pizza","2", null));
-        dishes.add(new Dish("Margherita","pizza","2", null));
-
-
-        for(int i =0; i < 1;i++){
-            Card c = new Card("Pizza "+i);
-            c.setDishes(dishes);
-            cards.add(c);
-        }*/
-
-
-        RVAdapter adapter = new RVAdapter(cards);
-        menu.setAdapter(adapter);
-        String json = toJSON();
-    }
-
-    public ArrayList<Card> readFromJSON (File path) throws IOException{
+    public ArrayList<Card> getCards(){
+        File file = new File(storageDir, JSON_PATH);
         ArrayList<Card> cards;
+        try{
+            cards = readFromJSON(file);
+        }catch (IOException e){
+            e.getMessage();
+            return new ArrayList<Card>();
+        }
+        return cards;
+    }
+
+    private ArrayList<Card> readFromJSON (File path) throws IOException {
+        ArrayList<Card> cards = new ArrayList<>();
         FileInputStream fin = new FileInputStream(path);
 
         JsonReader reader = new JsonReader(new InputStreamReader(fin, StandardCharsets.UTF_8));
         try {
-            cards = readMultipleCards(reader);
+            reader.beginObject();
+            if (reader.nextName().equals("Card"))
+                cards = readMultipleCards(reader);
         } finally {
             try {
                 reader.close();
@@ -106,7 +84,7 @@ public class Menu extends AppCompatActivity {
                 case "title":
                     title = reader.nextString();
                     break;
-                case "dishes":
+                case "Dish":
                     dishes = readMultipleDishes(reader);
                     break;
                 default:
@@ -115,6 +93,7 @@ public class Menu extends AppCompatActivity {
             }
         }
         reader.endObject();
+        Log.d("title", title);
         return new Card(title, dishes);
     }
 
@@ -160,14 +139,48 @@ public class Menu extends AppCompatActivity {
         return new Dish(dishName, dishDescription, price, image);
     }
 
-    public String toJSON (){
+    private String toJSON (ArrayList<Card> cards){
         JSONObject obj = new JSONObject();
+        JSONArray objCardArray = new JSONArray();
         try {
-            obj.put("Dishes", cards);
+            for (Card card1 : cards) {
+                JSONObject objCard = new JSONObject();
+                Card card = card1;
+                objCard.put("title", card.getTitle());
+                ArrayList<Dish> dishes = card.getDishes();
+                JSONArray objDishArray = new JSONArray();
+                for (Dish dish : dishes) {
+                    JSONObject objDish = new JSONObject();
+                    objDish.put("dishName", dish.getDishName());
+                    objDish.put("dishDescription", dish.getDishDescription());
+                    objDish.put("price", dish.getPrice());
+                    objDish.put("image", dish.getImage());
+                    objDishArray.put(objDish);
+                }
+                objCard.put("Dish", objDishArray);
+                objCardArray.put(objCard);
+            }
+            obj.put("Card", objCardArray);
         }
         catch (JSONException e){
             e.getMessage();
         }
         return obj.toString();
+    }
+
+    private void saveStringToFile(String json, File file){
+        try{
+            FileOutputStream outputStream = new FileOutputStream(file);
+            outputStream.write(json.getBytes());
+            outputStream.close();
+        } catch (IOException e){
+            e.getMessage();
+        }
+    }
+
+    public void save(ArrayList<Card> cards){
+        String json = toJSON(cards);
+        File file = new File(storageDir, JSON_PATH);
+        saveStringToFile(json, file);
     }
 }

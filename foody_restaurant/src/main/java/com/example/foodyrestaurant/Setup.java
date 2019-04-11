@@ -19,7 +19,6 @@ import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.text.Editable;
 import android.text.TextWatcher;
-import android.util.Log;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
@@ -43,6 +42,7 @@ import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Locale;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -200,7 +200,7 @@ public class Setup extends AppCompatActivity {
         indexFoods = new ArrayList<>();
         foodCategories = getResources().getStringArray(R.array.foodcategory_array);
 
-        int prova = 0;
+        int prova;
         prova = savedInstanceState.getInt("foodIndexOne", -1);
         if(prova != -1) {
             indexFoods.add(prova);
@@ -460,7 +460,7 @@ public class Setup extends AppCompatActivity {
         indexFoods = new ArrayList<>();
         foodCategories = getResources().getStringArray(R.array.foodcategory_array);
 
-        int prova = 0;
+        int prova;
         prova = sharedPref.getInt("foodIndexOne", -1);
         if(prova != -1) {
             indexFoods.add(prova);
@@ -480,7 +480,7 @@ public class Setup extends AppCompatActivity {
         edit.apply();
 
         double price = deliveryPrice * 0.5;
-        String text = String.format("%.2f",price) + " €";
+        String text = String.format(Locale.getDefault(), "%.2f",price) + " €";
         delivPrice.setText(text);
         seekBarPrice.setProgress(deliveryPrice);
 
@@ -604,7 +604,7 @@ public class Setup extends AppCompatActivity {
             public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
                 deliveryPrice = progress;
                 double price = deliveryPrice * 0.5;
-                String text = String.format("%.2f",price) + " €";
+                String text = String.format(Locale.getDefault(), "%.2f",price) + " €";
                 delivPrice.setText(text);
                 unchanged = false;
 
