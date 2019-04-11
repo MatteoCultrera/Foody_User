@@ -3,6 +3,7 @@ package com.example.foodyrestaurant;
 import android.net.Uri;
 import android.util.JsonReader;
 import android.util.Log;
+import android.widget.Toast;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -45,6 +46,7 @@ public class JsonHandler {
                 reader.close();
             }
             catch (IOException e) {
+                //TODO mettiamo un toast per comunicare che la lettura è fallita?
                 e.getMessage();
             }
         }
@@ -159,12 +161,22 @@ public class JsonHandler {
     }
 
     public void saveStringToFile(String json, File file){
+        FileOutputStream outputStream= null;
         try{
-            FileOutputStream outputStream = new FileOutputStream(file);
+            outputStream = new FileOutputStream(file);
             outputStream.write(json.getBytes());
             outputStream.close();
         } catch (IOException e){
             e.getMessage();
+        } finally {
+            if (outputStream != null){
+                try{
+                    outputStream.close();
+                } catch (IOException e){
+                    //TODO mettiamo un toast per comunicare che la scrittura è fallita?
+                    e.getMessage();
+                }
+            }
         }
     }
 }
