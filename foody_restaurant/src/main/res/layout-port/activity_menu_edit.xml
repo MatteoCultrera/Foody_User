@@ -62,6 +62,35 @@
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintTop_toTopOf="parent" />
 
+        <ImageButton
+            android:id="@+id/endButton"
+            android:layout_width="36dp"
+            android:layout_height="36dp"
+            android:layout_marginEnd="16dp"
+            android:background="@android:color/transparent"
+            android:padding="6dp"
+            android:scaleType="fitCenter"
+            android:src="@drawable/clear_white"
+            android:visibility="gone"
+            android:contentDescription="@null"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
+
+        <ImageButton
+            android:id="@+id/editButton"
+            android:layout_width="36dp"
+            android:layout_height="36dp"
+            android:layout_marginEnd="25dp"
+            android:background="@android:color/transparent"
+            android:padding="6dp"
+            android:scaleType="fitCenter"
+            android:src="@drawable/edit_white"
+            android:contentDescription="@null"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toStartOf="@id/saveButton"
+            app:layout_constraintTop_toTopOf="parent" />
+
 
 
 
@@ -89,8 +118,33 @@
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         android:layout_marginEnd="16dp"
-        android:layout_marginBottom="16dp"
-        android:src="@drawable/add_black"
-        app:maxImageSize="36dp"/>
+        android:layout_marginBottom="16dp" />
+
+    <ImageView
+        android:id="@+id/plus"
+        android:layout_width="48dp"
+        android:layout_height="48dp"
+        android:src="@drawable/plus_white"
+        app:layout_constraintStart_toStartOf="@id/mainFAB"
+        app:layout_constraintEnd_toEndOf="@id/mainFAB"
+        app:layout_constraintTop_toTopOf="@id/mainFAB"
+        app:layout_constraintBottom_toBottomOf="@id/mainFAB"
+        android:elevation="20dp"
+        />
+
+    <ImageView
+        android:id="@+id/trash"
+        android:layout_width="36dp"
+        android:layout_height="36dp"
+        android:src="@drawable/trash_white"
+        app:layout_constraintStart_toStartOf="@id/mainFAB"
+        app:layout_constraintEnd_toEndOf="@id/mainFAB"
+        app:layout_constraintTop_toTopOf="@id/mainFAB"
+        app:layout_constraintBottom_toBottomOf="@id/mainFAB"
+        android:elevation="20dp"
+        android:visibility="gone"
+        />
+
+
 
 </android.support.constraint.ConstraintLayout>

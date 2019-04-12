@@ -9,9 +9,12 @@ public class Card {
     public String title;
     public ArrayList<Dish> dishes;
 
+    private boolean editing;
+
     public Card(String title) {
         this.title = title;
         dishes = new ArrayList<>();
+        editing = false;
     }
 
     public Card(String title, ArrayList<Dish> dishes){
@@ -39,5 +42,12 @@ public class Card {
         dishes.remove(toRemove);
     }
 
+    public boolean isEditing() {
+        return editing;
+    }
+
+    public void setEditing(boolean editing) {
+        this.editing = editing;
+    }
 
 }
