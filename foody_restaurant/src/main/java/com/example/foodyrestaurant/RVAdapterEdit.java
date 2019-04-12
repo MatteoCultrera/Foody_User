@@ -67,14 +67,25 @@ public class RVAdapterEdit extends RecyclerView.Adapter<RVAdapterEdit.CardEdit>{
     }
 
     @Override
-    public void onBindViewHolder(final CardEdit cardViewHolder, final int i) {
+    public void onBindViewHolder(final CardEdit cardViewHolder, int i) {
         final Context context = cardViewHolder.title.getContext();
        cardViewHolder.title.setText(cards.get(i).getTitle());
 
+       cardViewHolder.layout.setOnClickListener(new View.OnClickListener() {
+           @Override
+           public void onClick(View v) {
+               Intent intent = new Intent(context.getApplicationContext(), MenuEditItem.class);
+               Bundle b = new Bundle();
+               b.putString("MainName", cardViewHolder.title.getText().toString());
+               intent.putExtras(b);
+               cardViewHolder.box.getContext().startActivity(intent);
+           }
+       });
 
        if(cards.get(i).isEditing()){
             cardViewHolder.box.setVisibility(View.VISIBLE);
             cardViewHolder.box.setAlpha(1.0f);
+            cardViewHolder.box.animate().setListener(null);
             cardViewHolder.arrow.setAlpha(0.0f);
             float distance = cardViewHolder.box.getContext().getResources().getDimensionPixelSize(R.dimen.short36);
             cardViewHolder.title.setX(distance);
@@ -85,6 +96,7 @@ public class RVAdapterEdit extends RecyclerView.Adapter<RVAdapterEdit.CardEdit>{
        }else{
            cardViewHolder.box.setVisibility(View.GONE);
            cardViewHolder.arrow.setAlpha(1.0f);
+           cardViewHolder.box.animate().setListener(null);
            cardViewHolder.title.setX(0);
        }
 
@@ -136,12 +148,13 @@ public class RVAdapterEdit extends RecyclerView.Adapter<RVAdapterEdit.CardEdit>{
             public void onAnimationEnd(Animator animation) {
                 box.setVisibility(View.GONE);
             }
-        });
+        }).start();
 
         text.animate().translationX(0).setDuration(shortAnimDuration).start();
         box.animate().translationX(-distance).setDuration(shortAnimDuration).start();
 
         arrow.animate().alpha(1.0f).setDuration(shortAnimDuration).setListener(null).start();
+        text.setFocusable(false);
 
         return true;
     }

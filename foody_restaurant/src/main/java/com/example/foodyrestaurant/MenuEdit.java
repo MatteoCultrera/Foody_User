@@ -193,11 +193,11 @@ public class MenuEdit extends AppCompatActivity {
         fab.setBackgroundTintList(getColorStateList(R.color.errorColor));
 
 
-        for(int i = 0; i< recyclerAdapter.getItemCount(); i++){
+        for(int i = 0; i< cards.size(); i++){
             cards.get(i).setEditing(true);
         }
 
-        for(int i = 0; i< recyclerAdapter.getItemCount(); i++){
+        for(int i = 0; i< cards.size(); i++){
             if(recyclerAdapter.normalToEdit(recyclerMenu.findViewHolderForAdapterPosition(i))==false)
                 recyclerAdapter.notifyItemChanged(i);
         }
@@ -249,11 +249,11 @@ public class MenuEdit extends AppCompatActivity {
         fab.setBackgroundTintList(getColorStateList(R.color.colorAccent));
 
 
-        for(int i = 0; i< recyclerAdapter.getItemCount(); i++){
+        for(int i = 0; i< cards.size(); i++){
             cards.get(i).setEditing(false);
         }
 
-        for(int i = 0; i< recyclerAdapter.getItemCount(); i++){
+        for(int i = 0; i< cards.size(); i++){
             if(recyclerAdapter.editToNormal(recyclerMenu.findViewHolderForAdapterPosition(i)) == false)
                 recyclerAdapter.notifyItemChanged(i);
         }

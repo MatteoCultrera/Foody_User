@@ -15,6 +15,6 @@ public class MenuEditItem extends AppCompatActivity {
 
         title = findViewById(R.id.textView);
 
-        title.setText("Edit "+savedInstanceState.getString("MainName"));
+        title.setText("Edit "+getIntent().getExtras().getString("MainName"));
     }
 }
