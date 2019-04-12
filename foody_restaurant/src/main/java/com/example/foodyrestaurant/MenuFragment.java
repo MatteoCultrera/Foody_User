@@ -3,36 +3,18 @@ package com.example.foodyrestaurant;
 import android.content.Intent;
 import android.os.Bundle;
 import android.os.Environment;
-import android.support.annotation.Nullable;
 import android.support.design.widget.FloatingActionButton;
-import android.net.Uri;
 import android.support.v4.app.Fragment;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
-import android.util.JsonReader;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
-
 import com.bumptech.glide.Glide;
-import com.example.foodyrestaurant.R;
-
-import org.json.JSONArray;
-import org.json.JSONException;
-import org.json.JSONObject;
-
 import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.io.InputStreamReader;
-import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
-import java.util.Iterator;
-import java.util.Objects;
-
 /**
  * A simple {@link Fragment} subclass.
  */
@@ -41,7 +23,7 @@ public class MenuFragment extends Fragment {
     private FloatingActionButton editMode;
     RecyclerView menu;
     private JsonHandler jsonHandler;
-    private ArrayList<Card> cards, cards2;
+    private ArrayList<Card> cards;
     LinearLayoutManager llm;
 
     ImageView profileImage, profileShadow;
@@ -70,8 +52,12 @@ public class MenuFragment extends Fragment {
     }
 
     private void init(View view){
+        String json;
+        storageDir = getActivity().getExternalFilesDir(Environment.DIRECTORY_DOCUMENTS);
+        File file = new File(storageDir, JSON_PATH);
         llm = new LinearLayoutManager(view.getContext());
         menu.setLayoutManager(llm);
+        cards = new ArrayList<>();
 
         this.editMode = view.findViewById(R.id.edit_mode);
         this.profileImage = view.findViewById(R.id.mainImage);
@@ -86,12 +72,9 @@ public class MenuFragment extends Fragment {
                 .load(R.drawable.pizza)
                 .into(profileImage);
 
-        //TODO: check the file paths correctly
-        storageDir = getActivity().getExternalFilesDir(Environment.DIRECTORY_DOCUMENTS);
+        jsonHandler = new JsonHandler();
 
-        jsonHandler = new JsonHandler(JSON_PATH, storageDir);
-
-        cards = jsonHandler.getCards();
+        cards = jsonHandler.getCards(file);
 
         if (cards.size() == 0) {
 
@@ -126,8 +109,8 @@ public class MenuFragment extends Fragment {
 
         }
 
-
-        jsonHandler.save(cards);
+        json = jsonHandler.toJSON(cards);
+        jsonHandler.saveStringToFile(json, file);
 
         RVAdapter adapter = new RVAdapter(cards);
         menu.setAdapter(adapter);
