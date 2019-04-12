@@ -36,5 +36,6 @@
     <string name="Sunday">Dom</string>
 
     <string name="Closed">Chiuso</string>
+    <string name="error_writing_file">La scrittura su file è fallita. Riprova</string>
 
 </resources>
