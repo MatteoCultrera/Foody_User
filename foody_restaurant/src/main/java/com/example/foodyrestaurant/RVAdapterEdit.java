@@ -7,6 +7,7 @@ import android.content.Intent;
 import android.content.res.ColorStateList;
 import android.content.res.Resources;
 import android.graphics.PorterDuff;
+import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.constraint.ConstraintLayout;
 import android.support.design.button.MaterialButton;
@@ -70,49 +71,61 @@ public class RVAdapterEdit extends RecyclerView.Adapter<RVAdapterEdit.CardEdit>{
         final Context context = cardViewHolder.title.getContext();
        cardViewHolder.title.setText(cards.get(i).getTitle());
 
-       if(cards.get(i).getEditing()){
-            normalToEdit(cardViewHolder.box,cardViewHolder.title, cardViewHolder.arrow);
+
+       if(cards.get(i).isEditing()){
+            cardViewHolder.box.setVisibility(View.VISIBLE);
+            cardViewHolder.box.setAlpha(1.0f);
+            cardViewHolder.arrow.setAlpha(0.0f);
+            float distance = cardViewHolder.box.getContext().getResources().getDimensionPixelSize(R.dimen.short36);
+            cardViewHolder.title.setX(distance);
+
+           cardViewHolder.layout.setClickable(true);
 
 
        }else{
-
-           editToNormal(cardViewHolder.box,cardViewHolder.title, cardViewHolder.arrow);
-           cardViewHolder.layout.setOnClickListener(new View.OnClickListener() {
-
-               @Override
-               public void onClick(View v) {
-                   /*
-                   Intent intent = new Intent(context.getApplicationContext(), MenuEdit.class);
-                   context.startActivity(intent);
-                   */
-               }
-           });
+           cardViewHolder.box.setVisibility(View.GONE);
+           cardViewHolder.arrow.setAlpha(1.0f);
+           cardViewHolder.title.setX(0);
        }
+
     }
 
-    private void normalToEdit(CheckBox box, EditText text, ImageView arrow){
-        if(box.getVisibility() == View.VISIBLE)
-            return;
+    public boolean normalToEdit(RecyclerView.ViewHolder view){
+        if(view == null)
+            return false;
+
+        CardEdit holder = (CardEdit)view;
+        CheckBox box = holder.box;
+        EditText text= holder.title;
+        ImageView arrow = holder.arrow;
 
         float distance = box.getContext().getResources().getDimensionPixelSize(R.dimen.short36);
         int shortAnimDuration = box.getContext().getResources().getInteger(android.R.integer.config_shortAnimTime);
 
         box.setAlpha(0.0f);
         box.setVisibility(View.VISIBLE);
-        box.animate().alpha(1.0f).setDuration(shortAnimDuration).setListener(null);
+        box.animate().alpha(1.0f).setDuration(shortAnimDuration).setListener(null).start();
 
         box.setX(-distance);
 
         text.animate().translationX(distance).setDuration(shortAnimDuration).start();
         box.animate().translationX(0).setDuration(shortAnimDuration).start();
 
-        arrow.animate().alpha(0.0f).setDuration(shortAnimDuration).setListener(null);
+        arrow.setAlpha(1.0f);
+        arrow.animate().alpha(0.0f).setDuration(shortAnimDuration).setListener(null).start();
 
+        return true;
     }
 
-    private void editToNormal(final CheckBox box, EditText text, ImageView arrow){
-        if(box.getVisibility() == View.GONE)
-            return;
+    public boolean editToNormal(RecyclerView.ViewHolder view){
+        if(view == null)
+            return false;
+
+        CardEdit holder = (CardEdit) view;
+        final CheckBox box = holder.box;
+        EditText text= holder.title;
+        ImageView arrow = holder.arrow;
+
 
         float distance = box.getContext().getResources().getDimensionPixelSize(R.dimen.short36);
         int shortAnimDuration = box.getContext().getResources().getInteger(android.R.integer.config_shortAnimTime);
@@ -128,7 +141,9 @@ public class RVAdapterEdit extends RecyclerView.Adapter<RVAdapterEdit.CardEdit>{
         text.animate().translationX(0).setDuration(shortAnimDuration).start();
         box.animate().translationX(-distance).setDuration(shortAnimDuration).start();
 
-        arrow.animate().alpha(1.0f).setDuration(shortAnimDuration).setListener(null);
+        arrow.animate().alpha(1.0f).setDuration(shortAnimDuration).setListener(null).start();
+
+        return true;
     }
 
 
