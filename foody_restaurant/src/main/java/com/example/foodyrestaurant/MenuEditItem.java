@@ -28,6 +28,7 @@ public class MenuEditItem extends AppCompatActivity {
 
     }
 
-
-
+    public void backToEditMenu(View view) {
+        super.onBackPressed();
+    }
 }

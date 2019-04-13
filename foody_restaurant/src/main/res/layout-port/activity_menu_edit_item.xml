@@ -27,6 +27,7 @@
             android:scaleType="fitCenter"
             android:src="@drawable/back_white"
             android:contentDescription="@null"
+            android:onClick="backToEditMenu"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent" />
