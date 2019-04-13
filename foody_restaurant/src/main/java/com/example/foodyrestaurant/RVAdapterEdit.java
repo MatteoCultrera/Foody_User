@@ -68,9 +68,10 @@ public class RVAdapterEdit extends RecyclerView.Adapter<RVAdapterEdit.CardEdit>{
     }
 
     @Override
-    public void onBindViewHolder(final CardEdit cardViewHolder, int i) {
+    public void onBindViewHolder(final CardEdit cardViewHolder,final int i) {
         final Context context = cardViewHolder.title.getContext();
        cardViewHolder.title.setText(cards.get(i).getTitle());
+       Log.d("TITLECHECK", ""+cards.get(i).getTitle());
 
        if(!cards.get(i).isEditing()){
            cardViewHolder.layout.setOnClickListener(new View.OnClickListener() {
@@ -78,7 +79,7 @@ public class RVAdapterEdit extends RecyclerView.Adapter<RVAdapterEdit.CardEdit>{
                public void onClick(View v) {
                    Intent intent = new Intent(context.getApplicationContext(), MenuEditItem.class);
                    Bundle b = new Bundle();
-                   b.putString("MainName", cardViewHolder.title.getText().toString());
+                   b.putString("MainName", cards.get(i).getTitle());
                    intent.putExtras(b);
                    cardViewHolder.box.getContext().startActivity(intent);
                }
@@ -89,7 +90,7 @@ public class RVAdapterEdit extends RecyclerView.Adapter<RVAdapterEdit.CardEdit>{
                public void onClick(View v) {
                    Intent intent = new Intent(((CardEdit) cardViewHolder).box.getContext().getApplicationContext(), MenuEditItem.class);
                    Bundle b = new Bundle();
-                   b.putString("MainName", cardViewHolder.title.getText().toString());
+                   b.putString("MainName", cards.get(i).getTitle());
                    intent.putExtras(b);
                    cardViewHolder.box.getContext().startActivity(intent);
                }
@@ -157,7 +158,7 @@ public class RVAdapterEdit extends RecyclerView.Adapter<RVAdapterEdit.CardEdit>{
         return true;
     }
 
-    public boolean editToNormal(final RecyclerView.ViewHolder view, int i){
+    public boolean editToNormal(final RecyclerView.ViewHolder view,final int i){
         if(view == null)
             return false;
 
@@ -171,7 +172,7 @@ public class RVAdapterEdit extends RecyclerView.Adapter<RVAdapterEdit.CardEdit>{
             public void onClick(View v) {
                 Intent intent = new Intent(((CardEdit) view).box.getContext().getApplicationContext(), MenuEditItem.class);
                 Bundle b = new Bundle();
-                b.putString("MainName", holder.title.getText().toString());
+                b.putString("MainName", cards.get(i).getTitle());
                 intent.putExtras(b);
                 holder.box.getContext().startActivity(intent);
             }
@@ -183,7 +184,7 @@ public class RVAdapterEdit extends RecyclerView.Adapter<RVAdapterEdit.CardEdit>{
             public void onClick(View v) {
                 Intent intent = new Intent(((CardEdit) view).box.getContext().getApplicationContext(), MenuEditItem.class);
                 Bundle b = new Bundle();
-                b.putString("MainName", holder.title.getText().toString());
+                b.putString("MainName", cards.get(i).getTitle());
                 intent.putExtras(b);
                 holder.box.getContext().startActivity(intent);
             }
