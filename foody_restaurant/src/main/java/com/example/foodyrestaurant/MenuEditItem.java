@@ -73,6 +73,7 @@ public class MenuEditItem extends AppCompatActivity {
         return dishes;
     }
 
-
-
+    public void backToEditMenu(View view) {
+        super.onBackPressed();
+    }
 }
