@@ -57,7 +57,7 @@ public class RVAdapter extends RecyclerView.Adapter<RVAdapter.CardViewHolder>{
                 ImageView image = dish.findViewById(R.id.food_image);
                 title.setText(dishes.get(j).getDishName());
                 subtitle.setText(dishes.get(j).getDishDescription());
-                price.setText(dishes.get(j).getPrice());
+                price.setText(String.format("%.2f", dishes.get(j).getPrice())+" €");
                 if(dishes.get(j).getImage() == null)
                     image.setVisibility(View.GONE);
                 pvh.menuDishes.addView(dish);
