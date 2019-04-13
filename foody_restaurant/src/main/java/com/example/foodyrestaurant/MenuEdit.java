@@ -2,21 +2,24 @@ package com.example.foodyrestaurant;
 
 import android.animation.Animator;
 import android.animation.AnimatorListenerAdapter;
+import android.app.AlertDialog;
 import android.content.DialogInterface;
 import android.media.Image;
 import android.os.Environment;
 import android.support.design.widget.FloatingActionButton;
-import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.text.Editable;
 import android.text.InputType;
+import android.text.TextWatcher;
 import android.util.Log;
 import android.view.View;
 import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 
 import java.io.File;
 import java.util.ArrayList;
@@ -41,6 +44,8 @@ public class MenuEdit extends AppCompatActivity {
     private ImageButton edit;
     private ImageButton exit;
     private ImageView plus, trash;
+    private boolean unchanged;
+    private AlertDialog dialogDism;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -54,6 +59,7 @@ public class MenuEdit extends AppCompatActivity {
 
     private void init(){
         final File fileTmp = new File(storageDir, JSON_COPY);
+        unchanged = true;
 
         jsonHandler = new JsonHandler();
         storageDir =  getExternalFilesDir(Environment.DIRECTORY_DOCUMENTS);
@@ -141,12 +147,65 @@ public class MenuEdit extends AppCompatActivity {
         mainFAB.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Card c = new Card("PLACEHOLDER TRY");
-                cards.add(c);
-                recyclerAdapter.notifyItemInserted(cards.size()-1);
+                if (plus.getVisibility() != View.GONE) {
+                    final EditText input = new EditText(mainFAB.getContext());
+                    LinearLayout.LayoutParams lp = new LinearLayout.LayoutParams(
+                            LinearLayout.LayoutParams.WRAP_CONTENT,
+                            LinearLayout.LayoutParams.WRAP_CONTENT);
+                    input.setInputType(InputType.TYPE_CLASS_TEXT | InputType.TYPE_TEXT_FLAG_CAP_SENTENCES);
+                    final AlertDialog.Builder builder = new AlertDialog.Builder(mainFAB.getContext(), R.style.AppCompatAlertDialogStyle);
+                    builder.setNegativeButton(getResources().getString(R.string.cancel), new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialog, int which) {
+                            dialog.dismiss();
+                        }
+                    });
+                    builder.setPositiveButton(getResources().getString(R.string.accept), new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialogInterface, int i) {
+                            unchanged = false;
+                            Card c = new Card(input.getText().toString());
+                            cards.add(c);
+                            recyclerAdapter.notifyItemInserted(cards.size() - 1);
+                        }
+                    });
+                    builder.setTitle(getResources().getString(R.string.alert_dialog_new_card_title));
+                    builder.setCancelable(false);
+                    input.setLayoutParams(lp);
+                    builder.setView(input);
+                    final AlertDialog dialog = builder.create();
+                    dialog.show();
+                    dialog.getButton(AlertDialog.BUTTON_POSITIVE).setEnabled(false);
+                    dialog.getButton(AlertDialog.BUTTON_POSITIVE).setTextColor(getColor(R.color.secondaryText));
+                    input.addTextChangedListener(new TextWatcher() {
+                        @Override
+                        public void beforeTextChanged(CharSequence charSequence, int i, int i1, int i2) {
+                        }
+
+                        @Override
+                        public void onTextChanged(CharSequence charSequence, int i, int i1, int i2) {
+                            if (charSequence.length() == 0) {
+                                dialog.getButton(AlertDialog.BUTTON_POSITIVE).setEnabled(false);
+                                dialog.getButton(AlertDialog.BUTTON_POSITIVE).setTextColor(getColor(R.color.secondaryText));
+                            } else {
+                                if (checkDuplicates(charSequence)) {
+                                    dialog.getButton(AlertDialog.BUTTON_POSITIVE).setEnabled(false);
+                                    dialog.getButton(AlertDialog.BUTTON_POSITIVE).setTextColor(getColor(R.color.secondaryText));
+                                    input.setError(getString(R.string.alert_dialog_error_card_name));
+                                } else {
+                                    dialog.getButton(AlertDialog.BUTTON_POSITIVE).setEnabled(true);
+                                    dialog.getButton(AlertDialog.BUTTON_POSITIVE).setTextColor(getColor(R.color.primaryText));
+                                }
+                            }
+                        }
+
+                        @Override
+                        public void afterTextChanged(Editable editable) {
+                        }
+                    });
+                }
             }
         });
-
     }
 
     @Override
@@ -157,12 +216,57 @@ public class MenuEdit extends AppCompatActivity {
         JsonHandler jsonPlaceholder =new JsonHandler();
         String json = jsonPlaceholder.toJSON(cards);
         jsonPlaceholder.saveStringToFile(json, file);
-
-
     }
 
     private void back(){
-        finish();
+        if (unchanged){
+            super.onBackPressed();
+        }
+        else {
+            AlertDialog.Builder builder = new AlertDialog.Builder(this, R.style.AppCompatAlertDialogStyle);
+            builder.setNegativeButton(getResources().getString(R.string.cancel), new DialogInterface.OnClickListener() {
+                @Override
+                public void onClick(DialogInterface dialog, int which) {
+                    dialog.dismiss();
+                }
+            });
+            builder.setPositiveButton(getResources().getString(R.string.accept), new DialogInterface.OnClickListener() {
+                @Override
+                public void onClick(DialogInterface dialogInterface, int i) {
+                    MenuEdit.super.onBackPressed();
+                }
+            });
+            builder.setTitle(getResources().getString(R.string.alert_dialog_back_title));
+            builder.setMessage(getResources().getString(R.string.alert_dialog_back_message));
+            builder.setCancelable(false);
+            dialogDism = builder.show();
+        }
+    }
+
+    @Override
+    public void onBackPressed() {
+        if (unchanged){
+            super.onBackPressed();
+        }
+        else {
+            AlertDialog.Builder builder = new AlertDialog.Builder(this, R.style.AppCompatAlertDialogStyle);
+            builder.setNegativeButton(getResources().getString(R.string.cancel), new DialogInterface.OnClickListener() {
+                @Override
+                public void onClick(DialogInterface dialog, int which) {
+                    dialog.dismiss();
+                }
+            });
+            builder.setPositiveButton(getResources().getString(R.string.accept), new DialogInterface.OnClickListener() {
+                @Override
+                public void onClick(DialogInterface dialogInterface, int i) {
+                    MenuEdit.super.onBackPressed();
+                }
+            });
+            builder.setTitle(getResources().getString(R.string.alert_dialog_back_title));
+            builder.setMessage(getResources().getString(R.string.alert_dialog_back_message));
+            builder.setCancelable(false);
+            dialogDism = builder.show();
+        }
     }
   
     private void edit(){
@@ -286,6 +390,17 @@ public class MenuEdit extends AppCompatActivity {
         plus.animate().alpha(1.0f).setDuration(shortAnimDuration).setListener(null).start();
         plus.animate().scaleX(1.f).scaleY(1.f).setDuration(shortAnimDuration).setListener(null).start();
 
+    }
+
+    public boolean checkDuplicates(CharSequence title){
+        boolean duplicate = false;
+        for (Card c: cards) {
+            if (c.getTitle().equals(title.toString())){
+                duplicate = true;
+                break;
+            }
+        }
+        return duplicate;
     }
 
 }
