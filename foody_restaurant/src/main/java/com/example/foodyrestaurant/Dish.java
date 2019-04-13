@@ -6,11 +6,11 @@ public class Dish {
 
     private String dishName;
     private String dishDescription;
-    private String price;
+    private Float price;
     private Uri image;
     private boolean added;
 
-    public Dish(String name, String description, String price, Uri image){
+    public Dish(String name, String description, Float price, Uri image){
         dishName = name;
         dishDescription = description;
         this.price = price;
@@ -30,7 +30,7 @@ public class Dish {
         return dishDescription;
     }
 
-    public String getPrice(){
+    public Float getPrice(){
         return price;
     }
 
@@ -46,7 +46,7 @@ public class Dish {
         this.dishDescription = dishDescription;
     }
 
-    public void setPrice(String price) {
+    public void setPrice(Float price) {
         this.price = price;
     }
 
