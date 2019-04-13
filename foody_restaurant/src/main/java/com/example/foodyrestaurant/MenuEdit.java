@@ -250,10 +250,11 @@ public class MenuEdit extends AppCompatActivity {
 
         for(int i = 0; i< cards.size(); i++){
             cards.get(i).setEditing(false);
+            cards.get(i).setSelected(false);
         }
 
         for(int i = 0; i< cards.size(); i++){
-            if(recyclerAdapter.editToNormal(recyclerMenu.findViewHolderForAdapterPosition(i)) == false)
+            if(recyclerAdapter.editToNormal(recyclerMenu.findViewHolderForAdapterPosition(i), i) == false)
                 recyclerAdapter.notifyItemChanged(i);
         }
 

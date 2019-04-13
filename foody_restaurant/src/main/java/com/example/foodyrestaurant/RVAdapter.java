@@ -47,8 +47,8 @@ public class RVAdapter extends RecyclerView.Adapter<RVAdapter.CardViewHolder>{
 
         ArrayList<Dish> dishes = cards.get(pos).getDishes();
 
+        pvh.menuDishes.removeAllViews();
 
-        if(!pvh.isInflated){
             for (int j = 0; j < dishes.size(); j++){
                 View dish = inflater.inflate(R.layout.menu_item_display, pvh.menuDishes, false);
                 TextView title = dish.findViewById(R.id.food_title);
@@ -64,11 +64,9 @@ public class RVAdapter extends RecyclerView.Adapter<RVAdapter.CardViewHolder>{
                 dishes.get(j).setAdded(true);
 
             }
-        }
+
 
         pvh.title.setText(cards.get(pos).getTitle());
-
-        pvh.isInflated = true;
 
     }
 
