@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <android.support.constraint.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     xmlns:app="http://schemas.android.com/apk/res-auto"
@@ -17,7 +18,7 @@
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintBottom_toTopOf="@id/separator"
-        android:paddingEnd="12dp"
+        android:paddingStart="12dp"
         android:layout_marginBottom="4dp"/>
 
 
@@ -47,7 +48,6 @@
             android:layout_height="wrap_content"
             android:layout_marginBottom="4dp"
             android:fontFamily="@font/roboto_regular"
-            android:text="Margherita"
             android:textColor="@color/primaryText"
             android:textSize="16sp" />
 
@@ -57,27 +57,33 @@
             android:layout_height="wrap_content"
             android:layout_marginBottom="4dp"
             android:fontFamily="@font/roboto_regular"
-            android:text="Pomodoro, Mozzarella, Basilico"
             android:textColor="@color/secondaryText"
             android:textSize="12sp" />
 
-
-
-
     </LinearLayout>
 
-    <TextView
-        android:id="@+id/price"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="4,00 €"
-        android:textSize="16sp"
-        android:fontFamily="@font/roboto_regular"
-        android:textColor="@color/primaryText"
-        app:layout_constraintEnd_toEndOf="parent"
-        android:layout_marginTop="8dp"
-        app:layout_constraintTop_toTopOf="parent"/>
+        <TextView
+            android:id="@+id/price"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textSize="16sp"
+            android:fontFamily="@font/roboto_regular"
+            android:textColor="@color/primaryText"
+            app:layout_constraintEnd_toEndOf="parent"
+            android:layout_marginTop="8dp"
+            app:layout_constraintTop_toTopOf="parent"/>
 
+    <android.widget.Switch
+        android:id="@+id/enabler"
+        android:layout_width="49dp"
+        android:layout_height="26dp"
+        android:layout_marginTop="8dp"
+        android:layout_marginEnd="8dp"
+        android:layout_marginBottom="8dp"
+        android:checked="true"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/price" />
 
 </android.support.constraint.ConstraintLayout>
 
