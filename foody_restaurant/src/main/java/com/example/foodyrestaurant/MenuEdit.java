@@ -32,7 +32,6 @@ public class MenuEdit extends AppCompatActivity {
     private FloatingActionButton mainFAB;
     private ArrayList<Card> cards;
     private JsonHandler jsonHandler;
-    private JsonHandler jsonPlaceholder;
     private final String JSON_PATH = "menu.json";
     private final String JSON_COPY = "menuCopy.json";
     private File storageDir;
@@ -53,16 +52,17 @@ public class MenuEdit extends AppCompatActivity {
     }
 
     private void init(){
+        final File fileTmp = new File(storageDir, JSON_COPY);
 
+        jsonHandler = new JsonHandler();
+        storageDir =  getExternalFilesDir(Environment.DIRECTORY_DOCUMENTS);
+        File file = new File(storageDir, JSON_PATH);
         recyclerMenu = findViewById(R.id.menu_edit);
-
         llm = new LinearLayoutManager(this);
         recyclerMenu.setLayoutManager(llm);
         mainFAB = findViewById(R.id.mainFAB);
-        storageDir =  getExternalFilesDir(Environment.DIRECTORY_DOCUMENTS);
+        cards = jsonHandler.getCards(file);
 
-        jsonHandler = new JsonHandler(JSON_PATH, storageDir);
-        cards = jsonHandler.getCards();
         save = findViewById(R.id.saveButton);
         back = findViewById(R.id.backButton);
         edit = findViewById(R.id.editButton);
@@ -73,7 +73,11 @@ public class MenuEdit extends AppCompatActivity {
         save.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                saveAll();
+                String json = jsonHandler.toJSON(cards);
+                storageDir =  getExternalFilesDir(Environment.DIRECTORY_DOCUMENTS);
+                File file = new File(storageDir, JSON_PATH);
+                jsonHandler.saveStringToFile(json, file);
+                finish();
             }
         });
 
@@ -145,15 +149,10 @@ public class MenuEdit extends AppCompatActivity {
 
     }
 
-    private void saveAll(){
-        jsonHandler.save(cards);
-        finish();
-    }
-
     private void back(){
         finish();
     }
-
+  
     private void edit(){
         animateToEdit(edit, save, exit, mainFAB, plus, trash);
     }
