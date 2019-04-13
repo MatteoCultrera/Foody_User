@@ -157,7 +157,7 @@ public class Menu extends AppCompatActivity {
             }
         }
         reader.endObject();
-        return new Dish(dishName, dishDescription, price, image);
+        return new Dish(dishName, dishDescription, Float.valueOf(price), image);
     }
 
     public String toJSON (){

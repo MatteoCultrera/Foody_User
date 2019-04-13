@@ -12,6 +12,7 @@ import android.os.Bundle;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.text.InputType;
+import android.util.Log;
 import android.view.View;
 import android.widget.EditText;
 import android.widget.ImageButton;
@@ -102,7 +103,6 @@ public class MenuEdit extends AppCompatActivity {
             }
         });
 
-
         /*
         cards = new ArrayList<>();
 
@@ -146,6 +146,18 @@ public class MenuEdit extends AppCompatActivity {
                 recyclerAdapter.notifyItemInserted(cards.size()-1);
             }
         });
+
+    }
+
+    @Override
+    protected void onPause() {
+        super.onPause();
+        Log.d("TITLECHECK","Called On Pause");
+        File file = new File(storageDir, JSON_COPY);
+        JsonHandler jsonPlaceholder =new JsonHandler();
+        String json = jsonPlaceholder.toJSON(cards);
+        jsonPlaceholder.saveStringToFile(json, file);
+
 
     }
 
