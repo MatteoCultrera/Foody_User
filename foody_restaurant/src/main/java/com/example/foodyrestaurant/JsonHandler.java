@@ -127,7 +127,7 @@ public class JsonHandler {
             }
         }
         reader.endObject();
-        return new Dish(dishName, dishDescription, price, image);
+        return new Dish(dishName, dishDescription, Float.valueOf(price), image);
     }
 
     public String toJSON (ArrayList<Card> cards){
