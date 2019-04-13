@@ -152,6 +152,7 @@ public class MenuEdit extends AppCompatActivity {
     @Override
     protected void onPause() {
         super.onPause();
+
         Log.d("TITLECHECK","Called On Pause");
         File file = new File(storageDir, JSON_COPY);
         JsonHandler jsonPlaceholder =new JsonHandler();

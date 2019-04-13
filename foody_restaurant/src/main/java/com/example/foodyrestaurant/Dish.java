@@ -18,6 +18,11 @@ public class Dish {
         added = false;
     }
 
+    @Override
+    public String toString() {
+        return dishName+" "+dishDescription+" "+String.format("%.2f €",price);
+    }
+
     public boolean getAdded(){
         return added;
     }
