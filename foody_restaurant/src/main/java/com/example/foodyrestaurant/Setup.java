@@ -74,8 +74,7 @@ public class Setup extends AppCompatActivity {
     private String dialogCode = "ok";
     private String openHour, closeHour;
     private int deliveryPrice;
-    private SeekBar seekBarPrice;
-    private boolean[] checkedFoods = new boolean[27];
+    private final boolean[] checkedFoods = new boolean[27];
     private ArrayList<String> selectedFoods;
     private String[] foodCategories;
     private ArrayList<Integer> indexFoods;
@@ -402,7 +401,7 @@ public class Setup extends AppCompatActivity {
         this.satC = findViewById(R.id.checkSaturday);
         this.sunC = findViewById(R.id.checkSunday);
         this.delivPrice = findViewById(R.id.delivPrice);
-        this.seekBarPrice = findViewById(R.id.seekBarPrice);
+        SeekBar seekBarPrice = findViewById(R.id.seekBarPrice);
         this.foodType = findViewById(R.id.food_type);
 
         //setup of the Shared Preferences to save value in (key, value) format
@@ -480,7 +479,7 @@ public class Setup extends AppCompatActivity {
         edit.apply();
 
         double price = deliveryPrice * 0.5;
-        String text = String.format(Locale.getDefault(), "%.2f",price) + " €";
+        String text = String.format(Locale.UK, "%.2f",price) + " €";
         delivPrice.setText(text);
         seekBarPrice.setProgress(deliveryPrice);
 
@@ -604,7 +603,7 @@ public class Setup extends AppCompatActivity {
             public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
                 deliveryPrice = progress;
                 double price = deliveryPrice * 0.5;
-                String text = String.format(Locale.getDefault(), "%.2f",price) + " €";
+                String text = String.format(Locale.UK, "%.2f",price) + " €";
                 delivPrice.setText(text);
                 unchanged = false;
 
@@ -950,7 +949,7 @@ public class Setup extends AppCompatActivity {
         timePicker.show();
     }
 
-    public void showSecondPicker(){
+    private void showSecondPicker(){
         int hour = 0;
         int minute = 0;
         switch(caller) {
@@ -1077,7 +1076,7 @@ public class Setup extends AppCompatActivity {
         }
     }
 
-    public void populateCheckedFoods() {
+    private void populateCheckedFoods() {
         for(int i = 0; i < 27; i++)
             checkedFoods[i] = false;
 
@@ -1107,8 +1106,7 @@ public class Setup extends AppCompatActivity {
                         Toast.makeText(getApplicationContext(), R.string.max_cuisine, Toast.LENGTH_SHORT).show();
                     }
                 } else {
-                    if(selectedFoods.contains(String.valueOf(foodCategories[which])))
-                        selectedFoods.remove(String.valueOf(foodCategories[which]));
+                    selectedFoods.remove(String.valueOf(foodCategories[which]));
                     if(indexFoods.contains(which))
                         indexFoods.remove(Integer.valueOf(which));
                     checkedFoods[which] = false;
@@ -1149,7 +1147,7 @@ public class Setup extends AppCompatActivity {
 
     }
 
-    public void updateButtons() {
+    private void updateButtons() {
         CheckBox cb;
         cb =findViewById(R.id.checkMonday);
         if (cb.isChecked()) {

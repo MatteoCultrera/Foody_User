@@ -20,10 +20,10 @@ import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
-
 import java.io.File;
 import java.util.ArrayList;
 import java.util.Iterator;
+
 import java.util.Objects;
 
 public class MenuEdit extends AppCompatActivity {
@@ -31,14 +31,12 @@ public class MenuEdit extends AppCompatActivity {
     private RecyclerView recyclerMenu;
     private RVAdapterEdit recyclerAdapter;
 
-    LinearLayoutManager llm;
     private FloatingActionButton mainFAB;
     private ArrayList<Card> cards;
     private JsonHandler jsonHandler;
     private final String JSON_PATH = "menu.json";
     private final String JSON_COPY = "menuCopy.json";
     private File storageDir;
-    private ImageButton back;
     private ImageButton save;
     private ImageButton edit;
     private ImageButton exit;
@@ -64,13 +62,13 @@ public class MenuEdit extends AppCompatActivity {
         storageDir =  getExternalFilesDir(Environment.DIRECTORY_DOCUMENTS);
         File file = new File(storageDir, JSON_PATH);
         recyclerMenu = findViewById(R.id.menu_edit);
-        llm = new LinearLayoutManager(this);
+        LinearLayoutManager llm = new LinearLayoutManager(this);
         recyclerMenu.setLayoutManager(llm);
         mainFAB = findViewById(R.id.mainFAB);
         cards = jsonHandler.getCards(file);
 
         save = findViewById(R.id.saveButton);
-        back = findViewById(R.id.backButton);
+        ImageButton back = findViewById(R.id.backButton);
         edit = findViewById(R.id.editButton);
         exit = findViewById(R.id.endButton);
         plus = findViewById(R.id.plus);
@@ -112,7 +110,7 @@ public class MenuEdit extends AppCompatActivity {
         cards = new ArrayList<>();
 
         ArrayList<Dish> dishes = new ArrayList<>();
-        dishes.add(new Dish("Margerita","Pomodoro, Mozzarella, Basilico","3,50 €", null));
+        dishes.add(new Dish("Margerita","Pomodoro, Mozzarella, Basilico","3.50 €", null));
         dishes.add(new Dish("Vegetariana","Verdure di Stagione, Pomodoro, Mozzarella","8,00 €", null));
         dishes.add(new Dish("Quattro Stagioni","Pomodoro, Mozzarella, Prosciutto, Carciofi, Funghi, Olive, Grana a Scaglie","6,50 €", null));
         dishes.add(new Dish("Quattro Formaggi","Mozzarella, Gorgonzola, Fontina, Stracchino","7,00 €", null));
@@ -121,7 +119,7 @@ public class MenuEdit extends AppCompatActivity {
         cards.add(c);
 
         dishes = new ArrayList<>();
-        dishes.add(new Dish("Pasta al Pomodoro","Rigationi, Pomodoro, Parmigiano, Basilico","3,50 €", null));
+        dishes.add(new Dish("Pasta al Pomodoro","Rigationi, Pomodoro, Parmigiano, Basilico","3.50 €", null));
         dishes.add(new Dish("Carbonara","Spaghetti, Uova, Guanciale, Pecorino, Pepe Nero","8,00 €", null));
         dishes.add(new Dish("Pasta alla Norma","Pomodoro, Pancetta, Melanzane, Grana a Scaglie","6,50 €", null));
         dishes.add(new Dish("Puttanesca","Pomodoro, Peperoncino, Pancetta, Parmigiano","7,00 €", null));
@@ -130,7 +128,7 @@ public class MenuEdit extends AppCompatActivity {
         cards.add(c);
 
         dishes = new ArrayList<>();
-        dishes.add(new Dish("Braciola Di Maiale","Braciola, Spezie","3,50 €", null));
+        dishes.add(new Dish("Braciola Di Maiale","Braciola, Spezie","3.50 €", null));
         dishes.add(new Dish("Stinco Alla Birra","Stinco di Maiale, Birra","8,00 €", null));
         dishes.add(new Dish("Cotoletta e Patatine","Cotoletta di Maiale, Patatine","6,50 €", null));
         dishes.add(new Dish("Filetto al pepe verde","Filetto di Maiale, Salsa alla Senape, Pepe verde in grani","7,00 €", null));
@@ -331,7 +329,7 @@ public class MenuEdit extends AppCompatActivity {
         }
 
         for(int i = 0; i< cards.size(); i++){
-            if(recyclerAdapter.normalToEdit(recyclerMenu.findViewHolderForAdapterPosition(i))==false)
+            if(!recyclerAdapter.normalToEdit(recyclerMenu.findViewHolderForAdapterPosition(i)))
                 recyclerAdapter.notifyItemChanged(i);
         }
 
@@ -388,7 +386,7 @@ public class MenuEdit extends AppCompatActivity {
         }
 
         for(int i = 0; i< cards.size(); i++){
-            if(recyclerAdapter.editToNormal(recyclerMenu.findViewHolderForAdapterPosition(i), i) == false)
+            if(!recyclerAdapter.editToNormal(recyclerMenu.findViewHolderForAdapterPosition(i), i))
                 recyclerAdapter.notifyItemChanged(i);
         }
 
@@ -410,7 +408,7 @@ public class MenuEdit extends AppCompatActivity {
 
     }
 
-    public boolean checkDuplicates(CharSequence title){
+    private boolean checkDuplicates(CharSequence title){
         boolean duplicate = false;
         for (Card c: cards) {
             if (c.getTitle().equals(title.toString())){
