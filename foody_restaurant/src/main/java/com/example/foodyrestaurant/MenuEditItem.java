@@ -96,8 +96,9 @@ public class MenuEditItem extends AppCompatActivity {
         recyclerAdapter.notifyDataSetChanged();
     }
 
-    public void removeItem(){
-
+    public void removeItem(int position){
+        dishes.remove(position);
+        recyclerAdapter.notifyDataSetChanged();
 
     }
 
