@@ -23,6 +23,7 @@ import android.widget.LinearLayout;
 
 import java.io.File;
 import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.Objects;
 
 import static java.security.AccessController.getContext;
@@ -147,7 +148,7 @@ public class MenuEdit extends AppCompatActivity {
         mainFAB.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if (plus.getVisibility() != View.GONE) {
+                if (plus.getVisibility() == View.VISIBLE) {
                     final EditText input = new EditText(mainFAB.getContext());
                     LinearLayout.LayoutParams lp = new LinearLayout.LayoutParams(
                             LinearLayout.LayoutParams.WRAP_CONTENT,
@@ -203,6 +204,18 @@ public class MenuEdit extends AppCompatActivity {
                         public void afterTextChanged(Editable editable) {
                         }
                     });
+                }
+                if(trash.getVisibility() == View.VISIBLE) {
+                    Iterator<Card> cardIterator;
+                    int i = 0;
+                    for(cardIterator = cards.iterator(); cardIterator.hasNext(); i++) {
+                        if (cardIterator.next().isSelected()) {
+                            cardIterator.remove();
+                            recyclerAdapter.notifyItemRemoved(i);
+                            recyclerAdapter.notifyItemRangeRemoved(i, cards.size()-1);
+                            unchanged = false;
+                        }
+                    }
                 }
             }
         });
