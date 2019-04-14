@@ -33,8 +33,8 @@ public class MenuEditItem extends AppCompatActivity {
     }
 
     private void init(){
-        RecyclerView recyclerMenu = findViewById(R.id.menu_items);
-        LinearLayoutManager llm = new LinearLayoutManager(this);
+        final RecyclerView recyclerMenu = findViewById(R.id.menu_items);
+        final LinearLayoutManager llm = new LinearLayoutManager(this);
         recyclerMenu.setLayoutManager(llm);
 
         save = findViewById(R.id.saveButton);
@@ -54,6 +54,7 @@ public class MenuEditItem extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 insertItem();
+                recyclerMenu.smoothScrollToPosition(dishes.size());
             }
         });
 
@@ -88,13 +89,13 @@ public class MenuEditItem extends AppCompatActivity {
 
     public void insertItem(){
         dishes.add(new Dish("","",0.0f,null));
-        recyclerAdapter.notifyDataSetChanged();
+        recyclerAdapter.notifyItemInserted(dishes.size()-1);
+
     }
 
     public void removeItem(int position){
         dishes.remove(position);
-        recyclerAdapter.notifyDataSetChanged();
-
+        recyclerAdapter.notifyItemRemoved(position);
     }
 
     private ArrayList<Dish> getDishes(){
