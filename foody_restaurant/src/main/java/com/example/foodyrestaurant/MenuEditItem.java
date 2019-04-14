@@ -57,7 +57,7 @@ public class MenuEditItem extends AppCompatActivity {
         fabDishes.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                insertItem();
+                insertItem(dishes.size());
             }
         });
 
@@ -113,15 +113,15 @@ public class MenuEditItem extends AppCompatActivity {
         return save.isEnabled();
     }
 
-    public void insertItem(){
+    public void insertItem(int position){
         dishes.add(new Dish("","",0.0f,null));
-        recyclerAdapter.notifyDataSetChanged();
+        recyclerAdapter.notifyItemInserted(position);
         saveEnabled(false);
     }
 
     public void removeItem(int position){
         dishes.remove(position);
-        recyclerAdapter.notifyDataSetChanged();
+        recyclerAdapter.notifyItemRemoved(position);
 
     }
 

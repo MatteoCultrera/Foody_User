@@ -55,7 +55,7 @@ public class RVAdapterEditItem extends RecyclerView.Adapter<RVAdapterEditItem.Di
                     if(pvh.dishName.length() > 0)
                         pvh.dishName.setCompoundDrawablesWithIntrinsicBounds(0, 0, R.drawable.delete_fill_black, 0);
                 }else{
-                    if(pvh.dishName.length()>0 && editItem.getSaveEnabled())
+                    if(pvh.dishName.length()>0 && pvh.dishName.getError()==null)
                         pvh.dishName.setCompoundDrawablesWithIntrinsicBounds(0, 0, 0, 0);
                 }
             }
