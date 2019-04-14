@@ -8,6 +8,7 @@ import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 import android.view.View;
+import android.widget.ImageButton;
 import android.widget.TextView;
 
 import java.io.File;
@@ -21,6 +22,7 @@ public class MenuEditItem extends AppCompatActivity {
     private String className;
     private final String JSON_COPY = "menuCopy.json";
     private File storageDir;
+    private ImageButton save, back;
     private ArrayList<Dish> dishes;
     private RecyclerView recyclerMenu;
     private RVAdapterEditItem recyclerAdapter;
@@ -40,6 +42,8 @@ public class MenuEditItem extends AppCompatActivity {
         llm = new LinearLayoutManager(this);
         recyclerMenu.setLayoutManager(llm);
 
+        save = findViewById(R.id.saveButton);
+
         storageDir =  getExternalFilesDir(Environment.DIRECTORY_DOCUMENTS);
         title = findViewById(R.id.textView);
         className = getIntent().getExtras().getString("MainName");
@@ -50,8 +54,21 @@ public class MenuEditItem extends AppCompatActivity {
         recyclerAdapter = new RVAdapterEditItem(dishes);
         recyclerMenu.setAdapter(recyclerAdapter);
 
+        save.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                save();
+            }
+        });
+
     }
 
+    public void save(){
+       for (int i = 0; i < dishes.size(); i++){
+            Log.d("TITLECHECK",i+" "+dishes.get(i).toString());
+       }
+
+    }
 
     private ArrayList<Dish> getDishes(){
 
@@ -60,17 +77,17 @@ public class MenuEditItem extends AppCompatActivity {
         JsonHandler placeholder = new JsonHandler();
         File plc = new File(storageDir, JSON_COPY);
         cards = placeholder.getCards(plc);
-        Log.d("TITLECHECK", "Searching dishes in cards of size "+cards.size());
 
         for (int i = 0; i < cards.size(); i++){
 
-            Log.d("TITLECHECK", "Card "+i+" with name "+cards.get(i).getTitle());
             if(cards.get(i).getTitle().equals(className)){
                 dishes = cards.get(i).getDishes();
-                Log.d("TITLECHECK", "Found Dishes oof size" + dishes.size());
             }
 
         }
+
+        for(int i = 0; i< dishes.size();i++)
+            Log.d("TITLECHECK","After Pause "+dishes.get(i).toString());
 
         return dishes;
     }
