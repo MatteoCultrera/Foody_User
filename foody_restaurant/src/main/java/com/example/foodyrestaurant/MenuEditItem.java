@@ -13,6 +13,10 @@ import android.widget.TextView;
 
 import java.io.File;
 import java.util.ArrayList;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
+import java.util.jar.Attributes;
 
 public class MenuEditItem extends AppCompatActivity {
 
@@ -75,12 +79,35 @@ public class MenuEditItem extends AppCompatActivity {
     }
 
     public void saveEnabled(boolean enabled){
+
+        if(enabled == true)
+            enabled = canEnable();
+
         save.setEnabled(enabled);
         if(enabled == true){
             save.setImageResource(R.drawable.save_white);
         }else{
             save.setImageResource(R.drawable.save_dis);
         }
+    }
+
+    public boolean canEnable(){
+        ArrayList<String> dishNames = new ArrayList<>();
+
+        for(int i = 0; i < dishes.size(); i++){
+            if(dishes.get(i).getDishName().isEmpty())
+                return false;
+            dishNames.add(dishes.get(i).getDishName());
+
+        }
+
+        Set<String> dis = new HashSet<String>(dishNames);
+
+        if(dis.size() < dishes.size())
+            return false;
+
+
+        return true;
     }
 
     public boolean getSaveEnabled(){
@@ -90,7 +117,7 @@ public class MenuEditItem extends AppCompatActivity {
     public void insertItem(){
         dishes.add(new Dish("","",0.0f,null));
         recyclerAdapter.notifyItemInserted(dishes.size()-1);
-
+        saveEnabled(false);
     }
 
     public void removeItem(int position){

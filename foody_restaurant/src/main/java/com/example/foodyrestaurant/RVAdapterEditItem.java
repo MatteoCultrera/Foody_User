@@ -17,7 +17,9 @@ import android.view.ViewGroup;
 import android.view.inputmethod.EditorInfo;
 import android.widget.EditText;
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.Locale;
+import java.util.Set;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import de.hdodenhof.circleimageview.CircleImageView;
@@ -100,7 +102,6 @@ public class RVAdapterEditItem extends RecyclerView.Adapter<RVAdapterEditItem.Di
                 correct = false;
         }
 
-
         return correct;
     }
 
@@ -143,6 +144,8 @@ public class RVAdapterEditItem extends RecyclerView.Adapter<RVAdapterEditItem.Di
             dishViewHolder.dishName.setError(null);
         }
 
+        if(dishViewHolder.dishName.getError() == null && !dishViewHolder.dishName.hasFocus())
+            dishViewHolder.dishName.setCompoundDrawablesWithIntrinsicBounds(0, 0, 0, 0);
 
 
     }
