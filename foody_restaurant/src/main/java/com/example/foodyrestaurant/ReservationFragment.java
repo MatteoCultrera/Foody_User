@@ -40,18 +40,6 @@ public class ReservationFragment extends Fragment {
         LinearLayoutManager llm = new LinearLayoutManager(view.getContext());
         reservation.setLayoutManager(llm);
 
-        ImageView profileImage = view.findViewById(R.id.mainImage);
-        ImageView profileShadow = view.findViewById(R.id.shadow);
-
-        Glide
-                .with(this)
-                .load(R.drawable.shadow)
-                .into(profileShadow);
-        Glide
-                .with(this)
-                .load(R.drawable.pizza)
-                .into(profileImage);
-
         ArrayList<Reservation> reservations = new ArrayList<>();
         ArrayList<Dish> dishes = new ArrayList<>();
         dishes.add(new Dish("Margherita","pizza",2.0f, null));
