@@ -125,6 +125,7 @@
         android:layout_width="48dp"
         android:layout_height="48dp"
         android:src="@drawable/plus_white"
+        android:contentDescription="@null"
         app:layout_constraintStart_toStartOf="@id/mainFAB"
         app:layout_constraintEnd_toEndOf="@id/mainFAB"
         app:layout_constraintTop_toTopOf="@id/mainFAB"

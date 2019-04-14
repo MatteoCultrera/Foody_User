@@ -19,6 +19,7 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintBottom_toTopOf="@id/separator"
         android:paddingStart="12dp"
+        android:paddingEnd="12dp"
         android:layout_marginBottom="4dp"/>
 
 

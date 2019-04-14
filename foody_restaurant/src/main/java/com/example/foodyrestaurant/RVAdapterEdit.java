@@ -1,53 +1,23 @@
 package com.example.foodyrestaurant;
 
-import android.animation.Animator;
-import android.animation.AnimatorListenerAdapter;
 import android.content.Context;
 import android.content.Intent;
-import android.content.res.ColorStateList;
-import android.content.res.Resources;
-import android.graphics.PorterDuff;
 import android.os.Bundle;
-import android.support.annotation.NonNull;
 import android.support.constraint.ConstraintLayout;
-import android.support.design.button.MaterialButton;
-import android.support.design.widget.TextInputEditText;
-import android.support.design.widget.TextInputLayout;
-import android.support.v4.content.ContextCompat;
-import android.support.v7.view.menu.MenuView;
-import android.support.v7.widget.CardView;
 import android.support.v7.widget.RecyclerView;
-import android.text.Editable;
-import android.text.InputType;
-import android.text.TextWatcher;
 import android.util.Log;
-import android.util.TypedValue;
 import android.view.LayoutInflater;
-import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
-import android.view.inputmethod.EditorInfo;
-import android.widget.ArrayAdapter;
-import android.widget.Button;
 import android.widget.CheckBox;
 import android.widget.CompoundButton;
 import android.widget.EditText;
-import android.widget.ImageButton;
 import android.widget.ImageView;
-import android.widget.LinearLayout;
-import android.widget.ListAdapter;
-import android.widget.TextView;
-import android.widget.Toast;
-
-import org.w3c.dom.Text;
-
-import java.io.File;
 import java.util.ArrayList;
-import java.util.List;
 
 public class RVAdapterEdit extends RecyclerView.Adapter<RVAdapterEdit.CardEdit>{
 
-    ArrayList<Card> cards;
+    final ArrayList<Card> cards;
 
     public RVAdapterEdit(ArrayList<Card> cards){
         this.cards = cards;
@@ -62,9 +32,7 @@ public class RVAdapterEdit extends RecyclerView.Adapter<RVAdapterEdit.CardEdit>{
     public CardEdit onCreateViewHolder(ViewGroup viewGroup, int i) {
 
         View v = LayoutInflater.from(viewGroup.getContext()).inflate(R.layout.menu_main_edit, viewGroup, false);
-        final CardEdit pvh = new CardEdit(v);
-
-        return pvh;
+        return new CardEdit(v);
     }
 
     @Override
@@ -88,7 +56,7 @@ public class RVAdapterEdit extends RecyclerView.Adapter<RVAdapterEdit.CardEdit>{
            cardViewHolder.title.setOnClickListener(new View.OnClickListener() {
                @Override
                public void onClick(View v) {
-                   Intent intent = new Intent(((CardEdit) cardViewHolder).box.getContext().getApplicationContext(), MenuEditItem.class);
+                   Intent intent = new Intent(cardViewHolder.box.getContext().getApplicationContext(), MenuEditItem.class);
                    Bundle b = new Bundle();
                    b.putString("MainName", cards.get(i).getTitle());
                    intent.putExtras(b);
@@ -215,10 +183,10 @@ public class RVAdapterEdit extends RecyclerView.Adapter<RVAdapterEdit.CardEdit>{
 
 
     public static class CardEdit extends RecyclerView.ViewHolder {
-        ConstraintLayout layout;
-        EditText title;
-        CheckBox box;
-        ImageView arrow;
+        final ConstraintLayout layout;
+        final EditText title;
+        final CheckBox box;
+        final ImageView arrow;
 
         public CardEdit(View itemView) {
             super(itemView);

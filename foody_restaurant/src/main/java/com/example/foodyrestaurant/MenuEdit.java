@@ -4,7 +4,6 @@ import android.animation.Animator;
 import android.animation.AnimatorListenerAdapter;
 import android.app.AlertDialog;
 import android.content.DialogInterface;
-import android.media.Image;
 import android.os.Environment;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v7.app.AppCompatActivity;
@@ -20,13 +19,9 @@ import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
-
 import java.io.File;
 import java.util.ArrayList;
 import java.util.Iterator;
-import java.util.Objects;
-
-import static java.security.AccessController.getContext;
 
 public class MenuEdit extends AppCompatActivity {
 
@@ -40,7 +35,6 @@ public class MenuEdit extends AppCompatActivity {
     private final String JSON_PATH = "menu.json";
     private final String JSON_COPY = "menuCopy.json";
     private File storageDir;
-    private ImageButton back;
     private ImageButton save;
     private ImageButton edit;
     private ImageButton exit;
@@ -72,7 +66,7 @@ public class MenuEdit extends AppCompatActivity {
         cards = jsonHandler.getCards(file);
 
         save = findViewById(R.id.saveButton);
-        back = findViewById(R.id.backButton);
+        ImageButton back = findViewById(R.id.backButton);
         edit = findViewById(R.id.editButton);
         exit = findViewById(R.id.endButton);
         plus = findViewById(R.id.plus);
@@ -114,7 +108,7 @@ public class MenuEdit extends AppCompatActivity {
         cards = new ArrayList<>();
 
         ArrayList<Dish> dishes = new ArrayList<>();
-        dishes.add(new Dish("Margerita","Pomodoro, Mozzarella, Basilico","3,50 €", null));
+        dishes.add(new Dish("Margerita","Pomodoro, Mozzarella, Basilico","3.50 €", null));
         dishes.add(new Dish("Vegetariana","Verdure di Stagione, Pomodoro, Mozzarella","8,00 €", null));
         dishes.add(new Dish("Quattro Stagioni","Pomodoro, Mozzarella, Prosciutto, Carciofi, Funghi, Olive, Grana a Scaglie","6,50 €", null));
         dishes.add(new Dish("Quattro Formaggi","Mozzarella, Gorgonzola, Fontina, Stracchino","7,00 €", null));
@@ -123,7 +117,7 @@ public class MenuEdit extends AppCompatActivity {
         cards.add(c);
 
         dishes = new ArrayList<>();
-        dishes.add(new Dish("Pasta al Pomodoro","Rigationi, Pomodoro, Parmigiano, Basilico","3,50 €", null));
+        dishes.add(new Dish("Pasta al Pomodoro","Rigationi, Pomodoro, Parmigiano, Basilico","3.50 €", null));
         dishes.add(new Dish("Carbonara","Spaghetti, Uova, Guanciale, Pecorino, Pepe Nero","8,00 €", null));
         dishes.add(new Dish("Pasta alla Norma","Pomodoro, Pancetta, Melanzane, Grana a Scaglie","6,50 €", null));
         dishes.add(new Dish("Puttanesca","Pomodoro, Peperoncino, Pancetta, Parmigiano","7,00 €", null));
@@ -132,7 +126,7 @@ public class MenuEdit extends AppCompatActivity {
         cards.add(c);
 
         dishes = new ArrayList<>();
-        dishes.add(new Dish("Braciola Di Maiale","Braciola, Spezie","3,50 €", null));
+        dishes.add(new Dish("Braciola Di Maiale","Braciola, Spezie","3.50 €", null));
         dishes.add(new Dish("Stinco Alla Birra","Stinco di Maiale, Birra","8,00 €", null));
         dishes.add(new Dish("Cotoletta e Patatine","Cotoletta di Maiale, Patatine","6,50 €", null));
         dishes.add(new Dish("Filetto al pepe verde","Filetto di Maiale, Salsa alla Senape, Pepe verde in grani","7,00 €", null));
@@ -326,7 +320,7 @@ public class MenuEdit extends AppCompatActivity {
         }
 
         for(int i = 0; i< cards.size(); i++){
-            if(recyclerAdapter.normalToEdit(recyclerMenu.findViewHolderForAdapterPosition(i))==false)
+            if(!recyclerAdapter.normalToEdit(recyclerMenu.findViewHolderForAdapterPosition(i)))
                 recyclerAdapter.notifyItemChanged(i);
         }
 
@@ -383,7 +377,7 @@ public class MenuEdit extends AppCompatActivity {
         }
 
         for(int i = 0; i< cards.size(); i++){
-            if(recyclerAdapter.editToNormal(recyclerMenu.findViewHolderForAdapterPosition(i), i) == false)
+            if(!recyclerAdapter.editToNormal(recyclerMenu.findViewHolderForAdapterPosition(i), i))
                 recyclerAdapter.notifyItemChanged(i);
         }
 

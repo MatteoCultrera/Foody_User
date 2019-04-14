@@ -1,7 +1,5 @@
 package com.example.foody_library;
 
-import android.content.Context;
-
 /**
  * Instrumented test, which will execute on an Android device.
  *

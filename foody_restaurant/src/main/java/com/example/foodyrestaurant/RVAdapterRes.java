@@ -1,24 +1,20 @@
 package com.example.foodyrestaurant;
 
 import android.content.Context;
-import android.content.res.Resources;
 import android.support.constraint.ConstraintLayout;
 import android.support.v7.widget.CardView;
 import android.support.v7.widget.RecyclerView;
-import android.util.TypedValue;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
-
 import java.util.ArrayList;
 import java.util.List;
 
 public class RVAdapterRes extends RecyclerView.Adapter<RVAdapterRes.CardViewHolder>{
 
-    List<Reservation> reservations;
+    final List<Reservation> reservations;
 
     public RVAdapterRes(List<Reservation> reservations){
         this.reservations = reservations;
@@ -32,8 +28,7 @@ public class RVAdapterRes extends RecyclerView.Adapter<RVAdapterRes.CardViewHold
     @Override
     public CardViewHolder onCreateViewHolder(ViewGroup viewGroup, int i) {
         View v = LayoutInflater.from(viewGroup.getContext()).inflate(R.layout.menu_card_display, viewGroup, false);
-        CardViewHolder pvh = new CardViewHolder(v);
-        return pvh;
+        return new CardViewHolder(v);
     }
 
     @Override
@@ -87,19 +82,19 @@ public class RVAdapterRes extends RecyclerView.Adapter<RVAdapterRes.CardViewHold
 
 
     public static class CardViewHolder extends RecyclerView.ViewHolder {
-        CardView cv;
-        TextView title;
-        LinearLayout menuDishes;
-        ConstraintLayout outside;
+        final CardView cv;
+        final TextView title;
+        final LinearLayout menuDishes;
+        final ConstraintLayout outside;
         boolean isInflated;
 
         public CardViewHolder(View itemView) {
             super(itemView);
 
-            cv = (CardView)itemView.findViewById(R.id.cv);
-            title = (TextView)itemView.findViewById(R.id.title);
-            menuDishes = (LinearLayout) itemView.findViewById(R.id.menu_dishes);
-            outside = (ConstraintLayout) itemView.findViewById(R.id.outside);
+            cv = itemView.findViewById(R.id.cv);
+            title = itemView.findViewById(R.id.title);
+            menuDishes = itemView.findViewById(R.id.menu_dishes);
+            outside = itemView.findViewById(R.id.outside);
             isInflated = false;
         }
     }

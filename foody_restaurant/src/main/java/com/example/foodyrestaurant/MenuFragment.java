@@ -15,6 +15,8 @@ import android.widget.ImageView;
 import com.bumptech.glide.Glide;
 import java.io.File;
 import java.util.ArrayList;
+import java.util.Objects;
+
 /**
  * A simple {@link Fragment} subclass.
  */
@@ -53,7 +55,7 @@ public class MenuFragment extends Fragment {
 
     private void init(View view){
         String json;
-        storageDir = getActivity().getExternalFilesDir(Environment.DIRECTORY_DOCUMENTS);
+        storageDir = Objects.requireNonNull(getActivity()).getExternalFilesDir(Environment.DIRECTORY_DOCUMENTS);
         File file = new File(storageDir, JSON_PATH);
         llm = new LinearLayoutManager(view.getContext());
         menu.setLayoutManager(llm);
@@ -113,7 +115,6 @@ public class MenuFragment extends Fragment {
 
         json = jsonHandler.toJSON(cards);
         jsonHandler.saveStringToFile(json, file);
-
         RVAdapter adapter = new RVAdapter(cards);
         menu.setAdapter(adapter);
 

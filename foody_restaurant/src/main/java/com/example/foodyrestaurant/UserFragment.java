@@ -6,7 +6,6 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
-import android.net.Uri;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.os.Environment;
@@ -16,12 +15,9 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
-
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.request.RequestOptions;
 import com.bumptech.glide.signature.ObjectKey;
-import com.example.foodyrestaurant.R;
-
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
@@ -167,7 +163,7 @@ public class UserFragment extends Fragment {
 
         double price = 0.5 * deliveryPrice;
 
-        String text = String.format(Locale.getDefault(),"%.2f", price) + getResources().getString(R.string.value);
+        String text = String.format(Locale.UK,"%.2f", price) + getResources().getString(R.string.value);
         delivPrice.setText(text);
 
 

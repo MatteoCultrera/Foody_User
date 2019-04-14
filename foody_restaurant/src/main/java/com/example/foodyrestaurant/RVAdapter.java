@@ -1,13 +1,10 @@
 package com.example.foodyrestaurant;
 
 import android.content.Context;
-import android.content.res.Resources;
 import android.support.constraint.ConstraintLayout;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.widget.CardView;
 import android.support.v7.widget.RecyclerView;
-import android.text.Layout;
-import android.util.TypedValue;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -16,15 +13,13 @@ import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.Switch;
 import android.widget.TextView;
-
-import org.w3c.dom.Text;
-
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Locale;
 
 public class RVAdapter extends RecyclerView.Adapter<RVAdapter.CardViewHolder>{
 
-    List<Card> cards;
+    final List<Card> cards;
 
     public RVAdapter(List<Card> cards){
         this.cards = cards;
@@ -39,9 +34,7 @@ public class RVAdapter extends RecyclerView.Adapter<RVAdapter.CardViewHolder>{
     public CardViewHolder onCreateViewHolder(ViewGroup viewGroup, int viewType) {
 
         View v = LayoutInflater.from(viewGroup.getContext()).inflate(R.layout.menu_card_display, viewGroup, false);
-        CardViewHolder pvh = new CardViewHolder(v);
-
-        return pvh;
+        return new CardViewHolder(v);
     }
 
     @Override
@@ -66,7 +59,7 @@ public class RVAdapter extends RecyclerView.Adapter<RVAdapter.CardViewHolder>{
                 ImageView image = dish.findViewById(R.id.food_image);
                 title.setText(dishes.get(j).getDishName());
                 subtitle.setText(dishes.get(j).getDishDescription());
-                price.setText(String.format("%.2f", dishes.get(j).getPrice())+" €");
+                price.setText(String.format(Locale.UK,"%.2f", dishes.get(j).getPrice())+" €");
                 if(dishes.get(j).getImage() == null)
                     image.setVisibility(View.GONE);
                 pvh.menuDishes.addView(dish);
@@ -102,11 +95,11 @@ public class RVAdapter extends RecyclerView.Adapter<RVAdapter.CardViewHolder>{
 
 
     public static class CardViewHolder extends RecyclerView.ViewHolder {
-        CardView cv;
-        TextView title;
-        LinearLayout menuDishes;
-        ConstraintLayout outside;
-        boolean isInflated;
+        final CardView cv;
+        final TextView title;
+        final LinearLayout menuDishes;
+        final ConstraintLayout outside;
+        final boolean isInflated;
 
         public CardViewHolder(View itemView) {
             super(itemView);
