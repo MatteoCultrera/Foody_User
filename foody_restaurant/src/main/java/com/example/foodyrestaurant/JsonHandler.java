@@ -3,12 +3,9 @@ package com.example.foodyrestaurant;
 import android.net.Uri;
 import android.util.JsonReader;
 import android.util.Log;
-import android.widget.Toast;
-
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
-
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
@@ -18,9 +15,7 @@ import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.Objects;
 
-import static java.security.AccessController.getContext;
-
-public class JsonHandler {
+class JsonHandler {
 
     public ArrayList<Card> getCards(File file){
         ArrayList<Card> cards;
@@ -28,7 +23,7 @@ public class JsonHandler {
             cards = readFromJSON(file);
         } catch (IOException e) {
             e.getMessage();
-            return new ArrayList<Card>();
+            return new ArrayList<>();
         }
         return cards;
     }
@@ -127,7 +122,7 @@ public class JsonHandler {
             }
         }
         reader.endObject();
-        return new Dish(dishName, dishDescription, Float.valueOf(price), image);
+        return new Dish(dishName, dishDescription, Float.valueOf(Objects.requireNonNull(price)), image);
     }
 
     public String toJSON (ArrayList<Card> cards){
@@ -136,9 +131,8 @@ public class JsonHandler {
         try {
             for (Card card1 : cards) {
                 JSONObject objCard = new JSONObject();
-                Card card = card1;
-                objCard.put("title", card.getTitle());
-                ArrayList<Dish> dishes = card.getDishes();
+                objCard.put("title", card1.getTitle());
+                ArrayList<Dish> dishes = card1.getDishes();
                 JSONArray objDishArray = new JSONArray();
                 for (Dish dish : dishes) {
                     JSONObject objDish = new JSONObject();

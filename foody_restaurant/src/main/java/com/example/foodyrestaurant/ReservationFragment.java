@@ -4,7 +4,6 @@ import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -16,11 +15,7 @@ import java.util.ArrayList;
 
 public class ReservationFragment extends Fragment {
 
-    RecyclerView reservation;
-    private ArrayList<Reservation> reservations;
-    LinearLayoutManager llm;
-
-    ImageView profileImage, profileShadow;
+    private RecyclerView reservation;
 
 
     public ReservationFragment() {
@@ -42,11 +37,11 @@ public class ReservationFragment extends Fragment {
     }
 
     private void init(View view){
-        llm = new LinearLayoutManager(view.getContext());
+        LinearLayoutManager llm = new LinearLayoutManager(view.getContext());
         reservation.setLayoutManager(llm);
 
-        this.profileImage = view.findViewById(R.id.mainImage);
-        this.profileShadow = view.findViewById(R.id.shadow);
+        ImageView profileImage = view.findViewById(R.id.mainImage);
+        ImageView profileShadow = view.findViewById(R.id.shadow);
 
         Glide
                 .with(this)
@@ -57,13 +52,13 @@ public class ReservationFragment extends Fragment {
                 .load(R.drawable.pizza)
                 .into(profileImage);
 
-        reservations = new ArrayList<>();
+        ArrayList<Reservation> reservations = new ArrayList<>();
         ArrayList<Dish> dishes = new ArrayList<>();
         dishes.add(new Dish("Margherita","pizza",2.0f, null));
         dishes.add(new Dish("Paperino","pizza",2.0f, null));
         dishes.add(new Dish("Margerita","pizza",2.0f, null));
-        Reservation res = new Reservation(getResources().getString(R.string.reservation) + " N° 1", dishes);
-        Reservation res2 = new Reservation(getResources().getString(R.string.reservation) + " N° 2", dishes);
+        Reservation res = new Reservation(getResources().getString(R.string.reservation) + " N° 1", dishes, Reservation.prepStatus.PENDING);
+        Reservation res2 = new Reservation(getResources().getString(R.string.reservation) + " N° 2", dishes, Reservation.prepStatus.DOING);
         reservations.add(res);
         reservations.add(res2);
 

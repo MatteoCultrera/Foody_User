@@ -7,11 +7,7 @@ import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v7.app.AppCompatActivity;
-import android.util.Log;
 import android.view.MenuItem;
-import android.widget.ImageView;
-
-import com.bumptech.glide.Glide;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -19,15 +15,13 @@ public class MainActivity extends AppCompatActivity {
         MENU,
         ORDERS,
         USER,
-    };
+    }
 
-    BottomNavigationView bottomBar;
-
-    final Fragment menu = new MenuFragment();
-    final Fragment reservations = new ReservationFragment();
-    final Fragment user = new UserFragment();
-    final FragmentManager fm = getSupportFragmentManager();
-    Fragment active = menu;
+    private final Fragment menu = new MenuFragment();
+    private final Fragment reservations = new ReservationFragment();
+    private final Fragment user = new UserFragment();
+    private final FragmentManager fm = getSupportFragmentManager();
+    private Fragment active = menu;
     TabState stateApp;
 
     @Override
@@ -41,7 +35,7 @@ public class MainActivity extends AppCompatActivity {
 
     private void init(){
 
-        bottomBar = findViewById(R.id.bottom_navigation);
+        BottomNavigationView bottomBar = findViewById(R.id.bottom_navigation);
 
         /*menu = new MenuFragment();
         user = new UserFragment();
@@ -104,6 +98,4 @@ public class MainActivity extends AppCompatActivity {
 
         updateFragment(active);
     }
-
-
 }

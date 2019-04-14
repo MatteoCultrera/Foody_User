@@ -2,7 +2,7 @@
     <string name="app_name">Foody Restaurant</string>
     <string name="reservation">Reservation</string>
     <string name="restaurant_maintype">Italian Restaurant</string>
-
+    <string name="alert_dialog_new_card_title">Insert new course\'s name</string>
     <string name="namerosso">RossoPomodoro</string>
     <string name="phone_rosso">011485959</string>
     <string name="mail_rosso">info@rossopomodoro.it</string>
@@ -10,7 +10,7 @@
     <string name="opening_time">Select opening time</string>
     <string name="closing_time">Select closing time</string>
     <string name="timetable">Timetable</string>
-
+    <string name="alert_dialog_error_card_name">There is already a course with that name</string>
     <string name="placeholder_price">0,00 €</string>
     <string name="delivery_price">Delivery price</string>
     <string name="food_type">Select cuisines (max. 3)</string>
@@ -50,11 +50,10 @@
     <string name="alert_dialog_choose_food">"Choose max. 3 cuisine"</string>
 
     <string name="okButton">OK</string>
-
+    <string name="edit" >Edit %1$s</string>
     <string name="menu">Menu</string>
     <string name="orders">Orders</string>
     <string name="profile">Profile</string>
-
     <string name="edit_menu">Edit Menu</string>
 
     <string name="title_edit">Title</string>

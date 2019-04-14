@@ -822,7 +822,7 @@ public class Setup extends AppCompatActivity {
         timePicker.show();
     }
 
-    public void showSecondPicker(){
+    private void showSecondPicker(){
         int hour = 0;
         int minute = 0;
 
@@ -952,7 +952,7 @@ public class Setup extends AppCompatActivity {
         }
     }
 
-    public void updateButtons() {
+    private void updateButtons() {
         CheckBox cb;
         cb =findViewById(R.id.checkMonday);
         if (cb.isChecked()) {
