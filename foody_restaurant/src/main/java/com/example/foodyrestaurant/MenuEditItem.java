@@ -1,6 +1,7 @@
 package com.example.foodyrestaurant;
 
 import android.os.Environment;
+import android.support.design.widget.FloatingActionButton;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.LinearLayoutManager;
@@ -18,9 +19,10 @@ public class MenuEditItem extends AppCompatActivity {
 
     private String className;
     private File storageDir;
-    private ImageButton back;
+    private ImageButton save;
     private ArrayList<Dish> dishes;
-
+    private FloatingActionButton fabDishes;
+    private RVAdapterEditItem recyclerAdapter;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -35,7 +37,7 @@ public class MenuEditItem extends AppCompatActivity {
         LinearLayoutManager llm = new LinearLayoutManager(this);
         recyclerMenu.setLayoutManager(llm);
 
-        ImageButton save = findViewById(R.id.saveButton);
+        save = findViewById(R.id.saveButton);
 
         storageDir =  getExternalFilesDir(Environment.DIRECTORY_DOCUMENTS);
         TextView title = findViewById(R.id.textView);
@@ -44,8 +46,16 @@ public class MenuEditItem extends AppCompatActivity {
         title.setText(getResources().getString(R.string.edit, className));
         dishes = getDishes();
 
-        RVAdapterEditItem recyclerAdapter = new RVAdapterEditItem(dishes);
+        recyclerAdapter = new RVAdapterEditItem(dishes, this);
         recyclerMenu.setAdapter(recyclerAdapter);
+        fabDishes = findViewById(R.id.fabDishes);
+
+        fabDishes.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                insertItem();
+            }
+        });
 
         save.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -60,6 +70,30 @@ public class MenuEditItem extends AppCompatActivity {
        for (int i = 0; i < dishes.size(); i++){
             Log.d("TITLECHECK",i+" "+dishes.get(i).toString());
        }
+
+    }
+
+    public void saveEnabled(boolean enabled){
+        save.setEnabled(enabled);
+        if(enabled == true){
+            save.setImageResource(R.drawable.save_white);
+        }else{
+            save.setImageResource(R.drawable.save_dis);
+        }
+    }
+
+    public boolean getSaveEnabled(){
+        return save.isEnabled();
+    }
+
+    public void insertItem(){
+        dishes.add(new Dish("","",0.0f,null));
+        recyclerAdapter.notifyDataSetChanged();
+    }
+
+    public void removeItem(int position){
+        dishes.remove(position);
+        recyclerAdapter.notifyDataSetChanged();
 
     }
 
@@ -79,9 +113,6 @@ public class MenuEditItem extends AppCompatActivity {
             }
 
         }
-
-        for(int i = 0; i< dishes.size();i++)
-            Log.d("TITLECHECK","After Pause "+dishes.get(i).toString());
 
         return dishes;
     }
