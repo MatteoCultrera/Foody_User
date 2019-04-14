@@ -50,8 +50,6 @@ public class MenuEdit extends AppCompatActivity {
         setContentView(R.layout.activity_menu_edit);
 
         init();
-
-
     }
 
     private void init(){

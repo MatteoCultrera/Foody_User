@@ -54,7 +54,7 @@
     <string name="menu">Menu</string>
     <string name="profile">Profile</string>
     <string name="edit_menu">Edit Menu</string>
-
+    <string name="orders">Orders</string>
     <string name="title_edit">Title</string>
     <string name="dish_edit">Dish Name</string>
     <string name="desc_edit">Dish Description</string>
