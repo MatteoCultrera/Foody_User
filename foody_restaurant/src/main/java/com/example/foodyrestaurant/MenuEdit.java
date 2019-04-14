@@ -141,7 +141,6 @@ public class MenuEdit extends AppCompatActivity {
         cards.add(c);
         */
 
-
         recyclerAdapter = new RVAdapterEdit(cards);
         recyclerMenu.setAdapter(recyclerAdapter);
 
