@@ -25,6 +25,10 @@
 
     <string name="timetable">Orario</string>
 
+
+    <string name="error_dish_name_missing">Nome Piatto Mancante</string>
+    <string name="error_dish_name_duplicate">Nome Piatto già presente</string>
+
     <string name="day">Giorno</string>
     <string name="time">Ore</string>
     <string name="Monday">Lun</string>

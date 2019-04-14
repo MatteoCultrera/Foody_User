@@ -2,7 +2,7 @@ package com.example.foodyuser;
 
 import android.support.annotation.NonNull;
 
-public class Item{
+class Item{
     private final String text;
     private final int icon;
     public Item(String text, Integer icon) {

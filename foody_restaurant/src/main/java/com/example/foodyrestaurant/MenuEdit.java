@@ -2,45 +2,47 @@ package com.example.foodyrestaurant;
 
 import android.animation.Animator;
 import android.animation.AnimatorListenerAdapter;
+import android.app.AlertDialog;
 import android.content.DialogInterface;
-import android.media.Image;
 import android.os.Environment;
 import android.support.design.widget.FloatingActionButton;
-import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.text.Editable;
 import android.text.InputType;
+import android.text.TextWatcher;
 import android.util.Log;
 import android.view.View;
+import android.view.WindowManager;
 import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.ImageView;
-
+import android.widget.LinearLayout;
 import java.io.File;
 import java.util.ArrayList;
-import java.util.Objects;
+import java.util.Iterator;
 
-import static java.security.AccessController.getContext;
+import java.util.Objects;
 
 public class MenuEdit extends AppCompatActivity {
 
     private RecyclerView recyclerMenu;
     private RVAdapterEdit recyclerAdapter;
 
-    LinearLayoutManager llm;
     private FloatingActionButton mainFAB;
     private ArrayList<Card> cards;
     private JsonHandler jsonHandler;
     private final String JSON_PATH = "menu.json";
     private final String JSON_COPY = "menuCopy.json";
     private File storageDir;
-    private ImageButton back;
     private ImageButton save;
     private ImageButton edit;
     private ImageButton exit;
     private ImageView plus, trash;
+    private boolean unchanged;
+    private AlertDialog dialogDism;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -54,18 +56,19 @@ public class MenuEdit extends AppCompatActivity {
 
     private void init(){
         final File fileTmp = new File(storageDir, JSON_COPY);
+        unchanged = true;
 
         jsonHandler = new JsonHandler();
         storageDir =  getExternalFilesDir(Environment.DIRECTORY_DOCUMENTS);
         File file = new File(storageDir, JSON_PATH);
         recyclerMenu = findViewById(R.id.menu_edit);
-        llm = new LinearLayoutManager(this);
+        LinearLayoutManager llm = new LinearLayoutManager(this);
         recyclerMenu.setLayoutManager(llm);
         mainFAB = findViewById(R.id.mainFAB);
         cards = jsonHandler.getCards(file);
 
         save = findViewById(R.id.saveButton);
-        back = findViewById(R.id.backButton);
+        ImageButton back = findViewById(R.id.backButton);
         edit = findViewById(R.id.editButton);
         exit = findViewById(R.id.endButton);
         plus = findViewById(R.id.plus);
@@ -107,7 +110,7 @@ public class MenuEdit extends AppCompatActivity {
         cards = new ArrayList<>();
 
         ArrayList<Dish> dishes = new ArrayList<>();
-        dishes.add(new Dish("Margerita","Pomodoro, Mozzarella, Basilico","3,50 €", null));
+        dishes.add(new Dish("Margerita","Pomodoro, Mozzarella, Basilico","3.50 €", null));
         dishes.add(new Dish("Vegetariana","Verdure di Stagione, Pomodoro, Mozzarella","8,00 €", null));
         dishes.add(new Dish("Quattro Stagioni","Pomodoro, Mozzarella, Prosciutto, Carciofi, Funghi, Olive, Grana a Scaglie","6,50 €", null));
         dishes.add(new Dish("Quattro Formaggi","Mozzarella, Gorgonzola, Fontina, Stracchino","7,00 €", null));
@@ -116,7 +119,7 @@ public class MenuEdit extends AppCompatActivity {
         cards.add(c);
 
         dishes = new ArrayList<>();
-        dishes.add(new Dish("Pasta al Pomodoro","Rigationi, Pomodoro, Parmigiano, Basilico","3,50 €", null));
+        dishes.add(new Dish("Pasta al Pomodoro","Rigationi, Pomodoro, Parmigiano, Basilico","3.50 €", null));
         dishes.add(new Dish("Carbonara","Spaghetti, Uova, Guanciale, Pecorino, Pepe Nero","8,00 €", null));
         dishes.add(new Dish("Pasta alla Norma","Pomodoro, Pancetta, Melanzane, Grana a Scaglie","6,50 €", null));
         dishes.add(new Dish("Puttanesca","Pomodoro, Peperoncino, Pancetta, Parmigiano","7,00 €", null));
@@ -125,7 +128,7 @@ public class MenuEdit extends AppCompatActivity {
         cards.add(c);
 
         dishes = new ArrayList<>();
-        dishes.add(new Dish("Braciola Di Maiale","Braciola, Spezie","3,50 €", null));
+        dishes.add(new Dish("Braciola Di Maiale","Braciola, Spezie","3.50 €", null));
         dishes.add(new Dish("Stinco Alla Birra","Stinco di Maiale, Birra","8,00 €", null));
         dishes.add(new Dish("Cotoletta e Patatine","Cotoletta di Maiale, Patatine","6,50 €", null));
         dishes.add(new Dish("Filetto al pepe verde","Filetto di Maiale, Salsa alla Senape, Pepe verde in grani","7,00 €", null));
@@ -134,35 +137,152 @@ public class MenuEdit extends AppCompatActivity {
         cards.add(c);
         */
 
-
         recyclerAdapter = new RVAdapterEdit(cards);
         recyclerMenu.setAdapter(recyclerAdapter);
 
         mainFAB.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Card c = new Card("PLACEHOLDER TRY");
-                cards.add(c);
-                recyclerAdapter.notifyItemInserted(cards.size()-1);
+                if (plus.getVisibility() == View.VISIBLE) {
+                    final EditText input = new EditText(mainFAB.getContext());
+                    final LinearLayout container = new LinearLayout(mainFAB.getContext());
+                    container.setOrientation(LinearLayout.VERTICAL);
+                    LinearLayout.LayoutParams lp = new LinearLayout.LayoutParams(
+                            LinearLayout.LayoutParams.MATCH_PARENT,
+                            LinearLayout.LayoutParams.WRAP_CONTENT);
+                    lp.setMargins(52, 0, 52, 0);
+                    final AlertDialog.Builder builder = new AlertDialog.Builder(mainFAB.getContext(), R.style.AppCompatAlertDialogStyle);
+                    builder.setNegativeButton(getResources().getString(R.string.cancel), new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialog, int which) {
+                            dialog.dismiss();
+                        }
+                    });
+                    builder.setPositiveButton(getResources().getString(R.string.accept), new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialogInterface, int i) {
+                            unchanged = false;
+                            Card c = new Card(input.getText().toString());
+                            cards.add(c);
+                            recyclerAdapter.notifyItemInserted(cards.size() - 1);
+                        }
+                    });
+                    builder.setTitle(getResources().getString(R.string.alert_dialog_new_card_title));
+                    builder.setCancelable(false);
+                    input.setLayoutParams(lp);
+                    input.setInputType(InputType.TYPE_CLASS_TEXT | InputType.TYPE_TEXT_FLAG_CAP_SENTENCES);
+                    input.setLines(1);
+                    input.setMaxLines(1);
+                    container.addView(input, lp);
+                    builder.setView(container);
+                    final AlertDialog dialog = builder.create();
+                    Objects.requireNonNull(dialog.getWindow()).setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_VISIBLE);
+                    dialog.show();
+                    dialog.getButton(AlertDialog.BUTTON_POSITIVE).setEnabled(false);
+                    dialog.getButton(AlertDialog.BUTTON_POSITIVE).setTextColor(getColor(R.color.secondaryText));
+                    input.addTextChangedListener(new TextWatcher() {
+                        @Override
+                        public void beforeTextChanged(CharSequence charSequence, int i, int i1, int i2) {
+                        }
+
+                        @Override
+                        public void onTextChanged(CharSequence charSequence, int i, int i1, int i2) {
+                            if (charSequence.length() == 0) {
+                                dialog.getButton(AlertDialog.BUTTON_POSITIVE).setEnabled(false);
+                                dialog.getButton(AlertDialog.BUTTON_POSITIVE).setTextColor(getColor(R.color.secondaryText));
+                            } else {
+                                if (checkDuplicates(charSequence)) {
+                                    dialog.getButton(AlertDialog.BUTTON_POSITIVE).setEnabled(false);
+                                    dialog.getButton(AlertDialog.BUTTON_POSITIVE).setTextColor(getColor(R.color.secondaryText));
+                                    input.setError(getString(R.string.alert_dialog_error_card_name));
+                                } else {
+                                    dialog.getButton(AlertDialog.BUTTON_POSITIVE).setEnabled(true);
+                                    dialog.getButton(AlertDialog.BUTTON_POSITIVE).setTextColor(getColor(R.color.primaryText));
+                                }
+                            }
+                        }
+
+                        @Override
+                        public void afterTextChanged(Editable editable) {
+                        }
+                    });
+                }
+                if(trash.getVisibility() == View.VISIBLE) {
+                    Iterator<Card> cardIterator;
+                    int i = 0;
+                    for(cardIterator = cards.iterator(); cardIterator.hasNext(); i++) {
+                        if (cardIterator.next().isSelected()) {
+                            cardIterator.remove();
+                            recyclerAdapter.notifyItemRemoved(i);
+                            recyclerAdapter.notifyItemRangeRemoved(i, cards.size()-1);
+                            unchanged = false;
+                        }
+                    }
+                }
             }
         });
-
     }
 
     @Override
     protected void onPause() {
         super.onPause();
+
         Log.d("TITLECHECK","Called On Pause");
         File file = new File(storageDir, JSON_COPY);
         JsonHandler jsonPlaceholder =new JsonHandler();
         String json = jsonPlaceholder.toJSON(cards);
         jsonPlaceholder.saveStringToFile(json, file);
-
-
     }
 
     private void back(){
-        finish();
+        if (unchanged){
+            super.onBackPressed();
+        }
+        else {
+            AlertDialog.Builder builder = new AlertDialog.Builder(this, R.style.AppCompatAlertDialogStyle);
+            builder.setNegativeButton(getResources().getString(R.string.cancel), new DialogInterface.OnClickListener() {
+                @Override
+                public void onClick(DialogInterface dialog, int which) {
+                    dialog.dismiss();
+                }
+            });
+            builder.setPositiveButton(getResources().getString(R.string.accept), new DialogInterface.OnClickListener() {
+                @Override
+                public void onClick(DialogInterface dialogInterface, int i) {
+                    MenuEdit.super.onBackPressed();
+                }
+            });
+            builder.setTitle(getResources().getString(R.string.alert_dialog_back_title));
+            builder.setMessage(getResources().getString(R.string.alert_dialog_back_message));
+            builder.setCancelable(false);
+            dialogDism = builder.show();
+        }
+    }
+
+    @Override
+    public void onBackPressed() {
+        if (unchanged){
+            super.onBackPressed();
+        }
+        else {
+            AlertDialog.Builder builder = new AlertDialog.Builder(this, R.style.AppCompatAlertDialogStyle);
+            builder.setNegativeButton(getResources().getString(R.string.cancel), new DialogInterface.OnClickListener() {
+                @Override
+                public void onClick(DialogInterface dialog, int which) {
+                    dialog.dismiss();
+                }
+            });
+            builder.setPositiveButton(getResources().getString(R.string.accept), new DialogInterface.OnClickListener() {
+                @Override
+                public void onClick(DialogInterface dialogInterface, int i) {
+                    MenuEdit.super.onBackPressed();
+                }
+            });
+            builder.setTitle(getResources().getString(R.string.alert_dialog_back_title));
+            builder.setMessage(getResources().getString(R.string.alert_dialog_back_message));
+            builder.setCancelable(false);
+            dialogDism = builder.show();
+        }
     }
   
     private void edit(){
@@ -209,7 +329,7 @@ public class MenuEdit extends AppCompatActivity {
         }
 
         for(int i = 0; i< cards.size(); i++){
-            if(recyclerAdapter.normalToEdit(recyclerMenu.findViewHolderForAdapterPosition(i))==false)
+            if(!recyclerAdapter.normalToEdit(recyclerMenu.findViewHolderForAdapterPosition(i)))
                 recyclerAdapter.notifyItemChanged(i);
         }
 
@@ -266,7 +386,7 @@ public class MenuEdit extends AppCompatActivity {
         }
 
         for(int i = 0; i< cards.size(); i++){
-            if(recyclerAdapter.editToNormal(recyclerMenu.findViewHolderForAdapterPosition(i), i) == false)
+            if(!recyclerAdapter.editToNormal(recyclerMenu.findViewHolderForAdapterPosition(i), i))
                 recyclerAdapter.notifyItemChanged(i);
         }
 
@@ -286,6 +406,17 @@ public class MenuEdit extends AppCompatActivity {
         plus.animate().alpha(1.0f).setDuration(shortAnimDuration).setListener(null).start();
         plus.animate().scaleX(1.f).scaleY(1.f).setDuration(shortAnimDuration).setListener(null).start();
 
+    }
+
+    private boolean checkDuplicates(CharSequence title){
+        boolean duplicate = false;
+        for (Card c: cards) {
+            if (c.getTitle().equals(title.toString())){
+                duplicate = true;
+                break;
+            }
+        }
+        return duplicate;
     }
 
 }

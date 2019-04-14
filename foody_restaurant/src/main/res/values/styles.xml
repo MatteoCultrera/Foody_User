@@ -64,7 +64,7 @@
     </style>
 
     <style name="editTextHintTitle" parent="TextAppearance.Design.Hint">
-        <item name="android:textSize">12dp</item>
+        <item name="android:textSize">12sp</item>
     </style>
 
     <style name="LoginTextInputLayoutStyle" parent="Widget.MaterialComponents.TextInputLayout.OutlinedBox">

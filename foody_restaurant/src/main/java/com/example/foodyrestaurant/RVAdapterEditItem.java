@@ -2,34 +2,36 @@ package com.example.foodyrestaurant;
 
 import android.annotation.SuppressLint;
 import android.content.Context;
-import android.content.Intent;
-import android.os.Bundle;
-import android.support.constraint.ConstraintLayout;
 import android.support.v7.widget.CardView;
 import android.support.v7.widget.RecyclerView;
 import android.text.Editable;
+import android.text.InputFilter;
 import android.text.InputType;
+import android.text.Spanned;
 import android.text.TextWatcher;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.inputmethod.EditorInfo;
-import android.widget.CheckBox;
-import android.widget.CompoundButton;
 import android.widget.EditText;
-import android.widget.ImageView;
-
 import java.util.ArrayList;
-
+import java.util.HashSet;
+import java.util.Locale;
+import java.util.Set;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 import de.hdodenhof.circleimageview.CircleImageView;
 
 public class RVAdapterEditItem extends RecyclerView.Adapter<RVAdapterEditItem.DishEdit>{
 
     ArrayList<Dish> dishes;
+    MenuEditItem editItem;
 
-    public RVAdapterEditItem(ArrayList<Dish> dishes){
+    public RVAdapterEditItem(ArrayList<Dish> dishes, MenuEditItem editItem){
         this.dishes = dishes;
+        this.editItem = editItem;
     }
 
     @Override
@@ -41,23 +43,82 @@ public class RVAdapterEditItem extends RecyclerView.Adapter<RVAdapterEditItem.Di
     public RVAdapterEditItem.DishEdit onCreateViewHolder(ViewGroup viewGroup, int i) {
 
         View v = LayoutInflater.from(viewGroup.getContext()).inflate(R.layout.menu_item_edit, viewGroup, false);
-        DishEdit pvh = new DishEdit(v, new DishNameEditTextListener(), new DishDescriptionEditTextListener());
+        final DishEdit pvh = new DishEdit(v, new DishNameEditTextListener(), new DishDescriptionEditTextListener(),
+                new DecimalDigitsInputFilter(5,2), new DishPriceListener());
+
+
+        pvh.dishName.setOnFocusChangeListener(new View.OnFocusChangeListener() {
+            @Override
+            public void onFocusChange(View v, boolean hasFocus) {
+                if(hasFocus){
+                    pvh.dishName.setSelection(pvh.dishName.getText().length());
+                    if(pvh.dishName.length() > 0)
+                        pvh.dishName.setCompoundDrawablesWithIntrinsicBounds(0, 0, R.drawable.delete_fill_black, 0);
+                }else{
+                    if(pvh.dishName.length()>0 && editItem.getSaveEnabled())
+                        pvh.dishName.setCompoundDrawablesWithIntrinsicBounds(0, 0, 0, 0);
+                }
+            }
+        });
+
+        pvh.dishDesc.setOnFocusChangeListener(new View.OnFocusChangeListener() {
+            @Override
+            public void onFocusChange(View v, boolean hasFocus) {
+                if(hasFocus){
+                    pvh.dishDesc.setSelection(pvh.dishDesc.getText().length());
+                    if(pvh.dishDesc.length() > 0)
+                        pvh.dishDesc.setCompoundDrawablesWithIntrinsicBounds(0, 0, R.drawable.delete_fill_black, 0);
+                }else{
+                    pvh.dishDesc.setCompoundDrawablesWithIntrinsicBounds(0, 0, 0, 0);
+                    if(pvh.dishDesc.length() == 0){
+                    }
+                }
+            }
+        });
 
         return pvh;
     }
 
+    private boolean alreadyExists(String name){
+        boolean correct = true;
+        int occurence = 0;
+
+        for(int i=0; i < dishes.size(); i++){
+            if(dishes.get(i).getDishName().equals(name))
+                occurence++;
+        }
+
+        if(occurence > 1)
+            correct = false;
+
+        return !correct;
+    }
+
+    private boolean checkError(){
+        boolean correct = true;
+
+        for(int i=0; i < dishes.size(); i++){
+            if(dishes.get(i).getDishName().isEmpty())
+                correct = false;
+        }
+
+        return correct;
+    }
+
+
     @Override
-    public void onBindViewHolder(final RVAdapterEditItem.DishEdit dishViewHolder, int i) {
+    public void onBindViewHolder(final RVAdapterEditItem.DishEdit dishViewHolder,final int i) {
 
         Context context = dishViewHolder.cardView.getContext();
-        dishViewHolder.dishName.setText(dishes.get(i).getDishName());
-        dishViewHolder.dishName.clearFocus();
-        dishViewHolder.dishDesc.setText(dishes.get(i).getDishDescription());
-        dishViewHolder.dishDesc.clearFocus();
-        Float value = Float.valueOf(dishes.get(i).getPrice());
-        dishViewHolder.price.setText(String.format("%.2f",value));
-        dishViewHolder.price.clearFocus();
 
+        dishViewHolder.nameListener.updatePosition(dishViewHolder.getAdapterPosition());
+        dishViewHolder.descriptionListener.updatePosition(dishViewHolder.getAdapterPosition());
+        dishViewHolder.dishPriceListener.updatePosition(dishViewHolder.getAdapterPosition());
+
+        dishViewHolder.dishName.setText(dishes.get(i).getDishName());
+        dishViewHolder.dishDesc.setText(dishes.get(i).getDishDescription());
+        Float value = dishes.get(i).getPrice();
+        dishViewHolder.price.setText(String.format(Locale.UK,"%.2f",value));
 
         dishViewHolder.dishName.setImeOptions(EditorInfo.IME_ACTION_DONE);
         dishViewHolder.dishName.setRawInputType(InputType.TYPE_TEXT_FLAG_NO_SUGGESTIONS);
@@ -65,8 +126,27 @@ public class RVAdapterEditItem extends RecyclerView.Adapter<RVAdapterEditItem.Di
         dishViewHolder.dishDesc.setRawInputType(InputType.TYPE_TEXT_FLAG_NO_SUGGESTIONS);
 
 
-        dishViewHolder.nameListener.updatePosition(dishViewHolder.getAdapterPosition());
-        dishViewHolder.descriptionListener.updatePosition(dishViewHolder.getAdapterPosition());
+        dishViewHolder.price.setOnFocusChangeListener(new View.OnFocusChangeListener() {
+            @Override
+            public void onFocusChange(View v, boolean hasFocus) {
+                if(hasFocus){
+                    dishViewHolder.price.setSelection(dishViewHolder.price.getText().length());
+                    if(dishViewHolder.price.length() > 0)
+                        dishViewHolder.price.setCompoundDrawablesWithIntrinsicBounds(0, 0, R.drawable.delete_fill_black, 0);
+                }else{
+                    dishViewHolder.price.setCompoundDrawablesWithIntrinsicBounds(0, 0, 0, 0);
+                    dishViewHolder.price.setText(String.format(Locale.UK, "%.2f",dishes.get(i).getPrice()));
+                }
+            }
+        });
+
+        if(!dishViewHolder.dishName.getText().toString().isEmpty() && dishViewHolder.valid){
+            dishViewHolder.dishName.setError(null);
+        }
+
+        if(dishViewHolder.dishName.getError() == null && !dishViewHolder.dishName.hasFocus())
+            dishViewHolder.dishName.setCompoundDrawablesWithIntrinsicBounds(0, 0, 0, 0);
+
 
     }
 
@@ -83,9 +163,14 @@ public class RVAdapterEditItem extends RecyclerView.Adapter<RVAdapterEditItem.Di
         CircleImageView dishPicture;
         DishNameEditTextListener nameListener;
         DishDescriptionEditTextListener descriptionListener;
+        DecimalDigitsInputFilter decimalDigitsInputFilter;
+        DishPriceListener dishPriceListener;
+        boolean valid;
 
-        public DishEdit(View itemView, DishNameEditTextListener nameListener, DishDescriptionEditTextListener descriptionListener) {
+        DishEdit(View itemView, DishNameEditTextListener nameListener,
+                 DishDescriptionEditTextListener descriptionListener, DecimalDigitsInputFilter decimalDigitsInputFilter, DishPriceListener dishPriceListener) {
             super(itemView);
+            valid = true;
             cardView = itemView.findViewById(R.id.dish_card);
             dishPicture = itemView.findViewById(R.id.dish_image);
             dishName = itemView.findViewById(R.id.dish_name);
@@ -93,9 +178,12 @@ public class RVAdapterEditItem extends RecyclerView.Adapter<RVAdapterEditItem.Di
             price = itemView.findViewById(R.id.dish_price);
             this.nameListener = nameListener;
             this.descriptionListener = descriptionListener;
+            this.decimalDigitsInputFilter = decimalDigitsInputFilter;
+            this.dishPriceListener = dishPriceListener;
 
             dishName.addTextChangedListener(nameListener);
-            nameListener.setEditText(dishName);
+            nameListener.setEditText(dishName, this);
+
             dishDesc.addTextChangedListener(descriptionListener);
             descriptionListener.setEditText(dishDesc);
 
@@ -129,18 +217,39 @@ public class RVAdapterEditItem extends RecyclerView.Adapter<RVAdapterEditItem.Di
                 }
             });
 
+            price.setOnTouchListener(new View.OnTouchListener() {
+                @SuppressLint("ClickableViewAccessibility")
+                @Override
+                public boolean onTouch(View v, MotionEvent event) {
+                    if(event.getAction() == MotionEvent.ACTION_UP) {
+                        if(price.getCompoundDrawables()[2]!=null){
+                            if(event.getX() >= (price.getRight()- price.getLeft() - price.getCompoundDrawables()[2].getBounds().width())) {
+                                price.setText("");
+                            }
+                        }
+                    }
+                    return false;
+                }
+            });
+
+            price.setFilters(new InputFilter[] {decimalDigitsInputFilter});
+            price.addTextChangedListener(dishPriceListener);
+            dishPriceListener.setEditText(price);
+
         }
     }
 
     private class DishNameEditTextListener implements TextWatcher {
         private int position;
         private EditText editText;
+        private DishEdit dishEdit;
 
-        public void setEditText(EditText text){
+        public void setEditText(EditText text, DishEdit dishEdit){
             editText = text;
+            this.dishEdit = dishEdit;
         }
 
-        public void updatePosition(int position) {
+        void updatePosition(int position) {
             this.position = position;
         }
 
@@ -152,13 +261,26 @@ public class RVAdapterEditItem extends RecyclerView.Adapter<RVAdapterEditItem.Di
         @Override
         public void onTextChanged(CharSequence charSequence, int i, int i2, int i3) {
             dishes.get(position).setDishName(charSequence.toString());
+            if(charSequence.toString().isEmpty()){
+                Log.d("TITLECHECK","Called for pos "+position+" and text "+charSequence.toString());
+                editText.setError(editText.getContext().getString(R.string.error_dish_name_missing));
+                dishEdit.valid=false;
+                editItem.saveEnabled(false);
+            } else if(alreadyExists(charSequence.toString())){
+                editText.setError(editText.getContext().getString(R.string.error_dish_name_duplicate));
+                dishEdit.valid = false;
+                editItem.saveEnabled(false);
+            } else if(checkError()){
+                editItem.saveEnabled(true);
+                dishEdit.valid = true;
+            }
+            else
+                dishEdit.valid = true;
         }
 
         @Override
         public void afterTextChanged(Editable editable) {
-            if(dishes.get(position).getDishName().length() == 0)
-                editText.setCompoundDrawablesWithIntrinsicBounds(0, 0, 0, 0);
-            else
+            if(dishes.get(position).getDishName().length() != 0 && editText.hasFocus() == true)
                 editText.setCompoundDrawablesWithIntrinsicBounds(0, 0, R.drawable.delete_fill_black, 0);
         }
     }
@@ -167,11 +289,11 @@ public class RVAdapterEditItem extends RecyclerView.Adapter<RVAdapterEditItem.Di
         private int position;
         private EditText editText;
 
-        public void setEditText(EditText text){
+        void setEditText(EditText text){
             editText = text;
         }
 
-        public void updatePosition(int position) {
+        void updatePosition(int position) {
             this.position = position;
         }
 
@@ -187,10 +309,64 @@ public class RVAdapterEditItem extends RecyclerView.Adapter<RVAdapterEditItem.Di
 
         @Override
         public void afterTextChanged(Editable editable) {
-            if(dishes.get(position).getDishName().length() == 0)
+            if(dishes.get(position).getDishName().length() == 0 || !editText.hasFocus())
                 editText.setCompoundDrawablesWithIntrinsicBounds(0, 0, 0, 0);
             else
                 editText.setCompoundDrawablesWithIntrinsicBounds(0, 0, R.drawable.delete_fill_black, 0);
         }
+    }
+
+    private class DishPriceListener implements TextWatcher {
+        private int position;
+        private EditText editText;
+
+        void setEditText(EditText text){
+            editText = text;
+        }
+
+        void updatePosition(int position) {
+            this.position = position;
+        }
+
+        @Override
+        public void beforeTextChanged(CharSequence charSequence, int i, int i2, int i3) {
+            // no op
+        }
+
+        @Override
+        public void onTextChanged(CharSequence charSequence, int i, int i2, int i3) {
+
+            String price = editText.getText().toString();
+            if(price.isEmpty())
+                price = "0";
+            dishes.get(position).setPrice(Float.parseFloat(price));
+        }
+
+        @Override
+        public void afterTextChanged(Editable editable) {
+            if(dishes.get(position).getDishName().length() == 0 || !editText.hasFocus())
+                editText.setCompoundDrawablesWithIntrinsicBounds(0, 0, 0, 0);
+            else
+                editText.setCompoundDrawablesWithIntrinsicBounds(0, 0, R.drawable.delete_fill_black, 0);
+        }
+    }
+
+    class DecimalDigitsInputFilter implements InputFilter {
+
+        final Pattern mPattern;
+
+        DecimalDigitsInputFilter(int digitsBeforeZero, int digitsAfterZero) {
+            mPattern=Pattern.compile("[0-9]{0," + (digitsBeforeZero-1) + "}+((\\.[0-9]{0," + (digitsAfterZero-1) + "})?)||(\\.)?");
+        }
+
+        @Override
+        public CharSequence filter(CharSequence source, int start, int end, Spanned dest, int dstart, int dend) {
+
+            Matcher matcher=mPattern.matcher(dest);
+            if(!matcher.matches())
+                return "";
+            return null;
+        }
+
     }
 }

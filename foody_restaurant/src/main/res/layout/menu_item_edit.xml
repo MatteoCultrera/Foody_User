@@ -18,7 +18,9 @@
 
         <android.support.constraint.ConstraintLayout
             android:layout_width="match_parent"
-            android:layout_height="wrap_content">
+            android:layout_height="wrap_content"
+            android:focusable="true"
+            android:focusableInTouchMode="true">
 
             <de.hdodenhof.circleimageview.CircleImageView
                 android:id="@+id/dish_image"
@@ -54,8 +56,7 @@
                     android:hint="@string/dish_edit"
                     android:inputType="textMultiLine|textNoSuggestions"
                     android:textSize="14sp"
-                    android:padding="6dp"
-                    android:drawableRight="@drawable/delete_fill_black"/>
+                    android:padding="6dp"/>
             </android.support.design.widget.TextInputLayout>
 
             <android.support.design.widget.TextInputLayout
@@ -80,8 +81,7 @@
                     android:hint="@string/desc_edit"
                     android:inputType="textMultiLine|textNoSuggestions"
                     android:textSize="14sp"
-                    android:padding="6dp"
-                    android:drawableRight="@drawable/delete_fill_black"/>
+                    android:padding="6dp"/>
             </android.support.design.widget.TextInputLayout>
 
 
@@ -109,8 +109,7 @@
                     android:hint="@string/price_edit"
                     android:inputType="numberDecimal"
                     android:padding="6dp"
-                    android:textSize="14sp"
-                    android:drawableRight="@drawable/delete_fill_black"/>
+                    android:textSize="14sp"/>
             </android.support.design.widget.TextInputLayout>
 
         </android.support.constraint.ConstraintLayout>

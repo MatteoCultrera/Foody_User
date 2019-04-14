@@ -62,6 +62,9 @@
     <string name="dish_edit">Nome del Piatto</string>
     <string name="desc_edit">Descrizione del Piatto</string>
     <string name="price_edit">Prezzo</string>
+    <string name="alert_dialog_new_card_title">Inserisci il nome della nuova portata</string>
+    <string name="alert_dialog_error_card_name">Esiste già una portata con quel nome</string>
+    <string name="edit">Modifica %1$s</string>
 
 
 </resources>

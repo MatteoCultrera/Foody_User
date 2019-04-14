@@ -1,13 +1,9 @@
 package com.example.foodyrestaurant;
-
-import org.json.JSONException;
-import org.json.JSONObject;
-
 import java.util.ArrayList;
 
-public class Card {
-    public String title;
-    public ArrayList<Dish> dishes;
+class Card {
+    private String title;
+    private ArrayList<Dish> dishes;
     private boolean editing;
     private boolean selected;
 

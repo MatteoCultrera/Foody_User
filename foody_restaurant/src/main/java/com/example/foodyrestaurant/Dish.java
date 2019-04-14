@@ -2,7 +2,9 @@ package com.example.foodyrestaurant;
 
 import android.net.Uri;
 
-public class Dish {
+import java.util.Locale;
+
+class Dish {
 
     private String dishName;
     private String dishDescription;
@@ -16,6 +18,11 @@ public class Dish {
         this.price = price;
         this.image = image;
         added = false;
+    }
+
+    @Override
+    public String toString() {
+        return dishName+" "+dishDescription+" "+String.format(Locale.UK, "%.2f €",price);
     }
 
     public boolean getAdded(){

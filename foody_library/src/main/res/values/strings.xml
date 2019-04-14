@@ -21,6 +21,9 @@
     <string name="error_address">Invalid Address</string>
     <string name="error_email">Invalid E-mail</string>
     <string name="error_bio">Invalid Bio</string>
+
+    <string name="error_dish_name_missing">Dish Name Missing</string>
+    <string name="error_dish_name_duplicate">Dish Name Already Exists</string>
     <string name="edit_profile">Edit Profile</string>
 
     <string name="timetable">Timetable</string>
