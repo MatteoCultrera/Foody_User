@@ -4,7 +4,6 @@ import android.animation.Animator;
 import android.animation.AnimatorListenerAdapter;
 import android.app.AlertDialog;
 import android.content.DialogInterface;
-import android.media.Image;
 import android.os.Environment;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v7.app.AppCompatActivity;
@@ -16,6 +15,7 @@ import android.text.InputType;
 import android.text.TextWatcher;
 import android.util.Log;
 import android.view.View;
+import android.view.WindowManager;
 import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.ImageView;
@@ -25,8 +25,6 @@ import java.io.File;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.Objects;
-
-import static java.security.AccessController.getContext;
 
 public class MenuEdit extends AppCompatActivity {
 
@@ -149,10 +147,12 @@ public class MenuEdit extends AppCompatActivity {
             public void onClick(View v) {
                 if (plus.getVisibility() == View.VISIBLE) {
                     final EditText input = new EditText(mainFAB.getContext());
+                    final LinearLayout container = new LinearLayout(mainFAB.getContext());
+                    container.setOrientation(LinearLayout.VERTICAL);
                     LinearLayout.LayoutParams lp = new LinearLayout.LayoutParams(
-                            LinearLayout.LayoutParams.WRAP_CONTENT,
+                            LinearLayout.LayoutParams.MATCH_PARENT,
                             LinearLayout.LayoutParams.WRAP_CONTENT);
-                    input.setInputType(InputType.TYPE_CLASS_TEXT | InputType.TYPE_TEXT_FLAG_CAP_SENTENCES);
+                    lp.setMargins(52, 0, 52, 0);
                     final AlertDialog.Builder builder = new AlertDialog.Builder(mainFAB.getContext(), R.style.AppCompatAlertDialogStyle);
                     builder.setNegativeButton(getResources().getString(R.string.cancel), new DialogInterface.OnClickListener() {
                         @Override
@@ -172,8 +172,13 @@ public class MenuEdit extends AppCompatActivity {
                     builder.setTitle(getResources().getString(R.string.alert_dialog_new_card_title));
                     builder.setCancelable(false);
                     input.setLayoutParams(lp);
-                    builder.setView(input);
+                    input.setInputType(InputType.TYPE_CLASS_TEXT | InputType.TYPE_TEXT_FLAG_CAP_SENTENCES);
+                    input.setLines(1);
+                    input.setMaxLines(1);
+                    container.addView(input, lp);
+                    builder.setView(container);
                     final AlertDialog dialog = builder.create();
+                    Objects.requireNonNull(dialog.getWindow()).setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_VISIBLE);
                     dialog.show();
                     dialog.getButton(AlertDialog.BUTTON_POSITIVE).setEnabled(false);
                     dialog.getButton(AlertDialog.BUTTON_POSITIVE).setTextColor(getColor(R.color.secondaryText));
