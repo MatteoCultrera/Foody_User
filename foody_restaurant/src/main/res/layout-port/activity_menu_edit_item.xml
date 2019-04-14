@@ -81,12 +81,13 @@
         android:background="@color/dark_white_background"/>
 
     <android.support.design.widget.FloatingActionButton
+        android:id="@+id/fabDishes"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintRight_toRightOf="parent"
         android:layout_margin="16dp"
-        android:src="@drawable/add_black"
+        android:src="@drawable/plus_white"
         app:maxImageSize="36dp"
         />
 

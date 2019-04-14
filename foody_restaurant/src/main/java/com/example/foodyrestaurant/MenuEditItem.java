@@ -1,6 +1,7 @@
 package com.example.foodyrestaurant;
 
 import android.os.Environment;
+import android.support.design.widget.FloatingActionButton;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.LinearLayoutManager;
@@ -24,6 +25,7 @@ public class MenuEditItem extends AppCompatActivity {
     private ImageButton save, back;
     private ArrayList<Dish> dishes;
     private RecyclerView recyclerMenu;
+    private FloatingActionButton fabDishes;
     private RVAdapterEditItem recyclerAdapter;
 
     @Override
@@ -49,8 +51,16 @@ public class MenuEditItem extends AppCompatActivity {
         title.setText("Edit "+className);
         dishes = getDishes();
 
-        recyclerAdapter = new RVAdapterEditItem(dishes);
+        recyclerAdapter = new RVAdapterEditItem(dishes, this);
         recyclerMenu.setAdapter(recyclerAdapter);
+        fabDishes = findViewById(R.id.fabDishes);
+
+        fabDishes.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                insertItem();
+            }
+        });
 
         save.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -65,6 +75,29 @@ public class MenuEditItem extends AppCompatActivity {
        for (int i = 0; i < dishes.size(); i++){
             Log.d("TITLECHECK",i+" "+dishes.get(i).toString());
        }
+
+    }
+
+    public void saveEnabled(boolean enabled){
+        save.setEnabled(enabled);
+        if(enabled == true){
+            save.setImageResource(R.drawable.save_white);
+        }else{
+            save.setImageResource(R.drawable.save_dis);
+        }
+    }
+
+    public boolean getSaveEnabled(){
+        return save.isEnabled();
+    }
+
+    public void insertItem(){
+        dishes.add(new Dish("","",0.0f,null));
+        recyclerAdapter.notifyDataSetChanged();
+    }
+
+    public void removeItem(){
+
 
     }
 
@@ -83,9 +116,6 @@ public class MenuEditItem extends AppCompatActivity {
             }
 
         }
-
-        for(int i = 0; i< dishes.size();i++)
-            Log.d("TITLECHECK","After Pause "+dishes.get(i).toString());
 
         return dishes;
     }
