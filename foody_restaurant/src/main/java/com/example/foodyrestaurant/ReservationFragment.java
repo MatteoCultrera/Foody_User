@@ -15,11 +15,7 @@ import java.util.ArrayList;
 
 public class ReservationFragment extends Fragment {
 
-    RecyclerView reservation;
-    private ArrayList<Reservation> reservations;
-    LinearLayoutManager llm;
-
-    ImageView profileImage, profileShadow;
+    private RecyclerView reservation;
 
 
     public ReservationFragment() {
@@ -41,11 +37,11 @@ public class ReservationFragment extends Fragment {
     }
 
     private void init(View view){
-        llm = new LinearLayoutManager(view.getContext());
+        LinearLayoutManager llm = new LinearLayoutManager(view.getContext());
         reservation.setLayoutManager(llm);
 
-        this.profileImage = view.findViewById(R.id.mainImage);
-        this.profileShadow = view.findViewById(R.id.shadow);
+        ImageView profileImage = view.findViewById(R.id.mainImage);
+        ImageView profileShadow = view.findViewById(R.id.shadow);
 
         Glide
                 .with(this)
@@ -56,7 +52,7 @@ public class ReservationFragment extends Fragment {
                 .load(R.drawable.pizza)
                 .into(profileImage);
 
-        reservations = new ArrayList<>();
+        ArrayList<Reservation> reservations = new ArrayList<>();
         ArrayList<Dish> dishes = new ArrayList<>();
         dishes.add(new Dish("Margherita","pizza",2.0f, null));
         dishes.add(new Dish("Paperino","pizza",2.0f, null));

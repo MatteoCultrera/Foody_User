@@ -16,16 +16,10 @@ import java.util.ArrayList;
 public class MenuEditItem extends AppCompatActivity {
 
 
-    private LinearLayoutManager llm;
-    private TextView title;
     private String className;
-    private final String JSON_COPY = "menuCopy.json";
     private File storageDir;
-    private ImageButton save, back;
+    private ImageButton back;
     private ArrayList<Dish> dishes;
-    private RecyclerView recyclerMenu;
-    private RVAdapterEditItem recyclerAdapter;
-
 
 
     @Override
@@ -37,20 +31,20 @@ public class MenuEditItem extends AppCompatActivity {
     }
 
     private void init(){
-        recyclerMenu = findViewById(R.id.menu_items);
-        llm = new LinearLayoutManager(this);
+        RecyclerView recyclerMenu = findViewById(R.id.menu_items);
+        LinearLayoutManager llm = new LinearLayoutManager(this);
         recyclerMenu.setLayoutManager(llm);
 
-        save = findViewById(R.id.saveButton);
+        ImageButton save = findViewById(R.id.saveButton);
 
         storageDir =  getExternalFilesDir(Environment.DIRECTORY_DOCUMENTS);
-        title = findViewById(R.id.textView);
+        TextView title = findViewById(R.id.textView);
         className = getIntent().getExtras().getString("MainName");
 
-        title.setText("Edit "+className);
+        title.setText(getResources().getString(R.string.edit, className));
         dishes = getDishes();
 
-        recyclerAdapter = new RVAdapterEditItem(dishes);
+        RVAdapterEditItem recyclerAdapter = new RVAdapterEditItem(dishes);
         recyclerMenu.setAdapter(recyclerAdapter);
 
         save.setOnClickListener(new View.OnClickListener() {
@@ -62,7 +56,7 @@ public class MenuEditItem extends AppCompatActivity {
 
     }
 
-    public void save(){
+    private void save(){
        for (int i = 0; i < dishes.size(); i++){
             Log.d("TITLECHECK",i+" "+dishes.get(i).toString());
        }
@@ -74,6 +68,7 @@ public class MenuEditItem extends AppCompatActivity {
         ArrayList<Card> cards;
         ArrayList<Dish> dishes = new ArrayList<>();
         JsonHandler placeholder = new JsonHandler();
+        String JSON_COPY = "menuCopy.json";
         File plc = new File(storageDir, JSON_COPY);
         cards = placeholder.getCards(plc);
 

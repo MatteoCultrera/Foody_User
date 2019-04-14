@@ -8,7 +8,7 @@ public class Reservation {
         PENDING,
         DOING,
         DONE,
-    };
+    }
 
     private String reservationID;
     private ArrayList<Dish> dishesOrdered;

@@ -22,16 +22,7 @@ import java.util.Objects;
  */
 public class MenuFragment extends Fragment {
 
-    private FloatingActionButton editMode;
-    RecyclerView menu;
-    private JsonHandler jsonHandler;
-    private ArrayList<Card> cards;
-    LinearLayoutManager llm;
-
-    ImageView profileImage, profileShadow;
-
-    private final String JSON_PATH = "menu.json";
-    private File storageDir;
+    private RecyclerView menu;
 
     public MenuFragment() {
         // Required empty public constructor
@@ -55,15 +46,16 @@ public class MenuFragment extends Fragment {
 
     private void init(View view){
         String json;
-        storageDir = Objects.requireNonNull(getActivity()).getExternalFilesDir(Environment.DIRECTORY_DOCUMENTS);
+        File storageDir = Objects.requireNonNull(getActivity()).getExternalFilesDir(Environment.DIRECTORY_DOCUMENTS);
+        String JSON_PATH = "menu.json";
         File file = new File(storageDir, JSON_PATH);
-        llm = new LinearLayoutManager(view.getContext());
+        LinearLayoutManager llm = new LinearLayoutManager(view.getContext());
         menu.setLayoutManager(llm);
-        cards = new ArrayList<>();
+        ArrayList<Card> cards;
 
-        this.editMode = view.findViewById(R.id.edit_mode);
-        this.profileImage = view.findViewById(R.id.mainImage);
-        this.profileShadow = view.findViewById(R.id.shadow);
+        FloatingActionButton editMode = view.findViewById(R.id.edit_mode);
+        ImageView profileImage = view.findViewById(R.id.mainImage);
+        ImageView profileShadow = view.findViewById(R.id.shadow);
 
         Glide
                 .with(this)
@@ -74,7 +66,7 @@ public class MenuFragment extends Fragment {
                 .load(R.drawable.pizza)
                 .into(profileImage);
 
-        jsonHandler = new JsonHandler();
+        JsonHandler jsonHandler = new JsonHandler();
 
         cards = jsonHandler.getCards(file);
 
@@ -111,7 +103,7 @@ public class MenuFragment extends Fragment {
 
         }
 
-        Log.d("TITLECHECK", "On menuFragment: "+cards.get(0).getTitle()+" "+cards.get(1).getTitle());
+        Log.d("TITLECHECK", "On menuFragment: "+ cards.get(0).getTitle()+" "+ cards.get(1).getTitle());
 
         json = jsonHandler.toJSON(cards);
         jsonHandler.saveStringToFile(json, file);

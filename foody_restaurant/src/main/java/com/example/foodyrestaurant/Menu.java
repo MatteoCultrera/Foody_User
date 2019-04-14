@@ -10,25 +10,22 @@ import java.util.ArrayList;
 
 public class Menu extends AppCompatActivity {
 
-    RecyclerView menu;
     private ArrayList<Card> cards;
-    LinearLayoutManager llm;
-    final JsonHandler jsonHandler = new JsonHandler();
+    private final JsonHandler jsonHandler = new JsonHandler();
     private final String JSON_PATH = "menu.json";
-    private File storageDir;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_menu);
-        storageDir = getFilesDir();
+        File storageDir = getFilesDir();
 
         init();
     }
 
     private void init(){
-        menu = findViewById(R.id.menu_display);
-        llm = new LinearLayoutManager(this);
+        RecyclerView menu = findViewById(R.id.menu_display);
+        LinearLayoutManager llm = new LinearLayoutManager(this);
         menu.setLayoutManager(llm);
         /*File file = new File(storageDir, JSON_PATH);
         if (file.exists()) {

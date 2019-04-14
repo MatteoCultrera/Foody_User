@@ -74,7 +74,6 @@ public class Setup extends AppCompatActivity {
     private String dialogCode = "ok";
     private String openHour, closeHour;
     private int deliveryPrice;
-    private SeekBar seekBarPrice;
     private final boolean[] checkedFoods = new boolean[27];
     private ArrayList<String> selectedFoods;
     private String[] foodCategories;
@@ -402,7 +401,7 @@ public class Setup extends AppCompatActivity {
         this.satC = findViewById(R.id.checkSaturday);
         this.sunC = findViewById(R.id.checkSunday);
         this.delivPrice = findViewById(R.id.delivPrice);
-        this.seekBarPrice = findViewById(R.id.seekBarPrice);
+        SeekBar seekBarPrice = findViewById(R.id.seekBarPrice);
         this.foodType = findViewById(R.id.food_type);
 
         //setup of the Shared Preferences to save value in (key, value) format
@@ -950,7 +949,7 @@ public class Setup extends AppCompatActivity {
         timePicker.show();
     }
 
-    public void showSecondPicker(){
+    private void showSecondPicker(){
         int hour = 0;
         int minute = 0;
         switch(caller) {
@@ -1077,7 +1076,7 @@ public class Setup extends AppCompatActivity {
         }
     }
 
-    public void populateCheckedFoods() {
+    private void populateCheckedFoods() {
         for(int i = 0; i < 27; i++)
             checkedFoods[i] = false;
 
@@ -1148,7 +1147,7 @@ public class Setup extends AppCompatActivity {
 
     }
 
-    public void updateButtons() {
+    private void updateButtons() {
         CheckBox cb;
         cb =findViewById(R.id.checkMonday);
         if (cb.isChecked()) {

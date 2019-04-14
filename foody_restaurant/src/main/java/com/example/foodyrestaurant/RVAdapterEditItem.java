@@ -24,7 +24,7 @@ import de.hdodenhof.circleimageview.CircleImageView;
 
 public class RVAdapterEditItem extends RecyclerView.Adapter<RVAdapterEditItem.DishEdit>{
 
-    final ArrayList<Dish> dishes;
+    private final ArrayList<Dish> dishes;
 
     public RVAdapterEditItem(ArrayList<Dish> dishes){
         this.dishes = dishes;
@@ -103,7 +103,7 @@ public class RVAdapterEditItem extends RecyclerView.Adapter<RVAdapterEditItem.Di
 
         dishViewHolder.dishName.setText(dishes.get(i).getDishName());
         dishViewHolder.dishDesc.setText(dishes.get(i).getDishDescription());
-        Float value = Float.valueOf(dishes.get(i).getPrice());
+        Float value = dishes.get(i).getPrice();
         dishViewHolder.price.setText(String.format(Locale.UK,"%.2f",value));
 
         dishViewHolder.dishName.setImeOptions(EditorInfo.IME_ACTION_DONE);
@@ -144,11 +144,11 @@ public class RVAdapterEditItem extends RecyclerView.Adapter<RVAdapterEditItem.Di
         final CircleImageView dishPicture;
         final DishNameEditTextListener nameListener;
         final DishDescriptionEditTextListener descriptionListener;
-        DecimalDigitsInputFilter decimalDigitsInputFilter;
-        DishPriceListener dishPriceListener;
+        final DecimalDigitsInputFilter decimalDigitsInputFilter;
+        final DishPriceListener dishPriceListener;
 
-        public DishEdit(View itemView, DishNameEditTextListener nameListener,
-                        DishDescriptionEditTextListener descriptionListener, DecimalDigitsInputFilter decimalDigitsInputFilter, DishPriceListener dishPriceListener) {
+        DishEdit(View itemView, DishNameEditTextListener nameListener,
+                 DishDescriptionEditTextListener descriptionListener, DecimalDigitsInputFilter decimalDigitsInputFilter, DishPriceListener dishPriceListener) {
             super(itemView);
             cardView = itemView.findViewById(R.id.dish_card);
             dishPicture = itemView.findViewById(R.id.dish_image);
@@ -221,11 +221,11 @@ public class RVAdapterEditItem extends RecyclerView.Adapter<RVAdapterEditItem.Di
         private int position;
         private EditText editText;
 
-        public void setEditText(EditText text){
+        void setEditText(EditText text){
             editText = text;
         }
 
-        public void updatePosition(int position) {
+        void updatePosition(int position) {
             this.position = position;
         }
 
@@ -252,11 +252,11 @@ public class RVAdapterEditItem extends RecyclerView.Adapter<RVAdapterEditItem.Di
         private int position;
         private EditText editText;
 
-        public void setEditText(EditText text){
+        void setEditText(EditText text){
             editText = text;
         }
 
-        public void updatePosition(int position) {
+        void updatePosition(int position) {
             this.position = position;
         }
 
@@ -283,11 +283,11 @@ public class RVAdapterEditItem extends RecyclerView.Adapter<RVAdapterEditItem.Di
         private int position;
         private EditText editText;
 
-        public void setEditText(EditText text){
+        void setEditText(EditText text){
             editText = text;
         }
 
-        public void updatePosition(int position) {
+        void updatePosition(int position) {
             this.position = position;
         }
 
@@ -315,11 +315,11 @@ public class RVAdapterEditItem extends RecyclerView.Adapter<RVAdapterEditItem.Di
         }
     }
 
-    public class DecimalDigitsInputFilter implements InputFilter {
+    class DecimalDigitsInputFilter implements InputFilter {
 
-        Pattern mPattern;
+        final Pattern mPattern;
 
-        public DecimalDigitsInputFilter(int digitsBeforeZero,int digitsAfterZero) {
+        DecimalDigitsInputFilter(int digitsBeforeZero, int digitsAfterZero) {
             mPattern=Pattern.compile("[0-9]{0," + (digitsBeforeZero-1) + "}+((\\.[0-9]{0," + (digitsAfterZero-1) + "})?)||(\\.)?");
         }
 

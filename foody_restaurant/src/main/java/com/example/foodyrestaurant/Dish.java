@@ -4,7 +4,7 @@ import android.net.Uri;
 
 import java.util.Locale;
 
-public class Dish {
+class Dish {
 
     private String dishName;
     private String dishDescription;

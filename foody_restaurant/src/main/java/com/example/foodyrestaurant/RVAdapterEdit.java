@@ -17,7 +17,7 @@ import java.util.ArrayList;
 
 public class RVAdapterEdit extends RecyclerView.Adapter<RVAdapterEdit.CardEdit>{
 
-    final ArrayList<Card> cards;
+    private final ArrayList<Card> cards;
 
     public RVAdapterEdit(ArrayList<Card> cards){
         this.cards = cards;
@@ -188,7 +188,7 @@ public class RVAdapterEdit extends RecyclerView.Adapter<RVAdapterEdit.CardEdit>{
         final CheckBox box;
         final ImageView arrow;
 
-        public CardEdit(View itemView) {
+        CardEdit(View itemView) {
             super(itemView);
             layout = itemView.findViewById(R.id.mainLayout);
             title = itemView.findViewById(R.id.edit_title);

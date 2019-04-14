@@ -19,7 +19,7 @@ import java.util.Locale;
 
 public class RVAdapter extends RecyclerView.Adapter<RVAdapter.CardViewHolder>{
 
-    final List<Card> cards;
+    private final List<Card> cards;
 
     public RVAdapter(List<Card> cards){
         this.cards = cards;
@@ -101,7 +101,7 @@ public class RVAdapter extends RecyclerView.Adapter<RVAdapter.CardViewHolder>{
         final ConstraintLayout outside;
         final boolean isInflated;
 
-        public CardViewHolder(View itemView) {
+        CardViewHolder(View itemView) {
             super(itemView);
 
             cv = itemView.findViewById(R.id.cv);

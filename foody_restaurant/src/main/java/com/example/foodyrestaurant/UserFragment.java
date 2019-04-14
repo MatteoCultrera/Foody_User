@@ -31,14 +31,6 @@ import static android.content.Context.MODE_PRIVATE;
  */
 public class UserFragment extends Fragment {
 
-    private FloatingActionButton editMode;
-    private TextView name;
-    private TextView email;
-    private TextView address;
-    private TextView phoneNumber;
-    private TextView monTime, tueTime, wedTime, thuTime, friTime, satTime,sunTime;
-    private TextView delivPrice, foodType;
-    private ImageView profilePicture, profileShadow;
     private final String PLACEHOLDER_CAMERA="PlaceCamera.jpg";
     private final String PROFILE_IMAGE = "ProfileImage.jpg";
     private File storageDir;
@@ -123,23 +115,23 @@ public class UserFragment extends Fragment {
 
     private void init(View view){
 
-        this.profilePicture = view.findViewById(R.id.profilePicture);
-        this.profileShadow = view.findViewById(R.id.shadow);
-        this.editMode = view.findViewById(R.id.edit_mode);
-        this.name = view.findViewById(R.id.userName);
-        this.email = view.findViewById(R.id.emailAddress);
-        this.address = view.findViewById(R.id.address);
-        this.phoneNumber = view.findViewById(R.id.phoneNumber);
+        ImageView profilePicture = view.findViewById(R.id.profilePicture);
+        ImageView profileShadow = view.findViewById(R.id.shadow);
+        FloatingActionButton editMode = view.findViewById(R.id.edit_mode);
+        TextView name = view.findViewById(R.id.userName);
+        TextView email = view.findViewById(R.id.emailAddress);
+        TextView address = view.findViewById(R.id.address);
+        TextView phoneNumber = view.findViewById(R.id.phoneNumber);
 
-        this.monTime = view.findViewById(R.id.monTime);
-        this.tueTime = view.findViewById(R.id.tueTime);
-        this.wedTime = view.findViewById(R.id.wedTime);
-        this.thuTime = view.findViewById(R.id.thuTime);
-        this.friTime = view.findViewById(R.id.friTime);
-        this.satTime = view.findViewById(R.id.satTime);
-        this.sunTime = view.findViewById(R.id.sunTime);
-        this.delivPrice = view.findViewById(R.id.delivery);
-        this.foodType = view.findViewById(R.id.food_type);
+        TextView monTime = view.findViewById(R.id.monTime);
+        TextView tueTime = view.findViewById(R.id.tueTime);
+        TextView wedTime = view.findViewById(R.id.wedTime);
+        TextView thuTime = view.findViewById(R.id.thuTime);
+        TextView friTime = view.findViewById(R.id.friTime);
+        TextView satTime = view.findViewById(R.id.satTime);
+        TextView sunTime = view.findViewById(R.id.sunTime);
+        TextView delivPrice = view.findViewById(R.id.delivery);
+        TextView foodType = view.findViewById(R.id.food_type);
 
         //setup of the Shared Preferences to save value in (key, value) format
 

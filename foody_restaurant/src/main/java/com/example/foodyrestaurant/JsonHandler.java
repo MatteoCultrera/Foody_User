@@ -15,7 +15,7 @@ import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.Objects;
 
-public class JsonHandler {
+class JsonHandler {
 
     public ArrayList<Card> getCards(File file){
         ArrayList<Card> cards;

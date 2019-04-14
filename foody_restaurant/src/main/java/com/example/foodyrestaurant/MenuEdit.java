@@ -28,7 +28,6 @@ public class MenuEdit extends AppCompatActivity {
     private RecyclerView recyclerMenu;
     private RVAdapterEdit recyclerAdapter;
 
-    LinearLayoutManager llm;
     private FloatingActionButton mainFAB;
     private ArrayList<Card> cards;
     private JsonHandler jsonHandler;
@@ -60,7 +59,7 @@ public class MenuEdit extends AppCompatActivity {
         storageDir =  getExternalFilesDir(Environment.DIRECTORY_DOCUMENTS);
         File file = new File(storageDir, JSON_PATH);
         recyclerMenu = findViewById(R.id.menu_edit);
-        llm = new LinearLayoutManager(this);
+        LinearLayoutManager llm = new LinearLayoutManager(this);
         recyclerMenu.setLayoutManager(llm);
         mainFAB = findViewById(R.id.mainFAB);
         cards = jsonHandler.getCards(file);
@@ -399,7 +398,7 @@ public class MenuEdit extends AppCompatActivity {
 
     }
 
-    public boolean checkDuplicates(CharSequence title){
+    private boolean checkDuplicates(CharSequence title){
         boolean duplicate = false;
         for (Card c: cards) {
             if (c.getTitle().equals(title.toString())){

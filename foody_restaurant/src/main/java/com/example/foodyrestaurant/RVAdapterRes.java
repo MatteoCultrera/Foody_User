@@ -14,7 +14,7 @@ import java.util.List;
 
 public class RVAdapterRes extends RecyclerView.Adapter<RVAdapterRes.CardViewHolder>{
 
-    final List<Reservation> reservations;
+    private final List<Reservation> reservations;
 
     public RVAdapterRes(List<Reservation> reservations){
         this.reservations = reservations;
@@ -88,7 +88,7 @@ public class RVAdapterRes extends RecyclerView.Adapter<RVAdapterRes.CardViewHold
         final ConstraintLayout outside;
         boolean isInflated;
 
-        public CardViewHolder(View itemView) {
+        CardViewHolder(View itemView) {
             super(itemView);
 
             cv = itemView.findViewById(R.id.cv);
