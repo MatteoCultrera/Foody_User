@@ -29,8 +29,11 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.bottom_bar);
 
-        init();
+        if (savedInstanceState == null){
 
+        }
+
+        init();
     }
 
     private void init(){
