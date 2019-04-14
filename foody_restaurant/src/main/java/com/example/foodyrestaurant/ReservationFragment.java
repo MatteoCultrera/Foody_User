@@ -59,11 +59,11 @@ public class ReservationFragment extends Fragment {
 
         reservations = new ArrayList<>();
         ArrayList<Dish> dishes = new ArrayList<>();
-        dishes.add(new Dish("Margherita","pizza","2", null));
-        dishes.add(new Dish("Paperino","pizza","2", null));
-        dishes.add(new Dish("Margerita","pizza","2", null));
-        Reservation res = new Reservation(getResources().getString(R.string.reservation) + " N° 1", dishes, 0);
-        Reservation res2 = new Reservation(getResources().getString(R.string.reservation) + " N° 2", dishes, 1);
+        dishes.add(new Dish("Margherita","pizza",2.0f, null));
+        dishes.add(new Dish("Paperino","pizza",2.0f, null));
+        dishes.add(new Dish("Margerita","pizza",2.0f, null));
+        Reservation res = new Reservation(getResources().getString(R.string.reservation) + " N° 1", dishes, Reservation.prepStatus.PENDING);
+        Reservation res2 = new Reservation(getResources().getString(R.string.reservation) + " N° 2", dishes, Reservation.prepStatus.DOING);
         reservations.add(res);
         reservations.add(res2);
 

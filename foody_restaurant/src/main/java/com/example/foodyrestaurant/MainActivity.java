@@ -20,7 +20,6 @@ import org.w3c.dom.Text;
 
 public class MainActivity extends AppCompatActivity {
 
-
     private enum  TabState {
         MENU,
         ORDERS,

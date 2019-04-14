@@ -3,10 +3,17 @@ package com.example.foodyrestaurant;
 import java.util.ArrayList;
 
 public class Reservation {
+
+    enum  prepStatus {
+        PENDING,
+        DOING,
+        DONE,
+    };
+
     private String reservationID;
     private ArrayList<Dish> dishesOrdered;
-    private int preparationStatus;
     private boolean accepted;
+    private prepStatus preparationStatus;
 
     //User useful data
     private String userName;
@@ -17,9 +24,7 @@ public class Reservation {
     private String resNote;
     private String orderTime;
 
-
-
-    public Reservation(String identifier, ArrayList<Dish> dishes, int preparationStatus){
+    public Reservation(String identifier, ArrayList<Dish> dishes, prepStatus preparationStatus){
         this.reservationID = identifier;
         this.dishesOrdered = dishes;
         this.preparationStatus = preparationStatus;
@@ -41,12 +46,20 @@ public class Reservation {
         this.dishesOrdered = dishesOrdered;
     }
 
-    public int getPreparationStatus() {
+    public prepStatus getPreparationStatus() {
         return preparationStatus;
     }
 
-    public void setPreparationStatus(int preparationStatus) {
+    public void setPreparationStatus(prepStatus preparationStatus) {
         this.preparationStatus = preparationStatus;
+    }
+
+    public String getOrderTime() {
+        return orderTime;
+    }
+
+    public void setOrderTime(String orderTime) {
+        this.orderTime = orderTime;
     }
 
     public String getUserName() {

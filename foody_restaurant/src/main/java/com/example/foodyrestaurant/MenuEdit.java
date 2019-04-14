@@ -20,6 +20,7 @@ import android.widget.ImageView;
 
 import java.io.File;
 import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.Objects;
 
 import static java.security.AccessController.getContext;
@@ -134,16 +135,30 @@ public class MenuEdit extends AppCompatActivity {
         cards.add(c);
         */
 
-
         recyclerAdapter = new RVAdapterEdit(cards);
         recyclerMenu.setAdapter(recyclerAdapter);
 
         mainFAB.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Card c = new Card("PLACEHOLDER TRY");
-                cards.add(c);
-                recyclerAdapter.notifyItemInserted(cards.size()-1);
+                //Card c = new Card("PLACEHOLDER TRY");
+                //cards.add(c);
+                //recyclerAdapter.notifyItemInserted(cards.size()-1);
+                if(trash.getVisibility() == View.VISIBLE) {
+                    Iterator<Card> cardIterator;
+                    int i = 0;
+                    for(cardIterator = cards.iterator(); cardIterator.hasNext(); i++) {
+                        if (cardIterator.next().isSelected()) {
+                            cardIterator.remove();
+                            recyclerAdapter.notifyItemRemoved(i);
+                            recyclerAdapter.notifyItemRangeRemoved(i, cards.size()-1);
+                        }
+                    }
+                } else {
+                    Card c = new Card("PLACEHOLDER TRY");
+                    cards.add(c);
+                    recyclerAdapter.notifyItemInserted(cards.size()-1);
+                }
             }
         });
 
