@@ -264,6 +264,7 @@ public class RVAdapterEditItem extends RecyclerView.Adapter<RVAdapterEditItem.Di
         private int position;
         private EditText editText;
         private DishEdit dishEdit;
+        private int count = 0;
 
         public void setEditText(EditText text, DishEdit dishEdit){
             editText = text;
@@ -281,10 +282,12 @@ public class RVAdapterEditItem extends RecyclerView.Adapter<RVAdapterEditItem.Di
 
         @Override
         public void onTextChanged(CharSequence charSequence, int i, int i2, int i3) {
-            unchanged = false;
+            if (count != 0){
+                unchanged = false;
+            }
+            count ++;
             dishes.get(position).setDishName(charSequence.toString());
             if(charSequence.toString().isEmpty()){
-                Log.d("TITLECHECK","Called for pos "+position+" and text "+charSequence.toString());
                 editText.setError(editText.getContext().getString(R.string.error_dish_name_missing));
                 dishEdit.valid=false;
                 editItem.saveEnabled(false);
@@ -302,7 +305,7 @@ public class RVAdapterEditItem extends RecyclerView.Adapter<RVAdapterEditItem.Di
 
         @Override
         public void afterTextChanged(Editable editable) {
-            if(dishes.get(position).getDishName().length() != 0 && editText.hasFocus() == true)
+            if(dishes.get(position).getDishName().length() != 0 && editText.hasFocus())
                 editText.setCompoundDrawablesWithIntrinsicBounds(0, 0, R.drawable.delete_fill_black, 0);
         }
     }
@@ -310,6 +313,7 @@ public class RVAdapterEditItem extends RecyclerView.Adapter<RVAdapterEditItem.Di
     private class DishDescriptionEditTextListener implements TextWatcher {
         private int position;
         private EditText editText;
+        private int count = 0;
 
         void setEditText(EditText text){
             editText = text;
@@ -326,7 +330,10 @@ public class RVAdapterEditItem extends RecyclerView.Adapter<RVAdapterEditItem.Di
 
         @Override
         public void onTextChanged(CharSequence charSequence, int i, int i2, int i3) {
-            unchanged = false;
+            if (count != 0){
+                unchanged = false;
+            }
+            count ++;
             dishes.get(position).setDishDescription(charSequence.toString());
         }
 
@@ -342,6 +349,7 @@ public class RVAdapterEditItem extends RecyclerView.Adapter<RVAdapterEditItem.Di
     private class DishPriceListener implements TextWatcher {
         private int position;
         private EditText editText;
+        private int count = 0;
 
         void setEditText(EditText text){
             editText = text;
@@ -358,7 +366,10 @@ public class RVAdapterEditItem extends RecyclerView.Adapter<RVAdapterEditItem.Di
 
         @Override
         public void onTextChanged(CharSequence charSequence, int i, int i2, int i3) {
-            unchanged = false;
+            if (count != 0){
+                unchanged = false;
+            }
+            count ++;
             String price = editText.getText().toString();
             if(price.isEmpty())
                 price = "0";
