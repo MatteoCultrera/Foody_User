@@ -177,7 +177,7 @@ public class MenuEdit extends AppCompatActivity {
         cards.add(c);
         */
 
-        if(dialogCode == "trash"){
+        if(dialogCode.equals("trash")){
             for(int i = 0; i < cards.size(); i++)
                 cards.get(i).setEditing(true);
         }
