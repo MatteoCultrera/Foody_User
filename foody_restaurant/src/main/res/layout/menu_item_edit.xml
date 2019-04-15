@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <android.support.constraint.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     xmlns:app="http://schemas.android.com/apk/res-auto"
@@ -24,28 +25,30 @@
 
             <de.hdodenhof.circleimageview.CircleImageView
                 android:id="@+id/dish_image"
-                android:layout_width="73dp"
-                android:layout_height="73dp"
-                app:layout_constraintStart_toStartOf="parent"
-                android:src="@drawable/profile_placeholder"
+                android:layout_width="0dp"
+                android:layout_height="0dp"
                 android:layout_marginStart="20dp"
-                app:layout_constraintTop_toTopOf="@id/name_text_input"
+                android:src="@drawable/profile_placeholder"
                 app:layout_constraintBottom_toBottomOf="@id/price_text_input"
-                />
+                app:layout_constraintEnd_toStartOf="@+id/guideline2"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="@id/name_text_input" />
 
 
             <android.support.design.widget.TextInputLayout
                 android:id="@+id/name_text_input"
                 style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
-                android:layout_width="190dp"
+                android:layout_width="0dp"
                 android:layout_height="wrap_content"
+                android:layout_marginStart="8dp"
                 android:layout_marginTop="23dp"
+                android:layout_marginEnd="20dp"
                 app:boxCornerRadiusBottomEnd="9dp"
                 app:boxCornerRadiusBottomStart="9dp"
                 app:boxCornerRadiusTopEnd="9dp"
                 app:boxCornerRadiusTopStart="9dp"
-                android:layout_marginStart="13dp"
-                app:layout_constraintStart_toEndOf="@id/dish_image"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="@+id/guideline2"
                 app:layout_constraintTop_toTopOf="parent">
 
                 <android.support.design.widget.TextInputEditText
@@ -55,22 +58,24 @@
                     android:layout_marginTop="23dp"
                     android:hint="@string/dish_edit"
                     android:inputType="textMultiLine|textNoSuggestions"
-                    android:textSize="14sp"
-                    android:padding="6dp"/>
+                    android:padding="6dp"
+                    android:textSize="14sp" />
             </android.support.design.widget.TextInputLayout>
 
             <android.support.design.widget.TextInputLayout
                 android:id="@+id/description_text_input"
                 style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
-                android:layout_width="190dp"
+                android:layout_width="0dp"
                 android:layout_height="wrap_content"
+                android:layout_marginStart="8dp"
                 android:layout_marginTop="6dp"
+                android:layout_marginEnd="20dp"
                 app:boxCornerRadiusBottomEnd="9dp"
                 app:boxCornerRadiusBottomStart="9dp"
                 app:boxCornerRadiusTopEnd="9dp"
                 app:boxCornerRadiusTopStart="9dp"
-                android:layout_marginStart="13dp"
-                app:layout_constraintStart_toEndOf="@id/dish_image"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="@+id/guideline2"
                 app:layout_constraintTop_toBottomOf="@id/name_text_input">
 
                 <android.support.design.widget.TextInputEditText
@@ -80,8 +85,8 @@
                     android:layout_marginTop="23dp"
                     android:hint="@string/desc_edit"
                     android:inputType="textMultiLine|textNoSuggestions"
-                    android:textSize="14sp"
-                    android:padding="6dp"/>
+                    android:padding="6dp"
+                    android:textSize="14sp" />
             </android.support.design.widget.TextInputLayout>
 
 
@@ -90,16 +95,16 @@
                 style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
                 android:layout_width="95dp"
                 android:layout_height="wrap_content"
+                android:layout_marginStart="8dp"
                 android:layout_marginTop="6dp"
+                android:layout_marginBottom="11dp"
                 app:boxCornerRadiusBottomEnd="9dp"
                 app:boxCornerRadiusBottomStart="9dp"
                 app:boxCornerRadiusTopEnd="9dp"
                 app:boxCornerRadiusTopStart="9dp"
-                app:layout_constraintStart_toEndOf="@id/dish_image"
-                android:layout_marginStart="13dp"
-                app:layout_constraintTop_toBottomOf="@id/description_text_input"
-                android:layout_marginBottom="11dp"
-                app:layout_constraintBottom_toBottomOf="parent">
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintStart_toStartOf="@+id/guideline2"
+                app:layout_constraintTop_toBottomOf="@id/description_text_input">
 
                 <android.support.design.widget.TextInputEditText
                     android:id="@+id/dish_price"
@@ -109,8 +114,34 @@
                     android:hint="@string/price_edit"
                     android:inputType="numberDecimal"
                     android:padding="6dp"
-                    android:textSize="14sp"/>
+                    android:textSize="14sp" />
             </android.support.design.widget.TextInputLayout>
+
+            <android.support.constraint.Guideline
+                android:id="@+id/guideline2"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="157dp"
+                android:orientation="vertical"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintGuide_percent="0.30"
+                app:layout_constraintTop_toTopOf="parent" />
+
+            <android.support.design.button.MaterialButton
+                android:id="@+id/deleteButton"
+                style="@style/Widget.MaterialComponents.Button.TextButton.Icon"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="8dp"
+                android:layout_marginEnd="20dp"
+                android:text="Delete"
+                android:textAllCaps="false"
+                android:textColor="@color/errorColor"
+                app:layout_constraintBottom_toBottomOf="@+id/price_text_input"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintHorizontal_bias="1.0"
+                app:layout_constraintStart_toEndOf="@+id/price_text_input"
+                app:layout_constraintTop_toTopOf="@+id/price_text_input" />
 
         </android.support.constraint.ConstraintLayout>
 

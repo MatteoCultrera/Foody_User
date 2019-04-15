@@ -25,6 +25,7 @@ public class MenuEditItem extends AppCompatActivity {
     private File storageDir;
     private ImageButton save;
     private ArrayList<Dish> dishes;
+    private ArrayList<Card> cards;
     private FloatingActionButton fabDishes;
     private RVAdapterEditItem recyclerAdapter;
 
@@ -37,7 +38,7 @@ public class MenuEditItem extends AppCompatActivity {
     }
 
     private void init(){
-        RecyclerView recyclerMenu = findViewById(R.id.menu_items);
+        final RecyclerView recyclerMenu = findViewById(R.id.menu_items);
         LinearLayoutManager llm = new LinearLayoutManager(this);
         recyclerMenu.setLayoutManager(llm);
 
@@ -57,7 +58,8 @@ public class MenuEditItem extends AppCompatActivity {
         fabDishes.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                insertItem();
+                insertItem(dishes.size());
+                recyclerMenu.smoothScrollToPosition(dishes.size());
             }
         });
 
@@ -71,9 +73,15 @@ public class MenuEditItem extends AppCompatActivity {
     }
 
     private void save(){
-       for (int i = 0; i < dishes.size(); i++){
-            Log.d("TITLECHECK",i+" "+dishes.get(i).toString());
-       }
+
+        JsonHandler placeholder = new JsonHandler();
+        String JSON_COPY = "menuCopy.json";
+        File plc = new File(storageDir, JSON_COPY);
+        String toJson = placeholder.toJSON(cards);
+
+        placeholder.saveStringToFile(toJson, plc);
+
+        finish();
 
     }
 
@@ -113,21 +121,21 @@ public class MenuEditItem extends AppCompatActivity {
         return save.isEnabled();
     }
 
-    public void insertItem(){
+    public void insertItem(int position){
         dishes.add(new Dish("","",0.0f,null));
-        recyclerAdapter.notifyDataSetChanged();
+        recyclerAdapter.notifyItemInserted(position);
         saveEnabled(false);
     }
 
     public void removeItem(int position){
         dishes.remove(position);
-        recyclerAdapter.notifyDataSetChanged();
+        recyclerAdapter.notifyItemRemoved(position);
+        recyclerAdapter.notifyItemRangeChanged(position, dishes.size());
 
     }
 
     private ArrayList<Dish> getDishes(){
 
-        ArrayList<Card> cards;
         ArrayList<Dish> dishes = new ArrayList<>();
         JsonHandler placeholder = new JsonHandler();
         String JSON_COPY = "menuCopy.json";
