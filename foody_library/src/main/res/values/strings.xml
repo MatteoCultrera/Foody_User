@@ -40,4 +40,6 @@
 
     <string name="Closed">Closed</string>
 
+    <string name="Accept">\u2713   Accept</string>
+    <string name="Decline">X   Decline</string>
 </resources>
