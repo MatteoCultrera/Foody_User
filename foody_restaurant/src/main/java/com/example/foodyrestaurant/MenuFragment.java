@@ -23,6 +23,7 @@ import java.util.Objects;
 public class MenuFragment extends Fragment {
 
     private RecyclerView menu;
+    private final String JSON_COPY = "menuCopy.json";
 
     public MenuFragment() {
         // Required empty public constructor
@@ -46,8 +47,8 @@ public class MenuFragment extends Fragment {
 
     private void init(View view){
         String json;
-        File storageDir = Objects.requireNonNull(getActivity()).getExternalFilesDir(Environment.DIRECTORY_DOCUMENTS);
-        String JSON_PATH = "menu.json";
+        final File storageDir = Objects.requireNonNull(getActivity()).getExternalFilesDir(Environment.DIRECTORY_DOCUMENTS);
+        final String JSON_PATH = "menu.json";
         File file = new File(storageDir, JSON_PATH);
         LinearLayoutManager llm = new LinearLayoutManager(view.getContext());
         menu.setLayoutManager(llm);
@@ -113,6 +114,9 @@ public class MenuFragment extends Fragment {
         editMode.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                File jsonTemp = new File(storageDir,JSON_COPY);
+                if(jsonTemp.exists())
+                    jsonTemp.delete();
                 Intent intent = new Intent(getActivity(), MenuEdit.class);
                 startActivity(intent);
             }

@@ -2,6 +2,7 @@ package com.example.foodyrestaurant;
 
 import android.annotation.SuppressLint;
 import android.content.Context;
+import android.support.design.button.MaterialButton;
 import android.support.v7.widget.CardView;
 import android.support.v7.widget.RecyclerView;
 import android.text.Editable;
@@ -44,7 +45,7 @@ public class RVAdapterEditItem extends RecyclerView.Adapter<RVAdapterEditItem.Di
 
         View v = LayoutInflater.from(viewGroup.getContext()).inflate(R.layout.menu_item_edit, viewGroup, false);
         final DishEdit pvh = new DishEdit(v, new DishNameEditTextListener(), new DishDescriptionEditTextListener(),
-                new DecimalDigitsInputFilter(5,2), new DishPriceListener());
+                new DecimalDigitsInputFilter(5,2), new DishPriceListener(), new DeleteListener());
 
 
         pvh.dishName.setOnFocusChangeListener(new View.OnFocusChangeListener() {
@@ -114,6 +115,7 @@ public class RVAdapterEditItem extends RecyclerView.Adapter<RVAdapterEditItem.Di
         dishViewHolder.nameListener.updatePosition(dishViewHolder.getAdapterPosition());
         dishViewHolder.descriptionListener.updatePosition(dishViewHolder.getAdapterPosition());
         dishViewHolder.dishPriceListener.updatePosition(dishViewHolder.getAdapterPosition());
+        dishViewHolder.deleteListener.updatePosition(dishViewHolder.getAdapterPosition());
 
         dishViewHolder.dishName.setText(dishes.get(i).getDishName());
         dishViewHolder.dishDesc.setText(dishes.get(i).getDishDescription());
@@ -165,10 +167,15 @@ public class RVAdapterEditItem extends RecyclerView.Adapter<RVAdapterEditItem.Di
         DishDescriptionEditTextListener descriptionListener;
         DecimalDigitsInputFilter decimalDigitsInputFilter;
         DishPriceListener dishPriceListener;
+        DeleteListener deleteListener;
+        MaterialButton deleteButton;
         boolean valid;
 
         DishEdit(View itemView, DishNameEditTextListener nameListener,
-                 DishDescriptionEditTextListener descriptionListener, DecimalDigitsInputFilter decimalDigitsInputFilter, DishPriceListener dishPriceListener) {
+                 DishDescriptionEditTextListener descriptionListener,
+                 DecimalDigitsInputFilter decimalDigitsInputFilter,
+                 DishPriceListener dishPriceListener,
+                 DeleteListener deleteListener) {
             super(itemView);
             valid = true;
             cardView = itemView.findViewById(R.id.dish_card);
@@ -176,16 +183,20 @@ public class RVAdapterEditItem extends RecyclerView.Adapter<RVAdapterEditItem.Di
             dishName = itemView.findViewById(R.id.dish_name);
             dishDesc = itemView.findViewById(R.id.dish_description);
             price = itemView.findViewById(R.id.dish_price);
+            deleteButton = itemView.findViewById(R.id.deleteButton);
             this.nameListener = nameListener;
             this.descriptionListener = descriptionListener;
             this.decimalDigitsInputFilter = decimalDigitsInputFilter;
             this.dishPriceListener = dishPriceListener;
+            this.deleteListener = deleteListener;
 
             dishName.addTextChangedListener(nameListener);
             nameListener.setEditText(dishName, this);
 
             dishDesc.addTextChangedListener(descriptionListener);
             descriptionListener.setEditText(dishDesc);
+
+            deleteButton.setOnClickListener(deleteListener);
 
             dishName.setOnTouchListener(new View.OnTouchListener() {
                 @SuppressLint("ClickableViewAccessibility")
@@ -236,6 +247,19 @@ public class RVAdapterEditItem extends RecyclerView.Adapter<RVAdapterEditItem.Di
             price.addTextChangedListener(dishPriceListener);
             dishPriceListener.setEditText(price);
 
+        }
+    }
+
+    private class DeleteListener implements View.OnClickListener {
+
+        int position;
+
+        public void updatePosition(int position){
+            this.position = position;
+        }
+
+        public void onClick(View arg0) {
+            editItem.removeItem(position);
         }
     }
 

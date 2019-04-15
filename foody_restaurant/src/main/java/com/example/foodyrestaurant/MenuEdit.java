@@ -65,7 +65,10 @@ public class MenuEdit extends AppCompatActivity {
         LinearLayoutManager llm = new LinearLayoutManager(this);
         recyclerMenu.setLayoutManager(llm);
         mainFAB = findViewById(R.id.mainFAB);
-        cards = jsonHandler.getCards(file);
+        if(fileTmp.exists())
+            cards = jsonHandler.getCards(fileTmp);
+        else
+            cards = jsonHandler.getCards(file);
 
         save = findViewById(R.id.saveButton);
         ImageButton back = findViewById(R.id.backButton);
@@ -419,4 +422,13 @@ public class MenuEdit extends AppCompatActivity {
         return duplicate;
     }
 
+    @Override
+    protected void onResume() {
+        super.onResume();
+        init();
+
+        for (int i = 0; i < cards.size();i++){
+            cards.get(i).print();
+        }
+    }
 }

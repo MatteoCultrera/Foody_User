@@ -129,7 +129,7 @@
                 app:layout_constraintTop_toTopOf="parent" />
 
             <android.support.design.button.MaterialButton
-                android:id="@+id/materialButton"
+                android:id="@+id/deleteButton"
                 style="@style/Widget.MaterialComponents.Button.TextButton.Icon"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
