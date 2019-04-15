@@ -1,4 +1,6 @@
 package com.example.foodyrestaurant;
+import android.util.Log;
+
 import java.util.ArrayList;
 
 class Card {
@@ -17,6 +19,16 @@ class Card {
     public Card(String title, ArrayList<Dish> dishes){
         this.title = title;
         this.dishes = dishes;
+    }
+
+    public void print(){
+
+        Log.d("TITLECHECK", title+"\n");
+        for (int i = 0; i < dishes.size(); i++){
+            Log.d("TITLECHECK","\t"+dishes.get(i).toString());
+        }
+        Log.d("TITLECHECK","\n\n");
+
     }
 
     public String getTitle() {
