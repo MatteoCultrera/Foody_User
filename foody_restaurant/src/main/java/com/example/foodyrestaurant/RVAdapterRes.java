@@ -4,6 +4,7 @@ import android.content.Context;
 import android.graphics.Paint;
 import android.support.constraint.ConstraintLayout;
 import android.support.design.button.MaterialButton;
+import android.support.design.widget.FloatingActionButton;
 import android.support.v7.widget.CardView;
 import android.support.v7.widget.RecyclerView;
 import android.text.TextWatcher;
@@ -120,7 +121,14 @@ public class RVAdapterRes extends RecyclerView.Adapter<RVAdapterRes.CardViewHold
                 reservations.get(i).setAccepted(false);
                 reservations.remove(i);
                 notifyItemRemoved(i);
-                notifyItemRangeChanged(i, reservations.size()-1);
+                notifyItemRangeChanged(i, reservations.size());
+            }
+        });
+
+        pvh.plus.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+
             }
         });
 
@@ -140,6 +148,7 @@ public class RVAdapterRes extends RecyclerView.Adapter<RVAdapterRes.CardViewHold
         LinearLayout menuDishes;
         MaterialButton accept;
         MaterialButton decline;
+        FloatingActionButton plus;
 
         CardViewHolder(View itemView) {
             super(itemView);
@@ -151,6 +160,7 @@ public class RVAdapterRes extends RecyclerView.Adapter<RVAdapterRes.CardViewHold
             status = itemView.findViewById(R.id.status);
             accept = itemView.findViewById(R.id.acceptOrder);
             decline = itemView.findViewById(R.id.declineOrder);
+            plus = itemView.findViewById(R.id.plusReservation);
         }
     }
 }

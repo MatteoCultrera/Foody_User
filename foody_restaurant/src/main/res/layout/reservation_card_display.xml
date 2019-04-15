@@ -11,8 +11,8 @@
         android:id="@+id/cv"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:layout_marginStart="12dp"
-        android:layout_marginEnd="12dp"
+        android:layout_marginStart="16dp"
+        android:layout_marginEnd="16dp"
         app:cardCornerRadius="16dp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.0"
@@ -33,9 +33,8 @@
                 android:layout_marginStart="16dp"
                 android:layout_marginTop="17dp"
                 android:fontFamily="@font/roboto_regular"
-                android:text="ID: 252851"
                 android:textColor="@color/primaryText"
-                android:textSize="25dp"
+                android:textSize="25sp"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toTopOf="parent" />
 
@@ -47,9 +46,8 @@
                 android:layout_marginTop="17dp"
                 android:layout_marginEnd="16dp"
                 android:fontFamily="@font/roboto_regular"
-                android:text="12:30"
                 android:textColor="@color/secondaryText"
-                android:textSize="25dp"
+                android:textSize="25sp"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintTop_toTopOf="parent" />
 
@@ -59,9 +57,8 @@
                 android:layout_height="wrap_content"
                 android:layout_marginStart="16dp"
                 android:fontFamily="@font/roboto_regular"
-                android:text="Pending"
                 android:textColor="@color/secondaryText"
-                android:textSize="16dp"
+                android:textSize="16sp"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toBottomOf="@id/idOrder" />
 
@@ -86,7 +83,7 @@
                 android:orientation="vertical"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@id/separator"></LinearLayout>
+                app:layout_constraintTop_toBottomOf="@id/separator"/>
 
             <android.support.design.button.MaterialButton
                 android:id="@+id/acceptOrder"
@@ -112,9 +109,22 @@
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintTop_toBottomOf="@id/orderList" />
 
-
         </android.support.constraint.ConstraintLayout>
 
     </android.support.v7.widget.CardView>
+
+    <android.support.design.widget.FloatingActionButton
+        android:id="@+id/plusReservation"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginEnd="4dp"
+        android:src="@drawable/plus_white"
+        app:fabSize="mini"
+        app:layout_constraintBottom_toBottomOf="@+id/cv"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="1.0"
+        app:layout_constraintStart_toStartOf="@+id/cv"
+        app:layout_constraintTop_toTopOf="@+id/cv"
+        android:elevation="20dp"/>
 
 </android.support.constraint.ConstraintLayout>
