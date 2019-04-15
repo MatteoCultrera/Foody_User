@@ -24,14 +24,15 @@ public class Reservation {
     private String resNote;
     private String orderTime;
 
-    public Reservation(String identifier, ArrayList<Dish> dishes, prepStatus preparationStatus){
+    public Reservation(String identifier, ArrayList<Dish> dishes, prepStatus preparationStatus, String orderTime){
         this.reservationID = identifier;
         this.dishesOrdered = dishes;
         this.preparationStatus = preparationStatus;
+        this.orderTime = orderTime;
     }
 
     public String getReservationID() {
-        return reservationID;
+        return " "+reservationID;
     }
 
     public void setReservationID(String reservationID) {
@@ -48,6 +49,25 @@ public class Reservation {
 
     public prepStatus getPreparationStatus() {
         return preparationStatus;
+    }
+
+    public String getPreparationStatusString(){
+        String ret;
+        switch (this.preparationStatus){
+            case PENDING:
+                ret = "Pending";
+                break;
+            case DONE:
+                ret = "Done";
+                break;
+            case DOING:
+                ret="Doing";
+                break;
+            default:
+                ret="Status Unknown";
+                break;
+        }
+        return ret;
     }
 
     public void setPreparationStatus(prepStatus preparationStatus) {

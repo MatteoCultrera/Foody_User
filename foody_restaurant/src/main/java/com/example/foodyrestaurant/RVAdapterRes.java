@@ -9,6 +9,9 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.LinearLayout;
 import android.widget.TextView;
+
+import org.w3c.dom.Text;
+
 import java.util.ArrayList;
 import java.util.List;
 
@@ -27,7 +30,7 @@ public class RVAdapterRes extends RecyclerView.Adapter<RVAdapterRes.CardViewHold
 
     @Override
     public CardViewHolder onCreateViewHolder(ViewGroup viewGroup, int i) {
-        View v = LayoutInflater.from(viewGroup.getContext()).inflate(R.layout.menu_card_display, viewGroup, false);
+        View v = LayoutInflater.from(viewGroup.getContext()).inflate(R.layout.reservation_card_display, viewGroup, false);
         return new CardViewHolder(v);
     }
 
@@ -54,23 +57,23 @@ public class RVAdapterRes extends RecyclerView.Adapter<RVAdapterRes.CardViewHold
 
         Context context = pvh.cv.getContext();
         LayoutInflater inflater = LayoutInflater.from(context);
-        final int pos = pvh.getAdapterPosition();
 
-        ArrayList<Dish> dishes = reservations.get(pos).getDishesOrdered();
+        ArrayList<Dish> dishes = reservations.get(i).getDishesOrdered();
 
-        if(!pvh.isInflated){
-            for (int j = 0; j < dishes.size(); j++){
-                View dish = inflater.inflate(R.layout.reservation_item_display, pvh.menuDishes, false);
-                TextView title = dish.findViewById(R.id.food_title_res);
-                title.setText(dishes.get(j).getDishName());
-                pvh.menuDishes.addView(dish);
-                dishes.get(j).setAdded(true);
-            }
+        pvh.idOrder.setText(reservations.get(i).getReservationID());
+        pvh.status.setText(reservations.get(i).getPreparationStatusString());
+        pvh.time.setText(reservations.get(i).getOrderTime());
+
+        pvh.menuDishes.removeAllViews();
+
+        for(int j = 0; j < dishes.size(); j++){
+            View dish = inflater.inflate(R.layout.reservation_item_display, pvh.menuDishes, false);
+            TextView foodTitle = dish.findViewById(R.id.food_title_res);
+            foodTitle.setText(dishes.get(j).getStringForRes());
+            pvh.menuDishes.addView(dish);
         }
 
-        pvh.title.setText(reservations.get(pos).getReservationID());
 
-        pvh.isInflated = true;
 
 
     }
@@ -82,20 +85,20 @@ public class RVAdapterRes extends RecyclerView.Adapter<RVAdapterRes.CardViewHold
 
 
     public static class CardViewHolder extends RecyclerView.ViewHolder {
-        final CardView cv;
-        final TextView title;
-        final LinearLayout menuDishes;
-        final ConstraintLayout outside;
-        boolean isInflated;
+        CardView cv;
+        TextView idOrder;
+        TextView time;
+        TextView status;
+        LinearLayout menuDishes;
 
         CardViewHolder(View itemView) {
             super(itemView);
 
             cv = itemView.findViewById(R.id.cv);
-            title = itemView.findViewById(R.id.title);
-            menuDishes = itemView.findViewById(R.id.menu_dishes);
-            outside = itemView.findViewById(R.id.outside);
-            isInflated = false;
+            idOrder = itemView.findViewById(R.id.idOrder);
+            menuDishes = itemView.findViewById(R.id.orderList);
+            time = itemView.findViewById(R.id.time);
+            status = itemView.findViewById(R.id.status);
         }
     }
 

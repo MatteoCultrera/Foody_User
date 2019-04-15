@@ -1,152 +1,114 @@
 <?xml version="1.0" encoding="utf-8"?>
 <android.support.constraint.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:background="#E4E4E4">
 
     <android.support.v7.widget.CardView
-        android:id="@+id/card_view"
+        android:id="@+id/cv"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:layout_marginStart="6dp"
-        android:layout_marginEnd="6dp"
+        android:layout_marginStart="12dp"
+        android:layout_marginEnd="12dp"
         app:cardCornerRadius="16dp"
         app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.0"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent">
+        app:layout_constraintTop_toTopOf="parent"
+        android:layout_marginBottom="6dp"
+        app:layout_constraintBottom_toBottomOf="parent">
 
         <android.support.constraint.ConstraintLayout
             android:layout_width="match_parent"
-            android:layout_height="wrap_content">
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="10dp">
 
-            <ImageButton
-                android:id="@+id/call_user"
-                android:layout_width="36dp"
-                android:layout_height="36dp"
+            <TextView
+                android:id="@+id/idOrder"
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent"
                 android:layout_marginStart="16dp"
-                android:layout_marginTop="6dp"
-                android:src="@drawable/phone_black"
+                android:layout_marginTop="17dp"
+                android:fontFamily="@font/roboto_regular"
+                android:text="ID: 252851"
+                android:textColor="@color/primaryText"
+                android:textSize="25dp"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toTopOf="parent" />
 
-            <TextView
-                android:id="@+id/user_id"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="10dp"
-                android:fontFamily="@font/roboto_regular"
-                android:text="ID. 255383"
-                android:textColor="@color/primaryText"
-                android:textSize="20sp"
-                app:layout_constraintEnd_toStartOf="@id/pickup_time"
-                app:layout_constraintStart_toEndOf="@id/call_user"
-                app:layout_constraintTop_toTopOf="parent" />
 
             <TextView
-                android:id="@+id/pickup_time"
+                android:id="@+id/time"
                 android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="10dp"
+                android:layout_height="match_parent"
+                android:layout_marginTop="17dp"
                 android:layout_marginEnd="16dp"
                 android:fontFamily="@font/roboto_regular"
                 android:text="12:30"
-                android:textColor="@color/primaryText"
-                android:textSize="20sp"
+                android:textColor="@color/secondaryText"
+                android:textSize="25dp"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintTop_toTopOf="parent" />
+
+            <TextView
+                android:id="@+id/status"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="16dp"
+                android:fontFamily="@font/roboto_regular"
+                android:text="Pending"
+                android:textColor="@color/secondaryText"
+                android:textSize="16dp"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/idOrder" />
 
             <View
                 android:id="@+id/separator"
                 android:layout_width="match_parent"
                 android:layout_height="1dp"
                 android:layout_marginStart="16dp"
-                android:layout_marginTop="5dp"
-                android:layout_marginEnd="12dp"
-                android:background="@color/primaryText"
-                app:layout_constraintTop_toBottomOf="@id/user_id" />
-
-            <android.support.v7.widget.RecyclerView
-                android:id="@+id/reservations_display"
-                android:layout_width="match_parent"
-                android:layout_height="0dp"
-                android:layout_marginStart="8dp"
-                android:layout_marginEnd="8dp"
-                android:paddingStart="16dp"
-                android:paddingEnd="16dp"
-                android:paddingBottom="5dp"
-                android:paddingTop="10dp"
-                android:clipToPadding="false"
+                android:layout_marginTop="3dp"
+                android:layout_marginEnd="16dp"
+                android:background="@android:color/black"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@id/separator" />
+                app:layout_constraintTop_toBottomOf="@id/status" />
 
-            <TextView
-                android:id="@+id/note"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="4dp"
-                android:layout_marginStart="16dp"
-                android:fontFamily="@font/roboto_regular"
-                android:textColor="@color/primaryText"
-                android:textSize="12sp"
-                android:text="Notes:"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@id/reservations_display"
-                app:layout_constraintBottom_toTopOf="@id/notes"/>
-
-            <TextView
-                android:id="@+id/notes"
+            <LinearLayout
+                android:id="@+id/orderList"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginStart="16dp"
-                android:layout_marginEnd="12dp"
-                android:background="#D8D8D8"
-                android:fontFamily="@font/roboto_regular"
-                android:textColor="@color/primaryText"
-                android:textSize="12sp"
-                android:text=""
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@id/note"
-                app:layout_constraintEnd_toEndOf="parent"/>
-
-            <android.support.constraint.ConstraintLayout
-                android:id="@+id/button_layout"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="4dp"
-                app:layout_constraintTop_toBottomOf="@id/notes"
+                android:layout_marginStart="11dp"
+                android:layout_marginEnd="11dp"
+                android:orientation="vertical"
                 app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintStart_toStartOf="parent">
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/separator"></LinearLayout>
 
-                <Button
-                    android:id="@+id/accept"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="@string/Accept"
-                    android:textAllCaps="false"
-                    android:textSize="16sp"
-                    android:backgroundTint="@color/accept"
-                    app:layout_constraintTop_toTopOf="parent"
-                    app:layout_constraintBottom_toBottomOf="parent"
-                    app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintEnd_toStartOf="@id/decline"/>
+            <android.support.design.button.MaterialButton
+                android:layout_width="116dp"
+                android:layout_height="58dp"
+                android:layout_marginStart="36dp"
+                android:layout_marginTop="16dp"
+                android:backgroundTint="#11DB40"
+                android:text="@string/Accept"
+                app:cornerRadius="140dp"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/orderList" />
 
-                <Button
-                    android:id="@+id/decline"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="@string/Decline"
-                    android:textAllCaps="false"
-                    android:textSize="16sp"
-                    android:backgroundTint="@color/errorColor"
-                    app:layout_constraintTop_toTopOf="parent"
-                    app:layout_constraintBottom_toBottomOf="parent"
-                    app:layout_constraintEnd_toEndOf="parent"
-                    app:layout_constraintStart_toEndOf="@id/accept"/>
+            <android.support.design.button.MaterialButton
+                android:layout_width="116dp"
+                android:layout_height="58dp"
+                android:layout_marginTop="16dp"
+                android:layout_marginEnd="36dp"
+                android:backgroundTint="#FF0000"
+                android:text="@string/Decline"
+                app:cornerRadius="140dp"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/orderList" />
 
-            </android.support.constraint.ConstraintLayout>
 
         </android.support.constraint.ConstraintLayout>
 
