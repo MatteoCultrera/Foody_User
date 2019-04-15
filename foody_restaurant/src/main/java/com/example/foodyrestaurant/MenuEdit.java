@@ -53,12 +53,15 @@ public class MenuEdit extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_menu_edit);
 
+        Log.d("TITLECHECK","onCreate()");
         init();
     }
 
     @Override
     protected void onRestoreInstanceState(Bundle savedInstanceState){
         super.onRestoreInstanceState(savedInstanceState);
+
+        Log.d("TITLECHECK","onREstoreInstanceState()");
         cards = jsonHandler.getCards(fileTmp);
         String writingCard = savedInstanceState.getString("writing", "");
         String dialogPrec = savedInstanceState.getString("dialog");
@@ -69,7 +72,7 @@ public class MenuEdit extends AppCompatActivity {
             } else if (dialogPrec.compareTo("back") == 0){
                 onBackPressed();
             } else if (dialogPrec.compareTo("trash") == 0){
-                edit();
+                editRotate();
             }
         }
     }
@@ -88,6 +91,7 @@ public class MenuEdit extends AppCompatActivity {
     }
 
     private void init(){
+        Log.d("TITLECHECK","init()");
         fileTmp = new File(storageDir, JSON_COPY);
         jsonHandler = new JsonHandler();
         storageDir =  getExternalFilesDir(Environment.DIRECTORY_DOCUMENTS);
@@ -96,10 +100,12 @@ public class MenuEdit extends AppCompatActivity {
         LinearLayoutManager llm = new LinearLayoutManager(this);
         recyclerMenu.setLayoutManager(llm);
         mainFAB = findViewById(R.id.mainFAB);
+
         if(fileTmp.exists())
             cards = jsonHandler.getCards(fileTmp);
         else
             cards = jsonHandler.getCards(file);
+
 
         save = findViewById(R.id.saveButton);
         ImageButton back = findViewById(R.id.backButton);
@@ -171,6 +177,11 @@ public class MenuEdit extends AppCompatActivity {
         cards.add(c);
         */
 
+        if(dialogCode.equals("trash")){
+            for(int i = 0; i < cards.size(); i++)
+                cards.get(i).setEditing(true);
+        }
+
         recyclerAdapter = new RVAdapterEdit(cards);
         recyclerMenu.setAdapter(recyclerAdapter);
 
@@ -185,6 +196,7 @@ public class MenuEdit extends AppCompatActivity {
                 }
             }
         });
+
     }
 
     private void plusPressed(String starting){
@@ -350,6 +362,12 @@ public class MenuEdit extends AppCompatActivity {
         animateToNormal(edit, save, exit, mainFAB, plus, trash);
     }
 
+    private void editRotate(){
+        dialogCode = "trash";
+        for(int i = 0; i < cards.size();i++)
+            cards.get(i).setEditing(true);
+    }
+
     private void animateToEdit(final ImageButton edit,final ImageButton save,final ImageButton end,
                                FloatingActionButton fab, final ImageView plus, final ImageView trash){
         int shortAnimDuration = getResources().getInteger(android.R.integer.config_shortAnimTime);
@@ -479,10 +497,8 @@ public class MenuEdit extends AppCompatActivity {
     @Override
     protected void onResume() {
         super.onResume();
+        Log.d("TITLECHECK","onREsume()");
         init();
 
-        for (int i = 0; i < cards.size();i++){
-            cards.get(i).print();
-        }
     }
 }
