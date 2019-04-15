@@ -1,11 +1,15 @@
 package com.example.foodyrestaurant;
 
+import android.app.AlertDialog;
+import android.content.DialogInterface;
 import android.os.Environment;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.text.Editable;
+import android.text.TextWatcher;
 import android.util.Log;
 import android.view.View;
 import android.widget.ImageButton;
@@ -14,19 +18,24 @@ import android.widget.TextView;
 import java.io.File;
 import java.util.ArrayList;
 import java.util.HashSet;
-import java.util.List;
 import java.util.Set;
-import java.util.jar.Attributes;
 
 public class MenuEditItem extends AppCompatActivity {
 
 
     private String className;
+    private JsonHandler jsonHandler;
     private File storageDir;
     private ImageButton save;
     private ArrayList<Dish> dishes;
     private ArrayList<Card> cards;
     private FloatingActionButton fabDishes;
+    private boolean unchanged = true;
+    private AlertDialog dialogDism;
+    private String dialogCode = "ok";
+    private final String JSON_PATH = "menu.json";
+    private final String JSON_COPY = "menuCopy.json";
+    private File fileTmp;
     private RVAdapterEditItem recyclerAdapter;
 
     @Override
@@ -37,7 +46,28 @@ public class MenuEditItem extends AppCompatActivity {
         init();
     }
 
+    @Override
+    protected void onRestoreInstanceState(Bundle savedInstanceState) {
+        super.onRestoreInstanceState(savedInstanceState);
+        String dialogPrec = savedInstanceState.getString("dialog");
+        unchanged = savedInstanceState.getBoolean("unchanged");
+        if (dialogPrec != null && dialogPrec.compareTo("ok") != 0) {
+            if (dialogPrec.compareTo("back") == 0) {
+                onBackPressed();
+            }
+        }
+    }
+
+    @Override
+    protected void onSaveInstanceState(Bundle outState) {
+        super.onSaveInstanceState(outState);
+        outState.putBoolean("unchanged", unchanged);
+        outState.putString("dialog", dialogCode);
+    }
+
     private void init(){
+        fileTmp = new File(storageDir, JSON_COPY);
+        jsonHandler = new JsonHandler();
         final RecyclerView recyclerMenu = findViewById(R.id.menu_items);
         LinearLayoutManager llm = new LinearLayoutManager(this);
         recyclerMenu.setLayoutManager(llm);
@@ -47,10 +77,8 @@ public class MenuEditItem extends AppCompatActivity {
         storageDir =  getExternalFilesDir(Environment.DIRECTORY_DOCUMENTS);
         TextView title = findViewById(R.id.textView);
         className = getIntent().getExtras().getString("MainName");
-
         title.setText(getResources().getString(R.string.edit, className));
         dishes = getDishes();
-
         recyclerAdapter = new RVAdapterEditItem(dishes, this);
         recyclerMenu.setAdapter(recyclerAdapter);
         fabDishes = findViewById(R.id.fabDishes);
@@ -73,25 +101,19 @@ public class MenuEditItem extends AppCompatActivity {
     }
 
     private void save(){
-
-        JsonHandler placeholder = new JsonHandler();
-        String JSON_COPY = "menuCopy.json";
-        File plc = new File(storageDir, JSON_COPY);
-        String toJson = placeholder.toJSON(cards);
-
-        placeholder.saveStringToFile(toJson, plc);
-
+        File plc = new File(storageDir, JSON_PATH);
+        String toJson = jsonHandler.toJSON(cards);
+        jsonHandler.saveStringToFile(toJson, plc);
         finish();
-
     }
 
     public void saveEnabled(boolean enabled){
 
-        if(enabled == true)
+        if(enabled)
             enabled = canEnable();
 
         save.setEnabled(enabled);
-        if(enabled == true){
+        if(enabled){
             save.setImageResource(R.drawable.save_white);
         }else{
             save.setImageResource(R.drawable.save_dis);
@@ -131,7 +153,6 @@ public class MenuEditItem extends AppCompatActivity {
         dishes.remove(position);
         recyclerAdapter.notifyItemRemoved(position);
         recyclerAdapter.notifyItemRangeChanged(position, dishes.size());
-
     }
 
     private ArrayList<Dish> getDishes(){
@@ -155,6 +176,61 @@ public class MenuEditItem extends AppCompatActivity {
     }
 
     public void backToEditMenu(View view) {
-        super.onBackPressed();
+        unchanged = recyclerAdapter.getUnchanged();
+        if (unchanged){
+            super.onBackPressed();
+        }
+        else {
+            AlertDialog.Builder builder = new AlertDialog.Builder(this, R.style.AppCompatAlertDialogStyle);
+            builder.setNegativeButton(getResources().getString(R.string.cancel), new DialogInterface.OnClickListener() {
+                @Override
+                public void onClick(DialogInterface dialog, int which) {
+                    dialogCode = "ok";
+                    dialog.dismiss();
+                }
+            });
+            builder.setPositiveButton(getResources().getString(R.string.accept), new DialogInterface.OnClickListener() {
+                @Override
+                public void onClick(DialogInterface dialogInterface, int i) {
+                    dialogCode = "ok";
+                    MenuEditItem.super.onBackPressed();
+                }
+            });
+            builder.setTitle(getResources().getString(R.string.alert_dialog_back_title));
+            builder.setMessage(getResources().getString(R.string.alert_dialog_back_message));
+            builder.setCancelable(false);
+            dialogCode = "back";
+            dialogDism = builder.show();
+        }
+    }
+
+    @Override
+    public void onBackPressed() {
+        unchanged = recyclerAdapter.getUnchanged();
+        if (unchanged){
+            super.onBackPressed();
+        }
+        else {
+            AlertDialog.Builder builder = new AlertDialog.Builder(this, R.style.AppCompatAlertDialogStyle);
+            builder.setNegativeButton(getResources().getString(R.string.cancel), new DialogInterface.OnClickListener() {
+                @Override
+                public void onClick(DialogInterface dialog, int which) {
+                    dialogCode = "ok";
+                    dialog.dismiss();
+                }
+            });
+            builder.setPositiveButton(getResources().getString(R.string.accept), new DialogInterface.OnClickListener() {
+                @Override
+                public void onClick(DialogInterface dialogInterface, int i) {
+                    dialogCode = "ok";
+                    MenuEditItem.super.onBackPressed();
+                }
+            });
+            builder.setTitle(getResources().getString(R.string.alert_dialog_back_title));
+            builder.setMessage(getResources().getString(R.string.alert_dialog_back_message));
+            builder.setCancelable(false);
+            dialogCode = "back";
+            dialogDism = builder.show();
+        }
     }
 }
