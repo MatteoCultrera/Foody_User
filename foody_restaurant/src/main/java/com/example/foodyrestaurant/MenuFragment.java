@@ -104,8 +104,6 @@ public class MenuFragment extends Fragment {
 
         }
 
-        Log.d("TITLECHECK", "On menuFragment: "+ cards.get(0).getTitle()+" "+ cards.get(1).getTitle());
-
         json = jsonHandler.toJSON(cards);
         jsonHandler.saveStringToFile(json, file);
         RVAdapter adapter = new RVAdapter(cards);
