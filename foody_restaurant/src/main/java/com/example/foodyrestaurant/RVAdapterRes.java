@@ -128,7 +128,7 @@ public class RVAdapterRes extends RecyclerView.Adapter<RVAdapterRes.CardViewHold
         pvh.plus.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-
+                pvh.constraint.setVisibility(View.VISIBLE);
             }
         });
 
@@ -149,6 +149,10 @@ public class RVAdapterRes extends RecyclerView.Adapter<RVAdapterRes.CardViewHold
         MaterialButton accept;
         MaterialButton decline;
         FloatingActionButton plus;
+        ConstraintLayout constraint;
+        TextView userName;
+
+
 
         CardViewHolder(View itemView) {
             super(itemView);
@@ -161,6 +165,9 @@ public class RVAdapterRes extends RecyclerView.Adapter<RVAdapterRes.CardViewHold
             accept = itemView.findViewById(R.id.acceptOrder);
             decline = itemView.findViewById(R.id.declineOrder);
             plus = itemView.findViewById(R.id.plusReservation);
+            constraint = itemView.findViewById(R.id.constrGone);
+            userName = itemView.findViewById(R.id.user_name);
+
         }
     }
 }
