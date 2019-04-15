@@ -10,6 +10,6 @@
     <color name="divider">#BDBDBD</color>
     <color name="whiteText">#FFFFFF</color>
     <color name="dark_white_background">#EAEAEA</color>
-
+    <color name="accept">#11DB40</color>
 
 </resources>
