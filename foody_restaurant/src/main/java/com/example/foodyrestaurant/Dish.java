@@ -11,6 +11,7 @@ class Dish {
     private Float price;
     private Uri image;
     private boolean added;
+    private int quantity;
 
     public Dish(String name, String description, Float price, Uri image){
         dishName = name;
@@ -18,6 +19,15 @@ class Dish {
         this.price = price;
         this.image = image;
         added = false;
+        quantity = 0;
+    }
+
+    public void setQuantity(int quantity){
+        this.quantity = quantity;
+    }
+
+    public String getStringForRes(){
+        return quantity+" x "+dishName;
     }
 
     @Override
