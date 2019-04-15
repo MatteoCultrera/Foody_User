@@ -12,6 +12,7 @@ class Dish {
     private Uri image;
     private boolean added;
     private int quantity;
+    private boolean prepared;
 
     public Dish(String name, String description, Float price, Uri image){
         dishName = name;
@@ -20,6 +21,7 @@ class Dish {
         this.image = image;
         added = false;
         quantity = 0;
+        prepared = false;
     }
 
     public void setQuantity(int quantity){
@@ -75,4 +77,11 @@ class Dish {
         this.added = added;
     }
 
+    public boolean isPrepared() {
+        return prepared;
+    }
+
+    public void setPrepared(boolean prepared) {
+        this.prepared = prepared;
+    }
 }
