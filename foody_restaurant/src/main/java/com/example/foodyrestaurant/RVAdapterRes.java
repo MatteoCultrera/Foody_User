@@ -1,10 +1,12 @@
 package com.example.foodyrestaurant;
 
 import android.content.Context;
+import android.graphics.Paint;
 import android.support.constraint.ConstraintLayout;
 import android.support.design.button.MaterialButton;
 import android.support.v7.widget.CardView;
 import android.support.v7.widget.RecyclerView;
+import android.text.TextWatcher;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -28,6 +30,11 @@ public class RVAdapterRes extends RecyclerView.Adapter<RVAdapterRes.CardViewHold
     @Override
     public int getItemCount() {
         return reservations.size();
+    }
+
+    @Override
+    public long getItemId(int position) {
+        return position;
     }
 
     @Override
@@ -66,12 +73,33 @@ public class RVAdapterRes extends RecyclerView.Adapter<RVAdapterRes.CardViewHold
         pvh.status.setText(reservations.get(i).getPreparationStatusString());
         pvh.time.setText(reservations.get(i).getOrderTime());
 
+        if(reservations.get(i).isAccepted()) {
+            pvh.accept.setVisibility(View.GONE);
+            pvh.decline.setVisibility(View.GONE);
+        }
+
         pvh.menuDishes.removeAllViews();
 
         for(int j = 0; j < dishes.size(); j++){
+            final int toSet = j;
             View dish = inflater.inflate(R.layout.reservation_item_display, pvh.menuDishes, false);
-            TextView foodTitle = dish.findViewById(R.id.food_title_res);
+            final TextView foodTitle = dish.findViewById(R.id.food_title_res);
             foodTitle.setText(dishes.get(j).getStringForRes());
+            foodTitle.setPaintFlags(0);
+            foodTitle.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    if(reservations.get(i).getPreparationStatus() == Reservation.prepStatus.DOING && foodTitle.getPaintFlags() == 0) {
+                        Log.d("MAD", "Here in true");
+                        foodTitle.setPaintFlags(Paint.STRIKE_THRU_TEXT_FLAG);
+                        dishes.get(toSet).setPrepared(true);
+                    } else {
+                        Log.d("MAD", "ELSE");
+                        foodTitle.setPaintFlags(0);
+                        dishes.get(toSet).setPrepared(false);
+                    }
+                }
+            });
             pvh.menuDishes.addView(dish);
         }
 
@@ -80,6 +108,7 @@ public class RVAdapterRes extends RecyclerView.Adapter<RVAdapterRes.CardViewHold
             public void onClick(View v) {
                 pvh.accept.setVisibility(View.GONE);
                 pvh.decline.setVisibility(View.GONE);
+                reservations.get(i).setAccepted(true);
                 reservations.get(i).setPreparationStatus(Reservation.prepStatus.DOING);
                 pvh.status.setText(reservations.get(i).getPreparationStatusString());
             }
@@ -88,6 +117,7 @@ public class RVAdapterRes extends RecyclerView.Adapter<RVAdapterRes.CardViewHold
         pvh.decline.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                reservations.get(i).setAccepted(false);
                 reservations.remove(i);
                 notifyItemRemoved(i);
                 notifyItemRangeChanged(i, reservations.size());
@@ -123,5 +153,4 @@ public class RVAdapterRes extends RecyclerView.Adapter<RVAdapterRes.CardViewHold
             decline = itemView.findViewById(R.id.declineOrder);
         }
     }
-
 }
