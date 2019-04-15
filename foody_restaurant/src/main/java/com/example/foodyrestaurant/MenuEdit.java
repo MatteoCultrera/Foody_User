@@ -52,16 +52,12 @@ public class MenuEdit extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_menu_edit);
-
-        Log.d("TITLECHECK","onCreate()");
         init();
     }
 
     @Override
     protected void onRestoreInstanceState(Bundle savedInstanceState){
         super.onRestoreInstanceState(savedInstanceState);
-
-        Log.d("TITLECHECK","onREstoreInstanceState()");
         cards = jsonHandler.getCards(fileTmp);
         String writingCard = savedInstanceState.getString("writing", "");
         String dialogPrec = savedInstanceState.getString("dialog");
@@ -91,7 +87,6 @@ public class MenuEdit extends AppCompatActivity {
     }
 
     private void init(){
-        Log.d("TITLECHECK","init()");
         fileTmp = new File(storageDir, JSON_COPY);
         jsonHandler = new JsonHandler();
         storageDir =  getExternalFilesDir(Environment.DIRECTORY_DOCUMENTS);
@@ -105,7 +100,6 @@ public class MenuEdit extends AppCompatActivity {
             cards = jsonHandler.getCards(fileTmp);
         else
             cards = jsonHandler.getCards(file);
-
 
         save = findViewById(R.id.saveButton);
         ImageButton back = findViewById(R.id.backButton);
@@ -366,6 +360,7 @@ public class MenuEdit extends AppCompatActivity {
         dialogCode = "trash";
         for(int i = 0; i < cards.size();i++)
             cards.get(i).setEditing(true);
+        animateToEdit(edit, save, exit, mainFAB, plus, trash);
     }
 
     private void animateToEdit(final ImageButton edit,final ImageButton save,final ImageButton end,

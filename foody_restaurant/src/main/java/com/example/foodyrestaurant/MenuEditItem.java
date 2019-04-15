@@ -22,7 +22,6 @@ import java.util.Set;
 
 public class MenuEditItem extends AppCompatActivity {
 
-
     private String className;
     private JsonHandler jsonHandler;
     private File storageDir;
@@ -35,7 +34,7 @@ public class MenuEditItem extends AppCompatActivity {
     private String dialogCode = "ok";
     private final String JSON_PATH = "menu.json";
     private final String JSON_COPY = "menuCopy.json";
-    private File fileTmp;
+    private File fileTmp, file;
     private RVAdapterEditItem recyclerAdapter;
 
     @Override
@@ -47,13 +46,22 @@ public class MenuEditItem extends AppCompatActivity {
     }
 
     @Override
+    protected void onPause(){
+        super.onPause();
+        if (dialogDism != null){
+            dialogDism.dismiss();
+        }
+    }
+
+    @Override
     protected void onRestoreInstanceState(Bundle savedInstanceState) {
         super.onRestoreInstanceState(savedInstanceState);
         String dialogPrec = savedInstanceState.getString("dialog");
+        cards = jsonHandler.getCards(fileTmp);
         unchanged = savedInstanceState.getBoolean("unchanged");
         if (dialogPrec != null && dialogPrec.compareTo("ok") != 0) {
             if (dialogPrec.compareTo("back") == 0) {
-                onBackPressed();
+                restoreBack();
             }
         }
     }
@@ -63,15 +71,27 @@ public class MenuEditItem extends AppCompatActivity {
         super.onSaveInstanceState(outState);
         outState.putBoolean("unchanged", unchanged);
         outState.putString("dialog", dialogCode);
+
+        for (int i = 0; i < cards.size(); i++){
+            if(cards.get(i).getTitle().equals(className)){
+                cards.get(i).setDishes(dishes);
+            }
+        }
+        String json = jsonHandler.toJSON(cards);
+        jsonHandler.saveStringToFile(json, fileTmp);
     }
 
     private void init(){
         fileTmp = new File(storageDir, JSON_COPY);
+        file = new File(storageDir, JSON_PATH);
         jsonHandler = new JsonHandler();
         final RecyclerView recyclerMenu = findViewById(R.id.menu_items);
         LinearLayoutManager llm = new LinearLayoutManager(this);
         recyclerMenu.setLayoutManager(llm);
-
+        if(fileTmp.exists())
+            cards = jsonHandler.getCards(fileTmp);
+        else
+            cards = jsonHandler.getCards(file);
         save = findViewById(R.id.saveButton);
 
         storageDir =  getExternalFilesDir(Environment.DIRECTORY_DOCUMENTS);
@@ -101,9 +121,18 @@ public class MenuEditItem extends AppCompatActivity {
     }
 
     private void save(){
-        File plc = new File(storageDir, JSON_PATH);
-        String toJson = jsonHandler.toJSON(cards);
-        jsonHandler.saveStringToFile(toJson, plc);
+        storageDir =  getExternalFilesDir(Environment.DIRECTORY_DOCUMENTS);
+        for (int i = 0; i < cards.size(); i++){
+            if(cards.get(i).getTitle().equals(className)){
+                cards.get(i).setDishes(dishes);
+            }
+        }
+        String json = jsonHandler.toJSON(cards);
+        Log.d("SWSW", "save"+json);
+        File file = new File(storageDir, JSON_PATH);
+        File fileTMP = new File(storageDir, JSON_COPY);
+        jsonHandler.saveStringToFile(json, file);
+        jsonHandler.saveStringToFile(json, fileTMP);
         finish();
     }
 
@@ -129,13 +158,9 @@ public class MenuEditItem extends AppCompatActivity {
             dishNames.add(dishes.get(i).getDishName());
 
         }
-
         Set<String> dis = new HashSet<String>(dishNames);
-
         if(dis.size() < dishes.size())
             return false;
-
-
         return true;
     }
 
@@ -157,21 +182,17 @@ public class MenuEditItem extends AppCompatActivity {
 
     private ArrayList<Dish> getDishes(){
 
-        ArrayList<Card> cards;
         ArrayList<Dish> dishes = new ArrayList<>();
-        JsonHandler placeholder = new JsonHandler();
-        String JSON_COPY = "menuCopy.json";
         File plc = new File(storageDir, JSON_COPY);
-        cards = placeholder.getCards(plc);
+        cards = jsonHandler.getCards(plc);
 
         for (int i = 0; i < cards.size(); i++){
-
             if(cards.get(i).getTitle().equals(className)){
                 dishes = cards.get(i).getDishes();
             }
-
         }
-
+        String json = jsonHandler.toJSON(cards);
+        Log.d("SWSW", "get"+json);
         return dishes;
     }
 
@@ -232,5 +253,28 @@ public class MenuEditItem extends AppCompatActivity {
             dialogCode = "back";
             dialogDism = builder.show();
         }
+    }
+
+    private void restoreBack(){
+        AlertDialog.Builder builder = new AlertDialog.Builder(this, R.style.AppCompatAlertDialogStyle);
+        builder.setNegativeButton(getResources().getString(R.string.cancel), new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                dialogCode = "ok";
+                dialog.dismiss();
+            }
+        });
+        builder.setPositiveButton(getResources().getString(R.string.accept), new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialogInterface, int i) {
+                dialogCode = "ok";
+                MenuEditItem.super.onBackPressed();
+            }
+        });
+        builder.setTitle(getResources().getString(R.string.alert_dialog_back_title));
+        builder.setMessage(getResources().getString(R.string.alert_dialog_back_message));
+        builder.setCancelable(false);
+        dialogCode = "back";
+        dialogDism = builder.show();
     }
 }
