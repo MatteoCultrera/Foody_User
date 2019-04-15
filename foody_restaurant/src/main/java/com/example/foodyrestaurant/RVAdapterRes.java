@@ -32,10 +32,10 @@ public class RVAdapterRes extends RecyclerView.Adapter<RVAdapterRes.CardViewHold
         return reservations.size();
     }
 
-    @Override
+    /*@Override
     public long getItemId(int position) {
         return position;
-    }
+    }*/
 
     @Override
     public CardViewHolder onCreateViewHolder(ViewGroup viewGroup, int i) {
@@ -73,7 +73,7 @@ public class RVAdapterRes extends RecyclerView.Adapter<RVAdapterRes.CardViewHold
         pvh.status.setText(reservations.get(i).getPreparationStatusString());
         pvh.time.setText(reservations.get(i).getOrderTime());
 
-        if(reservations.get(i).isAccepted()) {
+        if(reservations.get(i).isAccepted() && reservations.get(i).getPreparationStatus() == Reservation.prepStatus.DOING) {
             pvh.accept.setVisibility(View.GONE);
             pvh.decline.setVisibility(View.GONE);
         }
@@ -120,7 +120,7 @@ public class RVAdapterRes extends RecyclerView.Adapter<RVAdapterRes.CardViewHold
                 reservations.get(i).setAccepted(false);
                 reservations.remove(i);
                 notifyItemRemoved(i);
-                notifyItemRangeChanged(i, reservations.size());
+                notifyItemRangeChanged(i, reservations.size()-1);
             }
         });
 
