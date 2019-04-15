@@ -2,8 +2,10 @@ package com.example.foodyrestaurant;
 
 import android.content.Context;
 import android.support.constraint.ConstraintLayout;
+import android.support.design.button.MaterialButton;
 import android.support.v7.widget.CardView;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -35,7 +37,7 @@ public class RVAdapterRes extends RecyclerView.Adapter<RVAdapterRes.CardViewHold
     }
 
     @Override
-    public void onBindViewHolder(CardViewHolder pvh, int i) {
+    public void onBindViewHolder(final CardViewHolder pvh, final int i) {
         /*pvh.title.setText(reservations.get(i).getReservationID());
         ArrayList<Dish> dishes = reservations.get(i).getDishesOrdered();
         Context context = pvh.cv.getContext();
@@ -58,7 +60,7 @@ public class RVAdapterRes extends RecyclerView.Adapter<RVAdapterRes.CardViewHold
         Context context = pvh.cv.getContext();
         LayoutInflater inflater = LayoutInflater.from(context);
 
-        ArrayList<Dish> dishes = reservations.get(i).getDishesOrdered();
+        final ArrayList<Dish> dishes = reservations.get(i).getDishesOrdered();
 
         pvh.idOrder.setText(reservations.get(i).getReservationID());
         pvh.status.setText(reservations.get(i).getPreparationStatusString());
@@ -73,8 +75,24 @@ public class RVAdapterRes extends RecyclerView.Adapter<RVAdapterRes.CardViewHold
             pvh.menuDishes.addView(dish);
         }
 
+        pvh.accept.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                pvh.accept.setVisibility(View.GONE);
+                pvh.decline.setVisibility(View.GONE);
+                reservations.get(i).setPreparationStatus(Reservation.prepStatus.DOING);
+                pvh.status.setText(reservations.get(i).getPreparationStatusString());
+            }
+        });
 
-
+        pvh.decline.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                reservations.remove(i);
+                notifyItemRemoved(i);
+                notifyItemRangeChanged(i, reservations.size());
+            }
+        });
 
     }
 
@@ -90,6 +108,8 @@ public class RVAdapterRes extends RecyclerView.Adapter<RVAdapterRes.CardViewHold
         TextView time;
         TextView status;
         LinearLayout menuDishes;
+        MaterialButton accept;
+        MaterialButton decline;
 
         CardViewHolder(View itemView) {
             super(itemView);
@@ -99,6 +119,8 @@ public class RVAdapterRes extends RecyclerView.Adapter<RVAdapterRes.CardViewHold
             menuDishes = itemView.findViewById(R.id.orderList);
             time = itemView.findViewById(R.id.time);
             status = itemView.findViewById(R.id.status);
+            accept = itemView.findViewById(R.id.acceptOrder);
+            decline = itemView.findViewById(R.id.declineOrder);
         }
     }
 
