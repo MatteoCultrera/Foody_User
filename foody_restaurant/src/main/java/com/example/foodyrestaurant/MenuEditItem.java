@@ -49,8 +49,6 @@ public class MenuEditItem extends AppCompatActivity {
     @Override
     protected void onRestoreInstanceState(Bundle savedInstanceState) {
         super.onRestoreInstanceState(savedInstanceState);
-        cards = jsonHandler.getCards(fileTmp);
-        String writingCard = savedInstanceState.getString("writing", "");
         String dialogPrec = savedInstanceState.getString("dialog");
         unchanged = savedInstanceState.getBoolean("unchanged");
         if (dialogPrec != null && dialogPrec.compareTo("ok") != 0) {
@@ -63,8 +61,6 @@ public class MenuEditItem extends AppCompatActivity {
     @Override
     protected void onSaveInstanceState(Bundle outState) {
         super.onSaveInstanceState(outState);
-        String json = jsonHandler.toJSON(cards);
-        jsonHandler.saveStringToFile(json, fileTmp);
         outState.putBoolean("unchanged", unchanged);
         outState.putString("dialog", dialogCode);
     }
