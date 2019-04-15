@@ -29,6 +29,7 @@ public class RVAdapterEditItem extends RecyclerView.Adapter<RVAdapterEditItem.Di
 
     ArrayList<Dish> dishes;
     MenuEditItem editItem;
+    private boolean unchanged = true;
 
     public RVAdapterEditItem(ArrayList<Dish> dishes, MenuEditItem editItem){
         this.dishes = dishes;
@@ -106,7 +107,6 @@ public class RVAdapterEditItem extends RecyclerView.Adapter<RVAdapterEditItem.Di
         return correct;
     }
 
-
     @Override
     public void onBindViewHolder(final RVAdapterEditItem.DishEdit dishViewHolder,final int i) {
 
@@ -152,12 +152,10 @@ public class RVAdapterEditItem extends RecyclerView.Adapter<RVAdapterEditItem.Di
 
     }
 
-
     @Override
     public void onAttachedToRecyclerView(RecyclerView recyclerView) {
         super.onAttachedToRecyclerView(recyclerView);
     }
-
 
     public static class DishEdit extends RecyclerView.ViewHolder {
         CardView cardView;
@@ -251,14 +249,13 @@ public class RVAdapterEditItem extends RecyclerView.Adapter<RVAdapterEditItem.Di
     }
 
     private class DeleteListener implements View.OnClickListener {
-
         int position;
 
         public void updatePosition(int position){
             this.position = position;
         }
-
         public void onClick(View arg0) {
+            unchanged = false;
             editItem.removeItem(position);
         }
     }
@@ -284,6 +281,7 @@ public class RVAdapterEditItem extends RecyclerView.Adapter<RVAdapterEditItem.Di
 
         @Override
         public void onTextChanged(CharSequence charSequence, int i, int i2, int i3) {
+            unchanged = false;
             dishes.get(position).setDishName(charSequence.toString());
             if(charSequence.toString().isEmpty()){
                 Log.d("TITLECHECK","Called for pos "+position+" and text "+charSequence.toString());
@@ -328,6 +326,7 @@ public class RVAdapterEditItem extends RecyclerView.Adapter<RVAdapterEditItem.Di
 
         @Override
         public void onTextChanged(CharSequence charSequence, int i, int i2, int i3) {
+            unchanged = false;
             dishes.get(position).setDishDescription(charSequence.toString());
         }
 
@@ -359,7 +358,7 @@ public class RVAdapterEditItem extends RecyclerView.Adapter<RVAdapterEditItem.Di
 
         @Override
         public void onTextChanged(CharSequence charSequence, int i, int i2, int i3) {
-
+            unchanged = false;
             String price = editText.getText().toString();
             if(price.isEmpty())
                 price = "0";
@@ -392,5 +391,9 @@ public class RVAdapterEditItem extends RecyclerView.Adapter<RVAdapterEditItem.Di
             return null;
         }
 
+    }
+
+    boolean getUnchanged(){
+        return unchanged;
     }
 }

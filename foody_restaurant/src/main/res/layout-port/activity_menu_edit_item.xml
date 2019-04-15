@@ -89,7 +89,6 @@
         app:layout_constraintRight_toRightOf="parent"
         android:layout_margin="16dp"
         android:src="@drawable/plus_white"
-        app:maxImageSize="36dp"
-        />
+        app:maxImageSize="36dp"/>
 
 </android.support.constraint.ConstraintLayout>
