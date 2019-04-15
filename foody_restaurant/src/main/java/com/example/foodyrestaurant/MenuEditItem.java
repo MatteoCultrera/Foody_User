@@ -161,6 +161,7 @@ public class MenuEditItem extends AppCompatActivity {
 
     private ArrayList<Dish> getDishes(){
 
+        ArrayList<Card> cards;
         ArrayList<Dish> dishes = new ArrayList<>();
         JsonHandler placeholder = new JsonHandler();
         String JSON_COPY = "menuCopy.json";
