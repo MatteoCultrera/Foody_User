@@ -67,5 +67,7 @@
     <string name="edit">Modifica %1$s</string>
     <string name="orders">Prenotazioni</string>
 
+    <string name="notesPlaceholder">Note:</string>
+    <string name="additional">Info addizionali:</string>
 
 </resources>

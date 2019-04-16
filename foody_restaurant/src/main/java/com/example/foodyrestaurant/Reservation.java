@@ -18,17 +18,24 @@ public class Reservation {
     //User useful data
     private String userName;
     private String userPhone;
+    private String userLevel;
     private String userEmail;
     private String userAddress;
 
     private String resNote;
     private String orderTime;
 
-    public Reservation(String identifier, ArrayList<Dish> dishes, prepStatus preparationStatus, String orderTime){
+    public Reservation(String identifier, ArrayList<Dish> dishes, prepStatus preparationStatus, String orderTime,
+                       String userName, String userPhone, String resNote, String userLevel){
         this.reservationID = identifier;
         this.dishesOrdered = dishes;
         this.preparationStatus = preparationStatus;
         this.orderTime = orderTime;
+        this.userName = userName;
+        this.userPhone = userPhone;
+        this.resNote = resNote;
+        this.userLevel = userLevel;
+
     }
 
     public String getReservationID() {
@@ -128,5 +135,13 @@ public class Reservation {
 
     public void setResNote(String resNote) {
         this.resNote = resNote;
+    }
+
+    public String getUserLevel() {
+        return userLevel;
+    }
+
+    public void setUserLevel(String userLevel) {
+        this.userLevel = userLevel;
     }
 }

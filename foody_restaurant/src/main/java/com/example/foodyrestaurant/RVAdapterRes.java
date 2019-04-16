@@ -1,10 +1,13 @@
 package com.example.foodyrestaurant;
 
 import android.content.Context;
+import android.content.Intent;
 import android.graphics.Paint;
+import android.net.Uri;
 import android.support.constraint.ConstraintLayout;
 import android.support.design.button.MaterialButton;
 import android.support.design.widget.FloatingActionButton;
+import android.support.v7.widget.AppCompatImageButton;
 import android.support.v7.widget.CardView;
 import android.support.v7.widget.RecyclerView;
 import android.text.TextWatcher;
@@ -65,7 +68,7 @@ public class RVAdapterRes extends RecyclerView.Adapter<RVAdapterRes.CardViewHold
             pvh.cv.requestLayout();
         }*/
 
-        Context context = pvh.cv.getContext();
+        final Context context = pvh.cv.getContext();
         LayoutInflater inflater = LayoutInflater.from(context);
 
         final ArrayList<Dish> dishes = reservations.get(i).getDishesOrdered();
@@ -73,6 +76,10 @@ public class RVAdapterRes extends RecyclerView.Adapter<RVAdapterRes.CardViewHold
         pvh.idOrder.setText(reservations.get(i).getReservationID());
         pvh.status.setText(reservations.get(i).getPreparationStatusString());
         pvh.time.setText(reservations.get(i).getOrderTime());
+        pvh.userName.setText(reservations.get(i).getUserName());
+        pvh.userLevel.setText(reservations.get(i).getUserLevel());
+        
+        pvh.notes.setText(reservations.get(i).getResNote());
 
         if(reservations.get(i).isAccepted() && reservations.get(i).getPreparationStatus() == Reservation.prepStatus.DOING) {
             pvh.accept.setVisibility(View.GONE);
@@ -134,6 +141,14 @@ public class RVAdapterRes extends RecyclerView.Adapter<RVAdapterRes.CardViewHold
             }
         });
 
+        pvh.phone.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(Intent.ACTION_DIAL);
+                intent.setData(Uri.parse("tel:"+reservations.get(i).getUserPhone()));
+                context.startActivity(intent);
+            }
+        });
     }
 
     @Override
@@ -154,6 +169,9 @@ public class RVAdapterRes extends RecyclerView.Adapter<RVAdapterRes.CardViewHold
         FloatingActionButton plus;
         ConstraintLayout additionalLayout;
         TextView userName;
+        TextView userLevel;
+        TextView notes;
+        AppCompatImageButton phone;
 
         CardViewHolder(View itemView) {
             super(itemView);
@@ -169,6 +187,9 @@ public class RVAdapterRes extends RecyclerView.Adapter<RVAdapterRes.CardViewHold
             plus = itemView.findViewById(R.id.plusReservation);
             additionalLayout = itemView.findViewById(R.id.constrGone);
             userName = itemView.findViewById(R.id.user_name);
+            notes = itemView.findViewById(R.id.note_text);
+            phone = itemView.findViewById(R.id.call_user);
+            userLevel = itemView.findViewById(R.id.user_level);
         }
     }
 }

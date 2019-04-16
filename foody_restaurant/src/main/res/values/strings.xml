@@ -60,8 +60,7 @@
     <string name="desc_edit">Dish Description</string>
     <string name="price_edit">Price</string>
 
-    <!-- TODO: Remove or change this placeholder text -->
-    <string name="hello_blank_fragment" translatable="false">Hello blank fragment</string>
-
+    <string name="notesPlaceholder">Notes:</string>
+    <string name="additional">Additional info:</string>
 
 </resources>
