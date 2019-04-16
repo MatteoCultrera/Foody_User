@@ -49,25 +49,6 @@ public class RVAdapterRes extends RecyclerView.Adapter<RVAdapterRes.CardViewHold
 
     @Override
     public void onBindViewHolder(final CardViewHolder pvh, final int i) {
-        /*pvh.title.setText(reservations.get(i).getReservationID());
-        ArrayList<Dish> dishes = reservations.get(i).getDishesOrdered();
-        Context context = pvh.cv.getContext();
-        LayoutInflater inflater = LayoutInflater.from(context);
-
-        for (int j = 0; j < dishes.size(); j++){
-            View dish = inflater.inflate(R.layout.reservation_item_display, pvh.menuDishes, false);
-            TextView title = dish.findViewById(R.id.food_title_res);
-            title.setText(dishes.get(j).getDishName());
-            pvh.menuDishes.addView(dish);
-        }
-
-        if (i == 0){
-            ViewGroup.MarginLayoutParams layoutParams =
-                    (ViewGroup.MarginLayoutParams) pvh.cv.getLayoutParams();
-            layoutParams.setMargins(0, getPixelValue(context,50), 0, getPixelValue(context,6));
-            pvh.cv.requestLayout();
-        }*/
-
         final Context context = pvh.cv.getContext();
         LayoutInflater inflater = LayoutInflater.from(context);
 
@@ -102,11 +83,9 @@ public class RVAdapterRes extends RecyclerView.Adapter<RVAdapterRes.CardViewHold
                 @Override
                 public void onClick(View v) {
                     if(reservations.get(i).getPreparationStatus() == Reservation.prepStatus.DOING && foodTitle.getPaintFlags() == 0) {
-                        Log.d("MAD", "Here in true");
                         foodTitle.setPaintFlags(Paint.STRIKE_THRU_TEXT_FLAG);
                         dishes.get(toSet).setPrepared(true);
                     } else {
-                        Log.d("MAD", "ELSE");
                         foodTitle.setPaintFlags(0);
                         dishes.get(toSet).setPrepared(false);
                     }

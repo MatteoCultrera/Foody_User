@@ -71,7 +71,7 @@ public class ReservationFragment extends Fragment {
         reservations.add(res5);
         reservations.add(res6);
         RVAdapterRes adapter = new RVAdapterRes(reservations);
-        //adapter.setHasStableIds(true);
+
         reservation.setAdapter(adapter);
     }
 }
