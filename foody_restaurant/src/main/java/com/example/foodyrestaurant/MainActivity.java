@@ -31,7 +31,6 @@ public class MainActivity extends AppCompatActivity {
         setContentView(R.layout.bottom_bar);
         if (savedInstanceState != null) {
             String lastFragment = savedInstanceState.getString("lastFragment", null);
-            Log.d("SWSW", lastFragment);
             if (lastFragment != null) {
                 if (lastFragment.compareTo("menu") == 0) {
                     active = menu;
