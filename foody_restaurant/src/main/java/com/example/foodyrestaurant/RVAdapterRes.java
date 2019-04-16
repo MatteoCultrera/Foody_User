@@ -107,8 +107,7 @@ public class RVAdapterRes extends RecyclerView.Adapter<RVAdapterRes.CardViewHold
         pvh.accept.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                pvh.accept.setVisibility(View.GONE);
-                pvh.decline.setVisibility(View.GONE);
+                pvh.buttonLayout.setVisibility(View.GONE);
                 reservations.get(i).setAccepted(true);
                 reservations.get(i).setPreparationStatus(Reservation.prepStatus.DOING);
                 pvh.status.setText(reservations.get(i).getPreparationStatusString());
@@ -150,6 +149,7 @@ public class RVAdapterRes extends RecyclerView.Adapter<RVAdapterRes.CardViewHold
         MaterialButton decline;
         FloatingActionButton plus;
         ConstraintLayout constraint;
+        ConstraintLayout buttonLayout;
         TextView userName;
 
 
@@ -167,7 +167,7 @@ public class RVAdapterRes extends RecyclerView.Adapter<RVAdapterRes.CardViewHold
             plus = itemView.findViewById(R.id.plusReservation);
             constraint = itemView.findViewById(R.id.constrGone);
             userName = itemView.findViewById(R.id.user_name);
-
+            buttonLayout = itemView.findViewById(R.id.buttonLayout);
         }
     }
 }
