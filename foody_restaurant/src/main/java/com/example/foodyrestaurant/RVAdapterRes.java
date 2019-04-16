@@ -78,7 +78,11 @@ public class RVAdapterRes extends RecyclerView.Adapter<RVAdapterRes.CardViewHold
         pvh.time.setText(reservations.get(i).getOrderTime());
         pvh.userName.setText(reservations.get(i).getUserName());
         pvh.userLevel.setText(reservations.get(i).getUserLevel());
-        
+        if(reservations.get(i).getResNote() == null) {
+            pvh.notePlaceholder.setVisibility(View.GONE);
+            pvh.notes.setVisibility(View.GONE);
+            pvh.separatorInfoNote.setVisibility(View.GONE);
+        }
         pvh.notes.setText(reservations.get(i).getResNote());
 
         if(reservations.get(i).isAccepted() && reservations.get(i).getPreparationStatus() == Reservation.prepStatus.DOING) {
@@ -172,6 +176,8 @@ public class RVAdapterRes extends RecyclerView.Adapter<RVAdapterRes.CardViewHold
         TextView userLevel;
         TextView notes;
         AppCompatImageButton phone;
+        TextView notePlaceholder;
+        View separatorInfoNote;
 
         CardViewHolder(View itemView) {
             super(itemView);
@@ -190,6 +196,8 @@ public class RVAdapterRes extends RecyclerView.Adapter<RVAdapterRes.CardViewHold
             notes = itemView.findViewById(R.id.note_text);
             phone = itemView.findViewById(R.id.call_user);
             userLevel = itemView.findViewById(R.id.user_level);
+            notePlaceholder = itemView.findViewById(R.id.note_placeholder);
+            separatorInfoNote = itemView.findViewById(R.id.separator2);
         }
     }
 }
