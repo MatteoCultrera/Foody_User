@@ -39,7 +39,6 @@ public class RVAdapterEdit extends RecyclerView.Adapter<RVAdapterEdit.CardEdit>{
     public void onBindViewHolder(final CardEdit cardViewHolder,final int i) {
         final Context context = cardViewHolder.title.getContext();
         cardViewHolder.title.setText(cards.get(i).getTitle());
-        Log.d("TITLECHECK", ""+cards.get(i).getTitle());
 
         if(!cards.get(i).isEditing()){
             cardViewHolder.layout.setOnClickListener(new View.OnClickListener() {

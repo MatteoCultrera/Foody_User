@@ -58,6 +58,7 @@ public class RVAdapterRes extends RecyclerView.Adapter<RVAdapterRes.CardViewHold
         pvh.status.setText(reservations.get(i).getPreparationStatusString());
         pvh.time.setText(reservations.get(i).getOrderTime());
         pvh.userName.setText(reservations.get(i).getUserName());
+
         if(reservations.get(i).getResNote() == null) {
             pvh.notePlaceholder.setVisibility(View.GONE);
             pvh.notes.setVisibility(View.GONE);
@@ -65,7 +66,7 @@ public class RVAdapterRes extends RecyclerView.Adapter<RVAdapterRes.CardViewHold
         }
         pvh.notes.setText(reservations.get(i).getResNote());
 
-        if(reservations.get(i).isAccepted() && reservations.get(i).getPreparationStatus() == Reservation.prepStatus.DOING) {
+        if(reservations.get(i).isAccepted()) {
             pvh.accept.setVisibility(View.GONE);
             pvh.decline.setVisibility(View.GONE);
         }

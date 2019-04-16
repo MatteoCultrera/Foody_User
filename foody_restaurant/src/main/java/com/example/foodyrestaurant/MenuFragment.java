@@ -101,7 +101,6 @@ public class MenuFragment extends Fragment {
             c = new Card("Secondi");
             c.setDishes(dishes);
             cards.add(c);
-
         }
 
         json = jsonHandler.toJSON(cards);

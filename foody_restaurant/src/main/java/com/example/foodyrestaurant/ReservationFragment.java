@@ -2,6 +2,8 @@ package com.example.foodyrestaurant;
 
 import android.os.Bundle;
 import android.os.Environment;
+import android.support.annotation.NonNull;
+import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -66,7 +68,7 @@ public class ReservationFragment extends Fragment {
             toAdd = new Dish("Coca Cola", "pizza", 2.0f, null);
             toAdd.setQuantity(6);
             dishes.add(toAdd);
-            Reservation res1 = new Reservation(getResources().getString(R.string.reservation) + "252850",
+            Reservation res1 = new Reservation(getResources().getString(R.string.idRes) + " " +"252850",
                     dishes, Reservation.prepStatus.PENDING, false,"12:30", "Daniele Leto",
                     "3469489722", "Suonare campanello giallo", "Foody Expert",
                     "danieleleto@gmail.com", "Viale Dei Nanni 5, Torino");
@@ -77,7 +79,7 @@ public class ReservationFragment extends Fragment {
             toAdd = new Dish("Quattro Stagioni", "pizza", 2.0f, null);
             toAdd.setQuantity(4);
             dishes.add(toAdd);
-            Reservation res2 = new Reservation(getResources().getString(R.string.reservation) + "252851",
+            Reservation res2 = new Reservation(getResources().getString(R.string.idRes) + " " +"252851",
                     dishes, Reservation.prepStatus.PENDING, false,"13:00", "Matteo Cultrera",
                     "3333333333", null, "Foody Beginner",
                     "matteocult@gmail.com", "Via Abruzzi 37, Torino");
@@ -88,7 +90,7 @@ public class ReservationFragment extends Fragment {
             toAdd = new Dish("Vegetariana", "pizza", 2.0f, null);
             toAdd.setQuantity(4);
             dishes.add(toAdd);
-            Reservation res3 = new Reservation(getResources().getString(R.string.reservation) + "300000",
+            Reservation res3 = new Reservation(getResources().getString(R.string.idRes) + " " +"300000",
                     dishes, Reservation.prepStatus.PENDING, false,"13:00", "Matteo Cultrera",
                     "3333333333", null, "Foody Beginner",
                     "matteocult@gmail.com", "Via Abruzzi 37, Torino");
@@ -102,7 +104,7 @@ public class ReservationFragment extends Fragment {
             toAdd = new Dish("Coca Cola", "pizza", 2.0f, null);
             toAdd.setQuantity(6);
             dishes.add(toAdd);
-            Reservation res4 = new Reservation(getResources().getString(R.string.reservation) + "400000",
+            Reservation res4 = new Reservation(getResources().getString(R.string.idRes) + " " +"400000",
                     dishes, Reservation.prepStatus.PENDING, false,"12:30", "Mattia Cara",
                     "3469489722", "Suonare campanello giallo", "Foody Expert",
                     "mattCara@gmail.com", "Via Boggio 55, Torino");
@@ -121,7 +123,7 @@ public class ReservationFragment extends Fragment {
             toAdd = new Dish("Coca Cola", "pizza", 2.0f, null);
             toAdd.setQuantity(6);
             dishes.add(toAdd);
-            Reservation res5 = new Reservation(getResources().getString(R.string.reservation) + "500000",
+            Reservation res5 = new Reservation(getResources().getString(R.string.idRes) + " " +"500000",
                     dishes, Reservation.prepStatus.PENDING, false,"12:45", "Fabio Carfì",
                     "3469489722", "Suonare campanello giallo, perchè ho bisogno della pizza calda e consegnata in tempo",
                     "Foody Beginner", "fabCarfi@gmail.com", "Via Tripoli 101, Torino");

@@ -52,7 +52,7 @@
                 android:id="@+id/status"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginStart="16dp"
+                android:layout_marginStart="20dp"
                 android:fontFamily="@font/roboto_regular"
                 android:textColor="@color/secondaryText"
                 android:textSize="16sp"
@@ -118,6 +118,7 @@
 
             <android.support.constraint.ConstraintLayout
                 android:id="@+id/constrGone"
+                android:visibility="gone"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="16dp"
