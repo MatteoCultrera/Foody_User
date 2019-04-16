@@ -20,7 +20,7 @@
             app:layout_constraintTop_toTopOf="parent">
 
             <ImageView
-                android:id="@+id/imageView1"
+                android:id="@+id/shadow"
                 android:layout_width="0dp"
                 android:layout_height="0dp"
                 android:contentDescription="@null"

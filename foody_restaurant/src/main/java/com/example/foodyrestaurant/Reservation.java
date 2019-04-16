@@ -4,7 +4,7 @@ import java.util.ArrayList;
 
 public class Reservation {
 
-    enum  prepStatus {
+    enum prepStatus {
         PENDING,
         DOING,
         DONE,
@@ -25,17 +25,20 @@ public class Reservation {
     private String resNote;
     private String orderTime;
 
-    public Reservation(String identifier, ArrayList<Dish> dishes, prepStatus preparationStatus, String orderTime,
-                       String userName, String userPhone, String resNote, String userLevel){
+    public Reservation(String identifier, ArrayList<Dish> dishes, prepStatus preparationStatus, boolean accepted,
+                       String orderTime, String userName, String userPhone, String resNote, String userLevel,
+                       String userEmail, String userAddress){
         this.reservationID = identifier;
         this.dishesOrdered = dishes;
+        this.accepted = accepted;
         this.preparationStatus = preparationStatus;
         this.orderTime = orderTime;
         this.userName = userName;
         this.userPhone = userPhone;
         this.resNote = resNote;
         this.userLevel = userLevel;
-
+        this.userEmail = userEmail;
+        this.userAddress = userAddress;
     }
 
     public String getReservationID() {
