@@ -12,13 +12,13 @@
         android:layout_height="match_parent"
         android:layout_marginStart="16dp"
         android:layout_marginEnd="16dp"
+        android:layout_marginBottom="6dp"
         app:cardCornerRadius="16dp"
+        app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.0"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        android:layout_marginBottom="6dp"
-        app:layout_constraintBottom_toBottomOf="parent">
+        app:layout_constraintTop_toTopOf="parent">
 
         <android.support.constraint.ConstraintLayout
             android:layout_width="match_parent"
@@ -36,7 +36,6 @@
                 android:textSize="25sp"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toTopOf="parent" />
-
 
             <TextView
                 android:id="@+id/time"
@@ -84,155 +83,157 @@
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toBottomOf="@id/separator" />
 
-
-
             <android.support.constraint.ConstraintLayout
                 android:id="@+id/buttonLayout"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toBottomOf="@id/orderList">
 
-            <android.support.design.button.MaterialButton
-                android:id="@+id/acceptOrder"
-                app:layout_goneMarginBottom="10dp"
-                android:layout_width="116dp"
-                android:layout_height="58dp"
-                android:layout_marginStart="36dp"
-                android:layout_marginTop="16dp"
-                android:backgroundTint="#11DB40"
-                android:text="@string/Accept"
-                app:cornerRadius="140dp"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toTopOf="parent" />
+                <android.support.design.button.MaterialButton
+                    android:id="@+id/acceptOrder"
+                    android:layout_width="116dp"
+                    android:layout_height="58dp"
+                    android:layout_marginStart="36dp"
+                    android:layout_marginTop="16dp"
+                    android:backgroundTint="#11DB40"
+                    android:text="@string/Accept"
+                    app:cornerRadius="140dp"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toTopOf="parent" />
 
-            <android.support.design.button.MaterialButton
-                android:id="@+id/declineOrder"
-                android:layout_width="116dp"
-                android:layout_height="58dp"
-                android:layout_marginTop="16dp"
-                android:layout_marginEnd="36dp"
-                android:layout_marginBottom="20dp"
-                android:backgroundTint="#FF0000"
-                android:text="@string/Decline"
-                app:cornerRadius="140dp"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintTop_toTopOf="parent"
-                app:layout_constraintBottom_toBottomOf="parent"/>
+                <android.support.design.button.MaterialButton
+                    android:id="@+id/declineOrder"
+                    android:layout_width="116dp"
+                    android:layout_height="58dp"
+                    android:layout_marginTop="16dp"
+                    android:layout_marginEnd="36dp"
+                    android:backgroundTint="#FF0000"
+                    android:text="@string/Decline"
+                    app:cornerRadius="140dp"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintTop_toTopOf="parent" />
             </android.support.constraint.ConstraintLayout>
 
             <android.support.constraint.ConstraintLayout
                 android:id="@+id/constrGone"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
+                android:visibility="gone"
+                android:layout_marginTop="16dp"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@+id/buttonLayout"
-                >
+                app:layout_constraintTop_toBottomOf="@+id/buttonLayout">
 
-                <RelativeLayout
-                    android:layout_width="match_parent"
+                <TextView
+                    android:id="@+id/additional_info"
+                    android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:paddingStart="16dp"
-                    android:paddingEnd="16dp"
-                    android:layout_marginTop="17dp"
-                    app:layout_constraintBottom_toBottomOf="parent"
-                    app:layout_constraintEnd_toEndOf="parent"
+                    android:layout_marginStart="16dp"
+                    android:fontFamily="@font/roboto_regular"
+                    android:text="Additional info:"
+                    android:textColor="@color/primaryText"
+                    android:textSize="16sp"
                     app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toTopOf="parent">
+                    app:layout_constraintTop_toTopOf="parent" />
 
-                    <TextView
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:fontFamily="@font/roboto_regular"
-                        android:text="Additional info:"
-                        android:textColor="@color/primaryText"
-                        android:textSize="16sp" />
+                <de.hdodenhof.circleimageview.CircleImageView
+                    android:id="@+id/user_image"
+                    android:layout_width="34dp"
+                    android:layout_height="34dp"
+                    android:layout_marginStart="16dp"
+                    android:layout_marginTop="2dp"
+                    android:src="@drawable/profile_placeholder"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toBottomOf="@id/additional_info" />
 
-                    <de.hdodenhof.circleimageview.CircleImageView
-                        android:id="@+id/user_image"
-                        android:layout_width="34dp"
-                        android:layout_height="34dp"
-                        android:layout_marginStart="0dp"
-                        android:layout_marginTop="26dp"
-                        android:src="@drawable/profile_placeholder" />
+                <TextView
+                    android:id="@+id/user_name"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="8dp"
+                    android:layout_marginTop="20dp"
+                    android:fontFamily="@font/roboto_regular"
+                    android:text="Simona Currà"
+                    android:textColor="@color/primaryText"
+                    android:textSize="16sp"
+                    app:layout_constraintStart_toEndOf="@id/user_image"
+                    app:layout_constraintTop_toTopOf="parent" />
 
-                    <TextView
-                        android:id="@+id/user_name"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_marginStart="42dp"
-                        android:layout_marginTop="24dp"
-                        android:fontFamily="@font/roboto_regular"
-                        android:text="Simona Currà"
-                        android:textColor="@color/primaryText"
-                        android:textSize="16sp" />
+                <TextView
+                    android:id="@+id/user_level"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="8dp"
+                    android:fontFamily="@font/roboto_regular"
+                    android:text="Foody Beginner"
+                    android:textColor="@color/secondaryText"
+                    android:textSize="12sp"
+                    app:layout_constraintStart_toEndOf="@id/user_image"
+                    app:layout_constraintTop_toBottomOf="@+id/user_name" />
 
-                    <TextView
-                        android:id="@+id/user_level"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_marginStart="42dp"
-                        android:layout_marginTop="44dp"
-                        android:fontFamily="@font/roboto_regular"
-                        android:text="Foody Beginner"
-                        android:textColor="@color/secondaryText"
-                        android:textSize="12sp"
-                        app:layout_constraintBottom_toBottomOf="parent"
-                        app:layout_constraintEnd_toEndOf="parent"
-                        app:layout_constraintStart_toStartOf="parent"
-                        app:layout_constraintTop_toTopOf="parent" />
+                <View
+                    android:id="@+id/separator2"
+                    android:layout_width="match_parent"
+                    android:layout_height="1dp"
+                    android:layout_marginStart="16dp"
+                    android:layout_marginTop="6dp"
+                    android:layout_marginEnd="16dp"
+                    android:background="@android:color/black"
+                    app:layout_constraintTop_toBottomOf="@id/user_image" />
 
-                    <View
-                        android:id="@+id/separator2"
-                        android:layout_width="match_parent"
-                        android:layout_height="1dp"
-                        android:layout_marginStart="0dp"
-                        android:layout_marginTop="70dp"
-                        android:layout_marginEnd="0dp"
-                        android:background="@android:color/black" />
+                <View
+                    android:id="@+id/separator3"
+                    android:layout_width="1dp"
+                    android:layout_height="36dp"
+                    android:layout_marginStart="300dp"
+                    android:layout_marginTop="20dp"
+                    android:layout_marginEnd="57dp"
+                    android:background="@android:color/black"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintTop_toTopOf="parent" />
 
-                    <View
-                        android:id="@+id/separator3"
-                        android:layout_width="1dp"
-                        android:layout_height="36dp"
-                        android:layout_marginStart="300dp"
-                        android:layout_marginTop="26dp"
-                        android:background="@android:color/black" />
+                <android.support.v7.widget.AppCompatImageButton
+                    android:id="@+id/call_user"
+                    android:layout_width="34dp"
+                    android:layout_height="34dp"
+                    android:layout_marginTop="22dp"
+                    android:layout_marginEnd="16dp"
+                    android:background="#FFFFFFFF"
+                    android:scaleType="centerCrop"
+                    android:src="@drawable/phone_black"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toEndOf="@id/separator3"
+                    app:layout_constraintTop_toTopOf="parent" />
 
-                    <android.support.v7.widget.AppCompatImageButton
-                        android:id="@+id/call_user"
-                        android:layout_width="32dp"
-                        android:layout_height="32dp"
-                        android:layout_marginStart="310dp"
-                        android:layout_marginTop="28dp"
-                        android:background="#FFFFFFFF"
-                        android:scaleType="centerCrop"
-                        android:src="@drawable/phone_black" />
+                <TextView
+                    android:id="@+id/note_placeholder"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="16dp"
+                    android:layout_marginTop="6dp"
+                    android:fontFamily="@font/roboto_regular"
+                    android:text="Notes:"
+                    android:textColor="@color/primaryText"
+                    android:textSize="14sp"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toBottomOf="@id/separator2" />
 
-                    <TextView
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_marginTop="78dp"
-                        android:fontFamily="@font/roboto_regular"
-                        android:text="Notes:"
-                        android:textColor="@color/primaryText"
-                        android:textSize="14sp" />
-
-                    <TextView
-                        android:id="@+id/note_text"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_marginTop="100dp"
-                        android:fontFamily="@font/roboto_regular"
-                        android:text="PROVA"
-                        android:textColor="@color/secondaryText"
-                        android:textSize="14sp" />
-
-                </RelativeLayout>
-
+                <TextView
+                    android:id="@+id/note_text"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="16dp"
+                    android:layout_marginTop="2dp"
+                    android:fontFamily="@font/roboto_regular"
+                    android:text="PROVA"
+                    android:textColor="@color/secondaryText"
+                    android:textSize="14sp"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toBottomOf="@id/note_placeholder" />
 
             </android.support.constraint.ConstraintLayout>
 

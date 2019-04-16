@@ -127,7 +127,10 @@ public class RVAdapterRes extends RecyclerView.Adapter<RVAdapterRes.CardViewHold
         pvh.plus.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                pvh.constraint.setVisibility(View.VISIBLE);
+                if(pvh.additionalLayout.getVisibility() == View.VISIBLE)
+                    pvh.additionalLayout.setVisibility(View.GONE);
+                else
+                    pvh.additionalLayout.setVisibility(View.VISIBLE);
             }
         });
 
@@ -145,29 +148,27 @@ public class RVAdapterRes extends RecyclerView.Adapter<RVAdapterRes.CardViewHold
         TextView time;
         TextView status;
         LinearLayout menuDishes;
+        ConstraintLayout buttonLayout;
         MaterialButton accept;
         MaterialButton decline;
         FloatingActionButton plus;
-        ConstraintLayout constraint;
-        ConstraintLayout buttonLayout;
+        ConstraintLayout additionalLayout;
         TextView userName;
-
-
 
         CardViewHolder(View itemView) {
             super(itemView);
 
             cv = itemView.findViewById(R.id.cv);
             idOrder = itemView.findViewById(R.id.idOrder);
-            menuDishes = itemView.findViewById(R.id.orderList);
             time = itemView.findViewById(R.id.time);
             status = itemView.findViewById(R.id.status);
+            menuDishes = itemView.findViewById(R.id.orderList);
+            buttonLayout = itemView.findViewById(R.id.buttonLayout);
             accept = itemView.findViewById(R.id.acceptOrder);
             decline = itemView.findViewById(R.id.declineOrder);
             plus = itemView.findViewById(R.id.plusReservation);
-            constraint = itemView.findViewById(R.id.constrGone);
+            additionalLayout = itemView.findViewById(R.id.constrGone);
             userName = itemView.findViewById(R.id.user_name);
-            buttonLayout = itemView.findViewById(R.id.buttonLayout);
         }
     }
 }
