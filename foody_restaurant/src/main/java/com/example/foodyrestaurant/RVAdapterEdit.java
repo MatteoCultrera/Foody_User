@@ -38,11 +38,10 @@ public class RVAdapterEdit extends RecyclerView.Adapter<RVAdapterEdit.CardEdit>{
     @Override
     public void onBindViewHolder(final CardEdit cardViewHolder,final int i) {
         final Context context = cardViewHolder.title.getContext();
-       cardViewHolder.title.setText(cards.get(i).getTitle());
-       Log.d("TITLECHECK", ""+cards.get(i).getTitle());
+        cardViewHolder.title.setText(cards.get(i).getTitle());
 
-       if(!cards.get(i).isEditing()){
-           cardViewHolder.layout.setOnClickListener(new View.OnClickListener() {
+        if(!cards.get(i).isEditing()){
+            cardViewHolder.layout.setOnClickListener(new View.OnClickListener() {
                @Override
                public void onClick(View v) {
                    Intent intent = new Intent(context.getApplicationContext(), MenuEditItem.class);
@@ -50,10 +49,10 @@ public class RVAdapterEdit extends RecyclerView.Adapter<RVAdapterEdit.CardEdit>{
                    b.putString("MainName", cards.get(i).getTitle());
                    intent.putExtras(b);
                    cardViewHolder.box.getContext().startActivity(intent);
-               }
-           });
-           cardViewHolder.title.setClickable(true);
-           cardViewHolder.title.setOnClickListener(new View.OnClickListener() {
+                }
+            });
+            cardViewHolder.title.setClickable(true);
+            cardViewHolder.title.setOnClickListener(new View.OnClickListener() {
                @Override
                public void onClick(View v) {
                    Intent intent = new Intent(cardViewHolder.box.getContext().getApplicationContext(), MenuEditItem.class);
@@ -61,14 +60,14 @@ public class RVAdapterEdit extends RecyclerView.Adapter<RVAdapterEdit.CardEdit>{
                    b.putString("MainName", cards.get(i).getTitle());
                    intent.putExtras(b);
                    cardViewHolder.box.getContext().startActivity(intent);
-               }
-           });
-       }else{
-           cardViewHolder.layout.setOnClickListener(null);
-           cardViewHolder.title.setClickable(true);
-           cardViewHolder.title.setOnClickListener(null);
+                }
+            });
+        } else {
+            cardViewHolder.layout.setOnClickListener(null);
+            cardViewHolder.title.setClickable(true);
+            cardViewHolder.title.setOnClickListener(null);
 
-       }
+        }
 
         cardViewHolder.box.setOnCheckedChangeListener(null);
 
@@ -83,18 +82,17 @@ public class RVAdapterEdit extends RecyclerView.Adapter<RVAdapterEdit.CardEdit>{
             }
         });
 
-       if(cards.get(i).isEditing()){
+        if(cards.get(i).isEditing()){
             cardViewHolder.box.setAlpha(1.0f);
             cardViewHolder.arrow.setAlpha(0.0f);
             float distance = cardViewHolder.box.getContext().getResources().getDimensionPixelSize(R.dimen.short36);
             cardViewHolder.title.setX(distance);
             cardViewHolder.layout.setClickable(true);
-       }else{
-           cardViewHolder.arrow.setAlpha(1.0f);
-           cardViewHolder.box.setAlpha(0.0f);
-           cardViewHolder.title.setX(0);
-       }
-
+        } else {
+            cardViewHolder.arrow.setAlpha(1.0f);
+            cardViewHolder.box.setAlpha(0.0f);
+            cardViewHolder.title.setX(0);
+        }
     }
 
     public boolean normalToEdit(RecyclerView.ViewHolder view){

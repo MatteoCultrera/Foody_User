@@ -1,7 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <android.support.constraint.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:background="#E4E4E4">
@@ -53,7 +52,7 @@
                 android:id="@+id/status"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginStart="16dp"
+                android:layout_marginStart="20dp"
                 android:fontFamily="@font/roboto_regular"
                 android:textColor="@color/secondaryText"
                 android:textSize="16sp"
@@ -119,10 +118,10 @@
 
             <android.support.constraint.ConstraintLayout
                 android:id="@+id/constrGone"
+                android:visibility="gone"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="16dp"
-                android:visibility="gone"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
@@ -140,38 +139,17 @@
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintTop_toTopOf="parent" />
 
-                <de.hdodenhof.circleimageview.CircleImageView
-                    android:id="@+id/user_image"
-                    android:layout_width="34dp"
-                    android:layout_height="34dp"
-                    android:layout_marginStart="16dp"
-                    android:layout_marginTop="2dp"
-                    android:src="@drawable/profile_placeholder"
-                    app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toBottomOf="@id/additional_info" />
-
                 <TextView
                     android:id="@+id/user_name"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_marginStart="8dp"
-                    android:layout_marginTop="20dp"
+                    android:layout_marginStart="16dp"
+                    android:layout_marginTop="26dp"
                     android:fontFamily="@font/roboto_regular"
                     android:textColor="@color/primaryText"
                     android:textSize="16sp"
-                    app:layout_constraintStart_toEndOf="@id/user_image"
+                    app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintTop_toTopOf="parent" />
-
-                <TextView
-                    android:id="@+id/user_level"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_marginStart="8dp"
-                    android:fontFamily="@font/roboto_regular"
-                    android:textColor="@color/secondaryText"
-                    android:textSize="12sp"
-                    app:layout_constraintStart_toEndOf="@id/user_image"
-                    app:layout_constraintTop_toBottomOf="@+id/user_name" />
 
                 <View
                     android:id="@+id/separator2"
@@ -181,15 +159,15 @@
                     android:layout_marginTop="6dp"
                     android:layout_marginEnd="16dp"
                     android:background="@android:color/black"
-                    app:layout_constraintTop_toBottomOf="@id/user_image" />
+                    app:layout_constraintTop_toBottomOf="@id/user_name"/>
 
                 <View
                     android:id="@+id/separator3"
                     android:layout_width="1dp"
                     android:layout_height="36dp"
                     android:layout_marginStart="300dp"
-                    android:layout_marginTop="20dp"
-                    android:layout_marginEnd="57dp"
+                    android:layout_marginTop="12dp"
+                    android:layout_marginEnd="70dp"
                     android:background="@android:color/black"
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintTop_toTopOf="parent" />
@@ -198,13 +176,12 @@
                     android:id="@+id/call_user"
                     android:layout_width="34dp"
                     android:layout_height="34dp"
-                    android:layout_marginTop="22dp"
-                    android:layout_marginEnd="16dp"
+                    android:layout_marginTop="12dp"
+                    android:layout_marginEnd="32dp"
                     android:background="#FFFFFFFF"
                     android:scaleType="centerCrop"
                     android:src="@drawable/phone_black"
                     app:layout_constraintEnd_toEndOf="parent"
-                    app:layout_constraintStart_toEndOf="@id/separator3"
                     app:layout_constraintTop_toTopOf="parent" />
 
                 <TextView
@@ -222,13 +199,15 @@
 
                 <TextView
                     android:id="@+id/note_text"
-                    android:layout_width="wrap_content"
+                    android:layout_width="0dp"
                     android:layout_height="wrap_content"
                     android:layout_marginStart="16dp"
                     android:layout_marginTop="2dp"
+                    android:layout_marginEnd="16dp"
                     android:fontFamily="@font/roboto_regular"
                     android:textColor="@color/secondaryText"
                     android:textSize="14sp"
+                    app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintTop_toBottomOf="@id/note_placeholder" />
 

@@ -1,22 +1,22 @@
 <resources>
     <string name="app_name">Foody Restaurant</string>
-    <string name="reservation">ID: </string>
     <string name="restaurant_maintype">Italian Restaurant</string>
-    <string name="alert_dialog_new_card_title">Insert new course\'s name</string>
     <string name="namerosso">RossoPomodoro</string>
     <string name="phone_rosso">011485959</string>
     <string name="mail_rosso">info@rossopomodoro.it</string>
     <string name="address_rosso">via Treviso 42/F, Torino</string>
+    <string name="timetable">Timetable</string>
     <string name="opening_time">Select opening time</string>
     <string name="closing_time">Select closing time</string>
-    <string name="timetable">Timetable</string>
-    <string name="alert_dialog_error_card_name">There is already a course with that name</string>
+
     <string name="placeholder_price">0,00 €</string>
     <string name="delivery_price">Delivery price</string>
     <string name="food_type">Select cuisines (max. 3)</string>
     <string name="food_type_unselect"> </string>
     <string name="value">$</string>
     <string name="max_cuisine">Maximum 3 cuisines</string>
+    <string name="alert_dialog_new_card_title">Insert new course\'s name</string>
+    <string name="alert_dialog_error_card_name">There is already a course with that name</string>
 
     <string-array name="foodcategory_array">
         <item>American</item>
@@ -54,7 +54,7 @@
     <string name="menu">Menu</string>
     <string name="profile">Profile</string>
     <string name="edit_menu">Edit Menu</string>
-    <string name="orders">Orders</string>
+    <string name="orders">Reservations</string>
     <string name="title_edit">Title</string>
     <string name="dish_edit">Dish Name</string>
     <string name="desc_edit">Dish Description</string>
@@ -62,5 +62,6 @@
 
     <string name="notesPlaceholder">Notes:</string>
     <string name="additional">Additional info:</string>
+    <string name="idRes" translatable="false">ID:</string>
 
 </resources>

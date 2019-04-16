@@ -49,25 +49,6 @@ public class RVAdapterRes extends RecyclerView.Adapter<RVAdapterRes.CardViewHold
 
     @Override
     public void onBindViewHolder(final CardViewHolder pvh, final int i) {
-        /*pvh.title.setText(reservations.get(i).getReservationID());
-        ArrayList<Dish> dishes = reservations.get(i).getDishesOrdered();
-        Context context = pvh.cv.getContext();
-        LayoutInflater inflater = LayoutInflater.from(context);
-
-        for (int j = 0; j < dishes.size(); j++){
-            View dish = inflater.inflate(R.layout.reservation_item_display, pvh.menuDishes, false);
-            TextView title = dish.findViewById(R.id.food_title_res);
-            title.setText(dishes.get(j).getDishName());
-            pvh.menuDishes.addView(dish);
-        }
-
-        if (i == 0){
-            ViewGroup.MarginLayoutParams layoutParams =
-                    (ViewGroup.MarginLayoutParams) pvh.cv.getLayoutParams();
-            layoutParams.setMargins(0, getPixelValue(context,50), 0, getPixelValue(context,6));
-            pvh.cv.requestLayout();
-        }*/
-
         final Context context = pvh.cv.getContext();
         LayoutInflater inflater = LayoutInflater.from(context);
 
@@ -77,11 +58,15 @@ public class RVAdapterRes extends RecyclerView.Adapter<RVAdapterRes.CardViewHold
         pvh.status.setText(reservations.get(i).getPreparationStatusString());
         pvh.time.setText(reservations.get(i).getOrderTime());
         pvh.userName.setText(reservations.get(i).getUserName());
-        pvh.userLevel.setText(reservations.get(i).getUserLevel());
-        
+
+        if(reservations.get(i).getResNote() == null) {
+            pvh.notePlaceholder.setVisibility(View.GONE);
+            pvh.notes.setVisibility(View.GONE);
+            pvh.separatorInfoNote.setVisibility(View.GONE);
+        }
         pvh.notes.setText(reservations.get(i).getResNote());
 
-        if(reservations.get(i).isAccepted() && reservations.get(i).getPreparationStatus() == Reservation.prepStatus.DOING) {
+        if(reservations.get(i).isAccepted()) {
             pvh.accept.setVisibility(View.GONE);
             pvh.decline.setVisibility(View.GONE);
         }
@@ -98,11 +83,9 @@ public class RVAdapterRes extends RecyclerView.Adapter<RVAdapterRes.CardViewHold
                 @Override
                 public void onClick(View v) {
                     if(reservations.get(i).getPreparationStatus() == Reservation.prepStatus.DOING && foodTitle.getPaintFlags() == 0) {
-                        Log.d("MAD", "Here in true");
                         foodTitle.setPaintFlags(Paint.STRIKE_THRU_TEXT_FLAG);
                         dishes.get(toSet).setPrepared(true);
                     } else {
-                        Log.d("MAD", "ELSE");
                         foodTitle.setPaintFlags(0);
                         dishes.get(toSet).setPrepared(false);
                     }
@@ -169,9 +152,10 @@ public class RVAdapterRes extends RecyclerView.Adapter<RVAdapterRes.CardViewHold
         FloatingActionButton plus;
         ConstraintLayout additionalLayout;
         TextView userName;
-        TextView userLevel;
         TextView notes;
         AppCompatImageButton phone;
+        TextView notePlaceholder;
+        View separatorInfoNote;
 
         CardViewHolder(View itemView) {
             super(itemView);
@@ -189,7 +173,8 @@ public class RVAdapterRes extends RecyclerView.Adapter<RVAdapterRes.CardViewHold
             userName = itemView.findViewById(R.id.user_name);
             notes = itemView.findViewById(R.id.note_text);
             phone = itemView.findViewById(R.id.call_user);
-            userLevel = itemView.findViewById(R.id.user_level);
+            notePlaceholder = itemView.findViewById(R.id.note_placeholder);
+            separatorInfoNote = itemView.findViewById(R.id.separator2);
         }
     }
 }

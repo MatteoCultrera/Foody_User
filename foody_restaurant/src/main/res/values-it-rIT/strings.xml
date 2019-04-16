@@ -1,9 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string name="app_name">Foody Restaurant</string>
-
     <string name="restaurant_maintype">Ristorante Italiano</string>
-
     <string name="namerosso">RossoPomodoro</string>
     <string name="phone_rosso">011485959</string>
     <string name="mail_rosso">info@rossopomodoro.it</string>
@@ -18,6 +16,8 @@
     <string name="food_type_unselect"> </string>
     <string name="value">€</string>
     <string name="max_cuisine">Massimo 3 tipi di cucina</string>
+    <string name="alert_dialog_new_card_title">Inserisci il nome della nuova portata</string>
+    <string name="alert_dialog_error_card_name">Esiste già una portata con quel nome</string>
 
     <string-array name="foodcategory_array">
         <item>Americano</item>
@@ -51,21 +51,15 @@
     <string name="alert_dialog_choose_food">"Scegli max. 3 tipi di cucina"</string>
 
     <string name="okButton">Ok</string>
+    <string name="edit">Modifica %1$s</string>
     <string name="menu">Menu</string>
     <string name="profile">Profilo</string>
-    <string name="reservation">ID: </string>
-
-
     <string name="edit_menu">Modifica Menu</string>
-
+    <string name="orders">Prenotazioni</string>
     <string name="title_edit">Titolo</string>
     <string name="dish_edit">Nome del Piatto</string>
     <string name="desc_edit">Descrizione del Piatto</string>
     <string name="price_edit">Prezzo</string>
-    <string name="alert_dialog_new_card_title">Inserisci il nome della nuova portata</string>
-    <string name="alert_dialog_error_card_name">Esiste già una portata con quel nome</string>
-    <string name="edit">Modifica %1$s</string>
-    <string name="orders">Prenotazioni</string>
 
     <string name="notesPlaceholder">Note:</string>
     <string name="additional">Info addizionali:</string>
