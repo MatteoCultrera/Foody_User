@@ -2,8 +2,13 @@ package com.example.foodyrestaurant;
 
 import android.app.AlertDialog;
 import android.content.DialogInterface;
+import android.content.Intent;
+import android.net.Uri;
 import android.os.Environment;
+import android.provider.MediaStore;
+import android.support.annotation.NonNull;
 import android.support.design.widget.FloatingActionButton;
+import android.support.v4.content.FileProvider;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.LinearLayoutManager;
@@ -12,7 +17,11 @@ import android.text.Editable;
 import android.text.TextWatcher;
 import android.util.Log;
 import android.view.View;
+import android.view.ViewGroup;
+import android.widget.ArrayAdapter;
 import android.widget.ImageButton;
+import android.widget.ImageView;
+import android.widget.ListAdapter;
 import android.widget.TextView;
 
 import java.io.File;
@@ -36,6 +45,8 @@ public class MenuEditItem extends AppCompatActivity {
     private final String JSON_COPY = "menuCopy.json";
     private File fileTmp, file;
     private RVAdapterEditItem recyclerAdapter;
+    private final int GALLERY_REQUEST_CODE = 1;
+    private final int REQUEST_CAPTURE_IMAGE = 100;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -276,5 +287,81 @@ public class MenuEditItem extends AppCompatActivity {
         builder.setCancelable(false);
         dialogCode = "back";
         dialogDism = builder.show();
+    }
+
+    public void showPickImageDialog(){
+        final Item[] items = {
+                new Item(getString(R.string.alert_dialog_image_gallery), R.drawable.collections_black),
+                new Item(getString(R.string.alert_dialog_image_camera), R.drawable.camera_black)
+        };
+        ListAdapter arrayAdapter = new ArrayAdapter<Item>(
+                this,
+                R.layout.alert_dialog_item,
+                R.id.tv1,
+                items){
+            @NonNull
+            public View getView(int position, View convertView, @NonNull ViewGroup parent) {
+                View v = super.getView(position, convertView, parent);
+                ImageView iv = v.findViewById(R.id.iv1);
+                iv.setImageDrawable(getDrawable(items[position].getIcon()));
+                return v;
+            }
+        };
+        AlertDialog.Builder builder = new AlertDialog.Builder(this, R.style.AppCompatAlertDialogStyle);
+        builder.setNegativeButton(getResources().getString(R.string.cancel), new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                dialogCode = "ok";
+                dialog.dismiss();
+            }
+        });
+        builder.setTitle(getResources().getString(R.string.alert_dialog_image_title));
+        builder.setCancelable(false);
+        builder.setAdapter(arrayAdapter, new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                switch (which){
+                    case 0:
+                        pickFromGallery();
+                        dialogCode = "ok";
+                        break;
+                    case 1:
+                        pickFromCamera();
+                        dialogCode = "ok";
+                        break;
+                }
+            }
+        });
+        dialogCode = "pickImage";
+        builder.show();
+    }
+
+    private  void pickFromGallery(){
+        /*
+        Intent intent = new Intent(Intent.ACTION_PICK);
+        intent.setType("image/*");
+        String[] mimeTypes = {"image/jpeg", "image/png"};
+        intent.putExtra(Intent.EXTRA_MIME_TYPES,mimeTypes);
+        startActivityForResult(intent,GALLERY_REQUEST_CODE);
+        */
+
+    }
+
+    private void pickFromCamera(){
+        /*
+        Intent pictureIntent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
+        if(pictureIntent.resolveActivity(getPackageManager())!= null){
+
+            File photoFile = createOrReplacePlaceholder();
+
+            if(photoFile!=null){
+                Uri photoURI = FileProvider.getUriForFile(this,
+                        "com.example.foodyrestaurant",
+                        photoFile);
+                pictureIntent.putExtra(MediaStore.EXTRA_OUTPUT, photoURI);
+                startActivityForResult(pictureIntent, REQUEST_CAPTURE_IMAGE);
+            }
+        }
+        */
     }
 }
