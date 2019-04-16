@@ -58,7 +58,6 @@ public class RVAdapterRes extends RecyclerView.Adapter<RVAdapterRes.CardViewHold
         pvh.status.setText(reservations.get(i).getPreparationStatusString());
         pvh.time.setText(reservations.get(i).getOrderTime());
         pvh.userName.setText(reservations.get(i).getUserName());
-        pvh.userLevel.setText(reservations.get(i).getUserLevel());
         if(reservations.get(i).getResNote() == null) {
             pvh.notePlaceholder.setVisibility(View.GONE);
             pvh.notes.setVisibility(View.GONE);
@@ -152,7 +151,6 @@ public class RVAdapterRes extends RecyclerView.Adapter<RVAdapterRes.CardViewHold
         FloatingActionButton plus;
         ConstraintLayout additionalLayout;
         TextView userName;
-        TextView userLevel;
         TextView notes;
         AppCompatImageButton phone;
         TextView notePlaceholder;
@@ -174,7 +172,6 @@ public class RVAdapterRes extends RecyclerView.Adapter<RVAdapterRes.CardViewHold
             userName = itemView.findViewById(R.id.user_name);
             notes = itemView.findViewById(R.id.note_text);
             phone = itemView.findViewById(R.id.call_user);
-            userLevel = itemView.findViewById(R.id.user_level);
             notePlaceholder = itemView.findViewById(R.id.note_placeholder);
             separatorInfoNote = itemView.findViewById(R.id.separator2);
         }
