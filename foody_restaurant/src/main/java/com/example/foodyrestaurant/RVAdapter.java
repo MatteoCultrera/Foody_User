@@ -48,39 +48,39 @@ public class RVAdapter extends RecyclerView.Adapter<RVAdapter.CardViewHolder>{
 
         pvh.menuDishes.removeAllViews();
 
-            for (int j = 0; j < dishes.size(); j++){
-                View dish = inflater.inflate(R.layout.menu_item_display, pvh.menuDishes, false);
-                TextView title = dish.findViewById(R.id.food_title);
-                final TextView titleF = dish.findViewById(R.id.food_title);
-                TextView subtitle = dish.findViewById(R.id.food_subtitle);
-                final TextView subtitleF = dish.findViewById(R.id.food_subtitle);
-                TextView price = dish.findViewById(R.id.price);
-                final TextView priceF = dish.findViewById(R.id.price);
-                ImageView image = dish.findViewById(R.id.food_image);
-                title.setText(dishes.get(j).getDishName());
-                subtitle.setText(dishes.get(j).getDishDescription());
-                price.setText(String.format(Locale.UK,"%.2f", dishes.get(j).getPrice())+" €");
-                if(dishes.get(j).getImage() == null)
-                    image.setVisibility(View.GONE);
-                pvh.menuDishes.addView(dish);
-                dishes.get(j).setAdded(true);
-                final Switch enabler = dish.findViewById(R.id.enabler);
-                enabler.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
-                    @Override
-                    public void onCheckedChanged(CompoundButton compoundButton, boolean b) {
-                        if (!b) {
-                            titleF.setTextColor(ContextCompat.getColor(enabler.getContext(), R.color.errorColor));
-                            subtitleF.setTextColor(ContextCompat.getColor(enabler.getContext(), R.color.errorColor));
-                            priceF.setTextColor(ContextCompat.getColor(enabler.getContext(), R.color.errorColor));
-                        }
-                        else {
-                            titleF.setTextColor(ContextCompat.getColor(enabler.getContext(), R.color.primaryText));
-                            subtitleF.setTextColor(ContextCompat.getColor(enabler.getContext(), R.color.secondaryText));
-                            priceF.setTextColor(ContextCompat.getColor(enabler.getContext(), R.color.primaryText));
-                        }
+        for (int j = 0; j < dishes.size(); j++){
+            View dish = inflater.inflate(R.layout.menu_item_display, pvh.menuDishes, false);
+            TextView title = dish.findViewById(R.id.food_title);
+            final TextView titleF = dish.findViewById(R.id.food_title);
+            TextView subtitle = dish.findViewById(R.id.food_subtitle);
+            final TextView subtitleF = dish.findViewById(R.id.food_subtitle);
+            TextView price = dish.findViewById(R.id.price);
+            final TextView priceF = dish.findViewById(R.id.price);
+            ImageView image = dish.findViewById(R.id.food_image);
+            title.setText(dishes.get(j).getDishName());
+            subtitle.setText(dishes.get(j).getDishDescription());
+            price.setText(String.format(Locale.UK,"%.2f", dishes.get(j).getPrice())+" €");
+            if(dishes.get(j).getImage() == null)
+                image.setVisibility(View.GONE);
+            pvh.menuDishes.addView(dish);
+            dishes.get(j).setAdded(true);
+            final Switch enabler = dish.findViewById(R.id.enabler);
+            enabler.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+                @Override
+                public void onCheckedChanged(CompoundButton compoundButton, boolean b) {
+                    if (!b) {
+                        titleF.setTextColor(ContextCompat.getColor(enabler.getContext(), R.color.errorColor));
+                        subtitleF.setTextColor(ContextCompat.getColor(enabler.getContext(), R.color.errorColor));
+                        priceF.setTextColor(ContextCompat.getColor(enabler.getContext(), R.color.errorColor));
                     }
-                });
-            }
+                    else {
+                        titleF.setTextColor(ContextCompat.getColor(enabler.getContext(), R.color.primaryText));
+                        subtitleF.setTextColor(ContextCompat.getColor(enabler.getContext(), R.color.secondaryText));
+                        priceF.setTextColor(ContextCompat.getColor(enabler.getContext(), R.color.primaryText));
+                    }
+                }
+            });
+        }
 
 
         pvh.title.setText(cards.get(pos).getTitle());
