@@ -2,7 +2,9 @@ package com.example.foodyrestaurant;
 
 import android.annotation.SuppressLint;
 import android.content.Context;
+import android.content.res.ColorStateList;
 import android.support.design.button.MaterialButton;
+import android.support.design.widget.FloatingActionButton;
 import android.support.v7.widget.CardView;
 import android.support.v7.widget.RecyclerView;
 import android.text.Editable;
@@ -17,6 +19,10 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.view.inputmethod.EditorInfo;
 import android.widget.EditText;
+
+import com.bumptech.glide.Glide;
+import com.bumptech.glide.request.RequestOptions;
+
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.Locale;
@@ -77,6 +83,16 @@ public class RVAdapterEditItem extends RecyclerView.Adapter<RVAdapterEditItem.Di
                 }
             }
         });
+
+        RequestOptions options = new RequestOptions();
+        options.fitCenter();
+
+        Glide
+                .with(pvh.dishPicture.getContext())
+                .load(R.drawable.placeholder_plate)
+                .apply(options)
+                .into(pvh.dishPicture);
+
 
         return pvh;
     }
@@ -143,11 +159,19 @@ public class RVAdapterEditItem extends RecyclerView.Adapter<RVAdapterEditItem.Di
         });
 
         if(!dishViewHolder.dishName.getText().toString().isEmpty() && dishViewHolder.valid){
+            dishViewHolder.editImage.setEnabled(true);
             dishViewHolder.dishName.setError(null);
         }
 
         if(dishViewHolder.dishName.getError() == null && !dishViewHolder.dishName.hasFocus())
             dishViewHolder.dishName.setCompoundDrawablesWithIntrinsicBounds(0, 0, 0, 0);
+
+        dishViewHolder.editImage.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                editItem.showPickImageDialog();
+            }
+        });
 
 
     }
@@ -167,6 +191,7 @@ public class RVAdapterEditItem extends RecyclerView.Adapter<RVAdapterEditItem.Di
         DishPriceListener dishPriceListener;
         DeleteListener deleteListener;
         MaterialButton deleteButton;
+        MaterialButton editImage;
         boolean valid;
 
         DishEdit(View itemView, DishNameEditTextListener nameListener,
@@ -182,6 +207,7 @@ public class RVAdapterEditItem extends RecyclerView.Adapter<RVAdapterEditItem.Di
             dishDesc = itemView.findViewById(R.id.dish_description);
             price = itemView.findViewById(R.id.dish_price);
             deleteButton = itemView.findViewById(R.id.deleteButton);
+            editImage = itemView.findViewById(R.id.edit_image);
             this.nameListener = nameListener;
             this.descriptionListener = descriptionListener;
             this.decimalDigitsInputFilter = decimalDigitsInputFilter;
@@ -189,7 +215,7 @@ public class RVAdapterEditItem extends RecyclerView.Adapter<RVAdapterEditItem.Di
             this.deleteListener = deleteListener;
 
             dishName.addTextChangedListener(nameListener);
-            nameListener.setEditText(dishName, this);
+            nameListener.setEditText(dishName, this, this.editImage);
 
             dishDesc.addTextChangedListener(descriptionListener);
             descriptionListener.setEditText(dishDesc);
@@ -264,11 +290,13 @@ public class RVAdapterEditItem extends RecyclerView.Adapter<RVAdapterEditItem.Di
         private int position;
         private EditText editText;
         private DishEdit dishEdit;
+        private MaterialButton editImage;
         private int count = 0;
 
-        public void setEditText(EditText text, DishEdit dishEdit){
+        public void setEditText(EditText text, DishEdit dishEdit, MaterialButton editImage){
             editText = text;
             this.dishEdit = dishEdit;
+            this.editImage = editImage;
         }
 
         void updatePosition(int position) {
@@ -287,20 +315,31 @@ public class RVAdapterEditItem extends RecyclerView.Adapter<RVAdapterEditItem.Di
             }
             count ++;
             dishes.get(position).setDishName(charSequence.toString());
+            Log.d("TITLECHECK","Set Enabled True");
+            if(editImage.isEnabled() == false){
+                editImage.setEnabled(true);
+                notifyItemChanged(position);
+            }
+
+            editItem.saveEnabled(true);
             if(charSequence.toString().isEmpty()){
+                Log.d("TITLECHECK","Set Enabled False");
+                editImage.setEnabled(false);
                 editText.setError(editText.getContext().getString(R.string.error_dish_name_missing));
                 dishEdit.valid=false;
                 editItem.saveEnabled(false);
             } else if(alreadyExists(charSequence.toString())){
+                editImage.setEnabled(false);
+                Log.d("TITLECHECK","Set Enabled False");
                 editText.setError(editText.getContext().getString(R.string.error_dish_name_duplicate));
                 dishEdit.valid = false;
                 editItem.saveEnabled(false);
             } else if(checkError()){
-                editItem.saveEnabled(true);
                 dishEdit.valid = true;
             }
             else
                 dishEdit.valid = true;
+
         }
 
         @Override
