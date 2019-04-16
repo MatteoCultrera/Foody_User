@@ -51,12 +51,19 @@ public class ReservationFragment extends Fragment {
         toAdd = new Dish("Coca Cola","pizza",2.0f, null);
         toAdd.setQuantity(1);
         dishes.add(toAdd);
-        Reservation res1 = new Reservation(getResources().getString(R.string.reservation) + "252850", dishes, Reservation.prepStatus.PENDING,"12:30");
-        Reservation res2 = new Reservation(getResources().getString(R.string.reservation) + "252851", dishes, Reservation.prepStatus.PENDING,"12:45");
-        Reservation res3 = new Reservation(getResources().getString(R.string.reservation) + "300000", dishes, Reservation.prepStatus.PENDING, "12:45");
-        Reservation res4 = new Reservation(getResources().getString(R.string.reservation) + "400000", dishes, Reservation.prepStatus.PENDING,"12:30");
-        Reservation res5 = new Reservation(getResources().getString(R.string.reservation) + "500000", dishes, Reservation.prepStatus.PENDING,"12:45");
-        Reservation res6 = new Reservation(getResources().getString(R.string.reservation) + "600000", dishes, Reservation.prepStatus.PENDING, "12:45");
+        Reservation res1 = new Reservation(getResources().getString(R.string.reservation) + "252850", dishes, Reservation.prepStatus.PENDING,"12:30",
+                "Daniele Leto", "3469489722", "Suonare campanello giallo", "Foody Expert");
+        Reservation res2 = new Reservation(getResources().getString(R.string.reservation) + "252851", dishes, Reservation.prepStatus.PENDING,"12:45",
+                "Matteo Cultrera","3333333333", null, "Foody Beginner");
+        Reservation res3 = new Reservation(getResources().getString(R.string.reservation) + "300000", dishes, Reservation.prepStatus.PENDING, "12:45",
+                "Matteo Cultrera","3333333333", null, "Foody Beginner");
+        Reservation res4 = new Reservation(getResources().getString(R.string.reservation) + "400000", dishes, Reservation.prepStatus.PENDING,"12:30",
+                "Daniele Leto", "3469489722", "Suonare campanello giallo", "Foody Expert");
+        Reservation res5 = new Reservation(getResources().getString(R.string.reservation) + "500000", dishes, Reservation.prepStatus.PENDING,"12:45",
+                "Fabio Carfì", "3469489722", "Suonare campanello giallo, perchè ho bisogno " +
+                "della pizza calda e consegnata in tempo", "Foody Expert");
+        Reservation res6 = new Reservation(getResources().getString(R.string.reservation) + "600000", dishes, Reservation.prepStatus.PENDING, "12:45",
+                "Mattia Cara", "3469489722", "Suonare campanello giallo", "Foody Expert");
         reservations.add(res1);
         reservations.add(res2);
         reservations.add(res3);
