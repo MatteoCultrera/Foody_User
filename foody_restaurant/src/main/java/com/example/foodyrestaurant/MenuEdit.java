@@ -96,10 +96,14 @@ public class MenuEdit extends AppCompatActivity {
         recyclerMenu.setLayoutManager(llm);
         mainFAB = findViewById(R.id.mainFAB);
 
-        if(fileTmp.exists())
+        if(fileTmp.exists()){
+            Log.d("TITLECHECK","Temp Found");
             cards = jsonHandler.getCards(fileTmp);
-        else
+        }
+        else{
+            Log.d("TITLECHECK","Got main");
             cards = jsonHandler.getCards(file);
+        }
 
         save = findViewById(R.id.saveButton);
         ImageButton back = findViewById(R.id.backButton);
@@ -176,7 +180,7 @@ public class MenuEdit extends AppCompatActivity {
                 cards.get(i).setEditing(true);
         }
 
-        recyclerAdapter = new RVAdapterEdit(cards);
+        recyclerAdapter = new RVAdapterEdit(cards, this);
         recyclerMenu.setAdapter(recyclerAdapter);
 
         mainFAB.setOnClickListener(new View.OnClickListener() {
@@ -289,6 +293,13 @@ public class MenuEdit extends AppCompatActivity {
         }
     }
 
+    public void savePlaceholder(){
+        File file = new File(storageDir, JSON_COPY);
+        String json = jsonHandler.toJSON(cards);
+        Log.d("TITLECHECK", "SavePlaceHolder");
+        jsonHandler.saveStringToFile(json, file);
+    }
+
     private void back(){
         if (unchanged){
             super.onBackPressed();
@@ -320,6 +331,9 @@ public class MenuEdit extends AppCompatActivity {
     @Override
     public void onBackPressed() {
         if (unchanged){
+            for(int i = 0; i < cards.size(); i++){
+                cards.get(i).print();
+            }
             super.onBackPressed();
         }
         else {
@@ -492,8 +506,12 @@ public class MenuEdit extends AppCompatActivity {
     @Override
     protected void onResume() {
         super.onResume();
-        Log.d("TITLECHECK","onREsume()");
         init();
+
+        Log.d("TITLECHECK","On resume the cards are");
+        for(int i = 0; i < cards.size();i++){
+            cards.get(i).print();
+        }
 
     }
 }

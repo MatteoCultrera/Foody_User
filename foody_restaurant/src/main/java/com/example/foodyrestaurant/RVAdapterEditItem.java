@@ -81,16 +81,6 @@ public class RVAdapterEditItem extends RecyclerView.Adapter<RVAdapterEditItem.Di
             }
         });
 
-        RequestOptions options = new RequestOptions();
-        options.fitCenter();
-
-        Glide
-                .with(pvh.dishPicture.getContext())
-                .load(R.drawable.placeholder_plate)
-                .apply(options)
-                .into(pvh.dishPicture);
-
-
         return pvh;
     }
 
@@ -122,9 +112,27 @@ public class RVAdapterEditItem extends RecyclerView.Adapter<RVAdapterEditItem.Di
 
     @Override
     public void onBindViewHolder(final RVAdapterEditItem.DishEdit dishViewHolder,final int i) {
-
-        Context context = dishViewHolder.cardView.getContext();
-
+        dishViewHolder.editImage.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                editItem.showPickImageDialog(i);
+            }
+        });
+        RequestOptions options = new RequestOptions();
+        options.fitCenter();
+        if(dishes.get(i).getImage() == null){
+            Glide
+                    .with(dishViewHolder.dishPicture.getContext())
+                    .load(R.drawable.placeholder_plate)
+                    .apply(options)
+                    .into(dishViewHolder.dishPicture);
+        }else{
+            Glide
+                    .with(dishViewHolder.dishPicture.getContext())
+                    .load(dishes.get(i).getImage())
+                    .apply(options)
+                    .into(dishViewHolder.dishPicture);
+        }
         dishViewHolder.nameListener.updatePosition(dishViewHolder.getAdapterPosition());
         dishViewHolder.descriptionListener.updatePosition(dishViewHolder.getAdapterPosition());
         dishViewHolder.dishPriceListener.updatePosition(dishViewHolder.getAdapterPosition());
@@ -163,12 +171,6 @@ public class RVAdapterEditItem extends RecyclerView.Adapter<RVAdapterEditItem.Di
         if(dishViewHolder.dishName.getError() == null && !dishViewHolder.dishName.hasFocus())
             dishViewHolder.dishName.setCompoundDrawablesWithIntrinsicBounds(0, 0, 0, 0);
 
-        dishViewHolder.editImage.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                editItem.showPickImageDialog();
-            }
-        });
 
 
     }

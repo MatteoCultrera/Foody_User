@@ -13,6 +13,10 @@ import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.Switch;
 import android.widget.TextView;
+
+import com.bumptech.glide.Glide;
+import com.bumptech.glide.request.RequestOptions;
+
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
@@ -62,6 +66,15 @@ public class RVAdapter extends RecyclerView.Adapter<RVAdapter.CardViewHolder>{
             price.setText(String.format(Locale.UK,"%.2f", dishes.get(j).getPrice())+" €");
             if(dishes.get(j).getImage() == null)
                 image.setVisibility(View.GONE);
+           else{
+                    RequestOptions options = new RequestOptions();
+                    options.fitCenter();
+                    Glide
+                            .with(image.getContext())
+                            .load(dishes.get(j).getImage())
+                            .apply(options)
+                            .into(image);
+            }
             pvh.menuDishes.addView(dish);
             dishes.get(j).setAdded(true);
             final Switch enabler = dish.findViewById(R.id.enabler);
@@ -72,6 +85,7 @@ public class RVAdapter extends RecyclerView.Adapter<RVAdapter.CardViewHolder>{
                         titleF.setTextColor(ContextCompat.getColor(enabler.getContext(), R.color.errorColor));
                         subtitleF.setTextColor(ContextCompat.getColor(enabler.getContext(), R.color.errorColor));
                         priceF.setTextColor(ContextCompat.getColor(enabler.getContext(), R.color.errorColor));
+
                     }
                     else {
                         titleF.setTextColor(ContextCompat.getColor(enabler.getContext(), R.color.primaryText));

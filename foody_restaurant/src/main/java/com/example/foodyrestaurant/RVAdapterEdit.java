@@ -18,9 +18,11 @@ import java.util.ArrayList;
 public class RVAdapterEdit extends RecyclerView.Adapter<RVAdapterEdit.CardEdit>{
 
     private final ArrayList<Card> cards;
+    MenuEdit menuEdit;
 
-    public RVAdapterEdit(ArrayList<Card> cards){
+    public RVAdapterEdit(ArrayList<Card> cards, MenuEdit menuEdit){
         this.cards = cards;
+        this.menuEdit = menuEdit;
     }
 
     @Override
@@ -44,6 +46,7 @@ public class RVAdapterEdit extends RecyclerView.Adapter<RVAdapterEdit.CardEdit>{
             cardViewHolder.layout.setOnClickListener(new View.OnClickListener() {
                @Override
                public void onClick(View v) {
+                   menuEdit.savePlaceholder();
                    Intent intent = new Intent(context.getApplicationContext(), MenuEditItem.class);
                    Bundle b = new Bundle();
                    b.putString("MainName", cards.get(i).getTitle());
@@ -55,6 +58,10 @@ public class RVAdapterEdit extends RecyclerView.Adapter<RVAdapterEdit.CardEdit>{
             cardViewHolder.title.setOnClickListener(new View.OnClickListener() {
                @Override
                public void onClick(View v) {
+                   for(int j = 0; j < cards.get(i).getDishes().size();j++){
+                       cards.get(i).getDishes().get(j).setEditImage(false);
+                   }
+                   menuEdit.savePlaceholder();
                    Intent intent = new Intent(cardViewHolder.box.getContext().getApplicationContext(), MenuEditItem.class);
                    Bundle b = new Bundle();
                    b.putString("MainName", cards.get(i).getTitle());
