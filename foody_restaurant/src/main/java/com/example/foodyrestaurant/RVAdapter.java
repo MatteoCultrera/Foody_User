@@ -5,6 +5,7 @@ import android.support.constraint.ConstraintLayout;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.widget.CardView;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -70,6 +71,11 @@ public class RVAdapter extends RecyclerView.Adapter<RVAdapter.CardViewHolder>{
                 image.setVisibility(View.GONE);
            else{
                     File f = new File(dishes.get(j).getImage().getPath());
+                    if(!f.exists()){
+                        Log.d("TITLECHECK", "Image of "+dishes.get(j).getDishName()+" does not exists");
+
+
+                    }
                     RequestOptions options = new RequestOptions();
                             options.fitCenter()
                             .signature(new ObjectKey(f.getPath()+f.lastModified()));
