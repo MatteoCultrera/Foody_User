@@ -267,7 +267,6 @@ public class MenuEdit extends AppCompatActivity {
     }
 
     private void trashPressed(){
-        dialogCode = "ok";
         Iterator<Card> cardIterator;
         int i = 0;
         for(cardIterator = cards.iterator(); cardIterator.hasNext(); i++) {
