@@ -75,7 +75,7 @@ public class RVAdapterRes extends RecyclerView.Adapter<RVAdapterRes.CardViewHold
 
         for(int j = 0; j < dishes.size(); j++){
             final int toSet = j;
-            View dish = inflater.inflate(R.layout.reservation_item_display, pvh.menuDishes, false);
+            final View dish = inflater.inflate(R.layout.reservation_item_display, pvh.menuDishes, false);
             final TextView foodTitle = dish.findViewById(R.id.food_title_res);
             foodTitle.setText(dishes.get(j).getStringForRes());
             foodTitle.setPaintFlags(0);
@@ -84,15 +84,28 @@ public class RVAdapterRes extends RecyclerView.Adapter<RVAdapterRes.CardViewHold
                 public void onClick(View v) {
                     if(reservations.get(i).getPreparationStatus() == Reservation.prepStatus.DOING && foodTitle.getPaintFlags() == 0) {
                         foodTitle.setPaintFlags(Paint.STRIKE_THRU_TEXT_FLAG);
+                        reservations.get(i).setToBePrepared(1);
+                        if(reservations.get(i).getToBePrepared() == 0 && reservations.get(i).isAccepted()) {
+                            reservations.get(i).setPreparationStatus(Reservation.prepStatus.DONE);
+                            pvh.status.setText(reservations.get(i).getPreparationStatusString());
+                            pvh.menuDishes.setVisibility(View.GONE);
+                        }
                         dishes.get(toSet).setPrepared(true);
                     } else {
                         foodTitle.setPaintFlags(0);
+                        reservations.get(i).setToBePrepared(0);
+                        if (reservations.get(i).isAccepted()) {
+                            reservations.get(i).setPreparationStatus(Reservation.prepStatus.DOING);
+                            pvh.status.setText(reservations.get(i).getPreparationStatusString());
+                        }
                         dishes.get(toSet).setPrepared(false);
                     }
                 }
             });
             pvh.menuDishes.addView(dish);
         }
+
+
 
         pvh.accept.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -117,9 +130,12 @@ public class RVAdapterRes extends RecyclerView.Adapter<RVAdapterRes.CardViewHold
         pvh.plus.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if(pvh.additionalLayout.getVisibility() == View.VISIBLE)
+                pvh.menuDishes.setVisibility(View.VISIBLE);
+                if(pvh.additionalLayout.getVisibility() == View.VISIBLE) {
+                    if (reservations.get(i).getToBePrepared() == 0)
+                        pvh.menuDishes.setVisibility(View.GONE);
                     pvh.additionalLayout.setVisibility(View.GONE);
-                else
+                } else
                     pvh.additionalLayout.setVisibility(View.VISIBLE);
             }
         });
