@@ -109,5 +109,10 @@ public class MainActivity extends AppCompatActivity {
     @Override
     protected void onRestart() {
         super.onRestart();
+        try {
+            fm.beginTransaction().detach(active).attach(active).commit();
+        } catch (IllegalStateException e){
+            e.getMessage();
+        }
     }
 }
