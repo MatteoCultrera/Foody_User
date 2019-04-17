@@ -3,10 +3,13 @@ package com.example.foodyrestaurant;
 import android.app.AlertDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.net.Uri;
 import android.os.Environment;
 import android.provider.MediaStore;
 import android.support.annotation.NonNull;
+import android.support.annotation.Nullable;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v4.content.FileProvider;
 import android.support.v7.app.AppCompatActivity;
@@ -24,8 +27,18 @@ import android.widget.ImageView;
 import android.widget.ListAdapter;
 import android.widget.TextView;
 
+import com.bumptech.glide.Glide;
+import com.bumptech.glide.request.RequestOptions;
+import com.bumptech.glide.signature.ObjectKey;
+import com.yalantis.ucrop.UCrop;
+import com.yalantis.ucrop.UCropActivity;
+
 import java.io.File;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.HashSet;
 import java.util.Set;
 
@@ -41,12 +54,17 @@ public class MenuEditItem extends AppCompatActivity {
     private boolean unchanged = true;
     private AlertDialog dialogDism;
     private String dialogCode = "ok";
-    private final String JSON_PATH = "menu.json";
-    private final String JSON_COPY = "menuCopy.json";
+    private final String JSON_REAL = "menu.json";
+    private final String JSON_PATH = "menuCopy.json";
+    private final String JSON_COPY = "menuCopyItem.json";
+    private final String PLACEHOLDER_CAMERA = "dishPlaceholder.jpg";
     private File fileTmp, file;
+    private int posToChange;
     private RVAdapterEditItem recyclerAdapter;
     private final int GALLERY_REQUEST_CODE = 1;
     private final int REQUEST_CAPTURE_IMAGE = 100;
+    private String placeholderPath;
+    private File storageImageDir;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -68,7 +86,9 @@ public class MenuEditItem extends AppCompatActivity {
     protected void onRestoreInstanceState(Bundle savedInstanceState) {
         super.onRestoreInstanceState(savedInstanceState);
         String dialogPrec = savedInstanceState.getString("dialog");
+        posToChange = savedInstanceState.getInt("posToChange", 0);
         cards = jsonHandler.getCards(fileTmp);
+        dishes = getDishes();
         unchanged = savedInstanceState.getBoolean("unchanged");
         if (dialogPrec != null && dialogPrec.compareTo("ok") != 0) {
             if (dialogPrec.compareTo("back") == 0) {
@@ -80,8 +100,10 @@ public class MenuEditItem extends AppCompatActivity {
     @Override
     protected void onSaveInstanceState(Bundle outState) {
         super.onSaveInstanceState(outState);
+        fileTmp = new File(storageDir, JSON_COPY);
         outState.putBoolean("unchanged", unchanged);
         outState.putString("dialog", dialogCode);
+        outState.putInt("posToChange", posToChange);
 
         for (int i = 0; i < cards.size(); i++){
             if(cards.get(i).getTitle().equals(className)){
@@ -93,16 +115,13 @@ public class MenuEditItem extends AppCompatActivity {
     }
 
     private void init(){
-        fileTmp = new File(storageDir, JSON_COPY);
+        storageImageDir = getExternalFilesDir(Environment.DIRECTORY_PICTURES);
         file = new File(storageDir, JSON_PATH);
         jsonHandler = new JsonHandler();
         final RecyclerView recyclerMenu = findViewById(R.id.menu_items);
         LinearLayoutManager llm = new LinearLayoutManager(this);
         recyclerMenu.setLayoutManager(llm);
-        if(fileTmp.exists())
-            cards = jsonHandler.getCards(fileTmp);
-        else
-            cards = jsonHandler.getCards(file);
+        cards = jsonHandler.getCards(file);
         save = findViewById(R.id.saveButton);
 
         storageDir =  getExternalFilesDir(Environment.DIRECTORY_DOCUMENTS);
@@ -133,17 +152,54 @@ public class MenuEditItem extends AppCompatActivity {
 
     private void save(){
         storageDir =  getExternalFilesDir(Environment.DIRECTORY_DOCUMENTS);
+        File oldFile = new File(storageDir,JSON_PATH);
+        ArrayList<Card> oldCards = jsonHandler.getCards(oldFile);
+        ArrayList<Dish> oldDishes = new ArrayList<>();
+
+        Log.d("TITLECHECK","OldCards");
+        for(int i = 0; i < oldCards.size(); i++){
+            oldCards.get(i).print();
+        }
+
+        Log.d("TITLECHECK","Cards");
+        for(int i = 0; i < cards.size(); i++){
+            cards.get(i).print();
+        }
+
+
+
         for (int i = 0; i < cards.size(); i++){
             if(cards.get(i).getTitle().equals(className)){
-                cards.get(i).setDishes(dishes);
+                oldDishes = oldCards.get(i).getDishes();
             }
         }
+
+        boolean stillExists;
+        for(int i = 0; i < oldDishes.size(); i++){
+            stillExists = false;
+            for(int j = 0; j < dishes.size(); j++) {
+                if(oldDishes.get(i).getImage() == dishes.get(j).getImage()){
+                    stillExists = true;
+                }
+            }
+            if(stillExists == false){
+                File toDelete = new File(oldDishes.get(i).getImage().getPath());
+                if(toDelete.exists())
+                    toDelete.delete();
+            }
+        }
+
+
         String json = jsonHandler.toJSON(cards);
-        Log.d("SWSW", "save"+json);
-        File file = new File(storageDir, JSON_PATH);
-        File fileTMP = new File(storageDir, JSON_COPY);
+        Log.d("TITLECHECK",json);
+        File file = new File(storageDir, JSON_REAL);
+        File fileTMP = new File(storageDir, JSON_PATH);
+        File fileItem = new File(storageDir, JSON_COPY);
         jsonHandler.saveStringToFile(json, file);
-        jsonHandler.saveStringToFile(json, fileTMP);
+        if(fileTMP.exists())
+            fileTMP.delete();
+        if(fileItem.exists())
+            fileItem.exists();
         finish();
     }
 
@@ -194,7 +250,7 @@ public class MenuEditItem extends AppCompatActivity {
     private ArrayList<Dish> getDishes(){
 
         ArrayList<Dish> dishes = new ArrayList<>();
-        File plc = new File(storageDir, JSON_COPY);
+        File plc = new File(storageDir, JSON_PATH);
         cards = jsonHandler.getCards(plc);
 
         for (int i = 0; i < cards.size(); i++){
@@ -255,6 +311,13 @@ public class MenuEditItem extends AppCompatActivity {
                 @Override
                 public void onClick(DialogInterface dialogInterface, int i) {
                     dialogCode = "ok";
+                    for(int j = 0; j< dishes.size(); j++){
+                        if(dishes.get(j).isEditImage()){
+                            File f = new File(dishes.get(j).getImage().getPath());
+                            if(f.exists())
+                                f.delete();
+                        }
+                    }
                     MenuEditItem.super.onBackPressed();
                 }
             });
@@ -289,7 +352,8 @@ public class MenuEditItem extends AppCompatActivity {
         dialogDism = builder.show();
     }
 
-    public void showPickImageDialog(){
+    public void showPickImageDialog(int i){
+        posToChange = i;
         final Item[] items = {
                 new Item(getString(R.string.alert_dialog_image_gallery), R.drawable.collections_black),
                 new Item(getString(R.string.alert_dialog_image_camera), R.drawable.camera_black)
@@ -337,18 +401,18 @@ public class MenuEditItem extends AppCompatActivity {
     }
 
     private  void pickFromGallery(){
-        /*
+
         Intent intent = new Intent(Intent.ACTION_PICK);
         intent.setType("image/*");
         String[] mimeTypes = {"image/jpeg", "image/png"};
         intent.putExtra(Intent.EXTRA_MIME_TYPES,mimeTypes);
         startActivityForResult(intent,GALLERY_REQUEST_CODE);
-        */
+
 
     }
 
     private void pickFromCamera(){
-        /*
+
         Intent pictureIntent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
         if(pictureIntent.resolveActivity(getPackageManager())!= null){
 
@@ -362,6 +426,121 @@ public class MenuEditItem extends AppCompatActivity {
                 startActivityForResult(pictureIntent, REQUEST_CAPTURE_IMAGE);
             }
         }
-        */
+
+    }
+
+    private File createOrReplacePlaceholder(){
+
+        File f = new File(storageImageDir, PLACEHOLDER_CAMERA);
+
+        if(f.exists())
+            this.deleteFile(f.getName());
+
+        f = new File(storageImageDir, PLACEHOLDER_CAMERA);
+
+        placeholderPath = f.getPath();
+
+        return f;
+    }
+
+    protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+
+        if(resultCode == RESULT_OK){
+            switch (requestCode){
+
+                case REQUEST_CAPTURE_IMAGE:
+                    File f = new File(placeholderPath);
+                    startCrop(Uri.fromFile(f));
+                    break;
+
+                case GALLERY_REQUEST_CODE:
+                    if(data !=null){
+                        Uri imageUri = data.getData();
+
+                        if(imageUri != null)
+                            startCrop(imageUri);
+                    }
+                    break;
+
+                case  UCrop.REQUEST_CROP:
+                    Bitmap bitmap = getBitmapFromFile();
+
+                    if(bitmap != null){
+                        File placeholder = new File(storageDir, PLACEHOLDER_CAMERA);
+                        Uri imageURi = saveBitmap(bitmap, placeholder.getPath());
+                        if(dishes.get(posToChange).isEditImage()){
+                            File toDelete = new File(dishes.get(posToChange).getImage().getPath());
+                            if(toDelete.exists())
+                                toDelete.delete();
+                        }else
+                            dishes.get(posToChange).setEditImage(true);
+                        dishes.get(posToChange).setImage(imageURi);
+                        recyclerAdapter.notifyItemChanged(posToChange);
+                        unchanged = false;
+                    }
+                    break;
+            }
+        }
+    }
+
+    private void startCrop(@NonNull Uri uri){
+        UCrop uCrop = UCrop.of(uri, Uri.fromFile(new File(storageDir, PLACEHOLDER_CAMERA)));
+        uCrop.withAspectRatio(1,1);
+        uCrop.withMaxResultSize(960,960);
+        uCrop.withOptions(getCropOptions());
+        uCrop.start(MenuEditItem.this);
+    }
+
+    private UCrop.Options getCropOptions(){
+        UCrop.Options options= new UCrop.Options();
+
+        options.setCompressionQuality(100);
+        options.setHideBottomControls(true);
+        options.setStatusBarColor(getResources().getColor(R.color.colorPrimaryDark, getTheme()));
+        options.setToolbarColor(getResources().getColor(R.color.colorPrimary, getTheme()));
+        options.setAllowedGestures(UCropActivity.ALL, UCropActivity.ALL, UCropActivity.ALL);
+        options.setToolbarTitle(getResources().getString(R.string.crop_image));
+        return options;
+    }
+
+    private Bitmap getBitmapFromFile(){
+        BitmapFactory.Options options = new BitmapFactory.Options();
+        options.inPreferredConfig = Bitmap.Config.ARGB_8888;
+        File dest = new File(storageDir, PLACEHOLDER_CAMERA);
+        if(!dest.exists())
+            return null;
+        return  BitmapFactory.decodeFile(dest.getPath(), options);
+
+    }
+
+    private Uri saveBitmap(Bitmap bitmap,String path){
+        if(bitmap!=null){
+            String timeStamp = new SimpleDateFormat("yyyyMMdd_HHmmss").format(new Date());
+            String imageFileName = "JPEG_" + timeStamp + "_";
+            File fileToSave = new File(storageImageDir, imageFileName);
+            try {
+                FileOutputStream outputStream = null;
+                try {
+                    outputStream = new FileOutputStream(fileToSave.getPath()); //here is set your file path where you want to save or also here you can set file object directly
+
+                    bitmap.compress(Bitmap.CompressFormat.JPEG, 100, outputStream); // bitmap is your Bitmap instance, if you want to compress it you can compress reduce percentage
+                } catch (Exception e) {
+                    e.printStackTrace();
+                } finally {
+                    try {
+                        if (outputStream != null) {
+                            outputStream.close();
+                        }
+                    } catch (IOException e) {
+                        e.printStackTrace();
+                    }
+                }
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+            return Uri.fromFile(fileToSave);
+        }
+        return null;
     }
 }

@@ -114,7 +114,7 @@ class JsonHandler {
                     price = reader.nextString();
                     break;
                 case "image":
-                    Uri.parse(reader.nextString().replace('\\', Character.MIN_VALUE));
+                    image = Uri.parse(reader.nextString().replace('\\', Character.MIN_VALUE));
                     break;
                 default:
                     reader.skipValue();

@@ -13,6 +13,7 @@ class Dish {
     private boolean added;
     private int quantity;
     private boolean prepared;
+    private boolean editImage;
 
     public Dish(String name, String description, Float price, Uri image){
         dishName = name;
@@ -22,6 +23,7 @@ class Dish {
         added = false;
         quantity = 0;
         prepared = false;
+        editImage = false;
     }
 
     public void setQuantity(int quantity){
@@ -34,7 +36,7 @@ class Dish {
 
     @Override
     public String toString() {
-        return dishName+" "+dishDescription+" "+String.format(Locale.UK, "%.2f €",price);
+        return dishName+" "+dishDescription+" "+String.format(Locale.UK, "%.2f €",price)+" "+(image==null?"null":image.toString());
     }
 
     public boolean getAdded(){
@@ -83,5 +85,13 @@ class Dish {
 
     public void setPrepared(boolean prepared) {
         this.prepared = prepared;
+    }
+
+    public boolean isEditImage() {
+        return editImage;
+    }
+
+    public void setEditImage(boolean editImage) {
+        this.editImage = editImage;
     }
 }
