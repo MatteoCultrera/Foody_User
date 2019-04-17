@@ -94,4 +94,5 @@ class Dish {
     public void setEditImage(boolean editImage) {
         this.editImage = editImage;
     }
+
 }

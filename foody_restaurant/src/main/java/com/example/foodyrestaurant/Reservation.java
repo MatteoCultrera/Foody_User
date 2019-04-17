@@ -14,6 +14,7 @@ public class Reservation {
     private ArrayList<Dish> dishesOrdered;
     private boolean accepted;
     private prepStatus preparationStatus;
+    private int toBePrepared;
 
     //User useful data
     private String userName;
@@ -39,6 +40,7 @@ public class Reservation {
         this.userLevel = userLevel;
         this.userEmail = userEmail;
         this.userAddress = userAddress;
+        toBePrepared = dishes.size();
     }
 
     public String getReservationID() {
@@ -146,5 +148,17 @@ public class Reservation {
 
     public void setUserLevel(String userLevel) {
         this.userLevel = userLevel;
+    }
+
+    public int getToBePrepared() {
+        return toBePrepared;
+    }
+
+    public int setToBePrepared(int number) {
+        if(number == 1)
+            toBePrepared--;
+        else
+            toBePrepared++;
+        return toBePrepared;
     }
 }

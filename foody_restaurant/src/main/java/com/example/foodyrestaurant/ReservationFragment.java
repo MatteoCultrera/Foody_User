@@ -16,6 +16,7 @@ import com.bumptech.glide.Glide;
 
 import java.io.File;
 import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.Objects;
 
 public class ReservationFragment extends Fragment {
@@ -114,6 +115,7 @@ public class ReservationFragment extends Fragment {
             dishes.add(toAdd);
             toAdd = new Dish("Quattro Stagioni", "pizza", 2.0f, null);
             toAdd.setQuantity(4);
+            dishes.add(toAdd);
             toAdd = new Dish("Margherita", "pizza", 2.0f, null);
             toAdd.setQuantity(1);
             dishes.add(toAdd);
@@ -132,6 +134,13 @@ public class ReservationFragment extends Fragment {
             reservations.add(res3);
             reservations.add(res4);
             reservations.add(res5);
+
+            reservations.sort(new Comparator<Reservation>() {
+                @Override
+                public int compare(Reservation o1, Reservation o2) {
+                    return o1.getOrderTime().compareTo(o2.getOrderTime());
+                }
+            });
         }
 
         json = jsonHandler.resToJSON(reservations);
