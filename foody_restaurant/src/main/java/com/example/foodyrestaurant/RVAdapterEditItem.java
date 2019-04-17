@@ -280,6 +280,7 @@ public class RVAdapterEditItem extends RecyclerView.Adapter<RVAdapterEditItem.Di
             this.position = position;
         }
         public void onClick(View arg0) {
+
             unchanged = false;
             editItem.removeItem(position);
         }
@@ -314,7 +315,6 @@ public class RVAdapterEditItem extends RecyclerView.Adapter<RVAdapterEditItem.Di
             }
             count ++;
             dishes.get(position).setDishName(charSequence.toString());
-            Log.d("TITLECHECK","Set Enabled True");
             if(editImage.isEnabled() == false){
                 editImage.setEnabled(true);
                 notifyItemChanged(position);
@@ -322,14 +322,12 @@ public class RVAdapterEditItem extends RecyclerView.Adapter<RVAdapterEditItem.Di
 
             editItem.saveEnabled(true);
             if(charSequence.toString().isEmpty()){
-                Log.d("TITLECHECK","Set Enabled False");
                 editImage.setEnabled(false);
                 editText.setError(editText.getContext().getString(R.string.error_dish_name_missing));
                 dishEdit.valid=false;
                 editItem.saveEnabled(false);
             } else if(alreadyExists(charSequence.toString())){
                 editImage.setEnabled(false);
-                Log.d("TITLECHECK","Set Enabled False");
                 editText.setError(editText.getContext().getString(R.string.error_dish_name_duplicate));
                 dishEdit.valid = false;
                 editItem.saveEnabled(false);

@@ -16,7 +16,9 @@ import android.widget.TextView;
 
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.request.RequestOptions;
+import com.bumptech.glide.signature.ObjectKey;
 
+import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
@@ -67,8 +69,10 @@ public class RVAdapter extends RecyclerView.Adapter<RVAdapter.CardViewHolder>{
             if(dishes.get(j).getImage() == null)
                 image.setVisibility(View.GONE);
            else{
+                    File f = new File(dishes.get(j).getImage().getPath());
                     RequestOptions options = new RequestOptions();
-                    options.fitCenter();
+                            options.fitCenter()
+                            .signature(new ObjectKey(f.getPath()+f.lastModified()));
                     Glide
                             .with(image.getContext())
                             .load(dishes.get(j).getImage())
