@@ -46,7 +46,6 @@
 
         </android.support.constraint.ConstraintLayout>
 
-
         <FrameLayout
             android:id="@+id/frameLayout"
             android:layout_width="88dp"

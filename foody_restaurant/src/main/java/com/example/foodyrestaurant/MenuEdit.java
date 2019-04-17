@@ -275,7 +275,7 @@ public class MenuEdit extends AppCompatActivity {
             if (cardIterator.next().isSelected()) {
                 cardIterator.remove();
                 recyclerAdapter.notifyItemRemoved(i);
-                recyclerAdapter.notifyItemRangeRemoved(i, cards.size()-1);
+                recyclerAdapter.notifyItemRangeRemoved(i, cards.size());
                 unchanged = false;
             }
         }

@@ -1,10 +1,13 @@
 package com.example.foodyrestaurant;
 
 import android.content.Context;
+import android.content.Intent;
 import android.graphics.Paint;
+import android.net.Uri;
 import android.support.constraint.ConstraintLayout;
 import android.support.design.button.MaterialButton;
 import android.support.design.widget.FloatingActionButton;
+import android.support.v7.widget.AppCompatImageButton;
 import android.support.v7.widget.CardView;
 import android.support.v7.widget.RecyclerView;
 import android.text.TextWatcher;
@@ -46,26 +49,7 @@ public class RVAdapterRes extends RecyclerView.Adapter<RVAdapterRes.CardViewHold
 
     @Override
     public void onBindViewHolder(final CardViewHolder pvh, final int i) {
-        /*pvh.title.setText(reservations.get(i).getReservationID());
-        ArrayList<Dish> dishes = reservations.get(i).getDishesOrdered();
-        Context context = pvh.cv.getContext();
-        LayoutInflater inflater = LayoutInflater.from(context);
-
-        for (int j = 0; j < dishes.size(); j++){
-            View dish = inflater.inflate(R.layout.reservation_item_display, pvh.menuDishes, false);
-            TextView title = dish.findViewById(R.id.food_title_res);
-            title.setText(dishes.get(j).getDishName());
-            pvh.menuDishes.addView(dish);
-        }
-
-        if (i == 0){
-            ViewGroup.MarginLayoutParams layoutParams =
-                    (ViewGroup.MarginLayoutParams) pvh.cv.getLayoutParams();
-            layoutParams.setMargins(0, getPixelValue(context,50), 0, getPixelValue(context,6));
-            pvh.cv.requestLayout();
-        }*/
-
-        Context context = pvh.cv.getContext();
+        final Context context = pvh.cv.getContext();
         LayoutInflater inflater = LayoutInflater.from(context);
 
         final ArrayList<Dish> dishes = reservations.get(i).getDishesOrdered();
@@ -73,8 +57,16 @@ public class RVAdapterRes extends RecyclerView.Adapter<RVAdapterRes.CardViewHold
         pvh.idOrder.setText(reservations.get(i).getReservationID());
         pvh.status.setText(reservations.get(i).getPreparationStatusString());
         pvh.time.setText(reservations.get(i).getOrderTime());
+        pvh.userName.setText(reservations.get(i).getUserName());
 
-        if(reservations.get(i).isAccepted() && reservations.get(i).getPreparationStatus() == Reservation.prepStatus.DOING) {
+        if(reservations.get(i).getResNote() == null) {
+            pvh.notePlaceholder.setVisibility(View.GONE);
+            pvh.notes.setVisibility(View.GONE);
+            pvh.separatorInfoNote.setVisibility(View.GONE);
+        }
+        pvh.notes.setText(reservations.get(i).getResNote());
+
+        if(reservations.get(i).isAccepted()) {
             pvh.accept.setVisibility(View.GONE);
             pvh.decline.setVisibility(View.GONE);
         }
@@ -91,11 +83,9 @@ public class RVAdapterRes extends RecyclerView.Adapter<RVAdapterRes.CardViewHold
                 @Override
                 public void onClick(View v) {
                     if(reservations.get(i).getPreparationStatus() == Reservation.prepStatus.DOING && foodTitle.getPaintFlags() == 0) {
-                        Log.d("MAD", "Here in true");
                         foodTitle.setPaintFlags(Paint.STRIKE_THRU_TEXT_FLAG);
                         dishes.get(toSet).setPrepared(true);
                     } else {
-                        Log.d("MAD", "ELSE");
                         foodTitle.setPaintFlags(0);
                         dishes.get(toSet).setPrepared(false);
                     }
@@ -127,10 +117,21 @@ public class RVAdapterRes extends RecyclerView.Adapter<RVAdapterRes.CardViewHold
         pvh.plus.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                pvh.constraint.setVisibility(View.VISIBLE);
+                if(pvh.additionalLayout.getVisibility() == View.VISIBLE)
+                    pvh.additionalLayout.setVisibility(View.GONE);
+                else
+                    pvh.additionalLayout.setVisibility(View.VISIBLE);
             }
         });
 
+        pvh.phone.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(Intent.ACTION_DIAL);
+                intent.setData(Uri.parse("tel:"+reservations.get(i).getUserPhone()));
+                context.startActivity(intent);
+            }
+        });
     }
 
     @Override
@@ -145,29 +146,35 @@ public class RVAdapterRes extends RecyclerView.Adapter<RVAdapterRes.CardViewHold
         TextView time;
         TextView status;
         LinearLayout menuDishes;
+        ConstraintLayout buttonLayout;
         MaterialButton accept;
         MaterialButton decline;
         FloatingActionButton plus;
-        ConstraintLayout constraint;
-        ConstraintLayout buttonLayout;
+        ConstraintLayout additionalLayout;
         TextView userName;
-
-
+        TextView notes;
+        AppCompatImageButton phone;
+        TextView notePlaceholder;
+        View separatorInfoNote;
 
         CardViewHolder(View itemView) {
             super(itemView);
 
             cv = itemView.findViewById(R.id.cv);
             idOrder = itemView.findViewById(R.id.idOrder);
-            menuDishes = itemView.findViewById(R.id.orderList);
             time = itemView.findViewById(R.id.time);
             status = itemView.findViewById(R.id.status);
+            menuDishes = itemView.findViewById(R.id.orderList);
+            buttonLayout = itemView.findViewById(R.id.buttonLayout);
             accept = itemView.findViewById(R.id.acceptOrder);
             decline = itemView.findViewById(R.id.declineOrder);
             plus = itemView.findViewById(R.id.plusReservation);
-            constraint = itemView.findViewById(R.id.constrGone);
+            additionalLayout = itemView.findViewById(R.id.constrGone);
             userName = itemView.findViewById(R.id.user_name);
-            buttonLayout = itemView.findViewById(R.id.buttonLayout);
+            notes = itemView.findViewById(R.id.note_text);
+            phone = itemView.findViewById(R.id.call_user);
+            notePlaceholder = itemView.findViewById(R.id.note_placeholder);
+            separatorInfoNote = itemView.findViewById(R.id.separator2);
         }
     }
 }
