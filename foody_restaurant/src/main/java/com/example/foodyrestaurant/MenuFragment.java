@@ -13,6 +13,9 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 import com.bumptech.glide.Glide;
+import com.bumptech.glide.request.RequestOptions;
+import com.bumptech.glide.signature.ObjectKey;
+
 import java.io.File;
 import java.util.ArrayList;
 import java.util.Objects;
@@ -58,6 +61,7 @@ public class MenuFragment extends Fragment {
         ImageView profileImage = view.findViewById(R.id.mainImage);
         ImageView profileShadow = view.findViewById(R.id.shadow);
 
+
         Glide
                 .with(this)
                 .load(R.drawable.shadow)
@@ -101,10 +105,11 @@ public class MenuFragment extends Fragment {
             c = new Card("Secondi");
             c.setDishes(dishes);
             cards.add(c);
+
+            json = jsonHandler.toJSON(cards);
+            jsonHandler.saveStringToFile(json, file);
         }
 
-        json = jsonHandler.toJSON(cards);
-        jsonHandler.saveStringToFile(json, file);
         RVAdapter adapter = new RVAdapter(cards);
         menu.setAdapter(adapter);
 

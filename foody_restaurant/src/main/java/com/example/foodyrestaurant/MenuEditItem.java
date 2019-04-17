@@ -19,6 +19,7 @@ import android.support.v7.widget.RecyclerView;
 import android.text.Editable;
 import android.text.TextWatcher;
 import android.util.Log;
+import android.view.Menu;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
@@ -72,6 +73,10 @@ public class MenuEditItem extends AppCompatActivity {
         setContentView(R.layout.activity_menu_edit_item);
 
         init();
+
+        for(int i = 0; i < cards.size(); i++)
+            cards.get(i).print();
+
     }
 
     @Override
@@ -80,6 +85,10 @@ public class MenuEditItem extends AppCompatActivity {
         if (dialogDism != null){
             dialogDism.dismiss();
         }
+
+        fileTmp = new File(storageDir, JSON_COPY);
+        String json = jsonHandler.toJSON(cards);
+        jsonHandler.saveStringToFile(json, fileTmp);
     }
 
     @Override
@@ -87,35 +96,42 @@ public class MenuEditItem extends AppCompatActivity {
         super.onRestoreInstanceState(savedInstanceState);
         String dialogPrec = savedInstanceState.getString("dialog");
         posToChange = savedInstanceState.getInt("posToChange", 0);
+        placeholderPath = savedInstanceState.getString("placeholderPath");
+        /*
+        fileTmp = new File(storageDir, JSON_COPY);
         cards = jsonHandler.getCards(fileTmp);
-        dishes = getDishes();
+        dishes = getDishes(JSON_COPY);
+        */
         unchanged = savedInstanceState.getBoolean("unchanged");
         if (dialogPrec != null && dialogPrec.compareTo("ok") != 0) {
             if (dialogPrec.compareTo("back") == 0) {
                 restoreBack();
             }
         }
+
     }
 
     @Override
     protected void onSaveInstanceState(Bundle outState) {
         super.onSaveInstanceState(outState);
-        fileTmp = new File(storageDir, JSON_COPY);
         outState.putBoolean("unchanged", unchanged);
         outState.putString("dialog", dialogCode);
         outState.putInt("posToChange", posToChange);
+        outState.putString("placeholderPath", placeholderPath);
 
         for (int i = 0; i < cards.size(); i++){
             if(cards.get(i).getTitle().equals(className)){
                 cards.get(i).setDishes(dishes);
             }
         }
+        fileTmp = new File(storageDir, JSON_COPY);
         String json = jsonHandler.toJSON(cards);
         jsonHandler.saveStringToFile(json, fileTmp);
     }
 
     private void init(){
         storageImageDir = getExternalFilesDir(Environment.DIRECTORY_PICTURES);
+
         file = new File(storageDir, JSON_PATH);
         jsonHandler = new JsonHandler();
         final RecyclerView recyclerMenu = findViewById(R.id.menu_items);
@@ -128,7 +144,12 @@ public class MenuEditItem extends AppCompatActivity {
         TextView title = findViewById(R.id.textView);
         className = getIntent().getExtras().getString("MainName");
         title.setText(getResources().getString(R.string.edit, className));
-        dishes = getDishes();
+        File temp = new File(storageDir,JSON_COPY);
+        if(temp.exists()){
+            dishes = getDishes(JSON_COPY);
+        }
+        else
+            dishes = getDishes(JSON_PATH);
         recyclerAdapter = new RVAdapterEditItem(dishes, this);
         recyclerMenu.setAdapter(recyclerAdapter);
         fabDishes = findViewById(R.id.fabDishes);
@@ -156,23 +177,12 @@ public class MenuEditItem extends AppCompatActivity {
         ArrayList<Card> oldCards = jsonHandler.getCards(oldFile);
         ArrayList<Dish> oldDishes = new ArrayList<>();
 
-        Log.d("TITLECHECK","OldCards");
-        for(int i = 0; i < oldCards.size(); i++){
-            oldCards.get(i).print();
-        }
-
-        Log.d("TITLECHECK","Cards");
-        for(int i = 0; i < cards.size(); i++){
-            cards.get(i).print();
-        }
-
-
-
         for (int i = 0; i < cards.size(); i++){
             if(cards.get(i).getTitle().equals(className)){
                 oldDishes = oldCards.get(i).getDishes();
             }
         }
+
 
         boolean stillExists;
         for(int i = 0; i < oldDishes.size(); i++){
@@ -182,7 +192,7 @@ public class MenuEditItem extends AppCompatActivity {
                     stillExists = true;
                 }
             }
-            if(stillExists == false){
+            if(stillExists == false && oldDishes.get(i).getImage() != null){
                 File toDelete = new File(oldDishes.get(i).getImage().getPath());
                 if(toDelete.exists())
                     toDelete.delete();
@@ -191,7 +201,6 @@ public class MenuEditItem extends AppCompatActivity {
 
 
         String json = jsonHandler.toJSON(cards);
-        Log.d("TITLECHECK",json);
         File file = new File(storageDir, JSON_REAL);
         File fileTMP = new File(storageDir, JSON_PATH);
         File fileItem = new File(storageDir, JSON_COPY);
@@ -242,15 +251,20 @@ public class MenuEditItem extends AppCompatActivity {
     }
 
     public void removeItem(int position){
+        if(dishes.get(position).isEditImage()){
+            File image = new File(dishes.get(position).getImage().getPath());
+            if(image.exists())
+                image.delete();
+        }
         dishes.remove(position);
         recyclerAdapter.notifyItemRemoved(position);
         recyclerAdapter.notifyItemRangeChanged(position, dishes.size());
     }
 
-    private ArrayList<Dish> getDishes(){
+    private ArrayList<Dish> getDishes(String fileName){
 
         ArrayList<Dish> dishes = new ArrayList<>();
-        File plc = new File(storageDir, JSON_PATH);
+        File plc = new File(storageDir, fileName);
         cards = jsonHandler.getCards(plc);
 
         for (int i = 0; i < cards.size(); i++){
@@ -296,6 +310,10 @@ public class MenuEditItem extends AppCompatActivity {
     public void onBackPressed() {
         unchanged = recyclerAdapter.getUnchanged();
         if (unchanged){
+            File f = new File(storageDir, JSON_COPY);
+            if(f.exists()){
+                f.delete();
+            }
             super.onBackPressed();
         }
         else {
@@ -542,5 +560,11 @@ public class MenuEditItem extends AppCompatActivity {
             return Uri.fromFile(fileToSave);
         }
         return null;
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        recyclerAdapter.notifyDataSetChanged();
     }
 }
