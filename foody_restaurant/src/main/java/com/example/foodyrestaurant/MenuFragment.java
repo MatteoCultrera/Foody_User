@@ -13,6 +13,9 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 import com.bumptech.glide.Glide;
+import com.bumptech.glide.request.RequestOptions;
+import com.bumptech.glide.signature.ObjectKey;
+
 import java.io.File;
 import java.util.ArrayList;
 import java.util.Objects;
@@ -57,6 +60,7 @@ public class MenuFragment extends Fragment {
         FloatingActionButton editMode = view.findViewById(R.id.edit_mode);
         ImageView profileImage = view.findViewById(R.id.mainImage);
         ImageView profileShadow = view.findViewById(R.id.shadow);
+
 
         Glide
                 .with(this)

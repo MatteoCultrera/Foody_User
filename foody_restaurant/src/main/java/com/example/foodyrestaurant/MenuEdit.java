@@ -97,11 +97,9 @@ public class MenuEdit extends AppCompatActivity {
         mainFAB = findViewById(R.id.mainFAB);
 
         if(fileTmp.exists()){
-            Log.d("TITLECHECK","Temp Found");
             cards = jsonHandler.getCards(fileTmp);
         }
         else{
-            Log.d("TITLECHECK","Got main");
             cards = jsonHandler.getCards(file);
             unchanged = true;
         }
@@ -296,6 +294,9 @@ public class MenuEdit extends AppCompatActivity {
 
     public void savePlaceholder(){
         File file = new File(storageDir, JSON_COPY);
+        File toDelete= new File(storageDir, "menuCopyItem.json");
+        if(toDelete.exists())
+            toDelete.delete();
         String json = jsonHandler.toJSON(cards);
         jsonHandler.saveStringToFile(json, file);
     }
@@ -331,9 +332,6 @@ public class MenuEdit extends AppCompatActivity {
     @Override
     public void onBackPressed() {
         if (unchanged){
-            for(int i = 0; i < cards.size(); i++){
-                cards.get(i).print();
-            }
             super.onBackPressed();
         }
         else {

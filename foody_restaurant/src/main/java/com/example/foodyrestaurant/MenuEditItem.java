@@ -73,6 +73,10 @@ public class MenuEditItem extends AppCompatActivity {
         setContentView(R.layout.activity_menu_edit_item);
 
         init();
+
+        for(int i = 0; i < cards.size(); i++)
+            cards.get(i).print();
+
     }
 
     @Override
@@ -92,20 +96,19 @@ public class MenuEditItem extends AppCompatActivity {
         super.onRestoreInstanceState(savedInstanceState);
         String dialogPrec = savedInstanceState.getString("dialog");
         posToChange = savedInstanceState.getInt("posToChange", 0);
+        placeholderPath = savedInstanceState.getString("placeholderPath");
+        /*
         fileTmp = new File(storageDir, JSON_COPY);
         cards = jsonHandler.getCards(fileTmp);
-        placeholderPath = savedInstanceState.getString("placeholderPath");
         dishes = getDishes(JSON_COPY);
+        */
         unchanged = savedInstanceState.getBoolean("unchanged");
         if (dialogPrec != null && dialogPrec.compareTo("ok") != 0) {
             if (dialogPrec.compareTo("back") == 0) {
                 restoreBack();
             }
         }
-        for(int i = 0; i < dishes.size();i ++){
-            Log.d("TITLECHECK",dishes.get(i).toString());
-        }
-        recyclerAdapter.notifyDataSetChanged();
+
     }
 
     @Override
@@ -142,8 +145,9 @@ public class MenuEditItem extends AppCompatActivity {
         className = getIntent().getExtras().getString("MainName");
         title.setText(getResources().getString(R.string.edit, className));
         File temp = new File(storageDir,JSON_COPY);
-        if(temp.exists())
+        if(temp.exists()){
             dishes = getDishes(JSON_COPY);
+        }
         else
             dishes = getDishes(JSON_PATH);
         recyclerAdapter = new RVAdapterEditItem(dishes, this);
@@ -247,6 +251,11 @@ public class MenuEditItem extends AppCompatActivity {
     }
 
     public void removeItem(int position){
+        if(dishes.get(position).isEditImage()){
+            File image = new File(dishes.get(position).getImage().getPath());
+            if(image.exists())
+                image.delete();
+        }
         dishes.remove(position);
         recyclerAdapter.notifyItemRemoved(position);
         recyclerAdapter.notifyItemRangeChanged(position, dishes.size());
@@ -301,6 +310,10 @@ public class MenuEditItem extends AppCompatActivity {
     public void onBackPressed() {
         unchanged = recyclerAdapter.getUnchanged();
         if (unchanged){
+            File f = new File(storageDir, JSON_COPY);
+            if(f.exists()){
+                f.delete();
+            }
             super.onBackPressed();
         }
         else {
