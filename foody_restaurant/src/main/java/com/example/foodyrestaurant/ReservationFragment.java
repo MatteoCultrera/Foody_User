@@ -22,7 +22,8 @@ import java.util.Objects;
 public class ReservationFragment extends Fragment {
 
     private RecyclerView reservation;
-
+    final String JSON_PATH = "reservations.json";
+    ArrayList<Reservation> reservations;
 
     public ReservationFragment() {
 
@@ -33,6 +34,10 @@ public class ReservationFragment extends Fragment {
 
         View view = inflater.inflate(R.layout.fragment_reservation, container, false);
         reservation = view.findViewById(R.id.reservation_display);
+
+        if(savedInstanceState != null) {
+
+        }
         return view;
     }
 
@@ -45,9 +50,7 @@ public class ReservationFragment extends Fragment {
     private void init(View view){
         String json;
         final File storageDir = Objects.requireNonNull(getActivity()).getExternalFilesDir(Environment.DIRECTORY_DOCUMENTS);
-        final String JSON_PATH = "reservations.json";
         File file = new File(storageDir, JSON_PATH);
-        ArrayList<Reservation> reservations;
 
         LinearLayoutManager llm = new LinearLayoutManager(view.getContext());
         reservation.setLayoutManager(llm);
@@ -150,4 +153,15 @@ public class ReservationFragment extends Fragment {
 
         reservation.setAdapter(adapter);
     }
+
+   /* @Override
+    public void onPause() {
+        super.onPause();
+        JsonHandler jsonHandler = new JsonHandler();
+        final File storageDir = Objects.requireNonNull(getActivity()).getExternalFilesDir(Environment.DIRECTORY_DOCUMENTS);
+        File file = new File(storageDir, JSON_PATH);
+        String json;
+        json = jsonHandler.resToJSON(reservations);
+        jsonHandler.saveStringToFile(json, file);
+    }*/
 }

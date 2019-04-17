@@ -37,11 +37,6 @@ public class RVAdapterRes extends RecyclerView.Adapter<RVAdapterRes.CardViewHold
         return reservations.size();
     }
 
-    /*@Override
-    public long getItemId(int position) {
-        return position;
-    }*/
-
     @Override
     public CardViewHolder onCreateViewHolder(ViewGroup viewGroup, int i) {
         View v = LayoutInflater.from(viewGroup.getContext()).inflate(R.layout.reservation_card_display, viewGroup, false);
@@ -64,8 +59,9 @@ public class RVAdapterRes extends RecyclerView.Adapter<RVAdapterRes.CardViewHold
             pvh.notePlaceholder.setVisibility(View.GONE);
             pvh.notes.setVisibility(View.GONE);
             pvh.separatorInfoNote.setVisibility(View.GONE);
+        } else {
+            pvh.notes.setText(reservations.get(i).getResNote());
         }
-        pvh.notes.setText(reservations.get(i).getResNote());
 
         if(reservations.get(i).isAccepted()) {
             pvh.accept.setVisibility(View.GONE);
@@ -85,16 +81,17 @@ public class RVAdapterRes extends RecyclerView.Adapter<RVAdapterRes.CardViewHold
                 public void onClick(View v) {
                     if(reservations.get(i).getPreparationStatus() == Reservation.prepStatus.DOING && foodTitle.getPaintFlags() == 0) {
                         foodTitle.setPaintFlags(Paint.STRIKE_THRU_TEXT_FLAG);
-                        reservations.get(i).setToBePrepared(1);
+                        reservations.get(i).incrementToBePrepared(1);
                         if(reservations.get(i).getToBePrepared() == 0 && reservations.get(i).isAccepted()) {
                             reservations.get(i).setPreparationStatus(Reservation.prepStatus.DONE);
                             pvh.status.setText(reservations.get(i).getPreparationStatusString());
-                            pvh.menuDishes.setVisibility(View.GONE);
+                            if(pvh.additionalLayout.getVisibility() == View.GONE)
+                                pvh.menuDishes.setVisibility(View.GONE);
                         }
                         dishes.get(toSet).setPrepared(true);
                     } else {
                         foodTitle.setPaintFlags(0);
-                        reservations.get(i).setToBePrepared(0);
+                        reservations.get(i).incrementToBePrepared(0);
                         if (reservations.get(i).isAccepted()) {
                             reservations.get(i).setPreparationStatus(Reservation.prepStatus.DOING);
                             pvh.status.setText(reservations.get(i).getPreparationStatusString());
