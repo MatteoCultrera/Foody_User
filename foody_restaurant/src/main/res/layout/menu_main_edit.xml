@@ -21,6 +21,7 @@
             android:id="@+id/checkFood"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:saveEnabled="false"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="@id/edit_title"
             app:layout_constraintBottom_toBottomOf="@id/edit_title"

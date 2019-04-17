@@ -3,9 +3,12 @@ package com.example.foodyrestaurant;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
+import android.os.Parcel;
+import android.os.Parcelable;
 import android.support.constraint.ConstraintLayout;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
+import android.util.SparseBooleanArray;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -18,9 +21,10 @@ import java.util.ArrayList;
 public class RVAdapterEdit extends RecyclerView.Adapter<RVAdapterEdit.CardEdit>{
 
     private final ArrayList<Card> cards;
+    private SparseBooleanArray sparseBooleanArray = new SparseBooleanArray();
     MenuEdit menuEdit;
 
-    public RVAdapterEdit(ArrayList<Card> cards, MenuEdit menuEdit){
+    RVAdapterEdit(ArrayList<Card> cards, MenuEdit menuEdit){
         this.cards = cards;
         this.menuEdit = menuEdit;
     }
@@ -75,17 +79,18 @@ public class RVAdapterEdit extends RecyclerView.Adapter<RVAdapterEdit.CardEdit>{
             cardViewHolder.title.setOnClickListener(null);
 
         }
-
         cardViewHolder.box.setOnCheckedChangeListener(null);
-
-        //if true, your checkbox will be selected, else unselected
-        cardViewHolder.box.setChecked(cards.get(i).isSelected());
-
+        if (menuEdit.getBoolean(i)){
+            cardViewHolder.box.setChecked(menuEdit.getBoolean(i));
+            sparseBooleanArray.put(i, cardViewHolder.box.isChecked());
+        } else{
+            cardViewHolder.box.setChecked(cards.get(i).isSelected());
+        }
         cardViewHolder.box.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
             @Override
             public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
-                //set your object's last status
                 cards.get(cardViewHolder.getAdapterPosition()).setSelected(isChecked);
+                sparseBooleanArray.put(i, cards.get(i).isSelected());
             }
         });
 
@@ -102,7 +107,7 @@ public class RVAdapterEdit extends RecyclerView.Adapter<RVAdapterEdit.CardEdit>{
         }
     }
 
-    public boolean normalToEdit(RecyclerView.ViewHolder view){
+    boolean normalToEdit(RecyclerView.ViewHolder view){
         if(view == null)
             return false;
 
@@ -131,7 +136,7 @@ public class RVAdapterEdit extends RecyclerView.Adapter<RVAdapterEdit.CardEdit>{
         return true;
     }
 
-    public boolean editToNormal(final RecyclerView.ViewHolder view,final int i){
+    boolean editToNormal(final RecyclerView.ViewHolder view,final int i){
         if(view == null)
             return false;
 
@@ -187,7 +192,7 @@ public class RVAdapterEdit extends RecyclerView.Adapter<RVAdapterEdit.CardEdit>{
     }
 
 
-    public static class CardEdit extends RecyclerView.ViewHolder {
+    static class CardEdit extends RecyclerView.ViewHolder {
         final ConstraintLayout layout;
         final EditText title;
         final CheckBox box;
@@ -201,5 +206,71 @@ public class RVAdapterEdit extends RecyclerView.Adapter<RVAdapterEdit.CardEdit>{
             arrow = itemView.findViewById(R.id.frontArrow);
         }
     }
+
+    SparseBooleanArrayParcelable getSparseBooleanArray(){
+        return new SparseBooleanArrayParcelable(sparseBooleanArray);
+    }
+
+    void setSparseBooleanArray(SparseBooleanArray sparseBooleanArray){
+        this.sparseBooleanArray = sparseBooleanArray;
+    }
+
+    public class SparseBooleanArrayParcelable extends SparseBooleanArray implements Parcelable {
+        public Parcelable.Creator<SparseBooleanArrayParcelable> CREATOR = new Parcelable.Creator<SparseBooleanArrayParcelable>() {
+            @Override
+            public SparseBooleanArrayParcelable createFromParcel(Parcel source) {
+                SparseBooleanArrayParcelable read = new SparseBooleanArrayParcelable();
+                int size = source.readInt();
+
+                int[] keys = new int[size];
+                boolean[] values = new boolean[size];
+
+                source.readIntArray(keys);
+                source.readBooleanArray(values);
+
+                for (int i = 0; i < size; i++) {
+                    read.put(keys[i], values[i]);
+                }
+
+                return read;
+            }
+
+            @Override
+            public SparseBooleanArrayParcelable[] newArray(int size) {
+                return new SparseBooleanArrayParcelable[size];
+            }
+        };
+
+        SparseBooleanArrayParcelable() {
+
+        }
+
+        SparseBooleanArrayParcelable(SparseBooleanArray sparseBooleanArray) {
+            for (int i = 0; i < sparseBooleanArray.size(); i++) {
+                this.put(sparseBooleanArray.keyAt(i), sparseBooleanArray.valueAt(i));
+            }
+        }
+
+        @Override
+        public int describeContents() {
+            return 0;
+        }
+
+        @Override
+        public void writeToParcel(Parcel dest, int flags) {
+            int[] keys = new int[size()];
+            boolean[] values = new boolean[size()];
+
+            for (int i = 0; i < size(); i++) {
+                keys[i] = keyAt(i);
+                values[i] = valueAt(i);
+            }
+
+            dest.writeInt(size());
+            dest.writeIntArray(keys);
+            dest.writeBooleanArray(values);
+        }
+    }
+
 
 }

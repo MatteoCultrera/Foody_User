@@ -5,6 +5,7 @@ import android.animation.AnimatorListenerAdapter;
 import android.app.AlertDialog;
 import android.content.DialogInterface;
 import android.os.Environment;
+import android.support.design.internal.ParcelableSparseArray;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
@@ -14,6 +15,7 @@ import android.text.Editable;
 import android.text.InputType;
 import android.text.TextWatcher;
 import android.util.Log;
+import android.util.SparseBooleanArray;
 import android.view.View;
 import android.view.WindowManager;
 import android.widget.EditText;
@@ -30,7 +32,7 @@ public class MenuEdit extends AppCompatActivity {
 
     private RecyclerView recyclerMenu;
     private RVAdapterEdit recyclerAdapter;
-
+    private SparseBooleanArray arrBoolean = new SparseBooleanArray();
     private FloatingActionButton mainFAB;
     private ArrayList<Card> cards;
     private JsonHandler jsonHandler;
@@ -71,6 +73,8 @@ public class MenuEdit extends AppCompatActivity {
                 editRotate();
             }
         }
+        arrBoolean = savedInstanceState.getParcelable("booleanArray");
+        Log.d("SWSW", "edit"+arrBoolean.toString());
     }
 
     @Override
@@ -84,6 +88,7 @@ public class MenuEdit extends AppCompatActivity {
             writingCard = input.getText().toString();
         if (!writingCard.equals(""))
             outState.putString("writing", writingCard);
+        outState.putParcelable("booleanArray", recyclerAdapter.getSparseBooleanArray());
     }
 
     private void init(){
@@ -181,6 +186,7 @@ public class MenuEdit extends AppCompatActivity {
 
         recyclerAdapter = new RVAdapterEdit(cards, this);
         recyclerMenu.setAdapter(recyclerAdapter);
+        recyclerAdapter.setSparseBooleanArray(arrBoolean);
 
         mainFAB.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -194,6 +200,10 @@ public class MenuEdit extends AppCompatActivity {
             }
         });
 
+    }
+
+    public boolean getBoolean(int i){
+        return arrBoolean.get(i);
     }
 
     private void plusPressed(String starting){
@@ -294,8 +304,10 @@ public class MenuEdit extends AppCompatActivity {
     public void savePlaceholder(){
         File file = new File(storageDir, JSON_COPY);
         File toDelete= new File(storageDir, "menuCopyItem.json");
-        if(toDelete.exists())
-            toDelete.delete();
+        if(toDelete.exists()) {
+            if (!toDelete.delete())
+                System.out.println("Delete Failure");
+        }
         String json = jsonHandler.toJSON(cards);
         jsonHandler.saveStringToFile(json, file);
     }
