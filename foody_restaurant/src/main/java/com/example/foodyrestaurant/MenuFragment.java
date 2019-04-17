@@ -61,7 +61,6 @@ public class MenuFragment extends Fragment {
         ImageView profileImage = view.findViewById(R.id.mainImage);
         ImageView profileShadow = view.findViewById(R.id.shadow);
 
-
         Glide
                 .with(this)
                 .load(R.drawable.shadow)

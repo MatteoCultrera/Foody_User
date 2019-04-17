@@ -86,9 +86,9 @@ public class RVAdapter extends RecyclerView.Adapter<RVAdapter.CardViewHolder>{
                 @Override
                 public void onCheckedChanged(CompoundButton compoundButton, boolean b) {
                     if (!b) {
-                        titleF.setTextColor(ContextCompat.getColor(enabler.getContext(), R.color.errorColor));
-                        subtitleF.setTextColor(ContextCompat.getColor(enabler.getContext(), R.color.errorColor));
-                        priceF.setTextColor(ContextCompat.getColor(enabler.getContext(), R.color.errorColor));
+                        titleF.setTextColor(ContextCompat.getColor(enabler.getContext(), R.color.disabledText));
+                        subtitleF.setTextColor(ContextCompat.getColor(enabler.getContext(), R.color.disabledText));
+                        priceF.setTextColor(ContextCompat.getColor(enabler.getContext(), R.color.disabledText));
 
                     }
                     else {
