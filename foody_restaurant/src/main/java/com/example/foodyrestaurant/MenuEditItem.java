@@ -189,14 +189,24 @@ public class MenuEditItem extends AppCompatActivity {
         for(int i = 0; i < oldDishes.size(); i++){
             stillExists = false;
             for(int j = 0; j < dishes.size(); j++) {
-                if(oldDishes.get(i).getImage() == dishes.get(j).getImage()){
+                Log.d("TITLECHECK", "old Dish "+oldDishes.get(i).getDishName()+" \n\t"+(oldDishes.get(i).getImage() == null?"":oldDishes.get(i).getImage().getPath()));
+                Log.d("TITLECHECK", "new Dish "+dishes.get(j).getDishName()+" \n\t"+(dishes.get(j).getImage()==null?"":dishes.get(j).getImage().getPath()));
+
+                if(oldDishes.get(i).getImage() == null || dishes.get(j).getImage() == null)
+                    continue;
+
+                if(oldDishes.get(i).getImage().toString().equals(dishes.get(j).getImage().toString())){
+                    Log.d("TITLECHECK",oldDishes.get(i).getDishName()+"still Exists");
                     stillExists = true;
+                    break;
                 }
             }
             if(!stillExists && oldDishes.get(i).getImage() != null){
                 File toDelete = new File(oldDishes.get(i).getImage().getPath());
-                if(toDelete.exists())
+                if(toDelete.exists()){
+                    Log.d("TITLECHECK", "deleting "+oldDishes.get(i).getDishName());
                     toDelete.delete();
+                }
             }
         }
 
@@ -254,8 +264,9 @@ public class MenuEditItem extends AppCompatActivity {
     public void removeItem(int position){
         if(dishes.get(position).isEditImage()){
             File image = new File(dishes.get(position).getImage().getPath());
-            if(image.exists())
+            if(image.exists()){
                 image.delete();
+            }
         }
         dishes.remove(position);
         recyclerAdapter.notifyItemRemoved(position);
