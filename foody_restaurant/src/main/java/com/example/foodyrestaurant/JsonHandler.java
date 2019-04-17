@@ -67,7 +67,7 @@ class JsonHandler {
                 reservations = readMultipleReservations(reader);
         } catch (IOException e) {
             e.getMessage();
-        }finally {
+        } finally {
             reader.close();
         }
 
@@ -194,12 +194,16 @@ class JsonHandler {
         String dishName = null;
         String dishDescription = null;
         String price = null;
+        boolean available = true;
         Uri image = null;
 
         reader.beginObject();
         while(reader.hasNext()){
             String name = reader.nextName();
             switch (name) {
+                case "available":
+                    available = reader.nextBoolean();
+                    break;
                 case "dishName":
                     dishName = reader.nextString();
                     break;
@@ -218,7 +222,9 @@ class JsonHandler {
             }
         }
         reader.endObject();
-        return new Dish(dishName, dishDescription, Float.valueOf(Objects.requireNonNull(price)), image);
+        Dish result = new Dish(dishName, dishDescription, Float.valueOf(Objects.requireNonNull(price)), image);
+        result.setAvailable(available);
+        return result;
     }
 
     String toJSON (ArrayList<Card> cards){
@@ -236,6 +242,7 @@ class JsonHandler {
                     objDish.put("dishDescription", dish.getDishDescription());
                     objDish.put("price", dish.getPrice());
                     objDish.put("image", dish.getImage());
+                    objDish.put("available", dish.isAvailable());
                     objDishArray.put(objDish);
                 }
                 objCard.put("Dish", objDishArray);
@@ -274,6 +281,7 @@ class JsonHandler {
                     objDish.put("dishDescription", dish.getDishDescription());
                     objDish.put("price", dish.getPrice());
                     objDish.put("image", dish.getImage());
+                    objDish.put("available", dish.isAvailable());
                     objDishArray.put(objDish);
                 }
                 objRes.put("Dish", objDishArray);

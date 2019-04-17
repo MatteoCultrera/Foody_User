@@ -27,6 +27,10 @@ public class MenuFragment extends Fragment {
 
     private RecyclerView menu;
     private final String JSON_COPY = "menuCopy.json";
+    private final String JSON_PATH = "menu.json";
+    private File storageDir;
+    private JsonHandler jsonHandler = new JsonHandler();
+    private ArrayList<Card> cards;
 
     public MenuFragment() {
         // Required empty public constructor
@@ -48,14 +52,20 @@ public class MenuFragment extends Fragment {
         init(view);
     }
 
+    @Override
+    public void onPause(){
+        super.onPause();
+        File file = new File(storageDir, JSON_PATH);
+        String json = jsonHandler.toJSON(cards);
+        jsonHandler.saveStringToFile(json, file);
+    }
+
     private void init(View view){
         String json;
-        final File storageDir = Objects.requireNonNull(getActivity()).getExternalFilesDir(Environment.DIRECTORY_DOCUMENTS);
-        final String JSON_PATH = "menu.json";
+        storageDir = Objects.requireNonNull(getActivity()).getExternalFilesDir(Environment.DIRECTORY_DOCUMENTS);
         File file = new File(storageDir, JSON_PATH);
         LinearLayoutManager llm = new LinearLayoutManager(view.getContext());
         menu.setLayoutManager(llm);
-        ArrayList<Card> cards;
 
         FloatingActionButton editMode = view.findViewById(R.id.edit_mode);
         ImageView profileImage = view.findViewById(R.id.mainImage);
@@ -69,8 +79,6 @@ public class MenuFragment extends Fragment {
                 .with(this)
                 .load(R.drawable.pizza)
                 .into(profileImage);
-
-        JsonHandler jsonHandler = new JsonHandler();
 
         cards = jsonHandler.getCards(file);
 

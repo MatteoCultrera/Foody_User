@@ -1,10 +1,13 @@
 package com.example.foodyrestaurant;
 
 import android.content.Context;
+import android.os.Parcel;
+import android.os.Parcelable;
 import android.support.constraint.ConstraintLayout;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.widget.CardView;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -49,8 +52,7 @@ public class RVAdapter extends RecyclerView.Adapter<RVAdapter.CardViewHolder>{
         Context context = pvh.cv.getContext();
         LayoutInflater inflater = LayoutInflater.from(context);
         final int pos = pvh.getAdapterPosition();
-
-        ArrayList<Dish> dishes = cards.get(pos).getDishes();
+        final ArrayList<Dish> dishes = cards.get(pos).getDishes();
 
         pvh.menuDishes.removeAllViews();
 
@@ -62,14 +64,20 @@ public class RVAdapter extends RecyclerView.Adapter<RVAdapter.CardViewHolder>{
             final TextView subtitleF = dish.findViewById(R.id.food_subtitle);
             TextView price = dish.findViewById(R.id.price);
             final TextView priceF = dish.findViewById(R.id.price);
+            final int index = j;
             ImageView image = dish.findViewById(R.id.food_image);
             title.setText(dishes.get(j).getDishName());
             subtitle.setText(dishes.get(j).getDishDescription());
             price.setText(String.format(Locale.UK,"%.2f", dishes.get(j).getPrice())+" €");
             if(dishes.get(j).getImage() == null)
                 image.setVisibility(View.GONE);
-           else{
+            else{
                     File f = new File(dishes.get(j).getImage().getPath());
+                    if(!f.exists()){
+                        Log.d("TITLECHECK", "Image of "+dishes.get(j).getDishName()+" does not exists");
+
+
+                    }
                     RequestOptions options = new RequestOptions();
                             options.fitCenter()
                             .signature(new ObjectKey(f.getPath()+f.lastModified()));
@@ -82,16 +90,30 @@ public class RVAdapter extends RecyclerView.Adapter<RVAdapter.CardViewHolder>{
             pvh.menuDishes.addView(dish);
             dishes.get(j).setAdded(true);
             final Switch enabler = dish.findViewById(R.id.enabler);
+            if (dishes.get(j).isAvailable()){
+                enabler.setChecked(dishes.get(j).isAvailable());
+                title.setTextColor(ContextCompat.getColor(enabler.getContext(), R.color.primaryText));
+                subtitle.setTextColor(ContextCompat.getColor(enabler.getContext(), R.color.secondaryText));
+                price.setTextColor(ContextCompat.getColor(enabler.getContext(), R.color.primaryText));
+            }
+            else{
+                enabler.setChecked(dishes.get(j).isAvailable());
+                title.setTextColor(ContextCompat.getColor(enabler.getContext(), R.color.errorColor));
+                subtitle.setTextColor(ContextCompat.getColor(enabler.getContext(), R.color.errorColor));
+                price.setTextColor(ContextCompat.getColor(enabler.getContext(), R.color.errorColor));
+            }
             enabler.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
                 @Override
                 public void onCheckedChanged(CompoundButton compoundButton, boolean b) {
                     if (!b) {
+                        dishes.get(index).setAvailable(b);
                         titleF.setTextColor(ContextCompat.getColor(enabler.getContext(), R.color.disabledText));
                         subtitleF.setTextColor(ContextCompat.getColor(enabler.getContext(), R.color.disabledText));
                         priceF.setTextColor(ContextCompat.getColor(enabler.getContext(), R.color.disabledText));
 
                     }
                     else {
+                        dishes.get(index).setAvailable(b);
                         titleF.setTextColor(ContextCompat.getColor(enabler.getContext(), R.color.primaryText));
                         subtitleF.setTextColor(ContextCompat.getColor(enabler.getContext(), R.color.secondaryText));
                         priceF.setTextColor(ContextCompat.getColor(enabler.getContext(), R.color.primaryText));
@@ -105,11 +127,11 @@ public class RVAdapter extends RecyclerView.Adapter<RVAdapter.CardViewHolder>{
 
     }
 
-
     @Override
     public void onAttachedToRecyclerView(RecyclerView recyclerView) {
         super.onAttachedToRecyclerView(recyclerView);
     }
+
 
 
     public static class CardViewHolder extends RecyclerView.ViewHolder {
@@ -129,5 +151,4 @@ public class RVAdapter extends RecyclerView.Adapter<RVAdapter.CardViewHolder>{
             isInflated = false;
         }
     }
-
 }

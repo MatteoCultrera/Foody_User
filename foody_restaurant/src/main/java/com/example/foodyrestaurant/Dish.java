@@ -13,6 +13,7 @@ class Dish {
     private boolean added;
     private int quantity;
     private boolean prepared;
+    private boolean available;
     private boolean editImage;
 
     public Dish(String name, String description, Float price, Uri image){
@@ -24,13 +25,22 @@ class Dish {
         quantity = 0;
         prepared = false;
         editImage = false;
+        available = true;
     }
 
-    public void setQuantity(int quantity){
+    void setAvailable(boolean b){
+        this.available = b;
+    }
+
+    boolean isAvailable(){
+        return this.available;
+    }
+
+    void setQuantity(int quantity){
         this.quantity = quantity;
     }
 
-    public String getStringForRes(){
+    String getStringForRes(){
         return quantity+" x "+dishName;
     }
 
@@ -43,11 +53,11 @@ class Dish {
         return added;
     }
 
-    public String getDishName(){
+    String getDishName(){
         return dishName;
     }
 
-    public String getDishDescription(){
+    String getDishDescription(){
         return dishDescription;
     }
 
@@ -55,15 +65,15 @@ class Dish {
         return price;
     }
 
-    public Uri getImage(){
+    Uri getImage(){
         return image;
     }
 
-    public void setDishName(String dishName) {
+    void setDishName(String dishName) {
         this.dishName = dishName;
     }
 
-    public void setDishDescription(String dishDescription) {
+    void setDishDescription(String dishDescription) {
         this.dishDescription = dishDescription;
     }
 
@@ -71,11 +81,11 @@ class Dish {
         this.price = price;
     }
 
-    public void setImage(Uri image) {
+    void setImage(Uri image) {
         this.image = image;
     }
 
-    public void setAdded(boolean added){
+    void setAdded(boolean added){
         this.added = added;
     }
 
@@ -83,15 +93,15 @@ class Dish {
         return prepared;
     }
 
-    public void setPrepared(boolean prepared) {
+    void setPrepared(boolean prepared) {
         this.prepared = prepared;
     }
 
-    public boolean isEditImage() {
+    boolean isEditImage() {
         return editImage;
     }
 
-    public void setEditImage(boolean editImage) {
+    void setEditImage(boolean editImage) {
         this.editImage = editImage;
     }
 
