@@ -114,6 +114,7 @@ public class MenuEditItem extends AppCompatActivity {
     @Override
     protected void onSaveInstanceState(Bundle outState) {
         super.onSaveInstanceState(outState);
+        unchanged = recyclerAdapter.getUnchanged() && unchanged;
         outState.putBoolean("unchanged", unchanged);
         outState.putString("dialog", dialogCode);
         outState.putInt("posToChange", posToChange);
@@ -192,7 +193,7 @@ public class MenuEditItem extends AppCompatActivity {
                     stillExists = true;
                 }
             }
-            if(stillExists == false && oldDishes.get(i).getImage() != null){
+            if(!stillExists && oldDishes.get(i).getImage() != null){
                 File toDelete = new File(oldDishes.get(i).getImage().getPath());
                 if(toDelete.exists())
                     toDelete.delete();
@@ -273,13 +274,11 @@ public class MenuEditItem extends AppCompatActivity {
             }
         }
         String json = jsonHandler.toJSON(cards);
-        Log.d("SWSW", "get"+json);
         return dishes;
     }
 
     public void backToEditMenu(View view) {
-        unchanged = recyclerAdapter.getUnchanged();
-        if (unchanged){
+        if (unchanged && recyclerAdapter.getUnchanged()){
             super.onBackPressed();
         }
         else {
@@ -308,8 +307,7 @@ public class MenuEditItem extends AppCompatActivity {
 
     @Override
     public void onBackPressed() {
-        unchanged = recyclerAdapter.getUnchanged();
-        if (unchanged){
+        if (unchanged && recyclerAdapter.getUnchanged()){
             File f = new File(storageDir, JSON_COPY);
             if(f.exists()){
                 f.delete();
