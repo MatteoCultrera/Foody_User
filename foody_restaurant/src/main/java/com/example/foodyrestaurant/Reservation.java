@@ -154,7 +154,7 @@ public class Reservation {
         return toBePrepared;
     }
 
-    public int setToBePrepared(int number) {
+    public int incrementToBePrepared(int number) {
         if(number == 1)
             toBePrepared--;
         else
