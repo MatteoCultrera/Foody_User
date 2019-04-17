@@ -1,6 +1,8 @@
 package com.example.foodyrestaurant;
 
 import android.content.Context;
+import android.os.Parcel;
+import android.os.Parcelable;
 import android.support.constraint.ConstraintLayout;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.widget.CardView;
@@ -50,7 +52,6 @@ public class RVAdapter extends RecyclerView.Adapter<RVAdapter.CardViewHolder>{
         Context context = pvh.cv.getContext();
         LayoutInflater inflater = LayoutInflater.from(context);
         final int pos = pvh.getAdapterPosition();
-
         final ArrayList<Dish> dishes = cards.get(pos).getDishes();
 
         pvh.menuDishes.removeAllViews();
@@ -132,6 +133,7 @@ public class RVAdapter extends RecyclerView.Adapter<RVAdapter.CardViewHolder>{
     }
 
 
+
     public static class CardViewHolder extends RecyclerView.ViewHolder {
         final CardView cv;
         final TextView title;
@@ -149,5 +151,4 @@ public class RVAdapter extends RecyclerView.Adapter<RVAdapter.CardViewHolder>{
             isInflated = false;
         }
     }
-
 }
