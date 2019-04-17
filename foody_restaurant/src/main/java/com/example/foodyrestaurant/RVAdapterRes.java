@@ -3,6 +3,7 @@ package com.example.foodyrestaurant;
 import android.content.Context;
 import android.content.Intent;
 import android.graphics.Paint;
+import android.graphics.drawable.Drawable;
 import android.net.Uri;
 import android.support.constraint.ConstraintLayout;
 import android.support.design.button.MaterialButton;
@@ -105,8 +106,6 @@ public class RVAdapterRes extends RecyclerView.Adapter<RVAdapterRes.CardViewHold
             pvh.menuDishes.addView(dish);
         }
 
-
-
         pvh.accept.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -135,8 +134,11 @@ public class RVAdapterRes extends RecyclerView.Adapter<RVAdapterRes.CardViewHold
                     if (reservations.get(i).getToBePrepared() == 0)
                         pvh.menuDishes.setVisibility(View.GONE);
                     pvh.additionalLayout.setVisibility(View.GONE);
-                } else
+                    pvh.plus.setImageResource(R.drawable.expand_white);
+                } else {
                     pvh.additionalLayout.setVisibility(View.VISIBLE);
+                    pvh.plus.setImageResource(R.drawable.collapse_white);
+                }
             }
         });
 
@@ -193,4 +195,6 @@ public class RVAdapterRes extends RecyclerView.Adapter<RVAdapterRes.CardViewHold
             separatorInfoNote = itemView.findViewById(R.id.separator2);
         }
     }
+
+
 }
