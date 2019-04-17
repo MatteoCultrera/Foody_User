@@ -50,7 +50,7 @@ public class RVAdapter extends RecyclerView.Adapter<RVAdapter.CardViewHolder>{
         LayoutInflater inflater = LayoutInflater.from(context);
         final int pos = pvh.getAdapterPosition();
 
-        ArrayList<Dish> dishes = cards.get(pos).getDishes();
+        final ArrayList<Dish> dishes = cards.get(pos).getDishes();
 
         pvh.menuDishes.removeAllViews();
 
@@ -62,13 +62,14 @@ public class RVAdapter extends RecyclerView.Adapter<RVAdapter.CardViewHolder>{
             final TextView subtitleF = dish.findViewById(R.id.food_subtitle);
             TextView price = dish.findViewById(R.id.price);
             final TextView priceF = dish.findViewById(R.id.price);
+            final int index = j;
             ImageView image = dish.findViewById(R.id.food_image);
             title.setText(dishes.get(j).getDishName());
             subtitle.setText(dishes.get(j).getDishDescription());
             price.setText(String.format(Locale.UK,"%.2f", dishes.get(j).getPrice())+" €");
             if(dishes.get(j).getImage() == null)
                 image.setVisibility(View.GONE);
-           else{
+            else{
                     File f = new File(dishes.get(j).getImage().getPath());
                     RequestOptions options = new RequestOptions();
                             options.fitCenter()
@@ -82,16 +83,30 @@ public class RVAdapter extends RecyclerView.Adapter<RVAdapter.CardViewHolder>{
             pvh.menuDishes.addView(dish);
             dishes.get(j).setAdded(true);
             final Switch enabler = dish.findViewById(R.id.enabler);
+            if (dishes.get(j).isAvailable()){
+                enabler.setChecked(dishes.get(j).isAvailable());
+                title.setTextColor(ContextCompat.getColor(enabler.getContext(), R.color.primaryText));
+                subtitle.setTextColor(ContextCompat.getColor(enabler.getContext(), R.color.secondaryText));
+                price.setTextColor(ContextCompat.getColor(enabler.getContext(), R.color.primaryText));
+            }
+            else{
+                enabler.setChecked(dishes.get(j).isAvailable());
+                title.setTextColor(ContextCompat.getColor(enabler.getContext(), R.color.errorColor));
+                subtitle.setTextColor(ContextCompat.getColor(enabler.getContext(), R.color.errorColor));
+                price.setTextColor(ContextCompat.getColor(enabler.getContext(), R.color.errorColor));
+            }
             enabler.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
                 @Override
                 public void onCheckedChanged(CompoundButton compoundButton, boolean b) {
                     if (!b) {
+                        dishes.get(index).setAvailable(b);
                         titleF.setTextColor(ContextCompat.getColor(enabler.getContext(), R.color.errorColor));
                         subtitleF.setTextColor(ContextCompat.getColor(enabler.getContext(), R.color.errorColor));
                         priceF.setTextColor(ContextCompat.getColor(enabler.getContext(), R.color.errorColor));
 
                     }
                     else {
+                        dishes.get(index).setAvailable(b);
                         titleF.setTextColor(ContextCompat.getColor(enabler.getContext(), R.color.primaryText));
                         subtitleF.setTextColor(ContextCompat.getColor(enabler.getContext(), R.color.secondaryText));
                         priceF.setTextColor(ContextCompat.getColor(enabler.getContext(), R.color.primaryText));
@@ -104,7 +119,6 @@ public class RVAdapter extends RecyclerView.Adapter<RVAdapter.CardViewHolder>{
         pvh.title.setText(cards.get(pos).getTitle());
 
     }
-
 
     @Override
     public void onAttachedToRecyclerView(RecyclerView recyclerView) {
