@@ -1,21 +1,31 @@
 <?xml version="1.0" encoding="utf-8"?>
 <FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/frameLayout2"
     android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    xmlns:app="http://schemas.android.com/apk/res-auto">
+    android:layout_height="match_parent">
 
     <android.support.constraint.ConstraintLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:fillViewport="true">
 
+        <android.support.constraint.Guideline
+            android:id="@+id/guideline3"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            app:layout_constraintGuide_percent="0.45" />
+
         <android.support.constraint.ConstraintLayout
             android:id="@+id/constraintLayout4"
-            android:layout_width="match_parent"
-            android:layout_height="105dp"
+            android:layout_width="0dp"
+            android:layout_height="0dp"
             android:background="@color/colorPrimary"
             android:elevation="16dp"
-            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toStartOf="@+id/guideline3"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent">
 
@@ -36,7 +46,7 @@
                 android:id="@+id/profilePicture"
                 style="@style/Widget.MaterialComponents.Toolbar"
                 android:layout_width="0dp"
-                android:layout_height="240dp"
+                android:layout_height="match_parent"
                 android:contentDescription="@null"
                 android:elevation="1dp"
                 android:scaleType="centerCrop"
@@ -50,7 +60,7 @@
             <android.support.constraint.ConstraintLayout
                 android:id="@+id/constraintLayout3"
                 android:layout_width="0dp"
-                android:layout_height="240dp"
+                android:layout_height="match_parent"
                 android:background="#00000000"
                 android:elevation="3dp"
                 app:layout_constraintEnd_toEndOf="parent"
@@ -65,7 +75,8 @@
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
                     android:layout_margin="16dp"
-                    android:layout_marginEnd="16dp"
+                    android:layout_marginStart="8dp"
+                    android:layout_marginEnd="8dp"
                     android:background="@android:color/transparent"
                     android:clickable="false"
                     android:fontFamily="@font/roboto_bold"
@@ -75,7 +86,7 @@
                     android:textColor="#ffffffff"
                     android:textColorHint="#bbffffff"
                     android:textSize="30sp"
-                    app:layout_constraintEnd_toStartOf="@+id/imageView5"
+                    app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintTop_toTopOf="parent" />
 
@@ -88,8 +99,8 @@
                     android:background="@android:color/transparent"
                     android:fontFamily="@font/roboto_regular"
                     android:gravity="center_vertical"
-                    android:maxLines="1"
                     android:hint="@string/food_type_unselect"
+                    android:maxLines="1"
                     android:textColor="#ffffffff"
                     android:textColorHint="#bbffffff"
                     android:textSize="15sp"
@@ -101,10 +112,14 @@
                     android:id="@+id/imageView5"
                     android:layout_width="49dp"
                     android:layout_height="49dp"
-                    android:layout_marginTop="16dp"
-                    android:layout_marginEnd="8dp"
+                    android:layout_marginStart="8dp"
+                    android:layout_marginTop="172dp"
+                    android:layout_marginEnd="180dp"
+                    android:layout_marginBottom="8dp"
                     android:contentDescription="@null"
-                    app:layout_constraintEnd_toStartOf="@+id/delivery"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintTop_toTopOf="parent"
                     app:srcCompat="@drawable/bike_white" />
 
@@ -113,8 +128,9 @@
                     style="@android:style/Widget.Material.TextView"
                     android:layout_width="49dp"
                     android:layout_height="49dp"
-                    android:layout_marginTop="16dp"
-                    android:layout_marginEnd="16dp"
+                    android:layout_marginTop="172dp"
+                    android:layout_marginEnd="140dp"
+                    android:layout_marginBottom="8dp"
                     android:background="@android:color/transparent"
                     android:fontFamily="@font/roboto_regular"
                     android:gravity="center"
@@ -123,6 +139,7 @@
                     android:textColor="#ffffffff"
                     android:textColorHint="#bbffffff"
                     android:textSize="15sp"
+                    app:layout_constraintBottom_toBottomOf="parent"
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintTop_toTopOf="parent" />
 
@@ -137,12 +154,15 @@
             android:id="@+id/frameLayout"
             android:layout_width="88dp"
             android:layout_height="88dp"
+            android:layout_marginTop="8dp"
+            android:layout_marginBottom="8dp"
             android:elevation="32dp"
-            app:layout_constraintBottom_toTopOf="@+id/scrollView4"
+            app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintHorizontal_bias="1.0"
+            app:layout_constraintHorizontal_bias="0.438"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="@+id/scrollView4">
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintVertical_bias="0.296">
 
             <android.support.design.widget.FloatingActionButton
                 android:id="@+id/edit_mode"
@@ -158,14 +178,15 @@
 
         <ScrollView
             android:id="@+id/scrollView4"
-            android:layout_width="match_parent"
-            android:layout_height="0dp"
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/constraintLayout4">
+            app:layout_constraintStart_toStartOf="@+id/guideline3"
+            app:layout_constraintTop_toBottomOf="parent">
 
             <LinearLayout
+                android:id="@+id/linearLayout2"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:orientation="vertical">
@@ -182,10 +203,10 @@
                         android:layout_width="30dp"
                         android:layout_height="30dp"
                         android:layout_marginTop="8dp"
-                        android:contentDescription="@null"
-                        android:scaleType="fitCenter"
                         android:adjustViewBounds="true"
+                        android:contentDescription="@null"
                         android:padding="2dp"
+                        android:scaleType="fitCenter"
                         android:src="@drawable/phone_black" />
 
                     <TextView
@@ -224,10 +245,10 @@
                         android:layout_width="30dp"
                         android:layout_height="30dp"
                         android:layout_marginTop="8dp"
-                        android:contentDescription="@null"
-                        android:scaleType="fitCenter"
                         android:adjustViewBounds="true"
+                        android:contentDescription="@null"
                         android:padding="2dp"
+                        android:scaleType="fitCenter"
                         android:src="@drawable/mail_black" />
 
                     <TextView
@@ -266,10 +287,10 @@
                         android:layout_width="30dp"
                         android:layout_height="30dp"
                         android:layout_marginTop="8dp"
-                        android:contentDescription="@null"
-                        android:scaleType="fitCenter"
                         android:adjustViewBounds="true"
+                        android:contentDescription="@null"
                         android:padding="2dp"
+                        android:scaleType="fitCenter"
                         android:src="@drawable/address2_black" />
 
                     <TextView
@@ -309,10 +330,10 @@
                         android:layout_width="30dp"
                         android:layout_height="30dp"
                         android:layout_marginTop="8dp"
-                        android:contentDescription="@null"
-                        android:scaleType="fitCenter"
                         android:adjustViewBounds="true"
+                        android:contentDescription="@null"
                         android:padding="2dp"
+                        android:scaleType="fitCenter"
                         android:src="@drawable/clock" />
 
                     <TextView
