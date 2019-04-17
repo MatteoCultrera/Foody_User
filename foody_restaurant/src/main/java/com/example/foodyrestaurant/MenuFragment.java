@@ -101,10 +101,11 @@ public class MenuFragment extends Fragment {
             c = new Card("Secondi");
             c.setDishes(dishes);
             cards.add(c);
+
+            json = jsonHandler.toJSON(cards);
+            jsonHandler.saveStringToFile(json, file);
         }
 
-        json = jsonHandler.toJSON(cards);
-        jsonHandler.saveStringToFile(json, file);
         RVAdapter adapter = new RVAdapter(cards);
         menu.setAdapter(adapter);
 

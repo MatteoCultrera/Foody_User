@@ -87,9 +87,9 @@ public class MenuEdit extends AppCompatActivity {
     }
 
     private void init(){
-        fileTmp = new File(storageDir, JSON_COPY);
         jsonHandler = new JsonHandler();
         storageDir =  getExternalFilesDir(Environment.DIRECTORY_DOCUMENTS);
+        fileTmp = new File(storageDir, JSON_COPY);
         File file = new File(storageDir, JSON_PATH);
         recyclerMenu = findViewById(R.id.menu_edit);
         LinearLayoutManager llm = new LinearLayoutManager(this);
@@ -103,6 +103,7 @@ public class MenuEdit extends AppCompatActivity {
         else{
             Log.d("TITLECHECK","Got main");
             cards = jsonHandler.getCards(file);
+            unchanged = true;
         }
 
         save = findViewById(R.id.saveButton);
@@ -296,7 +297,6 @@ public class MenuEdit extends AppCompatActivity {
     public void savePlaceholder(){
         File file = new File(storageDir, JSON_COPY);
         String json = jsonHandler.toJSON(cards);
-        Log.d("TITLECHECK", "SavePlaceHolder");
         jsonHandler.saveStringToFile(json, file);
     }
 
@@ -507,11 +507,6 @@ public class MenuEdit extends AppCompatActivity {
     protected void onResume() {
         super.onResume();
         init();
-
-        Log.d("TITLECHECK","On resume the cards are");
-        for(int i = 0; i < cards.size();i++){
-            cards.get(i).print();
-        }
 
     }
 }
