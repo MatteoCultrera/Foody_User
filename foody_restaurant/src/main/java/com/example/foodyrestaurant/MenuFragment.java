@@ -90,7 +90,7 @@ public class MenuFragment extends Fragment {
             cards = new ArrayList<>();
 
             ArrayList<Dish> dishes = new ArrayList<>();
-            dishes.add(new Dish("Margerita","Pomodoro, Mozzarella, Basilico",3.50f, null));
+            dishes.add(new Dish("Margherita","Pomodoro, Mozzarella, Basilico",3.50f, null));
             dishes.add(new Dish("Vegetariana","Verdure di Stagione, Pomodoro, Mozzarella",8.00f, null));
             dishes.add(new Dish("Quattro Stagioni","Pomodoro, Mozzarella, Prosciutto, Carciofi, Funghi, Olive, Grana a Scaglie",6.50f, null));
             dishes.add(new Dish("Quattro Formaggi","Mozzarella, Gorgonzola, Fontina, Stracchino",7.00f, null));

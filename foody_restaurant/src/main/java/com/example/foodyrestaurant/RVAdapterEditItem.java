@@ -136,7 +136,11 @@ public class RVAdapterEditItem extends RecyclerView.Adapter<RVAdapterEditItem.Di
         dishViewHolder.dishName.setText(dishes.get(i).getDishName());
         dishViewHolder.dishDesc.setText(dishes.get(i).getDishDescription());
         Float value = dishes.get(i).getPrice();
-        dishViewHolder.price.setText(String.format(Locale.UK,"%.2f",value));
+        if (value != 0.0f) {
+            dishViewHolder.price.setText(String.format(Locale.UK, "%.2f", value));
+        } else {
+            dishViewHolder.price.setText("");
+        }
 
         dishViewHolder.dishName.setImeOptions(EditorInfo.IME_ACTION_DONE);
         dishViewHolder.dishName.setRawInputType(InputType.TYPE_TEXT_FLAG_NO_SUGGESTIONS);
@@ -153,7 +157,7 @@ public class RVAdapterEditItem extends RecyclerView.Adapter<RVAdapterEditItem.Di
                         dishViewHolder.price.setCompoundDrawablesWithIntrinsicBounds(0, 0, R.drawable.delete_fill_black, 0);
                 }else{
                     dishViewHolder.price.setCompoundDrawablesWithIntrinsicBounds(0, 0, 0, 0);
-                    dishViewHolder.price.setText(String.format(Locale.UK, "%.2f",dishes.get(i).getPrice()));
+                    //dishViewHolder.price.setText(String.format(Locale.UK, "%.2f",dishes.get(i).getPrice()));
                 }
             }
         });
