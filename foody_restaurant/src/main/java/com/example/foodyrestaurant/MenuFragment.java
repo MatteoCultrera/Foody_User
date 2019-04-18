@@ -13,8 +13,6 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 import com.bumptech.glide.Glide;
-import com.bumptech.glide.request.RequestOptions;
-import com.bumptech.glide.signature.ObjectKey;
 
 import java.io.File;
 import java.util.ArrayList;
@@ -129,8 +127,11 @@ public class MenuFragment extends Fragment {
             @Override
             public void onClick(View v) {
                 File jsonTemp = new File(storageDir,JSON_COPY);
-                if(jsonTemp.exists())
-                    jsonTemp.delete();
+                if(jsonTemp.exists()) {
+                    if(!jsonTemp.delete()){
+                        System.out.println("Cannot delete the file.");
+                    }
+                }
                 Intent intent = new Intent(getActivity(), MenuEdit.class);
                 startActivity(intent);
             }

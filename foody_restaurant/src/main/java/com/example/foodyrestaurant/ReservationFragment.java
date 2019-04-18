@@ -2,8 +2,6 @@ package com.example.foodyrestaurant;
 
 import android.os.Bundle;
 import android.os.Environment;
-import android.support.annotation.NonNull;
-import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -11,9 +9,6 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.ImageView;
-
-import com.bumptech.glide.Glide;
 
 import java.io.File;
 import java.util.ArrayList;
@@ -23,10 +18,10 @@ import java.util.Objects;
 public class ReservationFragment extends Fragment {
 
     private RecyclerView reservation;
-    final String JSON_PATH = "reservations.json";
+    private final String JSON_PATH = "reservations.json";
     private File storageDir;
-    JsonHandler jsonHandler = new JsonHandler();
-    ArrayList<Reservation> reservations;
+    private JsonHandler jsonHandler = new JsonHandler();
+    private ArrayList<Reservation> reservations;
 
     public ReservationFragment() {
         // Required empty public constructor

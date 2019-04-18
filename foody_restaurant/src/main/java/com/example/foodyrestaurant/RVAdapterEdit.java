@@ -7,7 +7,6 @@ import android.os.Parcel;
 import android.os.Parcelable;
 import android.support.constraint.ConstraintLayout;
 import android.support.v7.widget.RecyclerView;
-import android.util.Log;
 import android.util.SparseBooleanArray;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -22,7 +21,7 @@ public class RVAdapterEdit extends RecyclerView.Adapter<RVAdapterEdit.CardEdit>{
 
     private final ArrayList<Card> cards;
     private SparseBooleanArray sparseBooleanArray = new SparseBooleanArray();
-    MenuEdit menuEdit;
+    private MenuEdit menuEdit;
 
     RVAdapterEdit(ArrayList<Card> cards, MenuEdit menuEdit){
         this.cards = cards;

@@ -24,7 +24,7 @@ public class Reservation {
     private String resNote;
     private String orderTime;
 
-    public Reservation(String identifier, ArrayList<Dish> dishes, prepStatus preparationStatus, boolean accepted,
+    Reservation(String identifier, ArrayList<Dish> dishes, prepStatus preparationStatus, boolean accepted,
                        String orderTime, String userName, String userPhone, String resNote, String userLevel,
                        String userEmail, String userAddress){
         this.reservationID = identifier;
@@ -41,7 +41,7 @@ public class Reservation {
         toBePrepared = dishes.size();
     }
 
-    public String getReservationID() {
+    String getReservationID() {
         return reservationID;
     }
 
@@ -49,7 +49,7 @@ public class Reservation {
         this.reservationID = reservationID;
     }
 
-    public ArrayList<Dish> getDishesOrdered() {
+    ArrayList<Dish> getDishesOrdered() {
         return dishesOrdered;
     }
 
@@ -57,11 +57,11 @@ public class Reservation {
         this.dishesOrdered = dishesOrdered;
     }
 
-    public prepStatus getPreparationStatus() {
+    prepStatus getPreparationStatus() {
         return preparationStatus;
     }
 
-    public String getPreparationStatusString(){
+    String getPreparationStatusString(){
         String ret;
         switch (this.preparationStatus){
             case PENDING:
@@ -80,11 +80,11 @@ public class Reservation {
         return ret;
     }
 
-    public void setPreparationStatus(prepStatus preparationStatus) {
+    void setPreparationStatus(prepStatus preparationStatus) {
         this.preparationStatus = preparationStatus;
     }
 
-    public String getOrderTime() {
+    String getOrderTime() {
         return orderTime;
     }
 
@@ -100,7 +100,7 @@ public class Reservation {
         this.userName = userName;
     }
 
-    public String getUserPhone() {
+    String getUserPhone() {
         return userPhone;
     }
 
@@ -108,7 +108,7 @@ public class Reservation {
         this.userPhone = userPhone;
     }
 
-    public String getUserEmail() {
+    String getUserEmail() {
         return userEmail;
     }
 
@@ -116,7 +116,7 @@ public class Reservation {
         this.userEmail = userEmail;
     }
 
-    public String getUserAddress() {
+    String getUserAddress() {
         return userAddress;
     }
 
@@ -124,15 +124,15 @@ public class Reservation {
         this.userAddress = userAddress;
     }
 
-    public boolean isAccepted() {
+    boolean isAccepted() {
         return accepted;
     }
 
-    public void setAccepted(boolean accepted) {
+    void setAccepted(boolean accepted) {
         this.accepted = accepted;
     }
 
-    public String getResNote() {
+    String getResNote() {
         return resNote;
     }
 
@@ -140,7 +140,7 @@ public class Reservation {
         this.resNote = resNote;
     }
 
-    public String getUserLevel() {
+    String getUserLevel() {
         return userLevel;
     }
 
@@ -148,11 +148,11 @@ public class Reservation {
         this.userLevel = userLevel;
     }
 
-    public int getToBePrepared() {
+    int getToBePrepared() {
         return toBePrepared;
     }
 
-    public int incrementToBePrepared(int number) {
+    int incrementToBePrepared(int number) {
         if(number == 1)
             toBePrepared--;
         else

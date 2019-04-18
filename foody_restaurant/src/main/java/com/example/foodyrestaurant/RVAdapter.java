@@ -1,8 +1,6 @@
 package com.example.foodyrestaurant;
 
 import android.content.Context;
-import android.os.Parcel;
-import android.os.Parcelable;
 import android.support.constraint.ConstraintLayout;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.widget.CardView;
@@ -106,14 +104,14 @@ public class RVAdapter extends RecyclerView.Adapter<RVAdapter.CardViewHolder>{
                 @Override
                 public void onCheckedChanged(CompoundButton compoundButton, boolean b) {
                     if (!b) {
-                        dishes.get(index).setAvailable(b);
+                        dishes.get(index).setAvailable(false);
                         titleF.setTextColor(ContextCompat.getColor(enabler.getContext(), R.color.disabledText));
                         subtitleF.setTextColor(ContextCompat.getColor(enabler.getContext(), R.color.disabledText));
                         priceF.setTextColor(ContextCompat.getColor(enabler.getContext(), R.color.disabledText));
 
                     }
                     else {
-                        dishes.get(index).setAvailable(b);
+                        dishes.get(index).setAvailable(true);
                         titleF.setTextColor(ContextCompat.getColor(enabler.getContext(), R.color.primaryText));
                         subtitleF.setTextColor(ContextCompat.getColor(enabler.getContext(), R.color.secondaryText));
                         priceF.setTextColor(ContextCompat.getColor(enabler.getContext(), R.color.primaryText));

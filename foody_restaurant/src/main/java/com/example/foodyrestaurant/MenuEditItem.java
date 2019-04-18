@@ -16,10 +16,7 @@ import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
-import android.text.Editable;
-import android.text.TextWatcher;
 import android.util.Log;
-import android.view.Menu;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
@@ -29,9 +26,6 @@ import android.widget.ListAdapter;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.bumptech.glide.Glide;
-import com.bumptech.glide.request.RequestOptions;
-import com.bumptech.glide.signature.ObjectKey;
 import com.yalantis.ucrop.UCrop;
 import com.yalantis.ucrop.UCropActivity;
 
@@ -42,6 +36,7 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashSet;
+import java.util.Objects;
 import java.util.Set;
 
 public class MenuEditItem extends AppCompatActivity {
@@ -52,15 +47,13 @@ public class MenuEditItem extends AppCompatActivity {
     private ImageButton save;
     private ArrayList<Dish> dishes;
     private ArrayList<Card> cards;
-    private FloatingActionButton fabDishes;
     private boolean unchanged = true;
     private AlertDialog dialogDism;
     private String dialogCode = "ok";
-    private final String JSON_REAL = "menu.json";
     private final String JSON_PATH = "menuCopy.json";
     private final String JSON_COPY = "menuCopyItem.json";
     private final String PLACEHOLDER_CAMERA = "dishPlaceholder.jpg";
-    private File fileTmp, file;
+    private File fileTmp;
     private int posToChange;
     private RVAdapterEditItem recyclerAdapter;
     private final int GALLERY_REQUEST_CODE = 1;
@@ -134,7 +127,7 @@ public class MenuEditItem extends AppCompatActivity {
     private void init(){
         storageImageDir = getExternalFilesDir(Environment.DIRECTORY_PICTURES);
 
-        file = new File(storageDir, JSON_PATH);
+        File file = new File(storageDir, JSON_PATH);
         jsonHandler = new JsonHandler();
         final RecyclerView recyclerMenu = findViewById(R.id.menu_items);
         LinearLayoutManager llm = new LinearLayoutManager(this);
@@ -144,7 +137,7 @@ public class MenuEditItem extends AppCompatActivity {
 
         storageDir =  getExternalFilesDir(Environment.DIRECTORY_DOCUMENTS);
         TextView title = findViewById(R.id.textView);
-        className = getIntent().getExtras().getString("MainName");
+        className = Objects.requireNonNull(getIntent().getExtras()).getString("MainName");
         title.setText(getResources().getString(R.string.edit, className));
         File temp = new File(storageDir,JSON_COPY);
         if(temp.exists()){
@@ -154,7 +147,7 @@ public class MenuEditItem extends AppCompatActivity {
             dishes = getDishes(JSON_PATH);
         recyclerAdapter = new RVAdapterEditItem(dishes, this);
         recyclerMenu.setAdapter(recyclerAdapter);
-        fabDishes = findViewById(R.id.fabDishes);
+        FloatingActionButton fabDishes = findViewById(R.id.fabDishes);
 
         fabDishes.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -206,22 +199,27 @@ public class MenuEditItem extends AppCompatActivity {
                 File toDelete = new File(oldDishes.get(i).getImage().getPath());
                 if(toDelete.exists()){
                     Log.d("TITLECHECK", "deleting "+oldDishes.get(i).getDishName());
-                    toDelete.delete();
+                    if(!toDelete.delete()){
+                        System.out.println("Cannot delete the file.");
+                    }
                 }
             }
         }
 
 
         String json = jsonHandler.toJSON(cards);
+        String JSON_REAL = "menu.json";
         File file = new File(storageDir, JSON_REAL);
         File fileTMP = new File(storageDir, JSON_PATH);
         File fileItem = new File(storageDir, JSON_COPY);
         jsonHandler.saveStringToFile(json, file);
-        if(fileTMP.exists())
-            fileTMP.delete();
+        if(fileTMP.exists()){
+            if(!fileTMP.delete()){
+                System.out.println("Cannot delete the file.");
+            };
+        }
         if(fileItem.exists())
             fileItem.exists();
-        //finish();
         unchanged = true;
         recyclerAdapter.setUnchanged(true);
         Toast.makeText(getApplicationContext(), R.string.save, Toast.LENGTH_SHORT).show();
@@ -240,7 +238,7 @@ public class MenuEditItem extends AppCompatActivity {
         }
     }
 
-    public boolean canEnable(){
+    private boolean canEnable(){
         ArrayList<String> dishNames = new ArrayList<>();
 
         for(int i = 0; i < dishes.size(); i++){
@@ -249,17 +247,15 @@ public class MenuEditItem extends AppCompatActivity {
             dishNames.add(dishes.get(i).getDishName());
 
         }
-        Set<String> dis = new HashSet<String>(dishNames);
-        if(dis.size() < dishes.size())
-            return false;
-        return true;
+        Set<String> dis = new HashSet<>(dishNames);
+        return dis.size() >= dishes.size();
     }
 
     public boolean getSaveEnabled(){
         return save.isEnabled();
     }
 
-    public void insertItem(int position){
+    private void insertItem(int position){
         unchanged = false;
         dishes.add(new Dish("","",0.0f,null));
         recyclerAdapter.notifyItemInserted(position);
@@ -270,7 +266,9 @@ public class MenuEditItem extends AppCompatActivity {
         if(dishes.get(position).isEditImage()){
             File image = new File(dishes.get(position).getImage().getPath());
             if(image.exists()){
-                image.delete();
+                if(!image.delete()){
+                    System.out.println("Cannot delete the file.");
+                }
             }
         }
         dishes.remove(position);
@@ -326,7 +324,9 @@ public class MenuEditItem extends AppCompatActivity {
         if (unchanged && recyclerAdapter.getUnchanged()){
             File f = new File(storageDir, JSON_COPY);
             if(f.exists()){
-                f.delete();
+                if(!f.delete()){
+                    System.out.println("Cannot delete the file.");
+                }
             }
             super.onBackPressed();
         }
@@ -347,7 +347,9 @@ public class MenuEditItem extends AppCompatActivity {
                         if(dishes.get(j).isEditImage()){
                             File f = new File(dishes.get(j).getImage().getPath());
                             if(f.exists())
-                                f.delete();
+                                if(!f.delete()){
+                                    System.out.println("Cannot delete the file.");
+                                }
                         }
                     }
                     MenuEditItem.super.onBackPressed();
@@ -504,7 +506,9 @@ public class MenuEditItem extends AppCompatActivity {
                         if(dishes.get(posToChange).isEditImage()){
                             File toDelete = new File(dishes.get(posToChange).getImage().getPath());
                             if(toDelete.exists())
-                                toDelete.delete();
+                                if(!toDelete.delete()){
+                                    System.out.println("Cannot delete the file.");
+                                }
                         }else
                             dishes.get(posToChange).setEditImage(true);
                         dishes.get(posToChange).setImage(imageURi);
