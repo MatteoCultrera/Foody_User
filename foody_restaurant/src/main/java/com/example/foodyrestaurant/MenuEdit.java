@@ -118,12 +118,16 @@ public class MenuEdit extends AppCompatActivity {
         save.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                String json = jsonHandler.toJSON(cards);
-                storageDir =  getExternalFilesDir(Environment.DIRECTORY_DOCUMENTS);
-                File file = new File(storageDir, JSON_PATH);
-                jsonHandler.saveStringToFile(json, file);
-                unchanged = true;
-                Toast.makeText(getApplicationContext(), R.string.save, Toast.LENGTH_SHORT).show();
+                if (unchanged){
+                    Toast.makeText(getApplicationContext(), R.string.noSave, Toast.LENGTH_SHORT).show();
+                } else {
+                    String json = jsonHandler.toJSON(cards);
+                    storageDir = getExternalFilesDir(Environment.DIRECTORY_DOCUMENTS);
+                    File file = new File(storageDir, JSON_PATH);
+                    jsonHandler.saveStringToFile(json, file);
+                    unchanged = true;
+                    Toast.makeText(getApplicationContext(), R.string.save, Toast.LENGTH_SHORT).show();
+                }
                 //finish();
             }
         });
