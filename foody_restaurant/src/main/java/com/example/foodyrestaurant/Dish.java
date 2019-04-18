@@ -41,7 +41,7 @@ class Dish {
         this.quantity = quantity;
     }
 
-    String getStringForRes(){
+    String getStringForRes() {
         return quantity+" x "+dishName;
     }
 
@@ -102,4 +102,9 @@ class Dish {
     int getQuantity() {
         return quantity;
     }
+
+    boolean isPrepared() {
+        return prepared;
+    }
 }
+

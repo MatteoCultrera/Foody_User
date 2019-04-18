@@ -2,7 +2,7 @@ package com.example.foodyrestaurant;
 
 import java.util.ArrayList;
 
-public class Reservation {
+class Reservation {
 
     enum prepStatus {
         PENDING,
@@ -14,7 +14,6 @@ public class Reservation {
     private final ArrayList<Dish> dishesOrdered;
     private boolean accepted;
     private prepStatus preparationStatus;
-    private int toBePrepared;
     private final String userName;
     private final String userPhone;
     private final String userLevel;
@@ -23,6 +22,7 @@ public class Reservation {
 
     private final String resNote;
     private final String orderTime;
+    private int toBePrepared;
 
     Reservation(String identifier, ArrayList<Dish> dishes, prepStatus preparationStatus, boolean accepted,
                        String orderTime, String userName, String userPhone, String resNote, String userLevel,
@@ -116,11 +116,15 @@ public class Reservation {
         return toBePrepared;
     }
 
-    int incrementToBePrepared(int number) {
-        if(number == 1)
-            toBePrepared--;
-        else
-            toBePrepared++;
-        return toBePrepared;
+    void incrementToBePrepared() {
+        toBePrepared++;
+    }
+
+    void incrementDishDone() {
+        toBePrepared--;
+    }
+
+    void setToBePrepared(int toBePrepared) {
+        this.toBePrepared = toBePrepared;
     }
 }
