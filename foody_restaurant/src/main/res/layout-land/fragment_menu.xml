@@ -34,7 +34,7 @@
             app:layout_constraintHorizontal_bias="0.461"
             app:layout_constraintStart_toEndOf="@+id/constraintLayout5"
             app:layout_constraintTop_toTopOf="@+id/constraintLayout5"
-            app:layout_constraintVertical_bias="0.14">
+            app:layout_constraintVertical_bias="0.23">
 
             <android.support.design.widget.FloatingActionButton
                 android:id="@+id/edit_mode"
@@ -91,7 +91,7 @@
                 android:layout_width="0dp"
                 android:layout_height="0dp"
                 android:clipToPadding="false"
-                android:paddingTop="30dp"
+                android:paddingTop="5dp"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toEndOf="@+id/constraintLayout5"
