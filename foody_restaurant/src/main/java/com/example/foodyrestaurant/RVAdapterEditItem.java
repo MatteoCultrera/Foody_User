@@ -74,9 +74,6 @@ public class RVAdapterEditItem extends RecyclerView.Adapter<RVAdapterEditItem.Di
                         pvh.dishDesc.setCompoundDrawablesWithIntrinsicBounds(0, 0, R.drawable.delete_fill_black, 0);
                 }else{
                     pvh.dishDesc.setCompoundDrawablesWithIntrinsicBounds(0, 0, 0, 0);
-                    if(pvh.dishDesc.length() == 0){
-                        //TODO
-                    }
                 }
             }
         });
@@ -170,8 +167,6 @@ public class RVAdapterEditItem extends RecyclerView.Adapter<RVAdapterEditItem.Di
 
         if(dishViewHolder.dishName.getError() == null && !dishViewHolder.dishName.hasFocus())
             dishViewHolder.dishName.setCompoundDrawablesWithIntrinsicBounds(0, 0, 0, 0);
-
-
 
     }
 
@@ -281,6 +276,7 @@ public class RVAdapterEditItem extends RecyclerView.Adapter<RVAdapterEditItem.Di
         public void updatePosition(int position){
             this.position = position;
         }
+
         public void onClick(View arg0) {
 
             unchanged = false;
@@ -319,7 +315,6 @@ public class RVAdapterEditItem extends RecyclerView.Adapter<RVAdapterEditItem.Di
             dishes.get(position).setDishName(charSequence.toString());
             if(!editImage.isEnabled()){
                 editImage.setEnabled(true);
-                notifyItemChanged(position);
             }
 
             editItem.saveEnabled(true);
