@@ -64,4 +64,6 @@
     <string name="additional">Additional info:</string>
     <string name="idRes" translatable="false">ID:</string>
 
+    <string name="save">Your data has been saved</string>
+
 </resources>

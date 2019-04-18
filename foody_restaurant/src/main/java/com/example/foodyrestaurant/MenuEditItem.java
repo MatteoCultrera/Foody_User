@@ -27,6 +27,7 @@ import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.ListAdapter;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.request.RequestOptions;
@@ -220,7 +221,10 @@ public class MenuEditItem extends AppCompatActivity {
             fileTMP.delete();
         if(fileItem.exists())
             fileItem.exists();
-        finish();
+        //finish();
+        unchanged = true;
+        recyclerAdapter.setUnchanged(true);
+        Toast.makeText(getApplicationContext(), R.string.save, Toast.LENGTH_SHORT).show();
     }
 
     public void saveEnabled(boolean enabled){
@@ -256,6 +260,7 @@ public class MenuEditItem extends AppCompatActivity {
     }
 
     public void insertItem(int position){
+        unchanged = false;
         dishes.add(new Dish("","",0.0f,null));
         recyclerAdapter.notifyItemInserted(position);
         saveEnabled(false);

@@ -98,9 +98,9 @@ public class RVAdapter extends RecyclerView.Adapter<RVAdapter.CardViewHolder>{
             }
             else{
                 enabler.setChecked(dishes.get(j).isAvailable());
-                title.setTextColor(ContextCompat.getColor(enabler.getContext(), R.color.errorColor));
-                subtitle.setTextColor(ContextCompat.getColor(enabler.getContext(), R.color.errorColor));
-                price.setTextColor(ContextCompat.getColor(enabler.getContext(), R.color.errorColor));
+                title.setTextColor(ContextCompat.getColor(enabler.getContext(), R.color.disabledText));
+                subtitle.setTextColor(ContextCompat.getColor(enabler.getContext(), R.color.disabledText));
+                price.setTextColor(ContextCompat.getColor(enabler.getContext(), R.color.disabledText));
             }
             enabler.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
                 @Override
@@ -122,17 +122,13 @@ public class RVAdapter extends RecyclerView.Adapter<RVAdapter.CardViewHolder>{
             });
         }
 
-
         pvh.title.setText(cards.get(pos).getTitle());
-
     }
 
     @Override
     public void onAttachedToRecyclerView(RecyclerView recyclerView) {
         super.onAttachedToRecyclerView(recyclerView);
     }
-
-
 
     public static class CardViewHolder extends RecyclerView.ViewHolder {
         final CardView cv;

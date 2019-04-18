@@ -44,7 +44,7 @@ public class Reservation {
     }
 
     public String getReservationID() {
-        return " "+reservationID;
+        return reservationID;
     }
 
     public void setReservationID(String reservationID) {

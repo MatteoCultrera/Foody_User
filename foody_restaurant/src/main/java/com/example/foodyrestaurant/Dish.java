@@ -105,4 +105,7 @@ class Dish {
         this.editImage = editImage;
     }
 
+    public int getQuantity() {
+        return quantity;
+    }
 }

@@ -65,10 +65,13 @@ class JsonHandler {
             reader.beginObject();
             if (reader.nextName().equals("Reservation"))
                 reservations = readMultipleReservations(reader);
-        } catch (IOException e) {
-            e.getMessage();
         } finally {
-            reader.close();
+            try {
+                reader.close();
+            }
+            catch (IOException e) {
+                e.getMessage();
+            }
         }
 
         return reservations;
@@ -110,7 +113,7 @@ class JsonHandler {
                 case "reservationID":
                     reservationID = reader.nextString();
                     break;
-                case "dishesOrdered":
+                case "Dish":
                     dishesOrdered = readMultipleDishes(reader);
                     break;
                 case "userName":
@@ -139,11 +142,11 @@ class JsonHandler {
                     break;
                 case "preparationStatus":
                     String help = reader.nextString();
-                    if (help.compareTo("pending") == 0)
+                    if (help.compareTo("Pending") == 0)
                         preparationStatus = Reservation.prepStatus.PENDING;
-                    else if (help.compareTo("doing") == 0)
+                    else if (help.compareTo("Doing") == 0)
                         preparationStatus = Reservation.prepStatus.DOING;
-                    else if (help.compareTo("done") == 0)
+                    else if (help.compareTo("Done") == 0)
                         preparationStatus = Reservation.prepStatus.DONE;
                     break;
                 default:
@@ -194,6 +197,7 @@ class JsonHandler {
         String dishName = null;
         String dishDescription = null;
         String price = null;
+        int quantity = 0;
         boolean available = true;
         Uri image = null;
 
@@ -216,6 +220,9 @@ class JsonHandler {
                 case "image":
                     image = Uri.parse(reader.nextString().replace('\\', Character.MIN_VALUE));
                     break;
+                case "quantity":
+                    quantity = reader.nextInt();
+                    break;
                 default:
                     reader.skipValue();
                     break;
@@ -223,6 +230,7 @@ class JsonHandler {
         }
         reader.endObject();
         Dish result = new Dish(dishName, dishDescription, Float.valueOf(Objects.requireNonNull(price)), image);
+        result.setQuantity(quantity);
         result.setAvailable(available);
         return result;
     }
@@ -282,12 +290,13 @@ class JsonHandler {
                     objDish.put("price", dish.getPrice());
                     objDish.put("image", dish.getImage());
                     objDish.put("available", dish.isAvailable());
+                    objDish.put("quantity", dish.getQuantity());
                     objDishArray.put(objDish);
                 }
                 objRes.put("Dish", objDishArray);
                 objCardArray.put(objRes);
             }
-            obj.put("Card", objCardArray);
+            obj.put("Reservation", objCardArray);
         }
         catch (JSONException e){
             e.getMessage();

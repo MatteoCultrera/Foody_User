@@ -82,7 +82,12 @@ public class MenuFragment extends Fragment {
 
         cards = jsonHandler.getCards(file);
 
+        for(int i = 0; i < cards.size(); i++)
+            Log.d("MAD", ""+ cards.get(i).getTitle() + ", ");
+
         if (cards.size() == 0) {
+            Log.d("MAD", "I'm inside to create the MENU JSON FILE + " + cards.size());
+
 
             cards = new ArrayList<>();
 
