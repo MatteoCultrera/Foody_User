@@ -91,8 +91,8 @@ public class RVAdapterRes extends RecyclerView.Adapter<RVAdapterRes.CardViewHold
                         dishes.get(toSet).setPrepared(true);
                     } else {
                         foodTitle.setPaintFlags(0);
-                        reservations.get(i).incrementToBePrepared(0);
                         if (reservations.get(i).isAccepted()) {
+                            reservations.get(i).incrementToBePrepared(0);
                             reservations.get(i).setPreparationStatus(Reservation.prepStatus.DOING);
                             pvh.status.setText(reservations.get(i).getPreparationStatusString());
                         }
