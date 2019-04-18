@@ -222,7 +222,6 @@ public class RVAdapterEditItem extends RecyclerView.Adapter<RVAdapterEditItem.Di
             deleteButton.setOnClickListener(deleteListener);
 
             dishName.setOnTouchListener(new View.OnTouchListener() {
-                @SuppressLint("ClickableViewAccessibility")
                 @Override
                 public boolean onTouch(View v, MotionEvent event) {
                     if(event.getAction() == MotionEvent.ACTION_UP) {
@@ -234,7 +233,10 @@ public class RVAdapterEditItem extends RecyclerView.Adapter<RVAdapterEditItem.Di
                     }
                     return false;
                 }
+
+
             });
+
 
             dishDesc.setOnTouchListener(new View.OnTouchListener() {
                 @SuppressLint("ClickableViewAccessibility")
@@ -315,7 +317,7 @@ public class RVAdapterEditItem extends RecyclerView.Adapter<RVAdapterEditItem.Di
             }
             count ++;
             dishes.get(position).setDishName(charSequence.toString());
-            if(editImage.isEnabled() == false){
+            if(!editImage.isEnabled()){
                 editImage.setEnabled(true);
                 notifyItemChanged(position);
             }
@@ -442,5 +444,9 @@ public class RVAdapterEditItem extends RecyclerView.Adapter<RVAdapterEditItem.Di
 
     boolean getUnchanged(){
         return unchanged;
+    }
+
+    void setUnchanged(boolean b){
+        this.unchanged = b;
     }
 }

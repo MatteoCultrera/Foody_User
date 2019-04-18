@@ -42,7 +42,7 @@ public class Reservation {
     }
 
     public String getReservationID() {
-        return " "+reservationID;
+        return reservationID;
     }
 
     public void setReservationID(String reservationID) {
@@ -152,7 +152,7 @@ public class Reservation {
         return toBePrepared;
     }
 
-    public int setToBePrepared(int number) {
+    public int incrementToBePrepared(int number) {
         if(number == 1)
             toBePrepared--;
         else

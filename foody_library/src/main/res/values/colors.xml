@@ -6,10 +6,11 @@
     <color name="colorAccent">#F9AA33</color>
     <color name="errorColor">#C90006</color>
     <color name="primaryText">#212121</color>
-    <color name="secondaryText" tools:ignore="UnusedResources">#757575</color>
+    <color name="secondaryText">#757575</color>
     <color name="divider">#BDBDBD</color>
     <color name="whiteText">#FFFFFF</color>
     <color name="dark_white_background">#EAEAEA</color>
     <color name="accept">#11DB40</color>
+    <color name="disabledText">#9D9FA2</color>
 
 </resources>

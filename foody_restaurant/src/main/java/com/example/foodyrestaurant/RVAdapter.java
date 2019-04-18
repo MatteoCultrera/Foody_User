@@ -98,18 +98,18 @@ public class RVAdapter extends RecyclerView.Adapter<RVAdapter.CardViewHolder>{
             }
             else{
                 enabler.setChecked(dishes.get(j).isAvailable());
-                title.setTextColor(ContextCompat.getColor(enabler.getContext(), R.color.errorColor));
-                subtitle.setTextColor(ContextCompat.getColor(enabler.getContext(), R.color.errorColor));
-                price.setTextColor(ContextCompat.getColor(enabler.getContext(), R.color.errorColor));
+                title.setTextColor(ContextCompat.getColor(enabler.getContext(), R.color.disabledText));
+                subtitle.setTextColor(ContextCompat.getColor(enabler.getContext(), R.color.disabledText));
+                price.setTextColor(ContextCompat.getColor(enabler.getContext(), R.color.disabledText));
             }
             enabler.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
                 @Override
                 public void onCheckedChanged(CompoundButton compoundButton, boolean b) {
                     if (!b) {
                         dishes.get(index).setAvailable(b);
-                        titleF.setTextColor(ContextCompat.getColor(enabler.getContext(), R.color.errorColor));
-                        subtitleF.setTextColor(ContextCompat.getColor(enabler.getContext(), R.color.errorColor));
-                        priceF.setTextColor(ContextCompat.getColor(enabler.getContext(), R.color.errorColor));
+                        titleF.setTextColor(ContextCompat.getColor(enabler.getContext(), R.color.disabledText));
+                        subtitleF.setTextColor(ContextCompat.getColor(enabler.getContext(), R.color.disabledText));
+                        priceF.setTextColor(ContextCompat.getColor(enabler.getContext(), R.color.disabledText));
 
                     }
                     else {
@@ -122,17 +122,13 @@ public class RVAdapter extends RecyclerView.Adapter<RVAdapter.CardViewHolder>{
             });
         }
 
-
         pvh.title.setText(cards.get(pos).getTitle());
-
     }
 
     @Override
     public void onAttachedToRecyclerView(RecyclerView recyclerView) {
         super.onAttachedToRecyclerView(recyclerView);
     }
-
-
 
     public static class CardViewHolder extends RecyclerView.ViewHolder {
         final CardView cv;
