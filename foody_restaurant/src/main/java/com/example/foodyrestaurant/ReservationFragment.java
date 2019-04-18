@@ -131,9 +131,10 @@ public class ReservationFragment extends Fragment {
             toAdd.setQuantity(6);
             dishes.add(toAdd);
             Reservation res5 = new Reservation(getResources().getString(R.string.idRes) + " " +"500000",
-                    dishes, Reservation.prepStatus.PENDING, false,"12:45", "Fabio Carfì",
+                    dishes, Reservation.prepStatus.PENDING, false,"14:15", "Fabio Carfì",
                     "3469489722", "Suonare campanello giallo, perchè ho bisogno della pizza calda e consegnata in tempo",
                     "Foody Beginner", "fabCarfi@gmail.com", "Via Tripoli 101, Torino");
+
             reservations.add(res1);
             reservations.add(res2);
             reservations.add(res3);

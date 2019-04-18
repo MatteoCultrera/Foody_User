@@ -104,6 +104,7 @@ class JsonHandler {
                 userAddress = null, resNote = null, orderTime = null;
         ArrayList<Dish> dishesOrdered = new ArrayList<>();
         boolean accepted = false;
+        int toBePrepared = 0;
         Reservation.prepStatus preparationStatus = Reservation.prepStatus.PENDING;
 
         reader.beginObject();
@@ -149,14 +150,19 @@ class JsonHandler {
                     else if (help.compareTo("Done") == 0)
                         preparationStatus = Reservation.prepStatus.DONE;
                     break;
+                case "toBePrepared":
+                    toBePrepared = reader.nextInt();
+                    break;
                 default:
                     reader.skipValue();
                     break;
             }
         }
         reader.endObject();
-        return new Reservation(reservationID, dishesOrdered, preparationStatus, accepted, orderTime, userName,
+        Reservation result = new Reservation(reservationID, dishesOrdered, preparationStatus, accepted, orderTime, userName,
                 userPhone, resNote, userLevel, userEmail, userAddress);
+        result.setToBePrepared(toBePrepared);
+        return result;
     }
 
     private Card readSingleCard(JsonReader reader) throws IOException{
@@ -198,7 +204,7 @@ class JsonHandler {
         String dishDescription = null;
         String price = null;
         int quantity = 0;
-        boolean available = true;
+        boolean available = true, prepared = false;
         Uri image = null;
 
         reader.beginObject();
@@ -223,6 +229,9 @@ class JsonHandler {
                 case "quantity":
                     quantity = reader.nextInt();
                     break;
+                case "prepared":
+                    prepared = reader.nextBoolean();
+                    break;
                 default:
                     reader.skipValue();
                     break;
@@ -231,6 +240,7 @@ class JsonHandler {
         reader.endObject();
         Dish result = new Dish(dishName, dishDescription, Float.valueOf(Objects.requireNonNull(price)), image);
         result.setQuantity(quantity);
+        result.setPrepared(prepared);
         result.setAvailable(available);
         return result;
     }
@@ -281,6 +291,7 @@ class JsonHandler {
                 objRes.put("orderTime", res1.getOrderTime());
                 objRes.put("accepted", res1.isAccepted());
                 objRes.put("preparationStatus", res1.getPreparationStatusString());
+                objRes.put("toBePrepared", res1.getToBePrepared());
                 ArrayList<Dish> dishes = res1.getDishesOrdered();
                 JSONArray objDishArray = new JSONArray();
                 for (Dish dish : dishes) {
@@ -291,6 +302,7 @@ class JsonHandler {
                     objDish.put("image", dish.getImage());
                     objDish.put("available", dish.isAvailable());
                     objDish.put("quantity", dish.getQuantity());
+                    objDish.put("prepared", dish.isPrepared());
                     objDishArray.put(objDish);
                 }
                 objRes.put("Dish", objDishArray);

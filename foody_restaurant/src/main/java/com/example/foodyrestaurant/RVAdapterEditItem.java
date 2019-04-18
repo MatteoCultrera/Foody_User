@@ -116,7 +116,7 @@ public class RVAdapterEditItem extends RecyclerView.Adapter<RVAdapterEditItem.Di
             }
         });
         RequestOptions options = new RequestOptions();
-        options.fitCenter();
+        options = options.fitCenter();
         if(dishes.get(i).getImage() == null){
             Glide
                     .with(dishViewHolder.dishPicture.getContext())
@@ -223,19 +223,18 @@ public class RVAdapterEditItem extends RecyclerView.Adapter<RVAdapterEditItem.Di
             deleteButton.setOnClickListener(deleteListener);
 
             dishName.setOnTouchListener(new View.OnTouchListener() {
+                @SuppressLint("ClickableViewAccessibility")
                 @Override
                 public boolean onTouch(View v, MotionEvent event) {
-                    if(event.getAction() == MotionEvent.ACTION_UP) {
-                        if(dishName.getCompoundDrawables()[2]!=null){
-                            if(event.getX() >= (dishName.getRight()- dishName.getLeft() - dishName.getCompoundDrawables()[2].getBounds().width())) {
+                    if (event.getAction() == MotionEvent.ACTION_UP) {
+                        if (dishName.getCompoundDrawables()[2] != null) {
+                            if (event.getX() >= (dishName.getRight() - dishName.getLeft() - dishName.getCompoundDrawables()[2].getBounds().width())) {
                                 dishName.setText("");
                             }
                         }
                     }
                     return false;
                 }
-
-
             });
 
 
