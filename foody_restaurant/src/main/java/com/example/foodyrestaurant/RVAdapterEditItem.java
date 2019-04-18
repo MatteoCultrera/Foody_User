@@ -1,7 +1,7 @@
 package com.example.foodyrestaurant;
 
 import android.annotation.SuppressLint;
-import android.content.Context;
+import android.support.annotation.NonNull;
 import android.support.design.button.MaterialButton;
 import android.support.v7.widget.CardView;
 import android.support.v7.widget.RecyclerView;
@@ -10,7 +10,6 @@ import android.text.InputFilter;
 import android.text.InputType;
 import android.text.Spanned;
 import android.text.TextWatcher;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.MotionEvent;
 import android.view.View;
@@ -29,11 +28,11 @@ import de.hdodenhof.circleimageview.CircleImageView;
 
 public class RVAdapterEditItem extends RecyclerView.Adapter<RVAdapterEditItem.DishEdit>{
 
-    ArrayList<Dish> dishes;
-    MenuEditItem editItem;
+    private final ArrayList<Dish> dishes;
+    private final MenuEditItem editItem;
     private boolean unchanged = true;
 
-    public RVAdapterEditItem(ArrayList<Dish> dishes, MenuEditItem editItem){
+    RVAdapterEditItem(ArrayList<Dish> dishes, MenuEditItem editItem){
         this.dishes = dishes;
         this.editItem = editItem;
     }
@@ -43,8 +42,9 @@ public class RVAdapterEditItem extends RecyclerView.Adapter<RVAdapterEditItem.Di
         return dishes.size();
     }
 
+    @NonNull
     @Override
-    public RVAdapterEditItem.DishEdit onCreateViewHolder(ViewGroup viewGroup, int i) {
+    public RVAdapterEditItem.DishEdit onCreateViewHolder(@NonNull ViewGroup viewGroup, int i) {
 
         View v = LayoutInflater.from(viewGroup.getContext()).inflate(R.layout.menu_item_edit, viewGroup, false);
         final DishEdit pvh = new DishEdit(v, new DishNameEditTextListener(), new DishDescriptionEditTextListener(),
@@ -108,7 +108,7 @@ public class RVAdapterEditItem extends RecyclerView.Adapter<RVAdapterEditItem.Di
     }
 
     @Override
-    public void onBindViewHolder(final RVAdapterEditItem.DishEdit dishViewHolder,final int i) {
+    public void onBindViewHolder(@NonNull final RVAdapterEditItem.DishEdit dishViewHolder,final int i) {
         dishViewHolder.editImage.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -175,21 +175,23 @@ public class RVAdapterEditItem extends RecyclerView.Adapter<RVAdapterEditItem.Di
     }
 
     @Override
-    public void onAttachedToRecyclerView(RecyclerView recyclerView) {
+    public void onAttachedToRecyclerView(@NonNull RecyclerView recyclerView) {
         super.onAttachedToRecyclerView(recyclerView);
     }
 
-    public static class DishEdit extends RecyclerView.ViewHolder {
-        CardView cardView;
-        EditText dishName, dishDesc, price;
-        CircleImageView dishPicture;
-        DishNameEditTextListener nameListener;
-        DishDescriptionEditTextListener descriptionListener;
-        DecimalDigitsInputFilter decimalDigitsInputFilter;
-        DishPriceListener dishPriceListener;
-        DeleteListener deleteListener;
-        MaterialButton deleteButton;
-        MaterialButton editImage;
+    static class DishEdit extends RecyclerView.ViewHolder {
+        final CardView cardView;
+        final EditText dishName;
+        final EditText dishDesc;
+        final EditText price;
+        final CircleImageView dishPicture;
+        final DishNameEditTextListener nameListener;
+        final DishDescriptionEditTextListener descriptionListener;
+        final DecimalDigitsInputFilter decimalDigitsInputFilter;
+        final DishPriceListener dishPriceListener;
+        final DeleteListener deleteListener;
+        final MaterialButton deleteButton;
+        final MaterialButton editImage;
         boolean valid;
 
         DishEdit(View itemView, DishNameEditTextListener nameListener,
@@ -277,7 +279,7 @@ public class RVAdapterEditItem extends RecyclerView.Adapter<RVAdapterEditItem.Di
     private class DeleteListener implements View.OnClickListener {
         int position;
 
-        public void updatePosition(int position){
+        void updatePosition(int position){
             this.position = position;
         }
 
@@ -295,7 +297,7 @@ public class RVAdapterEditItem extends RecyclerView.Adapter<RVAdapterEditItem.Di
         private MaterialButton editImage;
         private int count = 0;
 
-        public void setEditText(EditText text, DishEdit dishEdit, MaterialButton editImage){
+        void setEditText(EditText text, DishEdit dishEdit, MaterialButton editImage){
             editText = text;
             this.dishEdit = dishEdit;
             this.editImage = editImage;

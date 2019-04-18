@@ -65,5 +65,6 @@
     <string name="additional">Info addizionali:</string>
 
     <string name="save">I dati sono stati salvati</string>
+    <string name="noSave">I dati sono stati già salvati</string>
     <string name="delete">Cancella</string>
 </resources>

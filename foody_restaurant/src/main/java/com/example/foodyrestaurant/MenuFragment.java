@@ -3,6 +3,7 @@ package com.example.foodyrestaurant;
 import android.content.Intent;
 import android.os.Bundle;
 import android.os.Environment;
+import android.support.annotation.NonNull;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.Fragment;
 import android.support.v7.widget.LinearLayoutManager;
@@ -13,8 +14,6 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 import com.bumptech.glide.Glide;
-import com.bumptech.glide.request.RequestOptions;
-import com.bumptech.glide.signature.ObjectKey;
 
 import java.io.File;
 import java.util.ArrayList;
@@ -29,7 +28,7 @@ public class MenuFragment extends Fragment {
     private final String JSON_COPY = "menuCopy.json";
     private final String JSON_PATH = "menu.json";
     private File storageDir;
-    private JsonHandler jsonHandler = new JsonHandler();
+    private final JsonHandler jsonHandler = new JsonHandler();
     private ArrayList<Card> cards;
 
     public MenuFragment() {
@@ -37,7 +36,7 @@ public class MenuFragment extends Fragment {
     }
 
     @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container,
+    public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
 
@@ -47,7 +46,7 @@ public class MenuFragment extends Fragment {
     }
 
     @Override
-    public void onViewCreated(View view, Bundle savedInstanceState) {
+    public void onViewCreated(@NonNull View view, Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
         init(view);
     }
@@ -129,8 +128,11 @@ public class MenuFragment extends Fragment {
             @Override
             public void onClick(View v) {
                 File jsonTemp = new File(storageDir,JSON_COPY);
-                if(jsonTemp.exists())
-                    jsonTemp.delete();
+                if(jsonTemp.exists()) {
+                    if(!jsonTemp.delete()){
+                        System.out.println("Cannot delete the file.");
+                    }
+                }
                 Intent intent = new Intent(getActivity(), MenuEdit.class);
                 startActivity(intent);
             }

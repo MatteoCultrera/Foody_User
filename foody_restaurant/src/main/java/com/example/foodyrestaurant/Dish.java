@@ -1,6 +1,7 @@
 package com.example.foodyrestaurant;
 
 import android.net.Uri;
+import android.support.annotation.NonNull;
 
 import java.util.Locale;
 
@@ -44,13 +45,10 @@ class Dish {
         return quantity+" x "+dishName;
     }
 
+    @NonNull
     @Override
     public String toString() {
         return dishName+" "+dishDescription+" "+String.format(Locale.UK, "%.2f €",price)+" "+(image==null?"null":image.toString());
-    }
-
-    public boolean getAdded(){
-        return added;
     }
 
     String getDishName(){
@@ -61,7 +59,7 @@ class Dish {
         return dishDescription;
     }
 
-    public Float getPrice(){
+    Float getPrice(){
         return price;
     }
 
@@ -77,7 +75,7 @@ class Dish {
         this.dishDescription = dishDescription;
     }
 
-    public void setPrice(Float price) {
+    void setPrice(Float price) {
         this.price = price;
     }
 
@@ -87,10 +85,6 @@ class Dish {
 
     void setAdded(boolean added){
         this.added = added;
-    }
-
-    public boolean isPrepared() {
-        return prepared;
     }
 
     void setPrepared(boolean prepared) {
@@ -105,7 +99,7 @@ class Dish {
         this.editImage = editImage;
     }
 
-    public int getQuantity() {
+    int getQuantity() {
         return quantity;
     }
 }

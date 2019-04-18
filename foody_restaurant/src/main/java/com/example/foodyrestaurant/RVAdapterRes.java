@@ -3,23 +3,19 @@ package com.example.foodyrestaurant;
 import android.content.Context;
 import android.content.Intent;
 import android.graphics.Paint;
-import android.graphics.drawable.Drawable;
 import android.net.Uri;
+import android.support.annotation.NonNull;
 import android.support.constraint.ConstraintLayout;
 import android.support.design.button.MaterialButton;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v7.widget.AppCompatImageButton;
 import android.support.v7.widget.CardView;
 import android.support.v7.widget.RecyclerView;
-import android.text.TextWatcher;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.LinearLayout;
 import android.widget.TextView;
-
-import org.w3c.dom.Text;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -37,14 +33,15 @@ public class RVAdapterRes extends RecyclerView.Adapter<RVAdapterRes.CardViewHold
         return reservations.size();
     }
 
+    @NonNull
     @Override
-    public CardViewHolder onCreateViewHolder(ViewGroup viewGroup, int i) {
+    public CardViewHolder onCreateViewHolder(@NonNull ViewGroup viewGroup, int i) {
         View v = LayoutInflater.from(viewGroup.getContext()).inflate(R.layout.reservation_card_display, viewGroup, false);
         return new CardViewHolder(v);
     }
 
     @Override
-    public void onBindViewHolder(final CardViewHolder pvh, final int i) {
+    public void onBindViewHolder(@NonNull final CardViewHolder pvh, final int i) {
         final Context context = pvh.cv.getContext();
         LayoutInflater inflater = LayoutInflater.from(context);
         final int pos = pvh.getAdapterPosition();
@@ -150,27 +147,27 @@ public class RVAdapterRes extends RecyclerView.Adapter<RVAdapterRes.CardViewHold
     }
 
     @Override
-    public void onAttachedToRecyclerView(RecyclerView recyclerView) {
+    public void onAttachedToRecyclerView(@NonNull RecyclerView recyclerView) {
         super.onAttachedToRecyclerView(recyclerView);
     }
 
 
-    public static class CardViewHolder extends RecyclerView.ViewHolder {
-        CardView cv;
-        TextView idOrder;
-        TextView time;
-        TextView status;
-        LinearLayout menuDishes;
-        ConstraintLayout buttonLayout;
-        MaterialButton accept;
-        MaterialButton decline;
-        FloatingActionButton plus;
-        ConstraintLayout additionalLayout;
-        TextView userName;
-        TextView notes;
-        AppCompatImageButton phone;
-        TextView notePlaceholder;
-        View separatorInfoNote;
+    static class CardViewHolder extends RecyclerView.ViewHolder {
+        final CardView cv;
+        final TextView idOrder;
+        final TextView time;
+        final TextView status;
+        final LinearLayout menuDishes;
+        final ConstraintLayout buttonLayout;
+        final MaterialButton accept;
+        final MaterialButton decline;
+        final FloatingActionButton plus;
+        final ConstraintLayout additionalLayout;
+        final TextView userName;
+        final TextView notes;
+        final AppCompatImageButton phone;
+        final TextView notePlaceholder;
+        final View separatorInfoNote;
 
         CardViewHolder(View itemView) {
             super(itemView);

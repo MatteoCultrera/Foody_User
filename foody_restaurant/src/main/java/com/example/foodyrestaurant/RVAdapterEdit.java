@@ -5,9 +5,9 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.os.Parcel;
 import android.os.Parcelable;
+import android.support.annotation.NonNull;
 import android.support.constraint.ConstraintLayout;
 import android.support.v7.widget.RecyclerView;
-import android.util.Log;
 import android.util.SparseBooleanArray;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -22,7 +22,7 @@ public class RVAdapterEdit extends RecyclerView.Adapter<RVAdapterEdit.CardEdit>{
 
     private final ArrayList<Card> cards;
     private SparseBooleanArray sparseBooleanArray = new SparseBooleanArray();
-    MenuEdit menuEdit;
+    private final MenuEdit menuEdit;
 
     RVAdapterEdit(ArrayList<Card> cards, MenuEdit menuEdit){
         this.cards = cards;
@@ -34,15 +34,15 @@ public class RVAdapterEdit extends RecyclerView.Adapter<RVAdapterEdit.CardEdit>{
         return cards.size();
     }
 
+    @NonNull
     @Override
-    public CardEdit onCreateViewHolder(ViewGroup viewGroup, int i) {
-
+    public CardEdit onCreateViewHolder(@NonNull ViewGroup viewGroup, int i) {
         View v = LayoutInflater.from(viewGroup.getContext()).inflate(R.layout.menu_main_edit, viewGroup, false);
         return new CardEdit(v);
     }
 
     @Override
-    public void onBindViewHolder(final CardEdit cardViewHolder,final int i) {
+    public void onBindViewHolder(@NonNull final CardEdit cardViewHolder,final int i) {
         final Context context = cardViewHolder.title.getContext();
         cardViewHolder.title.setText(cards.get(i).getTitle());
 
@@ -168,8 +168,6 @@ public class RVAdapterEdit extends RecyclerView.Adapter<RVAdapterEdit.CardEdit>{
             }
         });
 
-
-        float distance = box.getContext().getResources().getDimensionPixelSize(R.dimen.short36);
         int shortAnimDuration = box.getContext().getResources().getInteger(android.R.integer.config_shortAnimTime);
 
         box.setAlpha(1.0f);
@@ -187,7 +185,7 @@ public class RVAdapterEdit extends RecyclerView.Adapter<RVAdapterEdit.CardEdit>{
 
 
     @Override
-    public void onAttachedToRecyclerView(RecyclerView recyclerView) {
+    public void onAttachedToRecyclerView(@NonNull RecyclerView recyclerView) {
         super.onAttachedToRecyclerView(recyclerView);
     }
 

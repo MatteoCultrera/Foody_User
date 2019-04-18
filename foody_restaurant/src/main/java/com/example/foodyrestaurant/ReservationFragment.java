@@ -3,7 +3,6 @@ package com.example.foodyrestaurant;
 import android.os.Bundle;
 import android.os.Environment;
 import android.support.annotation.NonNull;
-import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -11,9 +10,6 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.ImageView;
-
-import com.bumptech.glide.Glide;
 
 import java.io.File;
 import java.util.ArrayList;
@@ -23,17 +19,17 @@ import java.util.Objects;
 public class ReservationFragment extends Fragment {
 
     private RecyclerView reservation;
-    final String JSON_PATH = "reservations.json";
+    private final String JSON_PATH = "reservations.json";
     private File storageDir;
-    JsonHandler jsonHandler = new JsonHandler();
-    ArrayList<Reservation> reservations;
+    private final JsonHandler jsonHandler = new JsonHandler();
+    private ArrayList<Reservation> reservations;
 
     public ReservationFragment() {
         // Required empty public constructor
     }
 
     @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
+    public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
 
         View view = inflater.inflate(R.layout.fragment_reservation, container, false);
         reservation = view.findViewById(R.id.reservation_display);
@@ -42,7 +38,7 @@ public class ReservationFragment extends Fragment {
     }
 
     @Override
-    public void onViewCreated(View view, Bundle savedInstanceState) {
+    public void onViewCreated(@NonNull View view, Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
         init(view);
     }

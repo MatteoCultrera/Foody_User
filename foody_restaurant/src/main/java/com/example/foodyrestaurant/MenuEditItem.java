@@ -16,10 +16,6 @@ import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
-import android.text.Editable;
-import android.text.TextWatcher;
-import android.util.Log;
-import android.view.Menu;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
@@ -29,9 +25,6 @@ import android.widget.ListAdapter;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.bumptech.glide.Glide;
-import com.bumptech.glide.request.RequestOptions;
-import com.bumptech.glide.signature.ObjectKey;
 import com.yalantis.ucrop.UCrop;
 import com.yalantis.ucrop.UCropActivity;
 
@@ -42,6 +35,8 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashSet;
+import java.util.Locale;
+import java.util.Objects;
 import java.util.Set;
 
 public class MenuEditItem extends AppCompatActivity {
@@ -52,15 +47,13 @@ public class MenuEditItem extends AppCompatActivity {
     private ImageButton save;
     private ArrayList<Dish> dishes;
     private ArrayList<Card> cards;
-    private FloatingActionButton fabDishes;
     private boolean unchanged = true;
     private AlertDialog dialogDism;
     private String dialogCode = "ok";
-    private final String JSON_REAL = "menu.json";
     private final String JSON_PATH = "menuCopy.json";
     private final String JSON_COPY = "menuCopyItem.json";
     private final String PLACEHOLDER_CAMERA = "dishPlaceholder.jpg";
-    private File fileTmp, file;
+    private File fileTmp;
     private int posToChange;
     private RVAdapterEditItem recyclerAdapter;
     private final int GALLERY_REQUEST_CODE = 1;
@@ -98,11 +91,6 @@ public class MenuEditItem extends AppCompatActivity {
         String dialogPrec = savedInstanceState.getString("dialog");
         posToChange = savedInstanceState.getInt("posToChange", 0);
         placeholderPath = savedInstanceState.getString("placeholderPath");
-        /*
-        fileTmp = new File(storageDir, JSON_COPY);
-        cards = jsonHandler.getCards(fileTmp);
-        dishes = getDishes(JSON_COPY);
-        */
         unchanged = savedInstanceState.getBoolean("unchanged");
         if (dialogPrec != null && dialogPrec.compareTo("ok") != 0) {
             if (dialogPrec.compareTo("back") == 0) {
@@ -134,7 +122,7 @@ public class MenuEditItem extends AppCompatActivity {
     private void init(){
         storageImageDir = getExternalFilesDir(Environment.DIRECTORY_PICTURES);
 
-        file = new File(storageDir, JSON_PATH);
+        File file = new File(storageDir, JSON_PATH);
         jsonHandler = new JsonHandler();
         final RecyclerView recyclerMenu = findViewById(R.id.menu_items);
         LinearLayoutManager llm = new LinearLayoutManager(this);
@@ -144,7 +132,7 @@ public class MenuEditItem extends AppCompatActivity {
 
         storageDir =  getExternalFilesDir(Environment.DIRECTORY_DOCUMENTS);
         TextView title = findViewById(R.id.textView);
-        className = getIntent().getExtras().getString("MainName");
+        className = Objects.requireNonNull(getIntent().getExtras()).getString("MainName");
         title.setText(getResources().getString(R.string.edit, className));
         File temp = new File(storageDir,JSON_COPY);
         if(temp.exists()){
@@ -154,7 +142,7 @@ public class MenuEditItem extends AppCompatActivity {
             dishes = getDishes(JSON_PATH);
         recyclerAdapter = new RVAdapterEditItem(dishes, this);
         recyclerMenu.setAdapter(recyclerAdapter);
-        fabDishes = findViewById(R.id.fabDishes);
+        FloatingActionButton fabDishes = findViewById(R.id.fabDishes);
 
         fabDishes.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -174,60 +162,54 @@ public class MenuEditItem extends AppCompatActivity {
     }
 
     private void save(){
-        storageDir =  getExternalFilesDir(Environment.DIRECTORY_DOCUMENTS);
-        File oldFile = new File(storageDir,JSON_PATH);
-        ArrayList<Card> oldCards = jsonHandler.getCards(oldFile);
-        ArrayList<Dish> oldDishes = new ArrayList<>();
+        unchanged = recyclerAdapter.getUnchanged();
+        if (unchanged){
+            Toast.makeText(getApplicationContext(), R.string.noSave, Toast.LENGTH_SHORT).show();
+        } else {
+            final String JSON_REAL = "menu.json";
+            storageDir = getExternalFilesDir(Environment.DIRECTORY_DOCUMENTS);
+            File oldFile = new File(storageDir, JSON_PATH);
+            ArrayList<Card> oldCards = jsonHandler.getCards(oldFile);
+            ArrayList<Dish> oldDishes = new ArrayList<>();
 
-        for (int i = 0; i < cards.size(); i++){
-            if(cards.get(i).getTitle().equals(className)){
-                oldDishes = oldCards.get(i).getDishes();
-            }
-        }
-
-
-        boolean stillExists;
-        for(int i = 0; i < oldDishes.size(); i++){
-            stillExists = false;
-            for(int j = 0; j < dishes.size(); j++) {
-                Log.d("TITLECHECK", "old Dish "+oldDishes.get(i).getDishName()+" \n\t"+(oldDishes.get(i).getImage() == null?"":oldDishes.get(i).getImage().getPath()));
-                Log.d("TITLECHECK", "new Dish "+dishes.get(j).getDishName()+" \n\t"+(dishes.get(j).getImage()==null?"":dishes.get(j).getImage().getPath()));
-
-                if(oldDishes.get(i).getImage() == null || dishes.get(j).getImage() == null)
-                    continue;
-
-                if(oldDishes.get(i).getImage().toString().equals(dishes.get(j).getImage().toString())){
-                    Log.d("TITLECHECK",oldDishes.get(i).getDishName()+"still Exists");
-                    stillExists = true;
-                    break;
+            for (int i = 0; i < cards.size(); i++) {
+                if (cards.get(i).getTitle().equals(className)) {
+                    oldDishes = oldCards.get(i).getDishes();
                 }
             }
-            if(!stillExists && oldDishes.get(i).getImage() != null){
-                File toDelete = new File(oldDishes.get(i).getImage().getPath());
-                if(toDelete.exists()){
-                    Log.d("TITLECHECK", "deleting "+oldDishes.get(i).getDishName());
-                    toDelete.delete();
+            boolean stillExists;
+            for (int i = 0; i < oldDishes.size(); i++) {
+                stillExists = false;
+                for (int j = 0; j < dishes.size(); j++) {
+                    if (oldDishes.get(i).getImage() == null || dishes.get(j).getImage() == null)
+                        continue;
+                    if (oldDishes.get(i).getImage().toString().equals(dishes.get(j).getImage().toString())) {
+                        stillExists = true;
+                        break;
+                    }
+                }
+                if (!stillExists && oldDishes.get(i).getImage() != null) {
+                    File toDelete = new File(oldDishes.get(i).getImage().getPath());
+                    if (toDelete.exists()) {
+                        if (!toDelete.delete()) {
+                            System.out.println("Cannot delete the file.");
+                        }
+                    }
                 }
             }
-        }
 
-        String json = jsonHandler.toJSON(cards);
-        File file = new File(storageDir, JSON_REAL);
-        File fileTMP = new File(storageDir, JSON_PATH);
-        File fileItem = new File(storageDir, JSON_COPY);
-        jsonHandler.saveStringToFile(json, file);
-        if(fileTMP.exists())
-            fileTMP.delete();
-        if(fileItem.exists())
-            fileItem.exists();
-        //finish();
-        unchanged = true;
-        recyclerAdapter.setUnchanged(true);
-        Toast.makeText(getApplicationContext(), R.string.save, Toast.LENGTH_SHORT).show();
+            String json = jsonHandler.toJSON(cards);
+            File file = new File(storageDir, JSON_REAL);
+            File fileCopy = new File(storageDir, JSON_PATH);
+            jsonHandler.saveStringToFile(json, file);
+            jsonHandler.saveStringToFile(json, fileCopy);
+            unchanged = true;
+            recyclerAdapter.setUnchanged(true);
+            Toast.makeText(getApplicationContext(), R.string.save, Toast.LENGTH_SHORT).show();
+        }
     }
 
     public void saveEnabled(boolean enabled){
-
         if(enabled)
             enabled = canEnable();
 
@@ -239,7 +221,7 @@ public class MenuEditItem extends AppCompatActivity {
         }
     }
 
-    public boolean canEnable(){
+    private boolean canEnable(){
         ArrayList<String> dishNames = new ArrayList<>();
 
         for(int i = 0; i < dishes.size(); i++){
@@ -248,17 +230,11 @@ public class MenuEditItem extends AppCompatActivity {
             dishNames.add(dishes.get(i).getDishName());
 
         }
-        Set<String> dis = new HashSet<String>(dishNames);
-        if(dis.size() < dishes.size())
-            return false;
-        return true;
+        Set<String> dis = new HashSet<>(dishNames);
+        return dis.size() >= dishes.size();
     }
 
-    public boolean getSaveEnabled(){
-        return save.isEnabled();
-    }
-
-    public void insertItem(int position){
+    private void insertItem(int position){
         unchanged = false;
         dishes.add(new Dish("","",0.0f,null));
         recyclerAdapter.notifyItemInserted(position);
@@ -266,10 +242,13 @@ public class MenuEditItem extends AppCompatActivity {
     }
 
     public void removeItem(int position){
+        unchanged = false;
         if(dishes.get(position).isEditImage()){
             File image = new File(dishes.get(position).getImage().getPath());
             if(image.exists()){
-                image.delete();
+                if(!image.delete()){
+                    System.out.println("Cannot delete the file.");
+                }
             }
         }
         dishes.remove(position);
@@ -288,7 +267,6 @@ public class MenuEditItem extends AppCompatActivity {
                 dishes = cards.get(i).getDishes();
             }
         }
-        String json = jsonHandler.toJSON(cards);
         return dishes;
     }
 
@@ -325,7 +303,9 @@ public class MenuEditItem extends AppCompatActivity {
         if (unchanged && recyclerAdapter.getUnchanged()){
             File f = new File(storageDir, JSON_COPY);
             if(f.exists()){
-                f.delete();
+                if(!f.delete()){
+                    System.out.println("Cannot delete the file.");
+                }
             }
             super.onBackPressed();
         }
@@ -346,7 +326,9 @@ public class MenuEditItem extends AppCompatActivity {
                         if(dishes.get(j).isEditImage()){
                             File f = new File(dishes.get(j).getImage().getPath());
                             if(f.exists())
-                                f.delete();
+                                if(!f.delete()){
+                                    System.out.println("Cannot delete the file.");
+                                }
                         }
                     }
                     MenuEditItem.super.onBackPressed();
@@ -503,7 +485,9 @@ public class MenuEditItem extends AppCompatActivity {
                         if(dishes.get(posToChange).isEditImage()){
                             File toDelete = new File(dishes.get(posToChange).getImage().getPath());
                             if(toDelete.exists())
-                                toDelete.delete();
+                                if(!toDelete.delete()){
+                                    System.out.println("Cannot delete the file.");
+                                }
                         }else
                             dishes.get(posToChange).setEditImage(true);
                         dishes.get(posToChange).setImage(imageURi);
@@ -547,15 +531,15 @@ public class MenuEditItem extends AppCompatActivity {
 
     private Uri saveBitmap(Bitmap bitmap,String path){
         if(bitmap!=null){
-            String timeStamp = new SimpleDateFormat("yyyyMMdd_HHmmss").format(new Date());
+            String timeStamp = new SimpleDateFormat("yyyyMMdd_HHmmss", Locale.ITALY).format(new Date());
             String imageFileName = "JPEG_" + timeStamp + "_";
             File fileToSave = new File(storageImageDir, imageFileName);
             try {
                 FileOutputStream outputStream = null;
                 try {
-                    outputStream = new FileOutputStream(fileToSave.getPath()); //here is set your file path where you want to save or also here you can set file object directly
+                    outputStream = new FileOutputStream(fileToSave.getPath());
 
-                    bitmap.compress(Bitmap.CompressFormat.JPEG, 100, outputStream); // bitmap is your Bitmap instance, if you want to compress it you can compress reduce percentage
+                    bitmap.compress(Bitmap.CompressFormat.JPEG, 100, outputStream);
                 } catch (Exception e) {
                     e.printStackTrace();
                 } finally {
