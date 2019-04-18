@@ -50,13 +50,10 @@ public class ReservationFragment extends Fragment {
     @Override
     public void onPause(){
         super.onPause();
-        Log.d("MAD", "OnPause() #1");
         File file = new File(storageDir, JSON_PATH);
-
         String json = jsonHandler.resToJSON(reservations);
-        Log.d("MAD", "Json" + json);
         jsonHandler.saveStringToFile(json, file);
-        Log.d("MAD", "OnPause() #2");
+        Log.d("MAD", ""+json);
     }
 
     private void init(View view){
@@ -69,7 +66,6 @@ public class ReservationFragment extends Fragment {
         reservations = jsonHandler.getReservations(file);
 
         if(reservations.size() == 0) {
-            Log.d("MAD", "I'm inside to create the JSON FILE + " + reservations.size());
             reservations = new ArrayList<>();
 
             ArrayList<Dish> dishes = new ArrayList<>();
@@ -159,11 +155,7 @@ public class ReservationFragment extends Fragment {
             jsonHandler.saveStringToFile(json, file);
         }
 
-        Log.d("MAD", "here we go");
         RVAdapterRes adapter = new RVAdapterRes(reservations);
         reservation.setAdapter(adapter);
-        Log.d("MAD", "here we go #2");
-
-
     }
 }

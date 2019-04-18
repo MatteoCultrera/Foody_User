@@ -76,11 +76,10 @@ public class RVAdapterRes extends RecyclerView.Adapter<RVAdapterRes.CardViewHold
             final View dish = inflater.inflate(R.layout.reservation_item_display, pvh.menuDishes, false);
             final TextView foodTitle = dish.findViewById(R.id.food_title_res);
             foodTitle.setText(dishes.get(j).getStringForRes());
-            foodTitle.setPaintFlags(0);
             foodTitle.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    if(reservations.get(i).getPreparationStatus() == Reservation.prepStatus.DOING && foodTitle.getPaintFlags() == 0) {
+                    if(reservations.get(i).getPreparationStatus() == Reservation.prepStatus.DOING) {
                         foodTitle.setPaintFlags(Paint.STRIKE_THRU_TEXT_FLAG);
                         reservations.get(i).incrementToBePrepared(1);
                         if(reservations.get(i).getToBePrepared() == 0 && reservations.get(i).isAccepted()) {
