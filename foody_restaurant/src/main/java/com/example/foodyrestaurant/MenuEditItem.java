@@ -167,61 +167,48 @@ public class MenuEditItem extends AppCompatActivity {
     }
 
     private void save(){
-        storageDir =  getExternalFilesDir(Environment.DIRECTORY_DOCUMENTS);
-        File oldFile = new File(storageDir,JSON_PATH);
-        ArrayList<Card> oldCards = jsonHandler.getCards(oldFile);
-        ArrayList<Dish> oldDishes = new ArrayList<>();
+        if (unchanged){
+            Toast.makeText(getApplicationContext(), R.string.save, Toast.LENGTH_SHORT).show();
+        } else {
+            storageDir = getExternalFilesDir(Environment.DIRECTORY_DOCUMENTS);
+            File oldFile = new File(storageDir, JSON_PATH);
+            ArrayList<Card> oldCards = jsonHandler.getCards(oldFile);
+            ArrayList<Dish> oldDishes = new ArrayList<>();
 
-        for (int i = 0; i < cards.size(); i++){
-            if(cards.get(i).getTitle().equals(className)){
-                oldDishes = oldCards.get(i).getDishes();
-            }
-        }
-
-
-        boolean stillExists;
-        for(int i = 0; i < oldDishes.size(); i++){
-            stillExists = false;
-            for(int j = 0; j < dishes.size(); j++) {
-                Log.d("TITLECHECK", "old Dish "+oldDishes.get(i).getDishName()+" \n\t"+(oldDishes.get(i).getImage() == null?"":oldDishes.get(i).getImage().getPath()));
-                Log.d("TITLECHECK", "new Dish "+dishes.get(j).getDishName()+" \n\t"+(dishes.get(j).getImage()==null?"":dishes.get(j).getImage().getPath()));
-
-                if(oldDishes.get(i).getImage() == null || dishes.get(j).getImage() == null)
-                    continue;
-
-                if(oldDishes.get(i).getImage().toString().equals(dishes.get(j).getImage().toString())){
-                    Log.d("TITLECHECK",oldDishes.get(i).getDishName()+"still Exists");
-                    stillExists = true;
-                    break;
+            for (int i = 0; i < cards.size(); i++) {
+                if (cards.get(i).getTitle().equals(className)) {
+                    oldDishes = oldCards.get(i).getDishes();
                 }
             }
-            if(!stillExists && oldDishes.get(i).getImage() != null){
-                File toDelete = new File(oldDishes.get(i).getImage().getPath());
-                if(toDelete.exists()){
-                    Log.d("TITLECHECK", "deleting "+oldDishes.get(i).getDishName());
-                    if(!toDelete.delete()){
-                        System.out.println("Cannot delete the file.");
+            boolean stillExists;
+            for (int i = 0; i < oldDishes.size(); i++) {
+                stillExists = false;
+                for (int j = 0; j < dishes.size(); j++) {
+                    if (oldDishes.get(i).getImage() == null || dishes.get(j).getImage() == null)
+                        continue;
+                    if (oldDishes.get(i).getImage().toString().equals(dishes.get(j).getImage().toString())) {
+                        stillExists = true;
+                        break;
+                    }
+                }
+                if (!stillExists && oldDishes.get(i).getImage() != null) {
+                    File toDelete = new File(oldDishes.get(i).getImage().getPath());
+                    if (toDelete.exists()) {
+                        if (!toDelete.delete()) {
+                            System.out.println("Cannot delete the file.");
+                        }
                     }
                 }
             }
-        }
 
-        String json = jsonHandler.toJSON(cards);
-        String JSON_REAL = "menu.json";
-        File file = new File(storageDir, JSON_REAL);
-        File fileTMP = new File(storageDir, JSON_PATH);
-        File fileItem = new File(storageDir, JSON_COPY);
-        jsonHandler.saveStringToFile(json, file);
-        if(fileTMP.exists()){
-            if(!fileTMP.delete()){
-                System.out.println("Cannot delete the file.");
-            };
+            String json = jsonHandler.toJSON(cards);
+            String JSON_REAL = "menu.json";
+            File file = new File(storageDir, JSON_REAL);
+            jsonHandler.saveStringToFile(json, file);
+            unchanged = true;
+            recyclerAdapter.setUnchanged(true);
+            Toast.makeText(getApplicationContext(), R.string.save, Toast.LENGTH_SHORT).show();
         }
-        if(fileItem.exists())
-            fileItem.exists();
-        unchanged = true;
-        recyclerAdapter.setUnchanged(true);
-        Toast.makeText(getApplicationContext(), R.string.save, Toast.LENGTH_SHORT).show();
     }
 
     public void saveEnabled(boolean enabled){
