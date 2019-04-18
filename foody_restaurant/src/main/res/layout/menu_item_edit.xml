@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <android.support.constraint.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     xmlns:app="http://schemas.android.com/apk/res-auto"
@@ -38,13 +39,14 @@
                 android:layout_height="52dp"
                 app:cornerRadius="80dp"
                 app:icon="@drawable/edit_black"
-                app:iconPadding="0dp"
                 app:iconGravity="textStart"
+                app:iconPadding="0dp"
+                app:layout_constraintBottom_toBottomOf="@+id/dish_image"
                 app:layout_constraintEnd_toEndOf="@id/dish_image"
-                app:layout_constraintBottom_toBottomOf="@id/dish_image"
-                />
-
-
+                app:layout_constraintHorizontal_bias="1.0"
+                app:layout_constraintStart_toStartOf="@+id/dish_image"
+                app:layout_constraintTop_toTopOf="@+id/dish_image"
+                app:layout_constraintVertical_bias="0.9" />
 
             <android.support.design.widget.TextInputLayout
                 android:id="@+id/name_text_input"
@@ -52,7 +54,7 @@
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_marginStart="8dp"
-                android:layout_marginTop="23dp"
+                android:layout_marginTop="11dp"
                 android:layout_marginEnd="20dp"
                 app:boxCornerRadiusBottomEnd="9dp"
                 app:boxCornerRadiusBottomStart="9dp"
@@ -105,7 +107,7 @@
             <android.support.design.widget.TextInputLayout
                 android:id="@+id/price_text_input"
                 style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
-                android:layout_width="95dp"
+                android:layout_width="85dp"
                 android:layout_height="wrap_content"
                 android:layout_marginStart="8dp"
                 android:layout_marginTop="6dp"
@@ -143,10 +145,10 @@
                 android:id="@+id/deleteButton"
                 style="@style/Widget.MaterialComponents.Button.TextButton.Icon"
                 android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginStart="8dp"
-                android:layout_marginEnd="20dp"
-                android:text="Delete"
+                android:layout_height="0dp"
+                android:layout_marginStart="16dp"
+                android:layout_marginEnd="46dp"
+                android:text="@string/delete"
                 android:textAllCaps="false"
                 android:textColor="@color/errorColor"
                 app:layout_constraintBottom_toBottomOf="@+id/price_text_input"

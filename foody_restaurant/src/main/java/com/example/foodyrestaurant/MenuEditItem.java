@@ -206,7 +206,6 @@ public class MenuEditItem extends AppCompatActivity {
             }
         }
 
-
         String json = jsonHandler.toJSON(cards);
         String JSON_REAL = "menu.json";
         File file = new File(storageDir, JSON_REAL);
