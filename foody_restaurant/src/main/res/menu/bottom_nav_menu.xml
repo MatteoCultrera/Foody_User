@@ -11,6 +11,6 @@
         android:title="@string/orders" />
     <item
         android:id="@+id/prof"
-        android:icon="@drawable/prof_black"
+        android:icon="@drawable/name_black"
         android:title="@string/profile" />
 </menu>

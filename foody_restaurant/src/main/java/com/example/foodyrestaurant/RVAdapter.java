@@ -1,6 +1,7 @@
 package com.example.foodyrestaurant;
 
 import android.content.Context;
+import android.support.annotation.NonNull;
 import android.support.constraint.ConstraintLayout;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.widget.CardView;
@@ -28,7 +29,7 @@ public class RVAdapter extends RecyclerView.Adapter<RVAdapter.CardViewHolder>{
 
     private final List<Card> cards;
 
-    public RVAdapter(List<Card> cards){
+    RVAdapter(List<Card> cards){
         this.cards = cards;
     }
 
@@ -37,15 +38,16 @@ public class RVAdapter extends RecyclerView.Adapter<RVAdapter.CardViewHolder>{
         return cards.size();
     }
 
+    @NonNull
     @Override
-    public CardViewHolder onCreateViewHolder(ViewGroup viewGroup, int viewType) {
+    public CardViewHolder onCreateViewHolder(@NonNull ViewGroup viewGroup, int viewType) {
 
         View v = LayoutInflater.from(viewGroup.getContext()).inflate(R.layout.menu_card_display, viewGroup, false);
         return new CardViewHolder(v);
     }
 
     @Override
-    public void onBindViewHolder(CardViewHolder pvh, int i) {
+    public void onBindViewHolder(@NonNull CardViewHolder pvh, int i) {
 
         Context context = pvh.cv.getContext();
         LayoutInflater inflater = LayoutInflater.from(context);
@@ -72,9 +74,6 @@ public class RVAdapter extends RecyclerView.Adapter<RVAdapter.CardViewHolder>{
             else{
                     File f = new File(dishes.get(j).getImage().getPath());
                     if(!f.exists()){
-                        Log.d("TITLECHECK", "Image of "+dishes.get(j).getDishName()+" does not exists");
-
-
                     }
                     RequestOptions options = new RequestOptions();
                             options.fitCenter()
@@ -124,11 +123,11 @@ public class RVAdapter extends RecyclerView.Adapter<RVAdapter.CardViewHolder>{
     }
 
     @Override
-    public void onAttachedToRecyclerView(RecyclerView recyclerView) {
+    public void onAttachedToRecyclerView(@NonNull RecyclerView recyclerView) {
         super.onAttachedToRecyclerView(recyclerView);
     }
 
-    public static class CardViewHolder extends RecyclerView.ViewHolder {
+     static class CardViewHolder extends RecyclerView.ViewHolder {
         final CardView cv;
         final TextView title;
         final LinearLayout menuDishes;

@@ -2,6 +2,7 @@ package com.example.foodyrestaurant;
 
 import android.os.Bundle;
 import android.os.Environment;
+import android.support.annotation.NonNull;
 import android.support.v4.app.Fragment;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -20,7 +21,7 @@ public class ReservationFragment extends Fragment {
     private RecyclerView reservation;
     private final String JSON_PATH = "reservations.json";
     private File storageDir;
-    private JsonHandler jsonHandler = new JsonHandler();
+    private final JsonHandler jsonHandler = new JsonHandler();
     private ArrayList<Reservation> reservations;
 
     public ReservationFragment() {
@@ -28,7 +29,7 @@ public class ReservationFragment extends Fragment {
     }
 
     @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
+    public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
 
         View view = inflater.inflate(R.layout.fragment_reservation, container, false);
         reservation = view.findViewById(R.id.reservation_display);
@@ -37,7 +38,7 @@ public class ReservationFragment extends Fragment {
     }
 
     @Override
-    public void onViewCreated(View view, Bundle savedInstanceState) {
+    public void onViewCreated(@NonNull View view, Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
         init(view);
     }

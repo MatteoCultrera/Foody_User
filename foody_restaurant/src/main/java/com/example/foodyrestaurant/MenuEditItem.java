@@ -16,7 +16,6 @@ import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
-import android.util.Log;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
@@ -36,6 +35,7 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashSet;
+import java.util.Locale;
 import java.util.Objects;
 import java.util.Set;
 
@@ -91,11 +91,6 @@ public class MenuEditItem extends AppCompatActivity {
         String dialogPrec = savedInstanceState.getString("dialog");
         posToChange = savedInstanceState.getInt("posToChange", 0);
         placeholderPath = savedInstanceState.getString("placeholderPath");
-        /*
-        fileTmp = new File(storageDir, JSON_COPY);
-        cards = jsonHandler.getCards(fileTmp);
-        dishes = getDishes(JSON_COPY);
-        */
         unchanged = savedInstanceState.getBoolean("unchanged");
         if (dialogPrec != null && dialogPrec.compareTo("ok") != 0) {
             if (dialogPrec.compareTo("back") == 0) {
@@ -167,9 +162,11 @@ public class MenuEditItem extends AppCompatActivity {
     }
 
     private void save(){
+        unchanged = recyclerAdapter.getUnchanged();
         if (unchanged){
-            Toast.makeText(getApplicationContext(), R.string.save, Toast.LENGTH_SHORT).show();
+            Toast.makeText(getApplicationContext(), R.string.noSave, Toast.LENGTH_SHORT).show();
         } else {
+            final String JSON_REAL = "menu.json";
             storageDir = getExternalFilesDir(Environment.DIRECTORY_DOCUMENTS);
             File oldFile = new File(storageDir, JSON_PATH);
             ArrayList<Card> oldCards = jsonHandler.getCards(oldFile);
@@ -202,9 +199,10 @@ public class MenuEditItem extends AppCompatActivity {
             }
 
             String json = jsonHandler.toJSON(cards);
-            String JSON_REAL = "menu.json";
             File file = new File(storageDir, JSON_REAL);
+            File fileCopy = new File(storageDir, JSON_PATH);
             jsonHandler.saveStringToFile(json, file);
+            jsonHandler.saveStringToFile(json, fileCopy);
             unchanged = true;
             recyclerAdapter.setUnchanged(true);
             Toast.makeText(getApplicationContext(), R.string.save, Toast.LENGTH_SHORT).show();
@@ -212,7 +210,6 @@ public class MenuEditItem extends AppCompatActivity {
     }
 
     public void saveEnabled(boolean enabled){
-
         if(enabled)
             enabled = canEnable();
 
@@ -237,10 +234,6 @@ public class MenuEditItem extends AppCompatActivity {
         return dis.size() >= dishes.size();
     }
 
-    public boolean getSaveEnabled(){
-        return save.isEnabled();
-    }
-
     private void insertItem(int position){
         unchanged = false;
         dishes.add(new Dish("","",0.0f,null));
@@ -249,6 +242,7 @@ public class MenuEditItem extends AppCompatActivity {
     }
 
     public void removeItem(int position){
+        unchanged = false;
         if(dishes.get(position).isEditImage()){
             File image = new File(dishes.get(position).getImage().getPath());
             if(image.exists()){
@@ -273,7 +267,6 @@ public class MenuEditItem extends AppCompatActivity {
                 dishes = cards.get(i).getDishes();
             }
         }
-        String json = jsonHandler.toJSON(cards);
         return dishes;
     }
 
@@ -538,15 +531,15 @@ public class MenuEditItem extends AppCompatActivity {
 
     private Uri saveBitmap(Bitmap bitmap,String path){
         if(bitmap!=null){
-            String timeStamp = new SimpleDateFormat("yyyyMMdd_HHmmss").format(new Date());
+            String timeStamp = new SimpleDateFormat("yyyyMMdd_HHmmss", Locale.ITALY).format(new Date());
             String imageFileName = "JPEG_" + timeStamp + "_";
             File fileToSave = new File(storageImageDir, imageFileName);
             try {
                 FileOutputStream outputStream = null;
                 try {
-                    outputStream = new FileOutputStream(fileToSave.getPath()); //here is set your file path where you want to save or also here you can set file object directly
+                    outputStream = new FileOutputStream(fileToSave.getPath());
 
-                    bitmap.compress(Bitmap.CompressFormat.JPEG, 100, outputStream); // bitmap is your Bitmap instance, if you want to compress it you can compress reduce percentage
+                    bitmap.compress(Bitmap.CompressFormat.JPEG, 100, outputStream);
                 } catch (Exception e) {
                     e.printStackTrace();
                 } finally {

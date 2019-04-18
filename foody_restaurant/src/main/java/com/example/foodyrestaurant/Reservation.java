@@ -10,19 +10,19 @@ public class Reservation {
         DONE,
     }
 
-    private String reservationID;
-    private ArrayList<Dish> dishesOrdered;
+    private final String reservationID;
+    private final ArrayList<Dish> dishesOrdered;
     private boolean accepted;
     private prepStatus preparationStatus;
     private int toBePrepared;
-    private String userName;
-    private String userPhone;
-    private String userLevel;
-    private String userEmail;
-    private String userAddress;
+    private final String userName;
+    private final String userPhone;
+    private final String userLevel;
+    private final String userEmail;
+    private final String userAddress;
 
-    private String resNote;
-    private String orderTime;
+    private final String resNote;
+    private final String orderTime;
 
     Reservation(String identifier, ArrayList<Dish> dishes, prepStatus preparationStatus, boolean accepted,
                        String orderTime, String userName, String userPhone, String resNote, String userLevel,
@@ -45,16 +45,8 @@ public class Reservation {
         return reservationID;
     }
 
-    public void setReservationID(String reservationID) {
-        this.reservationID = reservationID;
-    }
-
     ArrayList<Dish> getDishesOrdered() {
         return dishesOrdered;
-    }
-
-    public void setDishesOrdered(ArrayList<Dish> dishesOrdered) {
-        this.dishesOrdered = dishesOrdered;
     }
 
     prepStatus getPreparationStatus() {
@@ -88,40 +80,20 @@ public class Reservation {
         return orderTime;
     }
 
-    public void setOrderTime(String orderTime) {
-        this.orderTime = orderTime;
-    }
-
-    public String getUserName() {
+    String getUserName() {
         return userName;
-    }
-
-    public void setUserName(String userName) {
-        this.userName = userName;
     }
 
     String getUserPhone() {
         return userPhone;
     }
 
-    public void setUserPhone(String userPhone) {
-        this.userPhone = userPhone;
-    }
-
     String getUserEmail() {
         return userEmail;
     }
 
-    public void setUserEmail(String userEmail) {
-        this.userEmail = userEmail;
-    }
-
     String getUserAddress() {
         return userAddress;
-    }
-
-    public void setUserAddress(String userAddress) {
-        this.userAddress = userAddress;
     }
 
     boolean isAccepted() {
@@ -136,16 +108,8 @@ public class Reservation {
         return resNote;
     }
 
-    public void setResNote(String resNote) {
-        this.resNote = resNote;
-    }
-
     String getUserLevel() {
         return userLevel;
-    }
-
-    public void setUserLevel(String userLevel) {
-        this.userLevel = userLevel;
     }
 
     int getToBePrepared() {

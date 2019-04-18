@@ -20,7 +20,7 @@ public class MainActivity extends AppCompatActivity {
     private Fragment menu = new MenuFragment();
     private Fragment reservations = new ReservationFragment();
     private Fragment user = new UserFragment();
-    private FragmentManager fm = getSupportFragmentManager();
+    private final FragmentManager fm = getSupportFragmentManager();
     private Fragment active;
     TabState stateApp;
 

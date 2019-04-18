@@ -4,7 +4,7 @@ import android.util.Log;
 import java.util.ArrayList;
 
 class Card {
-    private String title;
+    private final String title;
     private ArrayList<Dish> dishes;
     private boolean editing;
     private boolean selected;
@@ -35,20 +35,12 @@ class Card {
         return title;
     }
 
-    public void setTitle(String title) {
-        this.title = title;
-    }
-
     public ArrayList<Dish> getDishes() {
         return dishes;
     }
 
     public void setDishes(ArrayList<Dish> dishes) {
         this.dishes = dishes;
-    }
-
-    public void removeDish(Dish toRemove){
-        dishes.remove(toRemove);
     }
 
     public boolean isEditing() {

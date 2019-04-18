@@ -34,7 +34,6 @@
             android:fontFamily="@font/roboto_regular"
             android:textColor="@color/secondaryText"
             android:textSize="16sp"
-            android:text="1 x Pizza Margherita"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent"
