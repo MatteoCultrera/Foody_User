@@ -515,6 +515,7 @@ public class MenuEditItem extends AppCompatActivity {
         options.setStatusBarColor(getResources().getColor(R.color.colorPrimaryDark, getTheme()));
         options.setToolbarColor(getResources().getColor(R.color.colorPrimary, getTheme()));
         options.setAllowedGestures(UCropActivity.ALL, UCropActivity.ALL, UCropActivity.ALL);
+        options.setCircleDimmedLayer(true);
         options.setToolbarTitle(getResources().getString(R.string.crop_image));
         return options;
     }
