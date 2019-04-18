@@ -47,8 +47,9 @@ public class RVAdapterRes extends RecyclerView.Adapter<RVAdapterRes.CardViewHold
     public void onBindViewHolder(final CardViewHolder pvh, final int i) {
         final Context context = pvh.cv.getContext();
         LayoutInflater inflater = LayoutInflater.from(context);
+        final int pos = pvh.getAdapterPosition();
 
-        final ArrayList<Dish> dishes = reservations.get(i).getDishesOrdered();
+        final ArrayList<Dish> dishes = reservations.get(pos).getDishesOrdered();
 
         pvh.idOrder.setText(reservations.get(i).getReservationID());
         pvh.status.setText(reservations.get(i).getPreparationStatusString());
@@ -192,6 +193,4 @@ public class RVAdapterRes extends RecyclerView.Adapter<RVAdapterRes.CardViewHold
             separatorInfoNote = itemView.findViewById(R.id.separator2);
         }
     }
-
-
 }

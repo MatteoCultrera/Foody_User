@@ -7,6 +7,7 @@ import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -23,10 +24,12 @@ public class ReservationFragment extends Fragment {
 
     private RecyclerView reservation;
     final String JSON_PATH = "reservations.json";
+    private File storageDir;
+    JsonHandler jsonHandler = new JsonHandler();
     ArrayList<Reservation> reservations;
 
     public ReservationFragment() {
-
+        // Required empty public constructor
     }
 
     @Override
@@ -35,9 +38,6 @@ public class ReservationFragment extends Fragment {
         View view = inflater.inflate(R.layout.fragment_reservation, container, false);
         reservation = view.findViewById(R.id.reservation_display);
 
-        if(savedInstanceState != null) {
-
-        }
         return view;
     }
 
@@ -47,19 +47,29 @@ public class ReservationFragment extends Fragment {
         init(view);
     }
 
-    private void init(View view){
-        String json;
-        final File storageDir = Objects.requireNonNull(getActivity()).getExternalFilesDir(Environment.DIRECTORY_DOCUMENTS);
+    @Override
+    public void onPause(){
+        super.onPause();
+        Log.d("MAD", "OnPause() #1");
         File file = new File(storageDir, JSON_PATH);
 
+        String json = jsonHandler.resToJSON(reservations);
+        Log.d("MAD", "Json" + json);
+        jsonHandler.saveStringToFile(json, file);
+        Log.d("MAD", "OnPause() #2");
+    }
+
+    private void init(View view){
+        String json;
+        storageDir = Objects.requireNonNull(getActivity()).getExternalFilesDir(Environment.DIRECTORY_DOCUMENTS);
+        File file = new File(storageDir, JSON_PATH);
         LinearLayoutManager llm = new LinearLayoutManager(view.getContext());
         reservation.setLayoutManager(llm);
-
-        JsonHandler jsonHandler = new JsonHandler();
 
         reservations = jsonHandler.getReservations(file);
 
         if(reservations.size() == 0) {
+            Log.d("MAD", "I'm inside to create the JSON FILE + " + reservations.size());
             reservations = new ArrayList<>();
 
             ArrayList<Dish> dishes = new ArrayList<>();
@@ -144,24 +154,16 @@ public class ReservationFragment extends Fragment {
                     return o1.getOrderTime().compareTo(o2.getOrderTime());
                 }
             });
+
+            json = jsonHandler.resToJSON(reservations);
+            jsonHandler.saveStringToFile(json, file);
         }
 
-        json = jsonHandler.resToJSON(reservations);
-        jsonHandler.saveStringToFile(json, file);
-
+        Log.d("MAD", "here we go");
         RVAdapterRes adapter = new RVAdapterRes(reservations);
-
         reservation.setAdapter(adapter);
-    }
+        Log.d("MAD", "here we go #2");
 
-   /* @Override
-    public void onPause() {
-        super.onPause();
-        JsonHandler jsonHandler = new JsonHandler();
-        final File storageDir = Objects.requireNonNull(getActivity()).getExternalFilesDir(Environment.DIRECTORY_DOCUMENTS);
-        File file = new File(storageDir, JSON_PATH);
-        String json;
-        json = jsonHandler.resToJSON(reservations);
-        jsonHandler.saveStringToFile(json, file);
-    }*/
+
+    }
 }
