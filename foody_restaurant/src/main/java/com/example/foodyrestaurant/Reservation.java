@@ -15,8 +15,6 @@ public class Reservation {
     private boolean accepted;
     private prepStatus preparationStatus;
     private int toBePrepared;
-
-    //User useful data
     private String userName;
     private String userPhone;
     private String userLevel;
