@@ -92,12 +92,14 @@ public class MenuEditItem extends AppCompatActivity {
         posToChange = savedInstanceState.getInt("posToChange", 0);
         placeholderPath = savedInstanceState.getString("placeholderPath");
         unchanged = savedInstanceState.getBoolean("unchanged");
+        recyclerAdapter.setUnchanged(unchanged);
         if (dialogPrec != null && dialogPrec.compareTo("ok") != 0) {
             if (dialogPrec.compareTo("back") == 0) {
                 restoreBack();
+            } else if (dialogPrec.compareTo("pickImage") == 0){
+                showPickImageDialog(posToChange);
             }
         }
-
     }
 
     @Override
@@ -410,7 +412,7 @@ public class MenuEditItem extends AppCompatActivity {
             }
         });
         dialogCode = "pickImage";
-        builder.show();
+        dialogDism = builder.show();
     }
 
     private  void pickFromGallery(){
