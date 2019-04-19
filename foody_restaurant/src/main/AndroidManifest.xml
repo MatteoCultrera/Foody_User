@@ -18,7 +18,7 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
-        <activity android:name=".MenuEditItem"></activity>
+        <activity android:name=".MenuEditItem"/>
         <activity android:name=".MenuEdit" />
         <activity
             android:name=".Setup"
@@ -35,9 +35,6 @@
         <activity
             android:name="com.yalantis.ucrop.UCropActivity"
             android:theme="@style/Theme.AppCompat.Light.NoActionBar" />
-        <activity android:name=".User" />
-        <activity android:name=".Menu" />
-
         <provider
             android:name="android.support.v4.content.FileProvider"
             android:authorities="com.example.foodyrestaurant"

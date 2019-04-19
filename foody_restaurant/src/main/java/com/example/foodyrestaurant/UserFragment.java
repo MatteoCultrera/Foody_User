@@ -1,12 +1,12 @@
 package com.example.foodyrestaurant;
 
-
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.os.Bundle;
+import android.support.annotation.NonNull;
 import android.support.v4.app.Fragment;
 import android.os.Environment;
 import android.support.design.widget.FloatingActionButton;
@@ -26,15 +26,11 @@ import java.util.Objects;
 
 import static android.content.Context.MODE_PRIVATE;
 
-/**
- * A simple {@link Fragment} subclass.
- */
 public class UserFragment extends Fragment {
 
     private final String PLACEHOLDER_CAMERA="PlaceCamera.jpg";
     private final String PROFILE_IMAGE = "ProfileImage.jpg";
     private File storageDir;
-    private boolean allowRefresh = true;
 
     private SharedPreferences sharedPref;
 
@@ -44,20 +40,15 @@ public class UserFragment extends Fragment {
     }
 
     @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container,
+    public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-
-        // Inflate the layout for this fragment
         return inflater.inflate(R.layout.fragment_user, container, false);
-
-
     }
 
 
     @Override
-    public void onViewCreated(View view, Bundle savedInstanceState) {
+    public void onViewCreated(@NonNull View view, Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
-
     }
 
 

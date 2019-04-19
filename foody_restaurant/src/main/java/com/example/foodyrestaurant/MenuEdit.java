@@ -13,13 +13,15 @@ import android.support.v7.widget.RecyclerView;
 import android.text.Editable;
 import android.text.InputType;
 import android.text.TextWatcher;
-import android.util.Log;
+import android.util.SparseBooleanArray;
 import android.view.View;
 import android.view.WindowManager;
 import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
+import android.widget.Toast;
+
 import java.io.File;
 import java.util.ArrayList;
 import java.util.Iterator;
@@ -30,42 +32,81 @@ public class MenuEdit extends AppCompatActivity {
 
     private RecyclerView recyclerMenu;
     private RVAdapterEdit recyclerAdapter;
-
+    private SparseBooleanArray arrBoolean = new SparseBooleanArray();
     private FloatingActionButton mainFAB;
     private ArrayList<Card> cards;
     private JsonHandler jsonHandler;
+    private EditText input;
     private final String JSON_PATH = "menu.json";
     private final String JSON_COPY = "menuCopy.json";
+    private File fileTmp;
     private File storageDir;
     private ImageButton save;
     private ImageButton edit;
     private ImageButton exit;
     private ImageView plus, trash;
-    private boolean unchanged;
+    private boolean unchanged = true;
     private AlertDialog dialogDism;
+    private String dialogCode = "ok";
+    private String writingCard = "";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_menu_edit);
-
         init();
+    }
 
+    @Override
+    protected void onRestoreInstanceState(Bundle savedInstanceState){
+        super.onRestoreInstanceState(savedInstanceState);
+        cards = jsonHandler.getCards(fileTmp);
+        String writingCard = savedInstanceState.getString("writing", "");
+        String dialogPrec = savedInstanceState.getString("dialog");
+        unchanged = savedInstanceState.getBoolean("unchanged");
+        if (dialogPrec != null && dialogPrec.compareTo("ok") != 0) {
+            if (dialogPrec.compareTo("create") == 0) {
+                plusPressed(writingCard);
+            } else if (dialogPrec.compareTo("back") == 0){
+                onBackPressed();
+            } else if (dialogPrec.compareTo("trash") == 0){
+                editRotate();
+            }
+        }
+        arrBoolean = savedInstanceState.getParcelable("booleanArray");
+    }
 
+    @Override
+    protected void onSaveInstanceState(Bundle outState){
+        super.onSaveInstanceState(outState);
+        String json = jsonHandler.toJSON(cards);
+        jsonHandler.saveStringToFile(json, fileTmp);
+        outState.putBoolean("unchanged", unchanged);
+        outState.putString("dialog", dialogCode);
+        if (input != null)
+            writingCard = input.getText().toString();
+        if (!writingCard.equals(""))
+            outState.putString("writing", writingCard);
+        outState.putParcelable("booleanArray", recyclerAdapter.getSparseBooleanArray());
     }
 
     private void init(){
-        final File fileTmp = new File(storageDir, JSON_COPY);
-        unchanged = true;
-
         jsonHandler = new JsonHandler();
         storageDir =  getExternalFilesDir(Environment.DIRECTORY_DOCUMENTS);
+        fileTmp = new File(storageDir, JSON_COPY);
         File file = new File(storageDir, JSON_PATH);
         recyclerMenu = findViewById(R.id.menu_edit);
         LinearLayoutManager llm = new LinearLayoutManager(this);
         recyclerMenu.setLayoutManager(llm);
         mainFAB = findViewById(R.id.mainFAB);
-        cards = jsonHandler.getCards(file);
+
+        if(fileTmp.exists()){
+            cards = jsonHandler.getCards(fileTmp);
+        }
+        else{
+            cards = jsonHandler.getCards(file);
+            unchanged = true;
+        }
 
         save = findViewById(R.id.saveButton);
         ImageButton back = findViewById(R.id.backButton);
@@ -77,11 +118,17 @@ public class MenuEdit extends AppCompatActivity {
         save.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                String json = jsonHandler.toJSON(cards);
-                storageDir =  getExternalFilesDir(Environment.DIRECTORY_DOCUMENTS);
-                File file = new File(storageDir, JSON_PATH);
-                jsonHandler.saveStringToFile(json, file);
-                finish();
+                if (unchanged){
+                    Toast.makeText(getApplicationContext(), R.string.noSave, Toast.LENGTH_SHORT).show();
+                } else {
+                    String json = jsonHandler.toJSON(cards);
+                    storageDir = getExternalFilesDir(Environment.DIRECTORY_DOCUMENTS);
+                    File file = new File(storageDir, JSON_PATH);
+                    jsonHandler.saveStringToFile(json, file);
+                    unchanged = true;
+                    Toast.makeText(getApplicationContext(), R.string.save, Toast.LENGTH_SHORT).show();
+                }
+                //finish();
             }
         });
 
@@ -106,132 +153,137 @@ public class MenuEdit extends AppCompatActivity {
             }
         });
 
-        /*
-        cards = new ArrayList<>();
+        if(dialogCode.equals("trash")){
+            for(int i = 0; i < cards.size(); i++)
+                cards.get(i).setEditing(true);
+        }
 
-        ArrayList<Dish> dishes = new ArrayList<>();
-        dishes.add(new Dish("Margerita","Pomodoro, Mozzarella, Basilico","3.50 €", null));
-        dishes.add(new Dish("Vegetariana","Verdure di Stagione, Pomodoro, Mozzarella","8,00 €", null));
-        dishes.add(new Dish("Quattro Stagioni","Pomodoro, Mozzarella, Prosciutto, Carciofi, Funghi, Olive, Grana a Scaglie","6,50 €", null));
-        dishes.add(new Dish("Quattro Formaggi","Mozzarella, Gorgonzola, Fontina, Stracchino","7,00 €", null));
-        Card c = new Card("Pizza");
-        c.setDishes(dishes);
-        cards.add(c);
-
-        dishes = new ArrayList<>();
-        dishes.add(new Dish("Pasta al Pomodoro","Rigationi, Pomodoro, Parmigiano, Basilico","3.50 €", null));
-        dishes.add(new Dish("Carbonara","Spaghetti, Uova, Guanciale, Pecorino, Pepe Nero","8,00 €", null));
-        dishes.add(new Dish("Pasta alla Norma","Pomodoro, Pancetta, Melanzane, Grana a Scaglie","6,50 €", null));
-        dishes.add(new Dish("Puttanesca","Pomodoro, Peperoncino, Pancetta, Parmigiano","7,00 €", null));
-        c = new Card("Primi");
-        c.setDishes(dishes);
-        cards.add(c);
-
-        dishes = new ArrayList<>();
-        dishes.add(new Dish("Braciola Di Maiale","Braciola, Spezie","3.50 €", null));
-        dishes.add(new Dish("Stinco Alla Birra","Stinco di Maiale, Birra","8,00 €", null));
-        dishes.add(new Dish("Cotoletta e Patatine","Cotoletta di Maiale, Patatine","6,50 €", null));
-        dishes.add(new Dish("Filetto al pepe verde","Filetto di Maiale, Salsa alla Senape, Pepe verde in grani","7,00 €", null));
-        c = new Card("Secondi");
-        c.setDishes(dishes);
-        cards.add(c);
-        */
-
-        recyclerAdapter = new RVAdapterEdit(cards);
+        recyclerAdapter = new RVAdapterEdit(cards, this);
         recyclerMenu.setAdapter(recyclerAdapter);
+        recyclerAdapter.setSparseBooleanArray(arrBoolean);
 
         mainFAB.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 if (plus.getVisibility() == View.VISIBLE) {
-                    final EditText input = new EditText(mainFAB.getContext());
-                    final LinearLayout container = new LinearLayout(mainFAB.getContext());
-                    container.setOrientation(LinearLayout.VERTICAL);
-                    LinearLayout.LayoutParams lp = new LinearLayout.LayoutParams(
-                            LinearLayout.LayoutParams.MATCH_PARENT,
-                            LinearLayout.LayoutParams.WRAP_CONTENT);
-                    lp.setMargins(52, 0, 52, 0);
-                    final AlertDialog.Builder builder = new AlertDialog.Builder(mainFAB.getContext(), R.style.AppCompatAlertDialogStyle);
-                    builder.setNegativeButton(getResources().getString(R.string.cancel), new DialogInterface.OnClickListener() {
-                        @Override
-                        public void onClick(DialogInterface dialog, int which) {
-                            dialog.dismiss();
-                        }
-                    });
-                    builder.setPositiveButton(getResources().getString(R.string.accept), new DialogInterface.OnClickListener() {
-                        @Override
-                        public void onClick(DialogInterface dialogInterface, int i) {
-                            unchanged = false;
-                            Card c = new Card(input.getText().toString());
-                            cards.add(c);
-                            recyclerAdapter.notifyItemInserted(cards.size() - 1);
-                        }
-                    });
-                    builder.setTitle(getResources().getString(R.string.alert_dialog_new_card_title));
-                    builder.setCancelable(false);
-                    input.setLayoutParams(lp);
-                    input.setInputType(InputType.TYPE_CLASS_TEXT | InputType.TYPE_TEXT_FLAG_CAP_SENTENCES);
-                    input.setLines(1);
-                    input.setMaxLines(1);
-                    container.addView(input, lp);
-                    builder.setView(container);
-                    final AlertDialog dialog = builder.create();
-                    Objects.requireNonNull(dialog.getWindow()).setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_VISIBLE);
-                    dialog.show();
-                    dialog.getButton(AlertDialog.BUTTON_POSITIVE).setEnabled(false);
-                    dialog.getButton(AlertDialog.BUTTON_POSITIVE).setTextColor(getColor(R.color.secondaryText));
-                    input.addTextChangedListener(new TextWatcher() {
-                        @Override
-                        public void beforeTextChanged(CharSequence charSequence, int i, int i1, int i2) {
-                        }
-
-                        @Override
-                        public void onTextChanged(CharSequence charSequence, int i, int i1, int i2) {
-                            if (charSequence.length() == 0) {
-                                dialog.getButton(AlertDialog.BUTTON_POSITIVE).setEnabled(false);
-                                dialog.getButton(AlertDialog.BUTTON_POSITIVE).setTextColor(getColor(R.color.secondaryText));
-                            } else {
-                                if (checkDuplicates(charSequence)) {
-                                    dialog.getButton(AlertDialog.BUTTON_POSITIVE).setEnabled(false);
-                                    dialog.getButton(AlertDialog.BUTTON_POSITIVE).setTextColor(getColor(R.color.secondaryText));
-                                    input.setError(getString(R.string.alert_dialog_error_card_name));
-                                } else {
-                                    dialog.getButton(AlertDialog.BUTTON_POSITIVE).setEnabled(true);
-                                    dialog.getButton(AlertDialog.BUTTON_POSITIVE).setTextColor(getColor(R.color.primaryText));
-                                }
-                            }
-                        }
-
-                        @Override
-                        public void afterTextChanged(Editable editable) {
-                        }
-                    });
+                    plusPressed("");
                 }
                 if(trash.getVisibility() == View.VISIBLE) {
-                    Iterator<Card> cardIterator;
-                    int i = 0;
-                    for(cardIterator = cards.iterator(); cardIterator.hasNext(); i++) {
-                        if (cardIterator.next().isSelected()) {
-                            cardIterator.remove();
-                            recyclerAdapter.notifyItemRemoved(i);
-                            recyclerAdapter.notifyItemRangeRemoved(i, cards.size()-1);
-                            unchanged = false;
-                        }
-                    }
+                    trashPressed();
                 }
             }
         });
+
+    }
+
+    public boolean getBoolean(int i){
+        return arrBoolean.get(i);
+    }
+
+    private void plusPressed(String starting){
+        input = new EditText(mainFAB.getContext());
+        input.setText(starting);
+        final LinearLayout container = new LinearLayout(mainFAB.getContext());
+        container.setOrientation(LinearLayout.VERTICAL);
+        LinearLayout.LayoutParams lp = new LinearLayout.LayoutParams(
+                LinearLayout.LayoutParams.MATCH_PARENT,
+                LinearLayout.LayoutParams.WRAP_CONTENT);
+        lp.setMargins(52, 0, 52, 0);
+        final AlertDialog.Builder builder = new AlertDialog.Builder(mainFAB.getContext(), R.style.AppCompatAlertDialogStyle);
+        builder.setNegativeButton(getResources().getString(R.string.cancel), new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                dialogCode = "ok";
+                dialog.dismiss();
+            }
+        });
+        builder.setPositiveButton(getResources().getString(R.string.accept), new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialogInterface, int i) {
+                dialogCode = "ok";
+                unchanged = false;
+                Card c = new Card(input.getText().toString());
+                cards.add(c);
+                recyclerAdapter.notifyItemInserted(cards.size() - 1);
+            }
+        });
+        builder.setTitle(getResources().getString(R.string.alert_dialog_new_card_title));
+        if (checkDuplicates(input.getText().toString()) || input.getText().toString().equals(""))
+            builder.setCancelable(false);
+        input.setLayoutParams(lp);
+        input.setInputType(InputType.TYPE_CLASS_TEXT | InputType.TYPE_TEXT_FLAG_CAP_SENTENCES);
+        input.setLines(1);
+        input.setMaxLines(1);
+        container.addView(input, lp);
+        builder.setView(container);
+        dialogCode = "create";
+        final AlertDialog dialogDism = builder.create();
+        Objects.requireNonNull(dialogDism.getWindow()).setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_VISIBLE);
+        dialogDism.show();
+        dialogDism.getButton(AlertDialog.BUTTON_POSITIVE).setEnabled(false);
+        dialogDism.getButton(AlertDialog.BUTTON_POSITIVE).setTextColor(getColor(R.color.secondaryText));
+        input.addTextChangedListener(new TextWatcher() {
+            @Override
+            public void beforeTextChanged(CharSequence charSequence, int i, int i1, int i2) {
+            }
+
+            @Override
+            public void onTextChanged(CharSequence charSequence, int i, int i1, int i2) {
+                if (charSequence.length() == 0) {
+                    dialogDism.getButton(AlertDialog.BUTTON_POSITIVE).setEnabled(false);
+                    dialogDism.getButton(AlertDialog.BUTTON_POSITIVE).setTextColor(getColor(R.color.secondaryText));
+                } else {
+                    if (checkDuplicates(charSequence)) {
+                        dialogDism.getButton(AlertDialog.BUTTON_POSITIVE).setEnabled(false);
+                        dialogDism.getButton(AlertDialog.BUTTON_POSITIVE).setTextColor(getColor(R.color.secondaryText));
+                        input.setError(getString(R.string.alert_dialog_error_card_name));
+                    } else {
+                        dialogDism.getButton(AlertDialog.BUTTON_POSITIVE).setEnabled(true);
+                        dialogDism.getButton(AlertDialog.BUTTON_POSITIVE).setTextColor(getColor(R.color.primaryText));
+                    }
+                }
+            }
+
+            @Override
+            public void afterTextChanged(Editable editable) {
+            }
+        });
+    }
+
+    private void trashPressed(){
+        Iterator<Card> cardIterator;
+        int i = 0;
+        for(cardIterator = cards.iterator(); cardIterator.hasNext(); i++) {
+            if (cardIterator.next().isSelected()) {
+                cardIterator.remove();
+                recyclerAdapter.notifyItemRemoved(i);
+                recyclerAdapter.notifyItemRangeRemoved(i, cards.size());
+                unchanged = false;
+            }
+        }
     }
 
     @Override
     protected void onPause() {
         super.onPause();
-
-        Log.d("TITLECHECK","Called On Pause");
         File file = new File(storageDir, JSON_COPY);
         JsonHandler jsonPlaceholder =new JsonHandler();
         String json = jsonPlaceholder.toJSON(cards);
         jsonPlaceholder.saveStringToFile(json, file);
+        if (dialogDism != null){
+            dialogDism.dismiss();
+        }
+    }
+
+    public void savePlaceholder(){
+        File file = new File(storageDir, JSON_COPY);
+        File toDelete= new File(storageDir, "menuCopyItem.json");
+        if(toDelete.exists()) {
+            if (!toDelete.delete())
+                System.out.println("Delete Failure");
+        }
+        String json = jsonHandler.toJSON(cards);
+        jsonHandler.saveStringToFile(json, file);
     }
 
     private void back(){
@@ -243,18 +295,21 @@ public class MenuEdit extends AppCompatActivity {
             builder.setNegativeButton(getResources().getString(R.string.cancel), new DialogInterface.OnClickListener() {
                 @Override
                 public void onClick(DialogInterface dialog, int which) {
+                    dialogCode = "ok";
                     dialog.dismiss();
                 }
             });
             builder.setPositiveButton(getResources().getString(R.string.accept), new DialogInterface.OnClickListener() {
                 @Override
                 public void onClick(DialogInterface dialogInterface, int i) {
+                    dialogCode = "ok";
                     MenuEdit.super.onBackPressed();
                 }
             });
             builder.setTitle(getResources().getString(R.string.alert_dialog_back_title));
             builder.setMessage(getResources().getString(R.string.alert_dialog_back_message));
             builder.setCancelable(false);
+            dialogCode = "back";
             dialogDism = builder.show();
         }
     }
@@ -269,28 +324,40 @@ public class MenuEdit extends AppCompatActivity {
             builder.setNegativeButton(getResources().getString(R.string.cancel), new DialogInterface.OnClickListener() {
                 @Override
                 public void onClick(DialogInterface dialog, int which) {
+                    dialogCode = "ok";
                     dialog.dismiss();
                 }
             });
             builder.setPositiveButton(getResources().getString(R.string.accept), new DialogInterface.OnClickListener() {
                 @Override
                 public void onClick(DialogInterface dialogInterface, int i) {
+                    dialogCode = "ok";
                     MenuEdit.super.onBackPressed();
                 }
             });
             builder.setTitle(getResources().getString(R.string.alert_dialog_back_title));
             builder.setMessage(getResources().getString(R.string.alert_dialog_back_message));
             builder.setCancelable(false);
+            dialogCode = "back";
             dialogDism = builder.show();
         }
     }
   
     private void edit(){
+        dialogCode = "trash";
         animateToEdit(edit, save, exit, mainFAB, plus, trash);
     }
 
     private void exitEdit(){
+        dialogCode = "ok";
         animateToNormal(edit, save, exit, mainFAB, plus, trash);
+    }
+
+    private void editRotate(){
+        dialogCode = "trash";
+        for(int i = 0; i < cards.size();i++)
+            cards.get(i).setEditing(true);
+        animateToEdit(edit, save, exit, mainFAB, plus, trash);
     }
 
     private void animateToEdit(final ImageButton edit,final ImageButton save,final ImageButton end,
@@ -419,4 +486,10 @@ public class MenuEdit extends AppCompatActivity {
         return duplicate;
     }
 
+    @Override
+    protected void onResume() {
+        super.onResume();
+        init();
+
+    }
 }

@@ -42,6 +42,6 @@
     <string name="Closed">Chiuso</string>
     <string name="error_writing_file">La scrittura su file è fallita. Riprova</string>
 
-    <string name="Accept">\u2713   Accetta</string>
-    <string name="Decline">X   Rifiuta</string>
+    <string name="Accept">Accetta</string>
+    <string name="Decline">Rifiuta</string>
 </resources>

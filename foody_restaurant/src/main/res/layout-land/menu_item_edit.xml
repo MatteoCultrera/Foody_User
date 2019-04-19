@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
-<android.support.constraint.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<android.support.constraint.ConstraintLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     xmlns:app="http://schemas.android.com/apk/res-auto"
@@ -24,7 +25,7 @@
 
             <de.hdodenhof.circleimageview.CircleImageView
                 android:id="@+id/dish_image"
-                android:layout_width="0dp"
+                android:layout_width="wrap_content"
                 android:layout_height="0dp"
                 android:layout_marginStart="20dp"
                 app:layout_constraintBottom_toBottomOf="@id/price_text_input"
@@ -38,14 +39,11 @@
                 android:layout_height="52dp"
                 app:cornerRadius="80dp"
                 app:icon="@drawable/edit_black"
-                app:iconGravity="textStart"
                 app:iconPadding="0dp"
-                app:layout_constraintBottom_toBottomOf="@+id/dish_image"
+                app:iconGravity="textStart"
                 app:layout_constraintEnd_toEndOf="@id/dish_image"
-                app:layout_constraintHorizontal_bias="1.0"
-                app:layout_constraintStart_toStartOf="@+id/dish_image"
-                app:layout_constraintTop_toTopOf="@+id/dish_image"
-                app:layout_constraintVertical_bias="0.9" />
+                app:layout_constraintBottom_toBottomOf="@id/dish_image"
+                />
 
             <android.support.design.widget.TextInputLayout
                 android:id="@+id/name_text_input"
@@ -59,7 +57,6 @@
                 app:boxCornerRadiusBottomStart="9dp"
                 app:boxCornerRadiusTopEnd="9dp"
                 app:boxCornerRadiusTopStart="9dp"
-                android:inputType="textCapSentences"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="@+id/guideline2"
                 app:layout_constraintTop_toTopOf="parent">
@@ -97,16 +94,16 @@
                     android:layout_height="wrap_content"
                     android:layout_marginTop="23dp"
                     android:hint="@string/desc_edit"
-                    android:inputType="textMultiLine|textNoSuggestions|textCapSentences"
+                    android:inputType="textMultiLine|textNoSuggestions"
                     android:padding="6dp"
-                    android:textSize="14sp"/>
+                    android:textSize="14sp" />
             </android.support.design.widget.TextInputLayout>
 
 
             <android.support.design.widget.TextInputLayout
                 android:id="@+id/price_text_input"
                 style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
-                android:layout_width="85dp"
+                android:layout_width="95dp"
                 android:layout_height="wrap_content"
                 android:layout_marginStart="8dp"
                 android:layout_marginTop="6dp"
@@ -137,15 +134,14 @@
                 android:layout_marginBottom="157dp"
                 android:orientation="vertical"
                 app:layout_constraintBottom_toBottomOf="parent"
-                app:layout_constraintGuide_percent="0.30"
+                app:layout_constraintGuide_percent="0.50"
                 app:layout_constraintTop_toTopOf="parent" />
 
             <android.support.design.button.MaterialButton
                 android:id="@+id/deleteButton"
                 style="@style/Widget.MaterialComponents.Button.TextButton.Icon"
                 android:layout_width="wrap_content"
-                android:layout_height="0dp"
-                android:layout_marginStart="16dp"
+                android:layout_height="wrap_content"
                 android:layout_marginEnd="46dp"
                 android:text="@string/delete"
                 android:textAllCaps="false"

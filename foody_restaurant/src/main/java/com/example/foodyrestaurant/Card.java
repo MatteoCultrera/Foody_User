@@ -1,8 +1,10 @@
 package com.example.foodyrestaurant;
+import android.util.Log;
+
 import java.util.ArrayList;
 
 class Card {
-    private String title;
+    private final String title;
     private ArrayList<Dish> dishes;
     private boolean editing;
     private boolean selected;
@@ -19,12 +21,18 @@ class Card {
         this.dishes = dishes;
     }
 
-    public String getTitle() {
-        return title;
+    public void print(){
+
+        Log.d("TITLECHECK", title+"\n");
+        for (int i = 0; i < dishes.size(); i++){
+            Log.d("TITLECHECK","\t"+dishes.get(i).toString());
+        }
+        Log.d("TITLECHECK","\n\n");
+
     }
 
-    public void setTitle(String title) {
-        this.title = title;
+    public String getTitle() {
+        return title;
     }
 
     public ArrayList<Dish> getDishes() {
@@ -33,10 +41,6 @@ class Card {
 
     public void setDishes(ArrayList<Dish> dishes) {
         this.dishes = dishes;
-    }
-
-    public void removeDish(Dish toRemove){
-        dishes.remove(toRemove);
     }
 
     public boolean isEditing() {

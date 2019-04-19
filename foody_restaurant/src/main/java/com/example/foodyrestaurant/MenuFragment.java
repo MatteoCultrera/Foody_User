@@ -3,6 +3,7 @@ package com.example.foodyrestaurant;
 import android.content.Intent;
 import android.os.Bundle;
 import android.os.Environment;
+import android.support.annotation.NonNull;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.Fragment;
 import android.support.v7.widget.LinearLayoutManager;
@@ -13,6 +14,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 import com.bumptech.glide.Glide;
+
 import java.io.File;
 import java.util.ArrayList;
 import java.util.Objects;
@@ -23,13 +25,18 @@ import java.util.Objects;
 public class MenuFragment extends Fragment {
 
     private RecyclerView menu;
+    private final String JSON_COPY = "menuCopy.json";
+    private final String JSON_PATH = "menu.json";
+    private File storageDir;
+    private final JsonHandler jsonHandler = new JsonHandler();
+    private ArrayList<Card> cards;
 
     public MenuFragment() {
         // Required empty public constructor
     }
 
     @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container,
+    public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
 
@@ -39,19 +46,25 @@ public class MenuFragment extends Fragment {
     }
 
     @Override
-    public void onViewCreated(View view, Bundle savedInstanceState) {
+    public void onViewCreated(@NonNull View view, Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
         init(view);
     }
 
+    @Override
+    public void onPause(){
+        super.onPause();
+        File file = new File(storageDir, JSON_PATH);
+        String json = jsonHandler.toJSON(cards);
+        jsonHandler.saveStringToFile(json, file);
+    }
+
     private void init(View view){
         String json;
-        File storageDir = Objects.requireNonNull(getActivity()).getExternalFilesDir(Environment.DIRECTORY_DOCUMENTS);
-        String JSON_PATH = "menu.json";
+        storageDir = Objects.requireNonNull(getActivity()).getExternalFilesDir(Environment.DIRECTORY_DOCUMENTS);
         File file = new File(storageDir, JSON_PATH);
         LinearLayoutManager llm = new LinearLayoutManager(view.getContext());
         menu.setLayoutManager(llm);
-        ArrayList<Card> cards;
 
         FloatingActionButton editMode = view.findViewById(R.id.edit_mode);
         ImageView profileImage = view.findViewById(R.id.mainImage);
@@ -66,53 +79,60 @@ public class MenuFragment extends Fragment {
                 .load(R.drawable.pizza)
                 .into(profileImage);
 
-        JsonHandler jsonHandler = new JsonHandler();
-
         cards = jsonHandler.getCards(file);
 
+        for(int i = 0; i < cards.size(); i++)
+            Log.d("MAD", ""+ cards.get(i).getTitle() + ", ");
+
         if (cards.size() == 0) {
+            Log.d("MAD", "I'm inside to create the MENU JSON FILE + " + cards.size());
 
-        cards = new ArrayList<>();
 
-        ArrayList<Dish> dishes = new ArrayList<>();
-        dishes.add(new Dish("Margerita","Pomodoro, Mozzarella, Basilico",3.50f, null));
-        dishes.add(new Dish("Vegetariana","Verdure di Stagione, Pomodoro, Mozzarella",8.00f, null));
-        dishes.add(new Dish("Quattro Stagioni","Pomodoro, Mozzarella, Prosciutto, Carciofi, Funghi, Olive, Grana a Scaglie",6.50f, null));
-        dishes.add(new Dish("Quattro Formaggi","Mozzarella, Gorgonzola, Fontina, Stracchino",7.00f, null));
-        Card c = new Card("Pizza");
-        c.setDishes(dishes);
-        cards.add(c);
+            cards = new ArrayList<>();
 
-        dishes = new ArrayList<>();
-        dishes.add(new Dish("Pasta al Pomodoro","Rigationi, Pomodoro, Parmigiano, Basilico",3.50f, null));
-        dishes.add(new Dish("Carbonara","Spaghetti, Uova, Guanciale, Pecorino, Pepe Nero",8.00f, null));
-        dishes.add(new Dish("Pasta alla Norma","Pomodoro, Pancetta, Melanzane, Grana a Scaglie",6.50f, null));
-        dishes.add(new Dish("Puttanesca","Pomodoro, Peperoncino, Pancetta, Parmigiano",7.00f, null));
-        c = new Card("Primi");
-        c.setDishes(dishes);
-        cards.add(c);
+            ArrayList<Dish> dishes = new ArrayList<>();
+            dishes.add(new Dish("Margherita","Pomodoro, Mozzarella, Basilico",3.50f, null));
+            dishes.add(new Dish("Vegetariana","Verdure di Stagione, Pomodoro, Mozzarella",8.00f, null));
+            dishes.add(new Dish("Quattro Stagioni","Pomodoro, Mozzarella, Prosciutto, Carciofi, Funghi, Olive, Grana a Scaglie",6.50f, null));
+            dishes.add(new Dish("Quattro Formaggi","Mozzarella, Gorgonzola, Fontina, Stracchino",7.00f, null));
+            Card c = new Card("Pizza");
+            c.setDishes(dishes);
+            cards.add(c);
 
-        dishes = new ArrayList<>();
-        dishes.add(new Dish("Braciola Di Maiale","Braciola, Spezie",3.50f, null));
-        dishes.add(new Dish("Stinco Alla Birra","Stinco di Maiale, Birra",8.00f, null));
-        dishes.add(new Dish("Cotoletta e Patatine","Cotoletta di Maiale, Patatine",6.50f, null));
-        dishes.add(new Dish("Filetto al pepe verde","Filetto di Maiale, Salsa alla Senape, Pepe verde in grani",7.00f, null));
-        c = new Card("Secondi");
-        c.setDishes(dishes);
-        cards.add(c);
+            dishes = new ArrayList<>();
+            dishes.add(new Dish("Pasta al Pomodoro","Rigationi, Pomodoro, Parmigiano, Basilico",3.50f, null));
+            dishes.add(new Dish("Carbonara","Spaghetti, Uova, Guanciale, Pecorino, Pepe Nero",8.00f, null));
+            dishes.add(new Dish("Pasta alla Norma","Pomodoro, Pancetta, Melanzane, Grana a Scaglie",6.50f, null));
+            dishes.add(new Dish("Puttanesca","Pomodoro, Peperoncino, Pancetta, Parmigiano",7.00f, null));
+            c = new Card("Primi");
+            c.setDishes(dishes);
+            cards.add(c);
 
+            dishes = new ArrayList<>();
+            dishes.add(new Dish("Braciola Di Maiale","Braciola, Spezie",3.50f, null));
+            dishes.add(new Dish("Stinco Alla Birra","Stinco di Maiale, Birra",8.00f, null));
+            dishes.add(new Dish("Cotoletta e Patatine","Cotoletta di Maiale, Patatine",6.50f, null));
+            dishes.add(new Dish("Filetto al pepe verde","Filetto di Maiale, Salsa alla Senape, Pepe verde in grani",7.00f, null));
+            c = new Card("Secondi");
+            c.setDishes(dishes);
+            cards.add(c);
+
+            json = jsonHandler.toJSON(cards);
+            jsonHandler.saveStringToFile(json, file);
         }
 
-        Log.d("TITLECHECK", "On menuFragment: "+ cards.get(0).getTitle()+" "+ cards.get(1).getTitle());
-
-        json = jsonHandler.toJSON(cards);
-        jsonHandler.saveStringToFile(json, file);
         RVAdapter adapter = new RVAdapter(cards);
         menu.setAdapter(adapter);
 
         editMode.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                File jsonTemp = new File(storageDir,JSON_COPY);
+                if(jsonTemp.exists()) {
+                    if(!jsonTemp.delete()){
+                        System.out.println("Cannot delete the file.");
+                    }
+                }
                 Intent intent = new Intent(getActivity(), MenuEdit.class);
                 startActivity(intent);
             }

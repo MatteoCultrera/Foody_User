@@ -2,111 +2,129 @@ package com.example.foodyrestaurant;
 
 import java.util.ArrayList;
 
-public class Reservation {
+class Reservation {
 
-    enum  prepStatus {
+    enum prepStatus {
         PENDING,
         DOING,
         DONE,
     }
 
-    private String reservationID;
-    private ArrayList<Dish> dishesOrdered;
+    private final String reservationID;
+    private final ArrayList<Dish> dishesOrdered;
     private boolean accepted;
     private prepStatus preparationStatus;
+    private final String userName;
+    private final String userPhone;
+    private final String userLevel;
+    private final String userEmail;
+    private final String userAddress;
 
-    //User useful data
-    private String userName;
-    private String userPhone;
-    private String userEmail;
-    private String userAddress;
+    private final String resNote;
+    private final String orderTime;
+    private int toBePrepared;
 
-    private String resNote;
-    private String orderTime;
-
-    public Reservation(String identifier, ArrayList<Dish> dishes, prepStatus preparationStatus){
+    Reservation(String identifier, ArrayList<Dish> dishes, prepStatus preparationStatus, boolean accepted,
+                       String orderTime, String userName, String userPhone, String resNote, String userLevel,
+                       String userEmail, String userAddress){
         this.reservationID = identifier;
         this.dishesOrdered = dishes;
+        this.accepted = accepted;
         this.preparationStatus = preparationStatus;
+        this.orderTime = orderTime;
+        this.userName = userName;
+        this.userPhone = userPhone;
+        this.resNote = resNote;
+        this.userLevel = userLevel;
+        this.userEmail = userEmail;
+        this.userAddress = userAddress;
+        toBePrepared = dishes.size();
     }
 
-    public String getReservationID() {
+    String getReservationID() {
         return reservationID;
     }
 
-    public void setReservationID(String reservationID) {
-        this.reservationID = reservationID;
-    }
-
-    public ArrayList<Dish> getDishesOrdered() {
+    ArrayList<Dish> getDishesOrdered() {
         return dishesOrdered;
     }
 
-    public void setDishesOrdered(ArrayList<Dish> dishesOrdered) {
-        this.dishesOrdered = dishesOrdered;
-    }
-
-    public prepStatus getPreparationStatus() {
+    prepStatus getPreparationStatus() {
         return preparationStatus;
     }
 
-    public void setPreparationStatus(prepStatus preparationStatus) {
+    String getPreparationStatusString(){
+        String ret;
+        switch (this.preparationStatus){
+            case PENDING:
+                ret = "Pending";
+                break;
+            case DONE:
+                ret = "Done";
+                break;
+            case DOING:
+                ret="Doing";
+                break;
+            default:
+                ret="Status Unknown";
+                break;
+        }
+        return ret;
+    }
+
+    void setPreparationStatus(prepStatus preparationStatus) {
         this.preparationStatus = preparationStatus;
     }
 
-    public String getOrderTime() {
+    String getOrderTime() {
         return orderTime;
     }
 
-    public void setOrderTime(String orderTime) {
-        this.orderTime = orderTime;
-    }
-
-    public String getUserName() {
+    String getUserName() {
         return userName;
     }
 
-    public void setUserName(String userName) {
-        this.userName = userName;
-    }
-
-    public String getUserPhone() {
+    String getUserPhone() {
         return userPhone;
     }
 
-    public void setUserPhone(String userPhone) {
-        this.userPhone = userPhone;
-    }
-
-    public String getUserEmail() {
+    String getUserEmail() {
         return userEmail;
     }
 
-    public void setUserEmail(String userEmail) {
-        this.userEmail = userEmail;
-    }
-
-    public String getUserAddress() {
+    String getUserAddress() {
         return userAddress;
     }
 
-    public void setUserAddress(String userAddress) {
-        this.userAddress = userAddress;
-    }
-
-    public boolean isAccepted() {
+    boolean isAccepted() {
         return accepted;
     }
 
-    public void setAccepted(boolean accepted) {
+    void setAccepted(boolean accepted) {
         this.accepted = accepted;
     }
 
-    public String getResNote() {
+    String getResNote() {
         return resNote;
     }
 
-    public void setResNote(String resNote) {
-        this.resNote = resNote;
+    String getUserLevel() {
+        return userLevel;
+    }
+
+    int getToBePrepared() {
+        return toBePrepared;
+    }
+
+    void incrementToBePrepared() {
+        toBePrepared++;
+    }
+
+    void incrementDishDone() {
+        toBePrepared--;
+    }
+
+    void setToBePrepared(int toBePrepared) {
+        this.toBePrepared = toBePrepared;
     }
 }
