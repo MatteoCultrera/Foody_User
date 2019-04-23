@@ -1,0 +1,40 @@
+{
+  "project_info": {
+    "project_number": "515780522371",
+    "firebase_url": "https://foody-ba862.firebaseio.com",
+    "project_id": "foody-ba862",
+    "storage_bucket": "foody-ba862.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:515780522371:android:60d748c4a6b7e0a8",
+        "android_client_info": {
+          "package_name": "com.example.foody_biker"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "515780522371-mfhaa8e80844nr9p8s26h00cnfpod1c5.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyB4RvQGAfTpMOrs_ogKzrsOon-1uvx0UZ4"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "515780522371-mfhaa8e80844nr9p8s26h00cnfpod1c5.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
