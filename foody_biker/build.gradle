@@ -47,4 +47,9 @@ dependencies {
     //Crop Image
 
     implementation 'com.github.yalantis:ucrop:2.2.2'
+
+    //firebase
+    implementation 'com.google.firebase:firebase-core:16.0.8'
+    implementation 'com.google.firebase:firebase-database:16.1.0'
 }
+apply plugin: 'com.google.gms.google-services'
