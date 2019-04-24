@@ -22,6 +22,7 @@ import com.google.firebase.database.ValueEventListener;
 
 import java.io.File;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.Objects;
 
 public class MenuFragment extends Fragment {
@@ -31,11 +32,9 @@ public class MenuFragment extends Fragment {
     private final String JSON_PATH = "menu.json";
     private File storageDir;
     private final JsonHandler jsonHandler = new JsonHandler();
-    private ArrayList<Card> cards = new ArrayList<>();
+    private ArrayList<Card> cards;
 
-    public MenuFragment() {
-        // Required empty public constructor
-    }
+    public MenuFragment() {}
 
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
@@ -56,6 +55,15 @@ public class MenuFragment extends Fragment {
         File file = new File(storageDir, JSON_PATH);
         String json = jsonHandler.toJSON(cards);
         jsonHandler.saveStringToFile(json, file);
+
+        DatabaseReference database = FirebaseDatabase.getInstance().getReference()
+                .child("restaurantsMenu").child("RossoPomodoro").child("Card");
+        HashMap<String, Object> child = new HashMap<>();
+        for (int i = 0; i < cards.size(); i++) {
+            if (cards.get(i).getDishes().size() != 0)
+                child.put(Integer.toString(i), cards.get(i));
+        }
+        database.updateChildren(child);
     }
 
     private void init(View view){
@@ -82,6 +90,7 @@ public class MenuFragment extends Fragment {
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
                 for(DataSnapshot ds : dataSnapshot.getChildren()){
+                    cards = new ArrayList<>();
                     for (DataSnapshot ds2 : ds.getChildren()) {
                         Card card = ds2.getValue(Card.class);
                         for (DataSnapshot ds3 : ds2.getChildren()){
@@ -96,9 +105,9 @@ public class MenuFragment extends Fragment {
                         }
                         cards.add(card);
                     }
+                    RVAdapter adapter = new RVAdapter(cards);
+                    menu.setAdapter(adapter);
                 }
-                RVAdapter adapter = new RVAdapter(cards);
-                menu.setAdapter(adapter);
             }
 
             @Override

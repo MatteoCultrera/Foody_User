@@ -21,11 +21,12 @@ import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.Toast;
-
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
 import java.io.File;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.Iterator;
-
 import java.util.Objects;
 
 public class MenuEdit extends AppCompatActivity {
@@ -121,6 +122,15 @@ public class MenuEdit extends AppCompatActivity {
                 if (unchanged){
                     Toast.makeText(getApplicationContext(), R.string.noSave, Toast.LENGTH_SHORT).show();
                 } else {
+                    DatabaseReference database = FirebaseDatabase.getInstance().getReference()
+                            .child("restaurantsMenu").child("RossoPomodoro").child("Card");
+                    HashMap<String, Object> child = new HashMap<>();
+                    for (int i = 0; i < cards.size(); i++) {
+                        if (cards.get(i).getDishes().size() != 0)
+                        child.put(Integer.toString(i), cards.get(i));
+                    }
+                    database.updateChildren(child);
+
                     String json = jsonHandler.toJSON(cards);
                     storageDir = getExternalFilesDir(Environment.DIRECTORY_DOCUMENTS);
                     File file = new File(storageDir, JSON_PATH);
@@ -128,7 +138,6 @@ public class MenuEdit extends AppCompatActivity {
                     unchanged = true;
                     Toast.makeText(getApplicationContext(), R.string.save, Toast.LENGTH_SHORT).show();
                 }
-                //finish();
             }
         });
 
@@ -203,6 +212,8 @@ public class MenuEdit extends AppCompatActivity {
                 dialogCode = "ok";
                 unchanged = false;
                 Card c = new Card(input.getText().toString());
+                ArrayList<Dish> dishes = new ArrayList<>();
+                c.setDishes(dishes);
                 cards.add(c);
                 recyclerAdapter.notifyItemInserted(cards.size() - 1);
             }
@@ -258,6 +269,11 @@ public class MenuEdit extends AppCompatActivity {
                 cardIterator.remove();
                 recyclerAdapter.notifyItemRemoved(i);
                 recyclerAdapter.notifyItemRangeRemoved(i, cards.size());
+
+                DatabaseReference database = FirebaseDatabase.getInstance().getReference()
+                        .child("restaurantsMenu").child("RossoPomodoro").child("Card");
+                database.child(Integer.toString(i)).removeValue();
+
                 unchanged = false;
             }
         }
