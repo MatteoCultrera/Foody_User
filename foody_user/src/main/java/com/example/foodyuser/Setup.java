@@ -26,11 +26,15 @@ import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.ListAdapter;
 import android.widget.TextView;
+
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
 import com.yalantis.ucrop.UCrop;
 import com.yalantis.ucrop.UCropActivity;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.util.HashMap;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -591,6 +595,15 @@ public class Setup extends AppCompatActivity {
             saveBitmap(bitmap, profile.getPath());
 
         }
+
+        String userName = email.getText().toString().replace(".", "");
+        DatabaseReference database = FirebaseDatabase.getInstance().getReference()
+                .child("endUsers/" + userName);
+        HashMap<String, Object> child = new HashMap<>();
+        UserInfo info = new UserInfo(name.getText().toString(), email.getText().toString(), address.getText().toString(),
+                phoneNumber.getText().toString(), bio.getText().toString());
+        child.put("info", info);
+        database.updateChildren(child);
 
         edit.putString("name", name.getText().toString());
         edit.putString("email", email.getText().toString());
