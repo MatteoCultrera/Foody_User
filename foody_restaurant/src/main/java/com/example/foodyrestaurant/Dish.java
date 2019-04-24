@@ -17,6 +17,8 @@ class Dish {
     private boolean available;
     private boolean editImage;
 
+    public Dish(){}
+
     public Dish(String name, String description, Float price, Uri image){
         dishName = name;
         dishDescription = description;
