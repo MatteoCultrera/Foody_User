@@ -31,11 +31,9 @@ public class MenuFragment extends Fragment {
     private final String JSON_PATH = "menu.json";
     private File storageDir;
     private final JsonHandler jsonHandler = new JsonHandler();
-    private ArrayList<Card> cards = new ArrayList<>();
+    private ArrayList<Card> cards;
 
-    public MenuFragment() {
-        // Required empty public constructor
-    }
+    public MenuFragment() {}
 
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
@@ -82,6 +80,7 @@ public class MenuFragment extends Fragment {
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
                 for(DataSnapshot ds : dataSnapshot.getChildren()){
+                    cards = new ArrayList<>();
                     for (DataSnapshot ds2 : ds.getChildren()) {
                         Card card = ds2.getValue(Card.class);
                         for (DataSnapshot ds3 : ds2.getChildren()){
@@ -96,9 +95,9 @@ public class MenuFragment extends Fragment {
                         }
                         cards.add(card);
                     }
+                    RVAdapter adapter = new RVAdapter(cards);
+                    menu.setAdapter(adapter);
                 }
-                RVAdapter adapter = new RVAdapter(cards);
-                menu.setAdapter(adapter);
             }
 
             @Override

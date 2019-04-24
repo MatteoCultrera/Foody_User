@@ -56,67 +56,67 @@ public class RVAdapter extends RecyclerView.Adapter<RVAdapter.CardViewHolder>{
 
         pvh.menuDishes.removeAllViews();
 
-        for (int j = 0; j < dishes.size(); j++){
-            View dish = inflater.inflate(R.layout.menu_item_display, pvh.menuDishes, false);
-            TextView title = dish.findViewById(R.id.food_title);
-            final TextView titleF = dish.findViewById(R.id.food_title);
-            TextView subtitle = dish.findViewById(R.id.food_subtitle);
-            final TextView subtitleF = dish.findViewById(R.id.food_subtitle);
-            TextView price = dish.findViewById(R.id.price);
-            final TextView priceF = dish.findViewById(R.id.price);
-            final int index = j;
-            ImageView image = dish.findViewById(R.id.food_image);
-            title.setText(dishes.get(j).getDishName());
-            subtitle.setText(dishes.get(j).getDishDescription());
-            price.setText(String.format(Locale.UK,"%.2f", dishes.get(j).getPrice())+" €");
-            if(dishes.get(j).getImage() == null)
-                image.setVisibility(View.GONE);
-            else{
+        if (dishes != null) {
+            for (int j = 0; j < dishes.size(); j++) {
+                View dish = inflater.inflate(R.layout.menu_item_display, pvh.menuDishes, false);
+                TextView title = dish.findViewById(R.id.food_title);
+                final TextView titleF = dish.findViewById(R.id.food_title);
+                TextView subtitle = dish.findViewById(R.id.food_subtitle);
+                final TextView subtitleF = dish.findViewById(R.id.food_subtitle);
+                TextView price = dish.findViewById(R.id.price);
+                final TextView priceF = dish.findViewById(R.id.price);
+                final int index = j;
+                ImageView image = dish.findViewById(R.id.food_image);
+                title.setText(dishes.get(j).getDishName());
+                subtitle.setText(dishes.get(j).getDishDescription());
+                price.setText(String.format(Locale.UK, "%.2f", dishes.get(j).getPrice()) + " €");
+                if (dishes.get(j).getImage() == null)
+                    image.setVisibility(View.GONE);
+                else {
                     File f = new File(dishes.get(j).getImage().getPath());
-                    if(!f.exists()){
+                    if (!f.exists()) {
                     }
                     RequestOptions options = new RequestOptions();
-                            options.fitCenter()
-                            .signature(new ObjectKey(f.getPath()+f.lastModified()));
+                    options.fitCenter()
+                            .signature(new ObjectKey(f.getPath() + f.lastModified()));
                     Glide
                             .with(image.getContext())
                             .load(dishes.get(j).getImage())
                             .apply(options)
                             .into(image);
-            }
-            pvh.menuDishes.addView(dish);
-            dishes.get(j).setAdded(true);
-            final Switch enabler = dish.findViewById(R.id.enabler);
-            if (dishes.get(j).isAvailable()){
-                enabler.setChecked(dishes.get(j).isAvailable());
-                title.setTextColor(ContextCompat.getColor(enabler.getContext(), R.color.primaryText));
-                subtitle.setTextColor(ContextCompat.getColor(enabler.getContext(), R.color.secondaryText));
-                price.setTextColor(ContextCompat.getColor(enabler.getContext(), R.color.primaryText));
-            }
-            else{
-                enabler.setChecked(dishes.get(j).isAvailable());
-                title.setTextColor(ContextCompat.getColor(enabler.getContext(), R.color.disabledText));
-                subtitle.setTextColor(ContextCompat.getColor(enabler.getContext(), R.color.disabledText));
-                price.setTextColor(ContextCompat.getColor(enabler.getContext(), R.color.disabledText));
-            }
-            enabler.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
-                @Override
-                public void onCheckedChanged(CompoundButton compoundButton, boolean b) {
-                    if (!b) {
-                        dishes.get(index).setAvailable(false);
-                        titleF.setTextColor(ContextCompat.getColor(enabler.getContext(), R.color.disabledText));
-                        subtitleF.setTextColor(ContextCompat.getColor(enabler.getContext(), R.color.disabledText));
-                        priceF.setTextColor(ContextCompat.getColor(enabler.getContext(), R.color.disabledText));
-
-                    }
-                    else {
-                        dishes.get(index).setAvailable(true);
-                        titleF.setTextColor(ContextCompat.getColor(enabler.getContext(), R.color.primaryText));
-                        subtitleF.setTextColor(ContextCompat.getColor(enabler.getContext(), R.color.secondaryText));
-                        priceF.setTextColor(ContextCompat.getColor(enabler.getContext(), R.color.primaryText));
-                    }
                 }
-            });
+                pvh.menuDishes.addView(dish);
+                dishes.get(j).setAdded(true);
+                final Switch enabler = dish.findViewById(R.id.enabler);
+                if (dishes.get(j).isAvailable()) {
+                    enabler.setChecked(dishes.get(j).isAvailable());
+                    title.setTextColor(ContextCompat.getColor(enabler.getContext(), R.color.primaryText));
+                    subtitle.setTextColor(ContextCompat.getColor(enabler.getContext(), R.color.secondaryText));
+                    price.setTextColor(ContextCompat.getColor(enabler.getContext(), R.color.primaryText));
+                } else {
+                    enabler.setChecked(dishes.get(j).isAvailable());
+                    title.setTextColor(ContextCompat.getColor(enabler.getContext(), R.color.disabledText));
+                    subtitle.setTextColor(ContextCompat.getColor(enabler.getContext(), R.color.disabledText));
+                    price.setTextColor(ContextCompat.getColor(enabler.getContext(), R.color.disabledText));
+                }
+                enabler.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+                    @Override
+                    public void onCheckedChanged(CompoundButton compoundButton, boolean b) {
+                        if (!b) {
+                            dishes.get(index).setAvailable(false);
+                            titleF.setTextColor(ContextCompat.getColor(enabler.getContext(), R.color.disabledText));
+                            subtitleF.setTextColor(ContextCompat.getColor(enabler.getContext(), R.color.disabledText));
+                            priceF.setTextColor(ContextCompat.getColor(enabler.getContext(), R.color.disabledText));
+
+                        } else {
+                            dishes.get(index).setAvailable(true);
+                            titleF.setTextColor(ContextCompat.getColor(enabler.getContext(), R.color.primaryText));
+                            subtitleF.setTextColor(ContextCompat.getColor(enabler.getContext(), R.color.secondaryText));
+                            priceF.setTextColor(ContextCompat.getColor(enabler.getContext(), R.color.primaryText));
+                        }
+                    }
+                });
+            }
         }
 
         pvh.title.setText(cards.get(pos).getTitle());
