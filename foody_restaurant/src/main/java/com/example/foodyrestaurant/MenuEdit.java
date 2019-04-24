@@ -21,11 +21,12 @@ import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.Toast;
-
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
 import java.io.File;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.Iterator;
-
 import java.util.Objects;
 
 public class MenuEdit extends AppCompatActivity {
@@ -49,6 +50,7 @@ public class MenuEdit extends AppCompatActivity {
     private AlertDialog dialogDism;
     private String dialogCode = "ok";
     private String writingCard = "";
+    private int startingIndex;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -63,6 +65,7 @@ public class MenuEdit extends AppCompatActivity {
         cards = jsonHandler.getCards(fileTmp);
         String writingCard = savedInstanceState.getString("writing", "");
         String dialogPrec = savedInstanceState.getString("dialog");
+        startingIndex = savedInstanceState.getInt("index");
         unchanged = savedInstanceState.getBoolean("unchanged");
         if (dialogPrec != null && dialogPrec.compareTo("ok") != 0) {
             if (dialogPrec.compareTo("create") == 0) {
@@ -83,6 +86,7 @@ public class MenuEdit extends AppCompatActivity {
         jsonHandler.saveStringToFile(json, fileTmp);
         outState.putBoolean("unchanged", unchanged);
         outState.putString("dialog", dialogCode);
+        outState.putInt("index", startingIndex);
         if (input != null)
             writingCard = input.getText().toString();
         if (!writingCard.equals(""))
@@ -108,6 +112,8 @@ public class MenuEdit extends AppCompatActivity {
             unchanged = true;
         }
 
+        startingIndex = cards.size();
+
         save = findViewById(R.id.saveButton);
         ImageButton back = findViewById(R.id.backButton);
         edit = findViewById(R.id.editButton);
@@ -121,6 +127,15 @@ public class MenuEdit extends AppCompatActivity {
                 if (unchanged){
                     Toast.makeText(getApplicationContext(), R.string.noSave, Toast.LENGTH_SHORT).show();
                 } else {
+                    DatabaseReference database = FirebaseDatabase.getInstance().getReference()
+                            .child("restaurantsMenu").child("RossoPomodoro").child("Card");
+                    HashMap<String, Object> child = new HashMap<>();
+                    for (int i = 0; i < cards.size(); i++) {
+                        if (cards.get(i).getDishes().size() != 0)
+                        child.put(Integer.toString(i), cards.get(i));
+                    }
+                    database.updateChildren(child);
+
                     String json = jsonHandler.toJSON(cards);
                     storageDir = getExternalFilesDir(Environment.DIRECTORY_DOCUMENTS);
                     File file = new File(storageDir, JSON_PATH);
@@ -128,7 +143,6 @@ public class MenuEdit extends AppCompatActivity {
                     unchanged = true;
                     Toast.makeText(getApplicationContext(), R.string.save, Toast.LENGTH_SHORT).show();
                 }
-                //finish();
             }
         });
 
@@ -203,6 +217,8 @@ public class MenuEdit extends AppCompatActivity {
                 dialogCode = "ok";
                 unchanged = false;
                 Card c = new Card(input.getText().toString());
+                ArrayList<Dish> dishes = new ArrayList<>();
+                c.setDishes(dishes);
                 cards.add(c);
                 recyclerAdapter.notifyItemInserted(cards.size() - 1);
             }
@@ -258,6 +274,11 @@ public class MenuEdit extends AppCompatActivity {
                 cardIterator.remove();
                 recyclerAdapter.notifyItemRemoved(i);
                 recyclerAdapter.notifyItemRangeRemoved(i, cards.size());
+
+                DatabaseReference database = FirebaseDatabase.getInstance().getReference()
+                        .child("restaurantsMenu").child("RossoPomodoro").child("Card");
+                database.child(Integer.toString(i)).removeValue();
+
                 unchanged = false;
             }
         }
