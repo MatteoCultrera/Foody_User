@@ -1,22 +1,27 @@
 package com.example.foodyuser;
-
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Environment;
+import android.support.annotation.NonNull;
 import android.support.design.widget.FloatingActionButton;
-import android.support.v7.app.AppCompatActivity;
+import android.support.v4.app.Fragment;
+import android.view.LayoutInflater;
 import android.view.View;
+import android.view.ViewGroup;
 import android.widget.TextView;
 
 import java.io.File;
+import java.util.Objects;
 
 import de.hdodenhof.circleimageview.CircleImageView;
 
+import static android.content.Context.MODE_PRIVATE;
 
-public class User extends AppCompatActivity {
+
+public class UserFragment extends Fragment {
 
     private FloatingActionButton editMode;
     private TextView name;
@@ -26,37 +31,19 @@ public class User extends AppCompatActivity {
     private TextView bio;
     private final String PLACEHOLDER_CAMERA="PlaceCamera.jpg";
     private File storageDir;
-
     private SharedPreferences sharedPref;
 
+    public UserFragment() {}
 
     @Override
-    protected void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
+    public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container,
+                             Bundle savedInstanceState) {
+        return inflater.inflate(R.layout.fragment_user, container, false);
+    }
 
-        setContentView(R.layout.activity_profile);
-
-        //Shared Preferences definition
-        Context context = getApplicationContext();
-        sharedPref = context.getSharedPreferences("myPreference", MODE_PRIVATE);
-
-        firstStart();
-
-        storageDir = getExternalFilesDir(Environment.DIRECTORY_PICTURES);
-
-        init();
-
-        editMode.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Intent intent = new Intent(User.this, Setup.class);
-                File pl = new File(storageDir, PLACEHOLDER_CAMERA);
-                if(!pl.delete()){
-                    System.out.println("Delete Failure");
-                }
-                startActivity(intent);
-            }
-        });
+    @Override
+    public void onViewCreated(@NonNull View view, Bundle savedInstanceState) {
+        super.onViewCreated(view, savedInstanceState);
     }
 
     private void firstStart(){
@@ -82,15 +69,30 @@ public class User extends AppCompatActivity {
 
     }
 
-    private void init(){
+    /*@Override
+    protected void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
 
-        CircleImageView profilePicture = findViewById(R.id.profilePicture);
-        this.editMode = findViewById(R.id.edit_mode);
-        this.name = findViewById(R.id.userName);
-        this.email = findViewById(R.id.emailAddress);
-        this.address = findViewById(R.id.address);
-        this.phoneNumber = findViewById(R.id.phoneNumber);
-        this.bio = findViewById(R.id.bio);
+        setContentView(R.layout.fragment_user);
+
+        //Shared Preferences definition
+        Context context = getApplicationContext();
+        sharedPref = context.getSharedPreferences("myPreference", MODE_PRIVATE);
+
+        firstStart();
+
+        storageDir = getExternalFilesDir(Environment.DIRECTORY_PICTURES);
+    }*/
+
+    private void init(View view){
+
+        CircleImageView profilePicture = view.findViewById(R.id.profilePicture);
+        this.editMode = view.findViewById(R.id.edit_mode);
+        this.name = view.findViewById(R.id.userName);
+        this.email = view.findViewById(R.id.emailAddress);
+        this.address = view.findViewById(R.id.address);
+        this.phoneNumber = view.findViewById(R.id.phoneNumber);
+        this.bio = view.findViewById(R.id.bio);
 
         //setup of the Shared Preferences to save value in (key, value) format
 
@@ -107,9 +109,33 @@ public class User extends AppCompatActivity {
             profilePicture.setImageURI(Uri.fromFile(f));
         }
 
+        editMode.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(getActivity(), Setup.class);
+                File pl = new File(storageDir, PLACEHOLDER_CAMERA);
+                if(!pl.delete()){
+                    System.out.println("Delete Failure");
+                }
+                startActivity(intent);
+            }
+        });
+
     }
 
     @Override
+    public void onResume() {
+        super.onResume();
+        Context context = Objects.requireNonNull(getActivity()).getApplicationContext();
+        sharedPref = context.getSharedPreferences("myPreference", MODE_PRIVATE);
+        storageDir = getActivity().getExternalFilesDir(Environment.DIRECTORY_PICTURES);
+
+        firstStart();
+
+        init(Objects.requireNonNull(getView()));
+    }
+
+    /*@Override
     public void onSaveInstanceState(Bundle outState) {
         super.onSaveInstanceState(outState);
 
@@ -131,16 +157,11 @@ public class User extends AppCompatActivity {
         bio.setText(savedInstanceState.getString("bio", getResources().getString(R.string.biography)));
     }
 
-    protected void onPause(){
-        super.onPause();
-
-    }
-
     @Override
     protected void onRestart() {
         super.onRestart();
 
-        setContentView(R.layout.activity_profile);
+        setContentView(R.layout.fragment_user);
 
         storageDir = getExternalFilesDir(Environment.DIRECTORY_PICTURES);
 
@@ -164,7 +185,7 @@ public class User extends AppCompatActivity {
     protected void onResume() {
         super.onResume();
 
-        setContentView(R.layout.activity_profile);
+        setContentView(R.layout.fragment_user);
 
         storageDir = getExternalFilesDir(Environment.DIRECTORY_PICTURES);
 
@@ -183,5 +204,5 @@ public class User extends AppCompatActivity {
         });
 
 
-    }
+    }*/
 }

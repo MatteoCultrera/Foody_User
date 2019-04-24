@@ -31,20 +31,16 @@ public class UserFragment extends Fragment {
     private final String PLACEHOLDER_CAMERA="PlaceCamera.jpg";
     private final String PROFILE_IMAGE = "ProfileImage.jpg";
     private File storageDir;
-
     private SharedPreferences sharedPref;
 
 
-    public UserFragment() {
-        // Required empty public constructor
-    }
+    public UserFragment() {}
 
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         return inflater.inflate(R.layout.fragment_user, container, false);
     }
-
 
     @Override
     public void onViewCreated(@NonNull View view, Bundle savedInstanceState) {
