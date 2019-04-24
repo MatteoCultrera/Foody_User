@@ -50,7 +50,6 @@ public class MenuEdit extends AppCompatActivity {
     private AlertDialog dialogDism;
     private String dialogCode = "ok";
     private String writingCard = "";
-    private int startingIndex;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -65,7 +64,6 @@ public class MenuEdit extends AppCompatActivity {
         cards = jsonHandler.getCards(fileTmp);
         String writingCard = savedInstanceState.getString("writing", "");
         String dialogPrec = savedInstanceState.getString("dialog");
-        startingIndex = savedInstanceState.getInt("index");
         unchanged = savedInstanceState.getBoolean("unchanged");
         if (dialogPrec != null && dialogPrec.compareTo("ok") != 0) {
             if (dialogPrec.compareTo("create") == 0) {
@@ -86,7 +84,6 @@ public class MenuEdit extends AppCompatActivity {
         jsonHandler.saveStringToFile(json, fileTmp);
         outState.putBoolean("unchanged", unchanged);
         outState.putString("dialog", dialogCode);
-        outState.putInt("index", startingIndex);
         if (input != null)
             writingCard = input.getText().toString();
         if (!writingCard.equals(""))
@@ -111,8 +108,6 @@ public class MenuEdit extends AppCompatActivity {
             cards = jsonHandler.getCards(file);
             unchanged = true;
         }
-
-        startingIndex = cards.size();
 
         save = findViewById(R.id.saveButton);
         ImageButton back = findViewById(R.id.backButton);

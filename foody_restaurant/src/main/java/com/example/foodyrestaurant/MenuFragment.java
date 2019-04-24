@@ -22,6 +22,7 @@ import com.google.firebase.database.ValueEventListener;
 
 import java.io.File;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.Objects;
 
 public class MenuFragment extends Fragment {
@@ -54,6 +55,15 @@ public class MenuFragment extends Fragment {
         File file = new File(storageDir, JSON_PATH);
         String json = jsonHandler.toJSON(cards);
         jsonHandler.saveStringToFile(json, file);
+
+        DatabaseReference database = FirebaseDatabase.getInstance().getReference()
+                .child("restaurantsMenu").child("RossoPomodoro").child("Card");
+        HashMap<String, Object> child = new HashMap<>();
+        for (int i = 0; i < cards.size(); i++) {
+            if (cards.get(i).getDishes().size() != 0)
+                child.put(Integer.toString(i), cards.get(i));
+        }
+        database.updateChildren(child);
     }
 
     private void init(View view){

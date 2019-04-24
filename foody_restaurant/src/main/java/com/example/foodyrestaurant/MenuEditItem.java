@@ -25,6 +25,8 @@ import android.widget.ListAdapter;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
 import com.yalantis.ucrop.UCrop;
 import com.yalantis.ucrop.UCropActivity;
 
@@ -34,6 +36,7 @@ import java.io.IOException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Locale;
 import java.util.Objects;
@@ -199,6 +202,15 @@ public class MenuEditItem extends AppCompatActivity {
                     }
                 }
             }
+
+            DatabaseReference database = FirebaseDatabase.getInstance().getReference()
+                    .child("restaurantsMenu").child("RossoPomodoro").child("Card");
+            HashMap<String, Object> child = new HashMap<>();
+            for (int i = 0; i < cards.size(); i++) {
+                if (cards.get(i).getDishes().size() != 0)
+                    child.put(Integer.toString(i), cards.get(i));
+            }
+            database.updateChildren(child);
 
             String json = jsonHandler.toJSON(cards);
             File file = new File(storageDir, JSON_REAL);
