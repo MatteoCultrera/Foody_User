@@ -14,14 +14,16 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 import com.bumptech.glide.Glide;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ValueEventListener;
 
 import java.io.File;
 import java.util.ArrayList;
 import java.util.Objects;
 
-/**
- * A simple {@link Fragment} subclass.
- */
 public class MenuFragment extends Fragment {
 
     private RecyclerView menu;
@@ -29,17 +31,14 @@ public class MenuFragment extends Fragment {
     private final String JSON_PATH = "menu.json";
     private File storageDir;
     private final JsonHandler jsonHandler = new JsonHandler();
-    private ArrayList<Card> cards;
+    private ArrayList<Card> cards = new ArrayList<>();
 
     public MenuFragment() {
         // Required empty public constructor
     }
 
     @Override
-    public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container,
-                             Bundle savedInstanceState) {
-        // Inflate the layout for this fragment
-
+    public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_menu, container, false);
         menu = view.findViewById(R.id.menu_display);
         return view;
@@ -60,9 +59,7 @@ public class MenuFragment extends Fragment {
     }
 
     private void init(View view){
-        String json;
         storageDir = Objects.requireNonNull(getActivity()).getExternalFilesDir(Environment.DIRECTORY_DOCUMENTS);
-        File file = new File(storageDir, JSON_PATH);
         LinearLayoutManager llm = new LinearLayoutManager(view.getContext());
         menu.setLayoutManager(llm);
 
@@ -79,51 +76,36 @@ public class MenuFragment extends Fragment {
                 .load(R.drawable.pizza)
                 .into(profileImage);
 
-        cards = jsonHandler.getCards(file);
+        DatabaseReference database = FirebaseDatabase.getInstance().getReference();
+        DatabaseReference ref = database.child("restaurantsMenu").child("RossoPomodoro");
+        ref.addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                for(DataSnapshot ds : dataSnapshot.getChildren()){
+                    for (DataSnapshot ds2 : ds.getChildren()) {
+                        Card card = ds2.getValue(Card.class);
+                        for (DataSnapshot ds3 : ds2.getChildren()){
+                            if (ds3.getKey().compareTo("Dish") == 0){
+                                ArrayList<Dish> dishes = new ArrayList<>();
+                                for (DataSnapshot ds4 : ds3.getChildren()) {
+                                    Dish dish = ds4.getValue(Dish.class);
+                                    dishes.add(dish);
+                                }
+                                card.setDishes(dishes);
+                            }
+                        }
+                        cards.add(card);
+                    }
+                }
+                RVAdapter adapter = new RVAdapter(cards);
+                menu.setAdapter(adapter);
+            }
 
-        for(int i = 0; i < cards.size(); i++)
-            Log.d("MAD", ""+ cards.get(i).getTitle() + ", ");
-
-        if (cards.size() == 0) {
-            Log.d("MAD", "I'm inside to create the MENU JSON FILE + " + cards.size());
-
-
-            cards = new ArrayList<>();
-
-            ArrayList<Dish> dishes = new ArrayList<>();
-            dishes.add(new Dish("Margherita","Pomodoro, Mozzarella, Basilico",3.50f, null));
-            dishes.add(new Dish("Vegetariana","Verdure di Stagione, Pomodoro, Mozzarella",8.00f, null));
-            dishes.add(new Dish("Quattro Stagioni","Pomodoro, Mozzarella, Prosciutto, Carciofi, Funghi, Olive, Grana a Scaglie",6.50f, null));
-            dishes.add(new Dish("Quattro Formaggi","Mozzarella, Gorgonzola, Fontina, Stracchino",7.00f, null));
-            Card c = new Card("Pizza");
-            c.setDishes(dishes);
-            cards.add(c);
-
-            dishes = new ArrayList<>();
-            dishes.add(new Dish("Pasta al Pomodoro","Rigationi, Pomodoro, Parmigiano, Basilico",3.50f, null));
-            dishes.add(new Dish("Carbonara","Spaghetti, Uova, Guanciale, Pecorino, Pepe Nero",8.00f, null));
-            dishes.add(new Dish("Pasta alla Norma","Pomodoro, Pancetta, Melanzane, Grana a Scaglie",6.50f, null));
-            dishes.add(new Dish("Puttanesca","Pomodoro, Peperoncino, Pancetta, Parmigiano",7.00f, null));
-            c = new Card("Primi");
-            c.setDishes(dishes);
-            cards.add(c);
-
-            dishes = new ArrayList<>();
-            dishes.add(new Dish("Braciola Di Maiale","Braciola, Spezie",3.50f, null));
-            dishes.add(new Dish("Stinco Alla Birra","Stinco di Maiale, Birra",8.00f, null));
-            dishes.add(new Dish("Cotoletta e Patatine","Cotoletta di Maiale, Patatine",6.50f, null));
-            dishes.add(new Dish("Filetto al pepe verde","Filetto di Maiale, Salsa alla Senape, Pepe verde in grani",7.00f, null));
-            c = new Card("Secondi");
-            c.setDishes(dishes);
-            cards.add(c);
-
-            json = jsonHandler.toJSON(cards);
-            jsonHandler.saveStringToFile(json, file);
-        }
-
-        RVAdapter adapter = new RVAdapter(cards);
-        menu.setAdapter(adapter);
-
+            @Override
+            public void onCancelled(@NonNull DatabaseError databaseError) {
+                Log.d("SWSW", databaseError.getMessage());
+            }
+        });
         editMode.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {

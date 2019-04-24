@@ -4,10 +4,12 @@ import android.util.Log;
 import java.util.ArrayList;
 
 class Card {
-    private final String title;
+    private String title;
     private ArrayList<Dish> dishes;
     private boolean editing;
     private boolean selected;
+
+    public Card(){}
 
     public Card(String title) {
         this.title = title;
