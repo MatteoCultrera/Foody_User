@@ -18,10 +18,11 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
-        <activity android:name=".RestaurantsList"></activity>
+        <activity android:name=".RestaurantShow"></activity>
+        <activity android:name=".RestaurantsList" />
         <activity
             android:name=".Setup"
-            android:windowSoftInputMode="adjustResize"></activity>
+            android:windowSoftInputMode="adjustResize" />
         <activity
             android:name=".MainActivity"
             android:hardwareAccelerated="true">
@@ -32,7 +33,7 @@
         </activity>
         <activity
             android:name="com.yalantis.ucrop.UCropActivity"
-            android:theme="@style/Theme.AppCompat.Light.NoActionBar"></activity>
+            android:theme="@style/Theme.AppCompat.Light.NoActionBar" />
 
         <provider
             android:name="android.support.v4.content.FileProvider"
