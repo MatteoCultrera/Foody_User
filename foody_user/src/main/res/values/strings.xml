@@ -29,5 +29,9 @@
     <string name="noSave">Your data has been already saved</string>
     <string name="delete">Delete</string>
 
-    <string name="transition_restaurant_card" translatable="false">transitionRestaurant</string>
+
+
+    <string name="transition_restaurant_card_image" translatable="false">transitionRestaurantImage</string>
+    <string name="transition_restaurant_card_shadow" translatable="false">transitionRestaurantShadow</string>
+    <string name="transition_restaurant_card_name" translatable="false">transitionRestaurantName</string>
 </resources>
