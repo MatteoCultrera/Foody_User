@@ -45,10 +45,10 @@ public class MainActivity extends AppCompatActivity {
         discover = new DiscoverFragment();
         reservations = new ReservationFragment();
         user = new UserFragment();
-        fm.beginTransaction().add(R.id.mainFrame, user, "3").show(user).commit();
+        fm.beginTransaction().add(R.id.mainFrame, user, "3").commit();
         fm.beginTransaction().add(R.id.mainFrame, reservations, "2").commit();
-        fm.beginTransaction().add(R.id.mainFrame, discover, "1").commit();
-        active = user;
+        fm.beginTransaction().add(R.id.mainFrame, discover, "1").show(discover).commit();
+        active = discover;
         init();
     }
 

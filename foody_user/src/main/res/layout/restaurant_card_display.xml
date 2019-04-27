@@ -67,17 +67,16 @@
                 app:layout_constraintTop_toBottomOf="@id/restaurant_name"/>
 
             <ImageView
-            android:id="@+id/bike"
-            android:layout_width="29dp"
-            android:layout_height="wrap_content"
-            android:src="@drawable/bike_white"
-            android:elevation="2dp"
-            android:scaleType="centerCrop"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            android:layout_marginBottom="8.5dp"
-            android:layout_marginStart="14dp"
-            />
+                android:id="@+id/bike"
+                android:layout_width="29dp"
+                android:layout_height="wrap_content"
+                android:src="@drawable/bike_white"
+                android:elevation="2dp"
+                android:scaleType="centerCrop"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                android:layout_marginBottom="8.5dp"
+                android:layout_marginStart="14dp"/>
 
             <TextView
                 android:id="@+id/restaurant_delivery_price"
@@ -119,12 +118,6 @@
                 app:layout_constraintBottom_toBottomOf="@+id/distance_image"
                 app:layout_constraintEnd_toStartOf="@+id/distance_image"
                 app:layout_constraintTop_toTopOf="@+id/distance_image" />
-
-
-
-
-
-
 
         </android.support.constraint.ConstraintLayout>
 
