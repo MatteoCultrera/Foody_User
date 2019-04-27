@@ -1,10 +1,6 @@
 package com.example.foodyuser;
 
 import android.support.annotation.NonNull;
-import android.support.design.button.MaterialButton;
-import android.support.design.widget.FloatingActionButton;
-import android.support.v7.widget.AppCompatImageButton;
-import android.support.v7.widget.CardView;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
