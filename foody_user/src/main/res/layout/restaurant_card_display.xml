@@ -18,7 +18,9 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.0"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent">
+        app:layout_constraintTop_toTopOf="parent"
+        android:clickable="true"
+        android:transitionName="@string/transition_restaurant_card">
 
         <android.support.constraint.ConstraintLayout
             android:layout_width="match_parent"
