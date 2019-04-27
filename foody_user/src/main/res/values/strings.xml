@@ -11,7 +11,7 @@
     <string name="bio_Walter">My name is Walter White and I love to cook!</string>
 
     <string name="okButton">OK</string>
-    <string name="edit" >Edit %1$s</string>
+    <string name="edit">Edit %1$s</string>
     <string name="discover">Discover</string>
     <string name="profile">Profile</string>
     <string name="edit_menu">Edit Menu</string>

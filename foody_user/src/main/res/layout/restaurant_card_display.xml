@@ -1,0 +1,128 @@
+<?xml version="1.0" encoding="utf-8"?>
+<android.support.constraint.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="143dp"
+    android:background="#E4E4E4">
+
+    <android.support.v7.widget.CardView
+        android:id="@+id/cv"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_marginStart="16dp"
+        android:layout_marginEnd="16dp"
+        android:layout_marginBottom="8dp"
+        app:cardCornerRadius="16dp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.0"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent">
+
+        <android.support.constraint.ConstraintLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent">
+
+
+            <ImageView
+                android:id="@+id/restaurant_background"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:src="@drawable/user_static_background"
+                android:scaleType="centerCrop"/>
+
+            <ImageView
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:elevation="1dp"
+                android:src="@drawable/shadow_restaurants"
+                android:scaleType="fitXY"
+                />
+
+            <TextView
+                android:id="@+id/restaurant_name"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="RossoPomodoro"
+                android:elevation="2dp"
+                android:fontFamily="@font/roboto_bold"
+                android:textSize="20sp"
+                android:textColor="@color/whiteText"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintTop_toTopOf="parent"
+                android:layout_marginTop="5dp"/>
+            <TextView
+                android:id="@+id/restaurant_description"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Italian Restaurant"
+                android:elevation="2dp"
+                android:fontFamily="@font/roboto_regular"
+                android:textSize="12.5sp"
+                android:textColor="@color/whiteText"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/restaurant_name"/>
+
+            <ImageView
+                android:id="@+id/bike"
+                android:layout_width="29dp"
+                android:layout_height="wrap_content"
+                android:src="@drawable/bike_white"
+                android:elevation="2dp"
+                android:scaleType="centerCrop"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                android:layout_marginBottom="8.5dp"
+                android:layout_marginStart="14dp"/>
+
+            <TextView
+                android:id="@+id/restaurant_delivery_price"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="9dp"
+                android:elevation="2dp"
+                android:fontFamily="@font/roboto_regular"
+                android:text="3,50 €"
+                android:textColor="@color/whiteText"
+                android:textSize="10sp"
+                app:layout_constraintBottom_toBottomOf="@+id/bike"
+                app:layout_constraintStart_toEndOf="@+id/bike"
+                app:layout_constraintTop_toTopOf="@+id/bike" />
+
+            <ImageView
+                android:id="@+id/distance_image"
+                android:layout_width="29dp"
+                android:layout_height="wrap_content"
+                android:src="@drawable/address2_white"
+                android:elevation="2dp"
+                android:scaleType="centerCrop"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                android:layout_marginBottom="8.5dp"
+                android:layout_marginEnd="14dp"
+                />
+
+            <TextView
+                android:id="@+id/restaurant_distance"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginEnd="9dp"
+                android:elevation="2dp"
+                android:fontFamily="@font/roboto_regular"
+                android:text="3,5 Km"
+                android:textColor="@color/whiteText"
+                android:textSize="10sp"
+                app:layout_constraintBottom_toBottomOf="@+id/distance_image"
+                app:layout_constraintEnd_toStartOf="@+id/distance_image"
+                app:layout_constraintTop_toTopOf="@+id/distance_image" />
+
+        </android.support.constraint.ConstraintLayout>
+
+    </android.support.v7.widget.CardView>
+
+
+
+</android.support.constraint.ConstraintLayout>
