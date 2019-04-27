@@ -19,16 +19,65 @@ public class RestaurantsList extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_restaurants_list);
 
+        init();
+
     }
 
     private void init(){
 
+        restaurantList = findViewById(R.id.restaurants_list);
         LinearLayoutManager llm = new LinearLayoutManager(this);
         restaurantList.setLayoutManager(llm);
 
         ArrayList<String> kitchens = new ArrayList<>();
 
         //TODO: fetch info from server instead of stub infos
+        restaurants = new ArrayList<>();
+        kitchens.add("Italian");
+        kitchens.add("Pizza");
+        restaurants.add(new Restaurant("RossoPomodoro", kitchens, 3.5f,3.2f));
+
+        kitchens = new ArrayList<String>();
+        kitchens.add("French");
+        kitchens.add("Restaurant");
+        restaurants.add(new Restaurant("Les Escargots", kitchens, 3.8f,4.5f));
+
+        kitchens = new ArrayList<String>();
+        kitchens.add("Vegetarian");
+        kitchens.add("Vegan");
+        restaurants.add(new Restaurant("Veggie Town", kitchens, 31.5f,8.2f));
+
+        kitchens = new ArrayList<String>();
+        kitchens.add("Italian");
+        kitchens.add("Pizza");
+        restaurants.add(new Restaurant("RossoPomodoro", kitchens, 3.5f,3.2f));
+
+        kitchens = new ArrayList<String>();
+        kitchens.add("French");
+        kitchens.add("Restaurant");
+        restaurants.add(new Restaurant("Les Escargots", kitchens, 3.8f,4.5f));
+
+        kitchens = new ArrayList<String>();
+        kitchens.add("Vegetarian");
+        kitchens.add("Vegan");
+        restaurants.add(new Restaurant("Veggie Town", kitchens, 31.5f,8.2f));
+
+        kitchens = new ArrayList<String>();
+        kitchens.add("Italian");
+        kitchens.add("Pizza");
+        restaurants.add(new Restaurant("RossoPomodoro", kitchens, 3.5f,3.2f));
+
+        kitchens = new ArrayList<String>();
+        kitchens.add("French");
+        kitchens.add("Restaurant");
+        restaurants.add(new Restaurant("Les Escargots", kitchens, 3.8f,4.5f));
+
+        kitchens = new ArrayList<String>();
+        kitchens.add("Vegetarian");
+        kitchens.add("Vegan");
+        restaurants.add(new Restaurant("Veggie Town", kitchens, 31.5f,8.2f));
+
+        kitchens = new ArrayList<String>();
         kitchens.add("Italian");
         kitchens.add("Pizza");
         restaurants.add(new Restaurant("RossoPomodoro", kitchens, 3.5f,3.2f));
