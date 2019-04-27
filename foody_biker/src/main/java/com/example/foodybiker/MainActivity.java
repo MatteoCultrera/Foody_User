@@ -31,7 +31,7 @@ public class MainActivity extends AppCompatActivity {
         if (savedInstanceState != null) {
             String lastFragment = savedInstanceState.getString("lastFragment", null);
             if (lastFragment != null) {
-                if (lastFragment.compareTo("discover") == 0) {
+                if (lastFragment.compareTo("map") == 0) {
                     active = map;
                 } else if (lastFragment.compareTo("reservations") == 0) {
                     active = reservations;
@@ -56,7 +56,7 @@ public class MainActivity extends AppCompatActivity {
     protected void onSaveInstanceState(Bundle outState){
         super.onSaveInstanceState(outState);
         if (active == map){
-            outState.putString("lastFragment", "discover");
+            outState.putString("lastFragment", "map");
         } else if (active == reservations){
             outState.putString("lastFragment", "reservations");
         } else if (active == user){
