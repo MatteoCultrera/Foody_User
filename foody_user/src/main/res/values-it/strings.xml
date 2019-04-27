@@ -27,4 +27,7 @@
     <string name="save">I dati sono stati salvati</string>
     <string name="noSave">I dati sono stati già salvati</string>
     <string name="delete">Cancella</string>
+
+    <string name="app_label">Foody User</string>
+    <string name="search_hint">Cerca ristoranti</string>
 </resources>

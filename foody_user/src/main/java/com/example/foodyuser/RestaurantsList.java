@@ -4,21 +4,39 @@ import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.view.View;
+import android.widget.EditText;
+
+import com.firebase.ui.database.FirebaseRecyclerAdapter;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
 
 import java.lang.reflect.Array;
 import java.util.ArrayList;
 
 public class RestaurantsList extends AppCompatActivity {
 
+    private EditText searchField;
+    private RecyclerView queryResult;
+
     private RecyclerView restaurantList;
     private ArrayList<Restaurant> restaurants;
 
+    DatabaseReference databaseReference;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_restaurants_list);
 
+        searchField = findViewById(R.id.search_field);
+        queryResult = findViewById(R.id.query_result);
+
+        databaseReference = FirebaseDatabase.getInstance().getReference();
+
+        queryResult.setHasFixedSize(true);
+
+        
     }
 
     private void init(){
