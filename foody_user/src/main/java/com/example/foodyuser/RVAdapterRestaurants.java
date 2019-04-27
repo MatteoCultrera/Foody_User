@@ -25,7 +25,6 @@ public class RVAdapterRestaurants  extends RecyclerView.Adapter<RVAdapterRestaur
 
     private ArrayList<Restaurant> restaurants;
 
-
     RVAdapterRestaurants(ArrayList<Restaurant> restaurants){
         this.restaurants = restaurants;
     }
@@ -92,13 +91,12 @@ public class RVAdapterRestaurants  extends RecyclerView.Adapter<RVAdapterRestaur
         }
     }
 
-    //TRIES
-    public Animator createAnimator(ViewGroup sceneRoot, TransitionValues startValues, TransitionValues endValues){
-        if(startValues == null || endValues == null)
-            return null;
 
-
-
-        return null;
+    //This method will filter the list
+    //here we are passing the filtered data
+    //and assigning it to the list with notifydatasetchanged method
+    public void filterList(ArrayList<Restaurant> filtedNames) {
+        this.restaurants = filtedNames;
+        notifyDataSetChanged();
     }
 }

@@ -29,9 +29,9 @@
     <string name="noSave">Your data has been already saved</string>
     <string name="delete">Delete</string>
 
-
-
     <string name="transition_restaurant_card_image" translatable="false">transitionRestaurantImage</string>
     <string name="transition_restaurant_card_shadow" translatable="false">transitionRestaurantShadow</string>
     <string name="transition_restaurant_card_name" translatable="false">transitionRestaurantName</string>
+    <string name="app_label">Foody User</string>
+    <string name="search_hint">Search restaurant</string>
 </resources>

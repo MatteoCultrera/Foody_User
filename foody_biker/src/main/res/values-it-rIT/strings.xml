@@ -8,4 +8,8 @@
     <string name="opening_time">Seleziona l\'orario di apertura</string>
     <string name="closing_time">Selezione l\'orario di chiusura</string>
     <string name="okButton">Ok</string>
+
+    <string name="discover">Esplora</string>
+    <string name="profile">Profilo</string>
+    <string name="orders">Prenotazioni</string>
 </resources>
