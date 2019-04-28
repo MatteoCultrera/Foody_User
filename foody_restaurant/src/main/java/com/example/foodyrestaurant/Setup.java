@@ -35,6 +35,8 @@ import android.widget.Toast;
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.request.RequestOptions;
 import com.bumptech.glide.signature.ObjectKey;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
 import com.yalantis.ucrop.UCrop;
 import com.yalantis.ucrop.UCropActivity;
 
@@ -42,6 +44,7 @@ import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.Locale;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -865,8 +868,16 @@ public class Setup extends AppCompatActivity {
                 break;
             }
         }
-
         edit.apply();
+
+        float price = (float) (deliveryPrice * 0.5);
+        Restaurant restaurant = new Restaurant(name.getText().toString(), selectedFoods, price,(float) 0.00);
+        DatabaseReference database = FirebaseDatabase.getInstance().getReference()
+                .child("endUsers/" + name.getText().toString());
+        HashMap<String, Object> child = new HashMap<>();
+        child.put("info", restaurant);
+        database.updateChildren(child);
+
         finish();
     }
 
