@@ -873,7 +873,7 @@ public class Setup extends AppCompatActivity {
         float price = (float) (deliveryPrice * 0.5);
         Restaurant restaurant = new Restaurant(name.getText().toString(), selectedFoods, price,(float) 0.00);
         DatabaseReference database = FirebaseDatabase.getInstance().getReference()
-                .child("endUsers/" + name.getText().toString());
+                .child("restaurantsInfo/" + name.getText().toString());
         HashMap<String, Object> child = new HashMap<>();
         child.put("info", restaurant);
         database.updateChildren(child);

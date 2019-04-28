@@ -18,11 +18,13 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.0"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent">
+        app:layout_constraintTop_toTopOf="parent"
+        android:clickable="true">
 
         <android.support.constraint.ConstraintLayout
             android:layout_width="match_parent"
-            android:layout_height="match_parent">
+            android:layout_height="match_parent"
+            >
 
 
             <ImageView
@@ -30,14 +32,17 @@
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 android:src="@drawable/user_static_background"
-                android:scaleType="centerCrop"/>
+                android:scaleType="centerCrop"
+                android:transitionName="@string/transition_restaurant_card_image"/>
 
             <ImageView
+                android:id="@+id/restaurant_shadow"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 android:elevation="1dp"
                 android:src="@drawable/shadow_restaurants"
                 android:scaleType="fitXY"
+                android:transitionName="@string/transition_restaurant_card_shadow"
                 />
 
             <TextView
@@ -52,7 +57,8 @@
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintTop_toTopOf="parent"
-                android:layout_marginTop="5dp"/>
+                android:layout_marginTop="5dp"
+                android:transitionName="@string/transition_restaurant_card_name"/>
             <TextView
                 android:id="@+id/restaurant_description"
                 android:layout_width="wrap_content"

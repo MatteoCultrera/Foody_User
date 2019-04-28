@@ -4,13 +4,15 @@ import java.util.ArrayList;
 
 public class Restaurant {
     private String name;
-    private ArrayList<String> kitchens;
+    private ArrayList<String> cuisines;
     private float deliveryPrice;
     private float distance;
 
-    public Restaurant(String name, ArrayList<String> kitchens, float deliveryPrice, float distance){
+    public Restaurant() {}
+
+    public Restaurant(String name, ArrayList<String> cuisines, float deliveryPrice, float distance){
         this.name = name;
-        this.kitchens = kitchens;
+        this.cuisines = cuisines;
         this.deliveryPrice = deliveryPrice;
         this.distance = distance;
     }
@@ -23,13 +25,12 @@ public class Restaurant {
         this.name = name;
     }
 
-
-    public ArrayList<String> getKitchens() {
-        return kitchens;
+    public ArrayList<String> getCuisines() {
+        return cuisines;
     }
 
-    public void setKitchens(ArrayList<String> kitchens) {
-        this.kitchens = kitchens;
+    public void setCuisines(ArrayList<String> cuisines) {
+        this.cuisines = cuisines;
     }
 
     public float getDeliveryPrice() {
@@ -49,13 +50,13 @@ public class Restaurant {
     }
 
     public String getKitchensString(){
-        if(kitchens == null)
+        if(cuisines == null)
             return "";
         else {
             String returner="";
-            for(int i = 0; i < kitchens.size(); i++){
-                returner+=kitchens.get(i);
-                if(i!= kitchens.size()-1)
+            for(int i = 0; i < cuisines.size(); i++){
+                returner+=cuisines.get(i);
+                if(i!= cuisines.size()-1)
                     returner+=", ";
             }
             return returner;
