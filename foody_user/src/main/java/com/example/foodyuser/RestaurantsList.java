@@ -28,6 +28,7 @@ public class RestaurantsList extends AppCompatActivity {
     private RecyclerView restaurantList;
     private ArrayList<Restaurant> restaurants = new ArrayList<>();
     private RVAdapterRestaurants adapter;
+    private boolean add = true;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -66,9 +67,18 @@ public class RestaurantsList extends AppCompatActivity {
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
                 for (DataSnapshot ds : dataSnapshot.getChildren()) {
-                    for (DataSnapshot ds1 : ds.getChildren()) {
-                        Restaurant restaurant = ds1.getValue(Restaurant.class);
-                        restaurants.add(restaurant);
+                    add = true;
+                    for (Restaurant rest : restaurants){
+                        if (ds.getKey().compareTo(rest.getName()) == 0) {
+                            add = false;
+                            break;
+                        }
+                    }
+                    if (add) {
+                        for (DataSnapshot ds1 : ds.getChildren()) {
+                            Restaurant restaurant = ds1.getValue(Restaurant.class);
+                            restaurants.add(restaurant);
+                        }
                     }
                 }
                 adapter = new RVAdapterRestaurants(restaurants);
