@@ -7,6 +7,7 @@ import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v7.app.AppCompatActivity;
+import android.util.Log;
 import android.view.MenuItem;
 
 public class MainActivity extends AppCompatActivity {
@@ -45,8 +46,8 @@ public class MainActivity extends AppCompatActivity {
         discover = new DiscoverFragment();
         reservations = new ReservationFragment();
         user = new UserFragment();
-        fm.beginTransaction().add(R.id.mainFrame, user, "3").commit();
-        fm.beginTransaction().add(R.id.mainFrame, reservations, "2").commit();
+        fm.beginTransaction().add(R.id.mainFrame, user, "3").hide(user).commit();
+        fm.beginTransaction().add(R.id.mainFrame, reservations, "2").hide(reservations).commit();
         fm.beginTransaction().add(R.id.mainFrame, discover, "1").show(discover).commit();
         active = discover;
         init();
@@ -80,11 +81,11 @@ public class MainActivity extends AppCompatActivity {
                     if(active == discover){
                         FragmentTransaction transaction =fm.beginTransaction();
                         transaction.setCustomAnimations(R.anim.enter_from_right,R.anim.exit_to_left);
-                        transaction.replace(R.id.mainFrame, reservations).commit();
+                        transaction.replace(R.id.mainFrame, reservations).show(reservations).commit();
                     }else if(active == user) {
                         FragmentTransaction transaction = fm.beginTransaction();
                         transaction.setCustomAnimations(R.anim.enter_from_left, R.anim.exit_to_right);
-                        transaction.replace(R.id.mainFrame, reservations).commit();
+                        transaction.replace(R.id.mainFrame, reservations).show(reservations).commit();
                     }
                     active = reservations;
                     return true;
