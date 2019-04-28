@@ -1,4 +1,4 @@
-package com.example.foodyuser;
+package com.example.foodyrestaurant;
 
 import java.util.ArrayList;
 
@@ -8,7 +8,7 @@ public class Restaurant {
     private float deliveryPrice;
     private float distance;
 
-    public Restaurant() {}
+    public Restaurant(){}
 
     public Restaurant(String name, ArrayList<String> cuisines, float deliveryPrice, float distance){
         this.name = name;
@@ -49,27 +49,4 @@ public class Restaurant {
         this.distance = distance;
     }
 
-    public String getKitchensString(){
-        if(cuisines == null)
-            return "";
-        else {
-            String returner="";
-            for(int i = 0; i < cuisines.size(); i++){
-                returner+=cuisines.get(i);
-                if(i!= cuisines.size()-1)
-                    returner+=", ";
-            }
-            return returner;
-        }
-    }
-
-    public String getDeliveryPriceString(){
-        String returner = String.format("%.2f", deliveryPrice);
-        return returner;
-    }
-
-    public String getDistanceString(){
-        String returner = String.format("%.2f Km", distance);
-        return returner;
-    }
 }
