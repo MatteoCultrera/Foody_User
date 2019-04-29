@@ -34,4 +34,7 @@
     <string name="transition_restaurant_card_name" translatable="false">transitionRestaurantName</string>
     <string name="app_label">Foody User</string>
     <string name="search_hint">Search restaurant</string>
+
+    <string name="your_order">Your Order</string>
+    <string name="total">Total:</string>
 </resources>
