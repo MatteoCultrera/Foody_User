@@ -68,7 +68,6 @@ public class RestaurantsList extends AppCompatActivity {
     }
 
     private void init(){
-
         restaurantList = findViewById(R.id.restaurants_list);
         LinearLayoutManager llm = new LinearLayoutManager(this);
         restaurantList.setLayoutManager(llm);

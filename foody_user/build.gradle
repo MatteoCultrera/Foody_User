@@ -45,5 +45,9 @@ dependencies {
 
     // FirebaseUI for Firebase Realtime Database
     implementation 'com.firebaseui:firebase-ui-database:4.3.2'
+
+    //Glide image loader
+
+    implementation 'com.github.bumptech.glide:glide:4.3.+'
 }
 apply plugin: 'com.google.gms.google-services'

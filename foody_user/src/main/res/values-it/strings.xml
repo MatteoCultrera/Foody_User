@@ -30,5 +30,8 @@
 
     <string name="app_label">Foody User</string>
     <string name="search_hint">Cerca ristoranti</string>
+
     <string name="dialog_cuisine">Filtra per tipo di cucina</string>
+    <string name="your_order">Il Tuo Ordine</string>
+    <string name="total">Totale:</string>
 </resources>

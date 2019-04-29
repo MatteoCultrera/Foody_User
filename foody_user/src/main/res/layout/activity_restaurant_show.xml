@@ -8,8 +8,9 @@
 
     
     <android.support.constraint.ConstraintLayout
+        android:id="@+id/layout_image"
         android:layout_width="match_parent"
-        android:layout_height="240dp"
+        android:layout_height="178dp"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toTopOf="parent">
@@ -45,7 +46,76 @@
             android:layout_marginTop="13dp"
             android:transitionName="@string/transition_restaurant_card_name"
             />
+
+        <TextView
+            android:id="@+id/restaurant_cuisines"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/restaurant_title"
+            android:text="Italian Restaurant"
+            android:textColor="@color/whiteText"
+            android:textSize="15sp"
+            android:layout_marginStart="16dp"
+            android:layout_marginTop="3dp"
+            android:fontFamily="@font/roboto_regular"/>
+
+        <TextView
+            android:id="@+id/restaurant_del_price"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintBottom_toBottomOf="parent"
+            android:text="3.50 €"
+            android:textColor="@color/whiteText"
+            android:textSize="15sp"
+            android:layout_marginStart="16dp"
+            android:layout_marginBottom="16dp"
+            android:fontFamily="@font/roboto_regular"/>
+
+        <ImageView
+            android:layout_width="0dp"
+            android:layout_height="30dp"
+            android:src="@drawable/bike_white"
+            app:layout_constraintStart_toStartOf="@id/restaurant_del_price"
+            app:layout_constraintBottom_toTopOf="@id/restaurant_del_price"
+            app:layout_constraintEnd_toEndOf="@id/restaurant_del_price"
+            android:scaleType="fitCenter"
+            />
+
+        <TextView
+            android:id="@+id/restaurant_dist"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintBottom_toBottomOf="parent"
+            android:text="3.50 Km"
+            android:textColor="@color/whiteText"
+            android:textSize="15sp"
+            android:layout_marginEnd="16dp"
+            android:layout_marginBottom="16dp"
+            android:fontFamily="@font/roboto_regular"/>
+
+        <ImageView
+            android:layout_width="0dp"
+            android:layout_height="25dp"
+            android:src="@drawable/address2_white"
+            app:layout_constraintStart_toStartOf="@id/restaurant_dist"
+            app:layout_constraintBottom_toTopOf="@id/restaurant_dist"
+            app:layout_constraintEnd_toEndOf="@id/restaurant_dist"
+            android:scaleType="fitCenter"
+            />
+
     </android.support.constraint.ConstraintLayout>
+
+    <android.support.v7.widget.RecyclerView
+        android:id="@+id/menu"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        app:layout_constraintTop_toBottomOf="@id/layout_image"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"></android.support.v7.widget.RecyclerView>
 
 
     
