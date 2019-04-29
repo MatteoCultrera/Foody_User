@@ -89,26 +89,16 @@ public class MenuFragment extends Fragment {
         ref.addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-                for(DataSnapshot ds : dataSnapshot.getChildren()){
-                    cards = new ArrayList<>();
-                    for (DataSnapshot ds2 : ds.getChildren()) {
-                        Card card = ds2.getValue(Card.class);
-                        for (DataSnapshot ds3 : ds2.getChildren()){
-                            if (ds3.getKey().compareTo("Dish") == 0){
-                                ArrayList<Dish> dishes = new ArrayList<>();
-                                for (DataSnapshot ds4 : ds3.getChildren()) {
-                                    Dish dish = ds4.getValue(Dish.class);
-                                    dishes.add(dish);
-                                }
-                                card.setDishes(dishes);
-                            }
-                        }
+                cards = new ArrayList<>();
+                for (DataSnapshot ds : dataSnapshot.getChildren()) {
+                    for (DataSnapshot ds1 : ds.getChildren()) {
+                        Card card = ds1.getValue(Card.class);
                         cards.add(card);
                     }
+                }
                     RVAdapter adapter = new RVAdapter(cards);
                     menu.setAdapter(adapter);
                 }
-            }
 
             @Override
             public void onCancelled(@NonNull DatabaseError databaseError) {

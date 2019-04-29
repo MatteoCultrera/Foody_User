@@ -12,11 +12,23 @@ import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStreamReader;
+import java.lang.reflect.Array;
 import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.Objects;
 
 class JsonHandler {
+
+    ArrayList<OrderItem> getOrders(File file){
+        ArrayList<OrderItem> orders;
+        try {
+            orders = readOrdersFromJSON(file);
+        } catch (IOException e){
+            e.getMessage();
+            return new ArrayList<>();
+        }
+        return orders;
+    }
 
     ArrayList<Card> getCards(File file) {
         ArrayList<Card> cards;
@@ -38,6 +50,25 @@ class JsonHandler {
             return new ArrayList<>();
         }
         return reservations;
+    }
+
+    private ArrayList<OrderItem> readOrdersFromJSON (File path) throws  IOException {
+        ArrayList<OrderItem> orders = new ArrayList<>();
+        FileInputStream fin = new FileInputStream(path);
+        JsonReader reader = new JsonReader(new InputStreamReader(fin, StandardCharsets.UTF_8));
+        try {
+            reader.beginObject();
+            if (reader.nextName().equals("Order"))
+                orders = readMultipleOrders(reader);
+        }finally {
+            try {
+                reader.close();
+            }
+            catch (IOException e) {
+                e.getMessage();
+            }
+        }
+        return orders;
     }
 
     private ArrayList<Card> readFromJSON (File path) throws IOException {
@@ -77,6 +108,17 @@ class JsonHandler {
         }
 
         return reservations;
+    }
+
+    private ArrayList<OrderItem> readMultipleOrders(JsonReader reader) throws IOException{
+        ArrayList<OrderItem> orders = new ArrayList<>();
+
+        reader.beginArray();
+        while (reader.hasNext()){
+            orders.add(readSingleOrder(reader));
+        }
+        reader.endArray();
+        return orders;
     }
 
     private ArrayList<Card> readMultipleCards(JsonReader reader) throws IOException{
@@ -167,6 +209,32 @@ class JsonHandler {
         return result;
     }
 
+    private OrderItem readSingleOrder(JsonReader reader) throws IOException{
+        int pieces = 0;
+        String orderName = null;
+        double price = 0.0;
+
+        reader.beginObject();
+        while(reader.hasNext()){
+            String name = reader.nextName();
+            switch (name) {
+                case "pieces":
+                    pieces = reader.nextInt();
+                    break;
+                case "orderName":
+                    orderName = reader.nextString();
+                    break;
+                case "price":
+                    price = reader.nextDouble();
+                default:
+                    reader.skipValue();
+                    break;
+            }
+        }
+        reader.endObject();
+        return new OrderItem(pieces, orderName, (float) price);
+    }
+
     private Card readSingleCard(JsonReader reader) throws IOException{
         String title = null;
         ArrayList<Dish> dishes = new ArrayList<>();
@@ -247,6 +315,25 @@ class JsonHandler {
         return result;
     }
 
+    String ordersToJSON(ArrayList<OrderItem> orders){
+        JSONObject obj = new JSONObject();
+        JSONArray objOrdArray = new JSONArray();
+        try {
+            for (OrderItem ord : orders) {
+                JSONObject objOrd = new JSONObject();
+                objOrd.put("pieces", ord.getPieces());
+                objOrd.put("orderName", ord.getOrderName());
+                objOrd.put("price", ord.getPrice());
+            }
+            obj.put("Order", objOrdArray);
+        }
+        catch (JSONException e){
+            e.getMessage();
+            return "Error String";
+        }
+        return obj.toString();
+    }
+
     String toJSON (ArrayList<Card> cards){
         JSONObject obj = new JSONObject();
         JSONArray objCardArray = new JSONArray();
@@ -320,7 +407,7 @@ class JsonHandler {
     }
 
     void saveStringToFile(String json, File file){
-        FileOutputStream outputStream= null;
+        FileOutputStream outputStream = null;
         try{
             outputStream = new FileOutputStream(file);
             outputStream.write(json.getBytes());
