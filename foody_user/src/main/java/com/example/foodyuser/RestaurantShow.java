@@ -47,15 +47,8 @@ public class RestaurantShow extends AppCompatActivity {
         title.setText(extras.getString("restaurant_name",""));
         fetchRestaurant();
         fetchMenu();
-
-        Log.d("SWSW", ""+cards.size());
         LinearLayoutManager llm = new LinearLayoutManager(this);
         menu.setLayoutManager(llm);
-
-        RVAdapterMenu adapterMenu = new RVAdapterMenu(cards);
-        menu.setAdapter(adapterMenu);
-
-
         return true;
     }
 
@@ -96,6 +89,8 @@ public class RestaurantShow extends AppCompatActivity {
                         cards.add(card);
                     }
                 }
+                RVAdapterMenu adapterMenu = new RVAdapterMenu(cards);
+                menu.setAdapter(adapterMenu);
             }
             @Override
             public void onCancelled(@NonNull DatabaseError databaseError) {
