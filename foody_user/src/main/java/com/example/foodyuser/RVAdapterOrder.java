@@ -43,8 +43,9 @@ public class RVAdapterOrder  extends RecyclerView.Adapter<RVAdapterOrder.CardVie
     @Override
     public void onBindViewHolder(@NonNull final CardViewHolder cardViewHolder, int i) {
 
-        cardViewHolder.nameQuantity.setText(orders.get(i).toString());
+        cardViewHolder.name.setText(orders.get(i).getOrderName());
         cardViewHolder.price.setText(orders.get(i).getPriceString());
+        cardViewHolder.quantity.setText(orders.get(i).getPiecesString());
         final int pos = cardViewHolder.getAdapterPosition();
 
         cardViewHolder.add.setOnClickListener(new View.OnClickListener() {
@@ -84,17 +85,19 @@ public class RVAdapterOrder  extends RecyclerView.Adapter<RVAdapterOrder.CardVie
 
     static class CardViewHolder extends RecyclerView.ViewHolder {
 
-        TextView nameQuantity;
+        TextView name;
+        TextView quantity;
         TextView price;
         ImageButton add;
         ImageButton remove;
 
         CardViewHolder(View itemView) {
             super(itemView);
-            nameQuantity = itemView.findViewById(R.id.item_name);
+            name = itemView.findViewById(R.id.item_name);
             price = itemView.findViewById(R.id.item_price);
             add = itemView.findViewById(R.id.item_add_button);
             remove = itemView.findViewById(R.id.item_remove_button);
+            quantity = itemView.findViewById(R.id.item_quantity);
         }
     }
 

@@ -12,11 +12,6 @@ public class OrderItem {
         this.pieces = pieces;
     }
 
-    @Override
-    public String toString() {
-        return pieces+" x "+orderName;
-    }
-
     public String getPriceString(){
         return String.format("%.2f €", price);
     }
@@ -39,6 +34,10 @@ public class OrderItem {
 
     public int getPieces() {
         return pieces;
+    }
+
+    public String getPiecesString(){
+        return ""+pieces;
     }
 
     public void setPieces(int pieces) {
