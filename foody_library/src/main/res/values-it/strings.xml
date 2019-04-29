@@ -44,4 +44,33 @@
 
     <string name="Accept">Accetta</string>
     <string name="Decline">Rifiuta</string>
+
+    <string-array name="foodcategory_array">
+        <item>Americano</item>
+        <item>Brasiliano</item>
+        <item>Cinese</item>
+        <item>Coreano</item>
+        <item>Crepes</item>
+        <item>Dolci</item>
+        <item>Fritti</item>
+        <item>Giapponese</item>
+        <item>Senza Glutine</item>
+        <item>Greco</item>
+        <item>Hamburger</item>
+        <item>Indiano</item>
+        <item>Kebab</item>
+        <item>Medio oriente</item>
+        <item>Mediterranea</item>
+        <item>Messicano</item>
+        <item>Noodle</item>
+        <item>Pasta e Riso</item>
+        <item>Piadine</item>
+        <item>Pizza</item>
+        <item>Rosticceria</item>
+        <item>Steakhouse</item>
+        <item>Thai</item>
+        <item>Vegano</item>
+        <item>Vegetariano</item>
+        <item>Zuppe</item>
+    </string-array>
 </resources>
