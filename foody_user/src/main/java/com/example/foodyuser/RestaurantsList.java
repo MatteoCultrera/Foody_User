@@ -13,7 +13,6 @@ import android.util.Log;
 import android.view.View;
 import android.widget.EditText;
 import android.widget.ImageButton;
-import android.widget.Toast;
 
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
@@ -47,24 +46,7 @@ public class RestaurantsList extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_restaurants_list);
 
-        searchField = findViewById(R.id.search_field);
-        //queryResult = findViewById(R.id.query_result);
-        //queryResult.setHasFixedSize(true);
-        searchField.addTextChangedListener(new TextWatcher() {
-            @Override
-            public void beforeTextChanged(CharSequence charSequence, int i, int i1, int i2) {
-            }
-            @Override
-            public void onTextChanged(CharSequence charSequence, int i, int i1, int i2) {
-            }
-            @Override
-            public void afterTextChanged(Editable editable) {
-                filter(editable.toString());
-            }
-        });
-
         init();
-
     }
 
     private void init(){
@@ -73,6 +55,7 @@ public class RestaurantsList extends AppCompatActivity {
         restaurantList.setLayoutManager(llm);
         filter = findViewById(R.id.filterButton);
         back = findViewById(R.id.backButton);
+        searchField = findViewById(R.id.search_field);
 
         DatabaseReference database = FirebaseDatabase.getInstance().getReference();
         DatabaseReference ref = database.child("restaurantsInfo");
@@ -113,8 +96,31 @@ public class RestaurantsList extends AppCompatActivity {
                 showPickFood(filter);
             }
         });
+
+        searchField.addTextChangedListener(new TextWatcher() {
+            @Override
+            public void beforeTextChanged(CharSequence charSequence, int i, int i1, int i2) {
+            }
+            @Override
+            public void onTextChanged(CharSequence charSequence, int i, int i1, int i2) {
+            }
+            @Override
+            public void afterTextChanged(Editable editable) {
+                filter(editable.toString());
+            }
+        });
+
+        back.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                back();
+            }
+        });
     }
 
+    private void back() {
+        super.onBackPressed();
+    }
 
     private void filter(String text) {
         ArrayList<Restaurant> filteredNames = new ArrayList<>();
