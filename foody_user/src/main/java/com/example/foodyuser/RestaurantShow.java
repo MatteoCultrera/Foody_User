@@ -1,5 +1,6 @@
 package com.example.foodyuser;
 
+import android.net.Uri;
 import android.support.annotation.NonNull;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
@@ -8,11 +9,15 @@ import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 import android.widget.ImageView;
 import android.widget.TextView;
+import com.bumptech.glide.Glide;
+import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
+import com.google.firebase.storage.FirebaseStorage;
+import com.google.firebase.storage.StorageReference;
 
 import java.util.ArrayList;
 
@@ -67,6 +72,17 @@ public class RestaurantShow extends AppCompatActivity {
                     cuisines.setText(thisRestaurant.getKitchensString());
                     deliveryPrice.setText(thisRestaurant.getDeliveryPriceString());
                     distance.setText(thisRestaurant.getDistanceString());
+                    StorageReference mStorageRef = FirebaseStorage.getInstance().getReference();
+                    mStorageRef.child("images/"+title.getText().toString()+"_profile.jpeg").getDownloadUrl()
+                            .addOnSuccessListener(new OnSuccessListener<Uri>() {
+                                @Override
+                                public void onSuccess(Uri uri) {
+                                    Glide
+                                            .with(getApplicationContext())
+                                            .load(uri)
+                                            .into(image);
+                                }
+                            });
                 }
             }
             @Override
