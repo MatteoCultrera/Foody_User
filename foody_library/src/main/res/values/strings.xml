@@ -42,4 +42,33 @@
 
     <string name="Accept">Accept</string>
     <string name="Decline">Decline</string>
+
+    <string-array name="foodcategory_array">
+        <item>American</item>
+        <item>Brazilian</item>
+        <item>Chinese</item>
+        <item>Korean</item>
+        <item>Crepes</item>
+        <item>Desserts</item>
+        <item>Fried</item>
+        <item>Japanese</item>
+        <item>Gluten Free</item>
+        <item>Greek</item>
+        <item>Hamburger</item>
+        <item>Indian</item>
+        <item>Kebab</item>
+        <item>Middle East</item>
+        <item>Mediterranean</item>
+        <item>Mexican</item>
+        <item>Noodle</item>
+        <item>Pasta and Rice</item>
+        <item>Wraps</item>
+        <item>Pizza</item>
+        <item>Fry Shop</item>
+        <item>Steakhouse</item>
+        <item>Thai</item>
+        <item>Vegan</item>
+        <item>Vegetarian</item>
+        <item>Soups</item>
+    </string-array>
 </resources>
