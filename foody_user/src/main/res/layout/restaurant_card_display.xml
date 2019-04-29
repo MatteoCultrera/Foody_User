@@ -1,7 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <android.support.constraint.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="143dp"
     android:background="#E4E4E4">
@@ -31,7 +30,6 @@
                 android:id="@+id/restaurant_background"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
-                android:src="@drawable/user_static_background"
                 android:scaleType="centerCrop"
                 android:transitionName="@string/transition_restaurant_card_image"/>
 
@@ -49,7 +47,6 @@
                 android:id="@+id/restaurant_name"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="RossoPomodoro"
                 android:elevation="2dp"
                 android:fontFamily="@font/roboto_bold"
                 android:textSize="20sp"
@@ -63,7 +60,6 @@
                 android:id="@+id/restaurant_description"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="Italian Restaurant"
                 android:elevation="2dp"
                 android:fontFamily="@font/roboto_regular"
                 android:textSize="12.5sp"
