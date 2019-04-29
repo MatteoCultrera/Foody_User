@@ -3,6 +3,8 @@ package com.example.foodyuser;
 import android.support.annotation.NonNull;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.support.v7.widget.LinearLayoutManager;
+import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 import android.widget.ImageView;
 import android.widget.TextView;
@@ -19,6 +21,9 @@ public class RestaurantShow extends AppCompatActivity {
     TextView title, cuisines, deliveryPrice, distance;
     ImageView image;
     Restaurant thisRestaurant;
+    ArrayList<Card> cards;
+    RecyclerView menu;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -36,11 +41,21 @@ public class RestaurantShow extends AppCompatActivity {
         deliveryPrice = findViewById(R.id.restaurant_del_price);
         distance = findViewById(R.id.restaurant_dist);
         image = findViewById(R.id.restaurant_image);
+        menu = findViewById(R.id.menu);
         image.setImageResource(R.drawable.user_static_background);
         Bundle extras = getIntent().getExtras();
         title.setText(extras.getString("restaurant_name",""));
         fetchRestaurant();
         fetchMenu();
+
+        Log.d("SWSW", ""+cards.size());
+        LinearLayoutManager llm = new LinearLayoutManager(this);
+        menu.setLayoutManager(llm);
+
+        RVAdapterMenu adapterMenu = new RVAdapterMenu(cards);
+        menu.setAdapter(adapterMenu);
+
+
         return true;
     }
 
@@ -74,7 +89,7 @@ public class RestaurantShow extends AppCompatActivity {
         ref.addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-                ArrayList<Card> cards = new ArrayList<>();
+                cards = new ArrayList<>();
                 for (DataSnapshot ds : dataSnapshot.getChildren()) {
                     for (DataSnapshot ds1 : ds.getChildren()) {
                         Card card = ds1.getValue(Card.class);
