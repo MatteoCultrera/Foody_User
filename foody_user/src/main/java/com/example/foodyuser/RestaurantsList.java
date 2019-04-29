@@ -96,6 +96,7 @@ public class RestaurantsList extends AppCompatActivity {
                 showPickFood(filter);
             }
         });
+
         searchField.addTextChangedListener(new TextWatcher() {
             @Override
             public void beforeTextChanged(CharSequence charSequence, int i, int i1, int i2) {
@@ -108,8 +109,18 @@ public class RestaurantsList extends AppCompatActivity {
                 filter(editable.toString());
             }
         });
+
+        back.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                back();
+            }
+        });
     }
 
+    private void back() {
+        super.onBackPressed();
+    }
 
     private void filter(String text) {
         ArrayList<Restaurant> filteredNames = new ArrayList<>();

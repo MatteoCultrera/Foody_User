@@ -41,5 +41,7 @@ public class DiscoverFragment extends Fragment {
                 startActivity(intent);
             }
         });
+
+
     }
 }

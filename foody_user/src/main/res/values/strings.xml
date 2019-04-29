@@ -36,7 +36,6 @@
     <string name="search_hint">Search restaurant</string>
 
     <string name="dialog_cuisine">Filter by cuisine type</string>
-
     <string name="your_order">Your Order</string>
     <string name="total">Total:</string>
 </resources>
