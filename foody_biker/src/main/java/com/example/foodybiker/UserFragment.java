@@ -71,6 +71,7 @@ public class UserFragment extends Fragment {
         email.setText(sharedPref.getString("email", getResources().getString(R.string.email_hint)));
         address.setText(sharedPref.getString("address", getResources().getString(R.string.address_hint)));
         phoneNumber.setText(sharedPref.getString("phoneNumber", getResources().getString(R.string.phone_hint)));
+        city.setText(sharedPref.getString("city", getResources().getString(R.string.city_hint)));
 
         monTime.setText(sharedPref.getString("monTime", getResources().getString(R.string.free)));
         tueTime.setText(sharedPref.getString("tueTime", getResources().getString(R.string.free)));

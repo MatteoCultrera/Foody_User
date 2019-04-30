@@ -27,4 +27,12 @@
     <string name="save">I dati sono stati salvati</string>
     <string name="noSave">I dati sono stati già salvati</string>
     <string name="delete">Cancella</string>
+
+    <string name="app_label">Foody User</string>
+    <string name="search_hint">Cerca ristoranti</string>
+
+    <string name="dialog_cuisine">Filtra per tipo di cucina</string>
+    <string name="your_order">Il Tuo Ordine</string>
+    <string name="total">Totale:</string>
+    <string name="delete_filter">Azzera filtri</string>
 </resources>
