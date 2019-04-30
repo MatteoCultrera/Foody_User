@@ -21,8 +21,10 @@
         <activity android:name=".Order">
 
         </activity>
-        <activity android:name=".RestaurantShow" />
-        <activity android:name=".RestaurantsList" />
+        <activity android:name=".RestaurantShow"
+            android:screenOrientation="portrait"/>
+        <activity android:name=".RestaurantsList"
+            android:screenOrientation="portrait"/>
         <activity
             android:name=".Setup"
             android:windowSoftInputMode="adjustResize" />

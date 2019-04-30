@@ -40,14 +40,12 @@ public class RestaurantShow extends AppCompatActivity {
     }
 
     private boolean init(){
-
         title = findViewById(R.id.restaurant_title);
         cuisines = findViewById(R.id.restaurant_cuisines);
         deliveryPrice = findViewById(R.id.restaurant_del_price);
         distance = findViewById(R.id.restaurant_dist);
         image = findViewById(R.id.restaurant_image);
         menu = findViewById(R.id.menu);
-        image.setImageResource(R.drawable.user_static_background);
         Bundle extras = getIntent().getExtras();
         title.setText(extras.getString("restaurant_name",""));
         fetchRestaurant();
