@@ -38,4 +38,5 @@
     <string name="dialog_cuisine">Filter by cuisine type</string>
     <string name="your_order">Your Order</string>
     <string name="total">Total:</string>
+    <string name="delete_filter">Delete filters</string>
 </resources>
