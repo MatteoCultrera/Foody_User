@@ -45,9 +45,9 @@ public class MainActivity extends AppCompatActivity {
         map = new MapFragment();
         reservations = new ReservationFragment();
         user = new UserFragment();
-        fm.beginTransaction().add(R.id.mainFrame, user, "3").show(user).commit();
+        fm.beginTransaction().add(R.id.mainFrame, user, "3").hide(user).commit();
         fm.beginTransaction().add(R.id.mainFrame, reservations, "2").commit();
-        fm.beginTransaction().add(R.id.mainFrame, map, "1").commit();
+        fm.beginTransaction().add(R.id.mainFrame, map, "1").show(map).commit();
         active = user;
         init();
     }

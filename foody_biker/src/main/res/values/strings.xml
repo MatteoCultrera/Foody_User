@@ -13,7 +13,7 @@
     <string name="free">Free</string>
     <string name="okButton">OK</string>
 
-    <string name="discover">Discover</string>
+    <string name="map">Map</string>
     <string name="profile">Profile</string>
     <string name="orders">Reservations</string>
 </resources>
