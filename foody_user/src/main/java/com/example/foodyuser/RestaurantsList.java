@@ -13,6 +13,7 @@ import android.util.Log;
 import android.view.View;
 import android.widget.EditText;
 import android.widget.ImageButton;
+import android.widget.Toast;
 
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
@@ -21,6 +22,7 @@ import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 
 public class RestaurantsList extends AppCompatActivity {
 
@@ -33,13 +35,14 @@ public class RestaurantsList extends AppCompatActivity {
     private ImageButton back;
     private ImageButton filter;
     private AlertDialog foodChooseType;
-    private final boolean[] checkedFoods = new boolean[27];
+    private boolean[] checkedFoods = new boolean[27];
+    private boolean[] copyCheckedFoods = new boolean[27];
     private ArrayList<String> selectedFoods;
     private String[] foodCategories;
     private ArrayList<Integer> indexFoods;
     private boolean unchanged, checkString = true;
     private String dialogCode = "ok";
-
+    private boolean clearFilter = false;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -122,6 +125,8 @@ public class RestaurantsList extends AppCompatActivity {
         super.onBackPressed();
     }
 
+
+
     private void filter(String text) {
         ArrayList<Restaurant> filteredNames = new ArrayList<>();
 
@@ -133,7 +138,7 @@ public class RestaurantsList extends AppCompatActivity {
     }
 
     private void filterCuisine(ArrayList<String> text) {
-        ArrayList<Restaurant> filteredNames = new ArrayList<>();
+        ArrayList<Restaurant> filteredCuisines = new ArrayList<>();
 
         if(text.size() == 0) {
             adapter.filterList(restaurants);
@@ -145,15 +150,15 @@ public class RestaurantsList extends AppCompatActivity {
             for(String c : cuisines) {
                 for (String s : text) {
                     if (c.toLowerCase().contains(s.toLowerCase())) {
-                        if(!filteredNames.contains(restaurants.get(i))) {
-                            filteredNames.add(restaurants.get(i));
+                        if(!filteredCuisines.contains(restaurants.get(i))) {
+                            filteredCuisines.add(restaurants.get(i));
                         }
                     }
                 }
             }
         }
 
-        adapter.filterList(filteredNames);
+        adapter.filterList(filteredCuisines);
     }
 
     private void populateCheckedFoods() {
@@ -192,6 +197,10 @@ public class RestaurantsList extends AppCompatActivity {
             @Override
             public void onClick(DialogInterface dialog, int which) {
                 unchanged = false;
+                if(clearFilter) {
+                    selectedFoods.clear();
+                    clearFilter = false;
+                }
 
                 filterCuisine(selectedFoods);
                 dialogCode = "ok";
@@ -201,13 +210,31 @@ public class RestaurantsList extends AppCompatActivity {
         builder.setNegativeButton(R.string.cancel, new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialog, int which) {
+                if(clearFilter)
+                    checkedFoods = copyCheckedFoods.clone();
+                clearFilter = false;
                 dialogCode = "ok";
                 dialog.dismiss();
             }
         });
+
+        builder.setNeutralButton(R.string.delete_filter, null);
+
         builder.setTitle(R.string.dialog_cuisine);
         foodChooseType = builder.create();
         dialogCode = "foodDialog";
         foodChooseType.show();
+
+        foodChooseType.getButton(DialogInterface.BUTTON_NEUTRAL).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                clearFilter = true;
+                copyCheckedFoods = checkedFoods.clone();
+                Arrays.fill(checkedFoods, Boolean.FALSE);
+                for(int i = 0; i < indexFoods.size(); i++)
+                    foodChooseType.getListView().setItemChecked(indexFoods.get(i), false);
+                indexFoods.clear();
+            }
+        });
     }
 }
