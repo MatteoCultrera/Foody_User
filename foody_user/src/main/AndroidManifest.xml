@@ -21,20 +21,23 @@
         <activity android:name=".Order">
 
         </activity>
-        <activity android:name=".RestaurantShow" />
-        <activity android:name=".RestaurantsList" />
+        <activity android:name=".RestaurantShow"
+            android:screenOrientation="portrait"/>
+        <activity android:name=".RestaurantsList"
+            android:screenOrientation="portrait"/>
         <activity
             android:name=".Setup"
             android:windowSoftInputMode="adjustResize" />
         <activity
             android:name=".MainActivity"
-            android:hardwareAccelerated="true">
+            android:hardwareAccelerated="true"
+            android:theme="@style/SplashTheme">
             <intent-filter>
-                <action android:name="android.intent.action.MAIN" />
-
-                <category android:name="android.intent.category.LAUNCHER" />
+                <action android:name="android.intent.action.MAIN"/>
+                <category android:name="android.intent.category.LAUNCHER"/>
             </intent-filter>
         </activity>
+
         <activity
             android:name="com.yalantis.ucrop.UCropActivity"
             android:theme="@style/Theme.AppCompat.Light.NoActionBar" />

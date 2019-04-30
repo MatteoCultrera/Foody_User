@@ -32,9 +32,6 @@
             android:theme="@style/Theme.AppCompat.Light.NoActionBar">
         </activity>
 
-        <activity android:name="com.example.foodybiker.User">
-        </activity>
-
         <provider
             android:name="android.support.v4.content.FileProvider"
             android:authorities="com.example.foodybiker"
