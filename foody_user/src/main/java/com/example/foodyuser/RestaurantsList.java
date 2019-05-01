@@ -128,15 +128,15 @@ public class RestaurantsList extends AppCompatActivity {
 
     private void filter(String text) {
         ArrayList<Restaurant> filteredNames = new ArrayList<>();
+        restName = new ArrayList<>();
 
         for (int i = 0; i < restaurants.size(); i++) {
             if (restaurants.get(i).getName().toLowerCase().contains(text.toLowerCase()))
-                filteredNames.add(restaurants.get(i));
+                restName.add(restaurants.get(i));
         }
-        restName = filteredNames;
-        for(int j = 0; j < filteredNames.size(); j++){
-            if(!restCuisine.contains(filteredNames.get(j))){
-                filteredNames.remove(filteredNames.get(j));
+        for (int j = 0; j < restName.size(); j++) {
+            if (restCuisine.contains(restName.get(j))) {
+                filteredNames.add(restName.get(j));
             }
         }
         adapter.filterList(filteredNames);
@@ -155,8 +155,7 @@ public class RestaurantsList extends AppCompatActivity {
                 for (String c : cuisines) {
                     for (String s : text) {
                         if (c.toLowerCase().contains(s.toLowerCase())) {
-                            if (!restCuisine.contains(restaurants.get(i))
-                                    && restName.contains(restaurants.get(i))) {
+                            if (!restCuisine.contains(restaurants.get(i))){
                                 restCuisine.add(restaurants.get(i));
                             }
                         }
