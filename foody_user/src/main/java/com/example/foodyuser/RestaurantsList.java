@@ -1,6 +1,7 @@
 package com.example.foodyuser;
 
 import android.app.AlertDialog;
+import android.content.Context;
 import android.content.DialogInterface;
 import android.support.annotation.NonNull;
 import android.support.v7.app.AppCompatActivity;
@@ -11,9 +12,9 @@ import android.text.Editable;
 import android.text.TextWatcher;
 import android.util.Log;
 import android.view.View;
+import android.view.inputmethod.InputMethodManager;
 import android.widget.EditText;
 import android.widget.ImageButton;
-import android.widget.Toast;
 
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
@@ -27,7 +28,6 @@ import java.util.Arrays;
 public class RestaurantsList extends AppCompatActivity {
 
     private EditText searchField;
-    //private RecyclerView queryResult;
     private RecyclerView restaurantList;
     private ArrayList<Restaurant> restaurants = new ArrayList<>();
     private ArrayList<Restaurant> restName = new ArrayList<>();
@@ -38,13 +38,14 @@ public class RestaurantsList extends AppCompatActivity {
     private ImageButton filter;
     private AlertDialog foodChooseType;
     private boolean[] checkedFoods = new boolean[27];
-    private boolean[] copyCheckedFoods = new boolean[27];
     private ArrayList<String> selectedFoods;
     private String[] foodCategories;
     private ArrayList<Integer> indexFoods;
+    private ArrayList<Integer> copyIndexFoods;
     private boolean unchanged, checkString = true;
     private String dialogCode = "ok";
     private boolean clearFilter = false;
+    private boolean firstTime = true;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -95,11 +96,15 @@ public class RestaurantsList extends AppCompatActivity {
 
         selectedFoods = new ArrayList<>();
         indexFoods = new ArrayList<>();
+        copyIndexFoods = new ArrayList<>();
         foodCategories = getResources().getStringArray(R.array.foodcategory_array);
 
         filter.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                InputMethodManager imm = (InputMethodManager)getSystemService(Context.INPUT_METHOD_SERVICE);
+                imm.hideSoftInputFromWindow(searchField.getWindowToken(), 0);
+                searchField.clearFocus();
                 showPickFood(filter);
             }
         });
@@ -129,8 +134,7 @@ public class RestaurantsList extends AppCompatActivity {
         super.onBackPressed();
     }
 
-
-
+    //TODO
     private void filter(String text) {
         ArrayList<Restaurant> filteredNames = new ArrayList<>();
         restName = new ArrayList<>();
@@ -144,6 +148,7 @@ public class RestaurantsList extends AppCompatActivity {
                 filteredNames.add(restName.get(j));
             }
         }
+
         adapter.filterList(filteredNames);
     }
 
@@ -174,6 +179,7 @@ public class RestaurantsList extends AppCompatActivity {
                 filteredNames.add(restCuisine.get(j));
             }
         }
+
         adapter.filterList(filteredNames);
     }
 
@@ -196,6 +202,12 @@ public class RestaurantsList extends AppCompatActivity {
         builder.setMultiChoiceItems(foodCategories, checkedFoods, new DialogInterface.OnMultiChoiceClickListener() {
             @Override
             public void onClick(DialogInterface dialog, int which, boolean isChecked) {
+                if(firstTime) {
+                    copyIndexFoods.clear();
+                    copyIndexFoods.addAll(indexFoods);
+                }
+
+                firstTime = false;
                 if (isChecked) {
                     selectedFoods.add(String.valueOf(foodCategories[which]));
                     indexFoods.add(which);
@@ -218,18 +230,28 @@ public class RestaurantsList extends AppCompatActivity {
                     clearFilter = false;
                 }
 
+                firstTime = true;
                 filterCuisine(selectedFoods);
                 dialogCode = "ok";
+                copyIndexFoods.clear();
+                copyIndexFoods.addAll(indexFoods);
             }
         });
 
         builder.setNegativeButton(R.string.cancel, new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialog, int which) {
-                if(clearFilter)
-                    checkedFoods = copyCheckedFoods.clone();
                 clearFilter = false;
                 dialogCode = "ok";
+                firstTime = true;
+
+                indexFoods.clear();
+                indexFoods.addAll(copyIndexFoods);
+
+                selectedFoods.clear();
+                for (int i = 0; i < indexFoods.size(); i++)
+                    selectedFoods.add(String.valueOf(foodCategories[indexFoods.get(i)]));
+
                 dialog.dismiss();
             }
         });
@@ -245,11 +267,11 @@ public class RestaurantsList extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 clearFilter = true;
-                copyCheckedFoods = checkedFoods.clone();
                 Arrays.fill(checkedFoods, Boolean.FALSE);
                 for(int i = 0; i < indexFoods.size(); i++)
                     foodChooseType.getListView().setItemChecked(indexFoods.get(i), false);
                 indexFoods.clear();
+                copyIndexFoods.clear();
             }
         });
     }
