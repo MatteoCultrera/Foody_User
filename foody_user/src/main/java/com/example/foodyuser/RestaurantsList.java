@@ -1,6 +1,7 @@
 package com.example.foodyuser;
 
 import android.app.AlertDialog;
+import android.content.Context;
 import android.content.DialogInterface;
 import android.support.annotation.NonNull;
 import android.support.v7.app.AppCompatActivity;
@@ -11,6 +12,7 @@ import android.text.Editable;
 import android.text.TextWatcher;
 import android.util.Log;
 import android.view.View;
+import android.view.inputmethod.InputMethodManager;
 import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.Toast;
@@ -43,6 +45,8 @@ public class RestaurantsList extends AppCompatActivity {
     private boolean unchanged, checkString = true;
     private String dialogCode = "ok";
     private boolean clearFilter = false;
+    private boolean firstTime = true;
+    private ArrayList<Integer> copyIndexFoods;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -91,11 +95,15 @@ public class RestaurantsList extends AppCompatActivity {
 
         selectedFoods = new ArrayList<>();
         indexFoods = new ArrayList<>();
+        copyIndexFoods = new ArrayList<>();
         foodCategories = getResources().getStringArray(R.array.foodcategory_array);
 
         filter.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                InputMethodManager imm = (InputMethodManager)getSystemService(Context.INPUT_METHOD_SERVICE);
+                imm.hideSoftInputFromWindow(searchField.getWindowToken(), 0);
+                searchField.clearFocus();
                 showPickFood(filter);
             }
         });
@@ -125,20 +133,26 @@ public class RestaurantsList extends AppCompatActivity {
         super.onBackPressed();
     }
 
-
-
+    //TODO
     private void filter(String text) {
         ArrayList<Restaurant> filteredNames = new ArrayList<>();
+        Log.d("PIPPO", "filter " + text);
 
-        for (int i = 0; i < restaurants.size(); i++)
-            if(restaurants.get(i).getName().toLowerCase().contains(text.toLowerCase()))
-                filteredNames.add(restaurants.get(i));
+
+        for (int i = 0; i < restaurants.size(); i++) {
+            if (restaurants.get(i).getName().toLowerCase().contains(text.toLowerCase())) {
+                if (!filteredNames.contains(restaurants.get(i))) {
+                    filteredNames.add(restaurants.get(i));
+                }
+            }
+        }
 
         adapter.filterList(filteredNames);
     }
 
     private void filterCuisine(ArrayList<String> text) {
         ArrayList<Restaurant> filteredCuisines = new ArrayList<>();
+        Log.d("PIPPO", "filter " + text);
 
         if(text.size() == 0) {
             adapter.filterList(restaurants);
@@ -180,6 +194,14 @@ public class RestaurantsList extends AppCompatActivity {
         builder.setMultiChoiceItems(foodCategories, checkedFoods, new DialogInterface.OnMultiChoiceClickListener() {
             @Override
             public void onClick(DialogInterface dialog, int which, boolean isChecked) {
+                Log.d("PIPPO", "" + firstTime);
+
+                if(firstTime) {
+                    copyIndexFoods.clear();
+                    copyIndexFoods.addAll(indexFoods);
+                }
+
+                firstTime = false;
                 if (isChecked) {
                     selectedFoods.add(String.valueOf(foodCategories[which]));
                     indexFoods.add(which);
@@ -190,6 +212,11 @@ public class RestaurantsList extends AppCompatActivity {
                         indexFoods.remove(Integer.valueOf(which));
                     checkedFoods[which] = false;
                 }
+
+                Log.d("PIPPO", "" + firstTime);
+                Log.d("PIPPO", "indexFoods " + indexFoods);
+                Log.d("PIPPO", "copyIndexFoods " + copyIndexFoods);
+                Log.d("PIPPO", "selectedFoods " + selectedFoods);
             }
         });
 
@@ -202,6 +229,7 @@ public class RestaurantsList extends AppCompatActivity {
                     clearFilter = false;
                 }
 
+                firstTime = true;
                 filterCuisine(selectedFoods);
                 dialogCode = "ok";
             }
@@ -210,10 +238,35 @@ public class RestaurantsList extends AppCompatActivity {
         builder.setNegativeButton(R.string.cancel, new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialog, int which) {
-                if(clearFilter)
-                    checkedFoods = copyCheckedFoods.clone();
+                //for(int i = 0; i < 27; i++)
+                //    Log.d("PIPPO", "" + i + " " + checkedFoods[i]);
+                //for(int i = 0; i < 27; i++)
+                //    Log.d("PIPPO", "" + i + " " + copyCheckedFoods[i]);
+                //if(clearFilter)
+                //    checkedFoods = copyCheckedFoods.clone();
+
+                Log.d("PIPPO", "indexFoods " + indexFoods);
+                Log.d("PIPPO", "copyIndexFoods " + copyIndexFoods);
+                Log.d("PIPPO", "selectedFoods " + selectedFoods);
+                for(int i = 0; i < 27; i++)
+                    Log.d("PIPPO", "" + i + " " + checkedFoods[i]);
+
                 clearFilter = false;
                 dialogCode = "ok";
+                firstTime = true;
+
+                for(int i = 0; i < 27; i++)
+                    checkedFoods[i] = false;
+
+                int index = copyIndexFoods.size();
+
+                for(int i = 0; i < index; i++) {
+                    checkedFoods[copyIndexFoods.get(i)] = true;
+                }
+
+                indexFoods.clear();
+                indexFoods.addAll(copyIndexFoods);
+
                 dialog.dismiss();
             }
         });
@@ -229,11 +282,12 @@ public class RestaurantsList extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 clearFilter = true;
-                copyCheckedFoods = checkedFoods.clone();
+                //copyCheckedFoods = checkedFoods.clone();
                 Arrays.fill(checkedFoods, Boolean.FALSE);
                 for(int i = 0; i < indexFoods.size(); i++)
                     foodChooseType.getListView().setItemChecked(indexFoods.get(i), false);
                 indexFoods.clear();
+                copyIndexFoods.clear();
             }
         });
     }
