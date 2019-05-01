@@ -28,6 +28,8 @@ public class RestaurantsList extends AppCompatActivity {
     //private RecyclerView queryResult;
     private RecyclerView restaurantList;
     private ArrayList<Restaurant> restaurants = new ArrayList<>();
+    private ArrayList<Restaurant> restName = new ArrayList<>();
+    private ArrayList<Restaurant> restCuisine = new ArrayList<>();
     private RVAdapterRestaurants adapter;
     private boolean add = true;
     private ImageButton back;
@@ -74,6 +76,8 @@ public class RestaurantsList extends AppCompatActivity {
                         for (DataSnapshot ds1 : ds.getChildren()) {
                             Restaurant restaurant = ds1.getValue(Restaurant.class);
                             restaurants.add(restaurant);
+                            restName.add(restaurant);
+                            restCuisine.add(restaurant);
                         }
                     }
                 }
@@ -125,34 +129,46 @@ public class RestaurantsList extends AppCompatActivity {
     private void filter(String text) {
         ArrayList<Restaurant> filteredNames = new ArrayList<>();
 
-        for (int i = 0; i < restaurants.size(); i++)
-            if(restaurants.get(i).getName().toLowerCase().contains(text.toLowerCase()))
+        for (int i = 0; i < restaurants.size(); i++) {
+            if (restaurants.get(i).getName().toLowerCase().contains(text.toLowerCase()))
                 filteredNames.add(restaurants.get(i));
-
+        }
+        restName = filteredNames;
+        for(int j = 0; j < filteredNames.size(); j++){
+            if(!restCuisine.contains(filteredNames.get(j))){
+                filteredNames.remove(filteredNames.get(j));
+            }
+        }
         adapter.filterList(filteredNames);
     }
 
     private void filterCuisine(ArrayList<String> text) {
         ArrayList<Restaurant> filteredNames = new ArrayList<>();
+        restCuisine = new ArrayList<>();
 
         if(text.size() == 0) {
-            adapter.filterList(restaurants);
-            return;
+            restCuisine = restaurants;
         }
-
-        for(int i = 0; i < restaurants.size(); i++) {
-            ArrayList<String> cuisines = restaurants.get(i).getCuisines();
-            for(String c : cuisines) {
-                for (String s : text) {
-                    if (c.toLowerCase().contains(s.toLowerCase())) {
-                        if(!filteredNames.contains(restaurants.get(i))) {
-                            filteredNames.add(restaurants.get(i));
+        else {
+            for (int i = 0; i < restaurants.size(); i++) {
+                ArrayList<String> cuisines = restaurants.get(i).getCuisines();
+                for (String c : cuisines) {
+                    for (String s : text) {
+                        if (c.toLowerCase().contains(s.toLowerCase())) {
+                            if (!restCuisine.contains(restaurants.get(i))
+                                    && restName.contains(restaurants.get(i))) {
+                                restCuisine.add(restaurants.get(i));
+                            }
                         }
                     }
                 }
             }
         }
-
+        for(int j = 0; j < restCuisine.size(); j++){
+            if(restName.contains(restCuisine.get(j))){
+                filteredNames.add(restCuisine.get(j));
+            }
+        }
         adapter.filterList(filteredNames);
     }
 
