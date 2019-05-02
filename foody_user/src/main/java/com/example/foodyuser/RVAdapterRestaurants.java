@@ -4,6 +4,7 @@ import android.animation.Animator;
 import android.app.Activity;
 import android.content.Intent;
 import android.net.Uri;
+import android.os.Environment;
 import android.support.annotation.NonNull;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.ActivityOptionsCompat;
@@ -26,6 +27,7 @@ import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
 
+import java.io.File;
 import java.util.ArrayList;
 
 public class RVAdapterRestaurants  extends RecyclerView.Adapter<RVAdapterRestaurants.CardViewHolder>{
@@ -72,6 +74,12 @@ public class RVAdapterRestaurants  extends RecyclerView.Adapter<RVAdapterRestaur
                 Pair<View, String> shadow = Pair.create((View)cardViewHolder.restaurantShadow, v.getContext().getString(R.string.transition_restaurant_card_shadow));
 
                 intent.putExtra("restaurant_name",cardViewHolder.restaurantName.getText().toString());
+
+                File storage = cardViewHolder.card.getContext().getExternalFilesDir(Environment.DIRECTORY_DOCUMENTS);
+                String filename = cardViewHolder.card.getContext().getString(R.string.order_file_name);
+                File f = new File(storage, filename);
+                if (f.exists())
+                    f.delete();
 
                 ActivityOptionsCompat options =
                         ActivityOptionsCompat.makeSceneTransitionAnimation((Activity)v.getContext(),image, shadow);
