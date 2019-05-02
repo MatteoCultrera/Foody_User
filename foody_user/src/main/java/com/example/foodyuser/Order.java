@@ -1,11 +1,14 @@
 package com.example.foodyuser;
 
+import android.os.Environment;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.widget.TextView;
 
+import java.io.File;
 import java.util.ArrayList;
 
 public class Order extends AppCompatActivity {
@@ -24,12 +27,11 @@ public class Order extends AppCompatActivity {
     }
 
     public void init(){
-        orders = new ArrayList<>();
+        JsonHandler handler =  new JsonHandler();
+        File directory = getExternalFilesDir(Environment.DIRECTORY_DOCUMENTS);
+        File orderFile = new File(directory, getString(R.string.order_file_name));
 
-        orders.add(new OrderItem(3, "Pizza Margherita", 4.50f));
-        orders.add(new OrderItem(2, "Patatine Fritte", 2.50f));
-        orders.add(new OrderItem(3,"Coca Cola", 2.00f));
-
+        orders = handler.getOrders(orderFile);
 
 
         total = findViewById(R.id.total_price);

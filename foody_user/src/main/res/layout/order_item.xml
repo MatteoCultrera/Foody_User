@@ -38,11 +38,11 @@
         app:layout_constraintTop_toTopOf="@id/item_name">
 
         <ImageButton
-            android:id="@+id/item_add_button"
+            android:id="@+id/item_remove_button"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:background="@android:color/transparent"
-            android:src="@drawable/add_fill_yellow"
+            android:src="@drawable/remove_fill_yellow"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent" />
@@ -57,16 +57,16 @@
             android:textColor="@color/primaryText"
             android:textSize="16sp"
             app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintStart_toEndOf="@id/item_add_button"
+            app:layout_constraintStart_toEndOf="@id/item_remove_button"
             app:layout_constraintTop_toTopOf="parent" />
 
         <ImageButton
-            android:id="@+id/item_remove_button"
+            android:id="@+id/item_add_button"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginStart="7dp"
             android:background="@android:color/transparent"
-            android:src="@drawable/remove_fill_yellow"
+            android:src="@drawable/add_fill_yellow"
             app:layout_constraintStart_toEndOf="@id/item_quantity"
             app:layout_constraintTop_toTopOf="parent"
             app:layout_constraintBottom_toBottomOf="parent"/>
