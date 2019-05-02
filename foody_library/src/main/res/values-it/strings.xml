@@ -4,6 +4,7 @@
     <string name="email_hint">E-mail</string>
     <string name="address_hint">Indirizzo</string>
     <string name="phone_hint">Cellulare</string>
+    <string name="password_hint">Password</string>
     <string name="bio_hint">Biografia (Opzionale)</string>
     <string name="crop_image">Ritaglia</string>
     <string name="biography">Biografia</string>
@@ -18,6 +19,7 @@
     <string name="error_address">Indirizzo non valido</string>
     <string name="error_email">E-mail non valida</string>
     <string name="error_bio">Bio non valida</string>
+    <string name="error_password">Password non valida</string>
     <string name="edit_profile">Modifica Profilo</string>
     <string name="alert_dialog_back_title">Attenzione!</string>
     <string name="accept">Confermo</string>
@@ -73,4 +75,8 @@
         <item>Vegetariano</item>
         <item>Zuppe</item>
     </string-array>
+    <string name="login_success">Login completato</string>
+    <string name="login_failure">Login fallito</string>
+    <string name="auth_success">Autenticazione completata</string>
+    <string name="auth_failure">Autenticazione fallita</string>
 </resources>
