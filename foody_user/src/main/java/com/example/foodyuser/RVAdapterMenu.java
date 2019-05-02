@@ -11,6 +11,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.CompoundButton;
+import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.Switch;
@@ -27,10 +28,17 @@ import java.util.Locale;
 
 public class RVAdapterMenu extends RecyclerView.Adapter<RVAdapterMenu.CardViewHolder>{
 
-    private final List<Card> cards;
+    private List<Card> cards;
+    private ArrayList<OrderItem> orders;
+    private RestaurantShow fatherClass;
 
-    RVAdapterMenu(List<Card> cards){
+    RVAdapterMenu(RestaurantShow res){
+        fatherClass = res;
+    }
+
+    public void setProperties(List<Card> cards, ArrayList<OrderItem> orders){
         this.cards = cards;
+        this.orders = orders;
     }
 
     @Override
@@ -59,14 +67,24 @@ public class RVAdapterMenu extends RecyclerView.Adapter<RVAdapterMenu.CardViewHo
         if (dishes != null) {
             for (int j = 0; j < dishes.size(); j++) {
                 if (dishes.get(j).isAvailable()) {
-                    View dish = inflater.inflate(R.layout.menu_item_display, pvh.menuDishes, false);
-                    TextView title = dish.findViewById(R.id.food_title);
+                    final View dish = inflater.inflate(R.layout.menu_item_display, pvh.menuDishes, false);
+                    final int toSet = j;
+                    final TextView title = dish.findViewById(R.id.food_title);
                     TextView subtitle = dish.findViewById(R.id.food_subtitle);
-                    TextView price = dish.findViewById(R.id.price);
+                    final TextView price = dish.findViewById(R.id.price);
                     ImageView image = dish.findViewById(R.id.food_image);
+                    ImageButton plus = dish.findViewById(R.id.button_plus);
+                    ImageButton minus = dish.findViewById(R.id.button_minus);
+                    TextView orderQuantity = dish.findViewById(R.id.order_quantity);
                     title.setText(dishes.get(j).getDishName());
-                    subtitle.setText(dishes.get(j).getDishDescription());
+                    if(dishes.get(j).getDishDescription().length() == 0)
+                        subtitle.setVisibility(View.GONE);
+                    else{
+                        subtitle.setVisibility(View.VISIBLE);
+                        subtitle.setText(dishes.get(j).getDishDescription());
+                    }
                     price.setText(String.format(Locale.UK, "%.2f", dishes.get(j).getPrice()) + " €");
+
                     if (dishes.get(j).getImage() == null)
                         image.setVisibility(View.GONE);
                     else {
@@ -82,14 +100,97 @@ public class RVAdapterMenu extends RecyclerView.Adapter<RVAdapterMenu.CardViewHo
                                 .apply(options)
                                 .into(image);
                     }
+
                     pvh.menuDishes.addView(dish);
                     dishes.get(j).setAdded(true);
+
+                    int quantity = getOrderQuantity(dishes.get(j).getDishName());
+
+                    //Log.d("PROVA", dishes.get(j).getDishName()+" "+quantity);
+
+                    if(quantity > 0){
+                        minus.setVisibility(View.VISIBLE);
+                        orderQuantity.setVisibility(View.VISIBLE);
+                        plus.setVisibility(View.VISIBLE);
+                        orderQuantity.setText(String.valueOf(quantity));
+
+                        plus.setOnClickListener(new View.OnClickListener() {
+                            @Override
+                            public void onClick(View v) {
+                                addItem(dishes.get(toSet).getDishName());
+                                notifyItemChanged(pos);
+                            }
+                        });
+
+                        minus.setOnClickListener(new View.OnClickListener() {
+                            @Override
+                            public void onClick(View v) {
+                                removeItem(dishes.get(toSet).getDishName());
+                                notifyItemChanged(pos);
+                            }
+                        });
+
+                    }else{
+                        minus.setVisibility(View.GONE);
+                        orderQuantity.setVisibility(View.GONE);
+                        plus.setVisibility(View.VISIBLE);
+                        plus.setOnClickListener(new View.OnClickListener() {
+                            @Override
+                            public void onClick(View v) {
+                                OrderItem e = new OrderItem(1, title.getText().toString(), dishes.get(toSet).getPrice());
+                                orders.add(e);
+                                notifyItemChanged(pos);
+                                fatherClass.updateFAB();
+                            }
+                        });
+                    }
+
+
                 }
             }
         }
 
         pvh.title.setText(cards.get(pos).getTitle());
     }
+
+    public void addItem(String name){
+        int size = orders.size();
+        for(int i = 0; i < size; i++){
+            if(orders.get(i).getOrderName().equals(name)){
+                orders.get(i).plus();
+                fatherClass.updateFAB();
+                return;
+            }
+        }
+    }
+
+    public void removeItem(String name){
+        int size = orders.size();
+        for(int i = 0; i < size; i++){
+            if(orders.get(i).getOrderName().equals(name)){
+                if(orders.get(i).getPieces() > 1){
+                    orders.get(i).minus();
+                    fatherClass.updateFAB();
+                    return;
+                }else{
+                    orders.remove(i);
+                    fatherClass.updateFAB();
+                    return;
+                }
+            }
+        }
+    }
+
+    public int getOrderQuantity(String name){
+        int size = orders.size();
+        for(int i = 0; i < size; i++){
+            if(orders.get(i).getOrderName().equals(name)){
+                return orders.get(i).getPieces();
+            }
+        }
+        return 0;
+    }
+
 
     @Override
     public void onAttachedToRecyclerView(@NonNull RecyclerView recyclerView) {
@@ -101,7 +202,6 @@ public class RVAdapterMenu extends RecyclerView.Adapter<RVAdapterMenu.CardViewHo
         final TextView title;
         final LinearLayout menuDishes;
         final ConstraintLayout outside;
-        final boolean isInflated;
 
         CardViewHolder(View itemView) {
             super(itemView);
@@ -110,7 +210,6 @@ public class RVAdapterMenu extends RecyclerView.Adapter<RVAdapterMenu.CardViewHo
             title = itemView.findViewById(R.id.title);
             menuDishes = itemView.findViewById(R.id.menu_dishes);
             outside = itemView.findViewById(R.id.outside);
-            isInflated = false;
         }
     }
 }
