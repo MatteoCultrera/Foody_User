@@ -34,7 +34,7 @@ import java.util.ArrayList;
 
 public class RestaurantShow extends AppCompatActivity {
 
-    //TextView title, cuisines, deliveryPrice, distance;
+    TextView deliveryPrice;
     Toolbar toolbar;
     ImageView image;
     Restaurant thisRestaurant;
@@ -67,7 +67,7 @@ public class RestaurantShow extends AppCompatActivity {
         totalLayout = findViewById(R.id.price_show_layout);
         total = findViewById(R.id.price_show);
         //cuisines = findViewById(R.id.restaurant_cuisines);
-        //deliveryPrice = findViewById(R.id.restaurant_del_price);
+        deliveryPrice = findViewById(R.id.restaurant_del_price);
         //distance = findViewById(R.id.restaurant_dist);
         image = findViewById(R.id.restaurant_image);
         menu = findViewById(R.id.menu);
@@ -158,7 +158,7 @@ public class RestaurantShow extends AppCompatActivity {
                 for (DataSnapshot ds : dataSnapshot.getChildren()) {
                     thisRestaurant = ds.getValue(Restaurant.class);
                     //cuisines.setText(thisRestaurant.getKitchensString());
-                    //deliveryPrice.setText(thisRestaurant.getDeliveryPriceString());
+                    deliveryPrice.setText(thisRestaurant.getDeliveryPriceString());
                     //distance.setText(thisRestaurant.getDistanceString());
                     StorageReference mStorageRef = FirebaseStorage.getInstance().getReference();
                     mStorageRef.child("images/"+reName+"_profile.jpeg").getDownloadUrl()
