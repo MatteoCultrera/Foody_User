@@ -324,6 +324,7 @@ class JsonHandler {
                 objOrd.put("pieces", ord.getPieces());
                 objOrd.put("orderName", ord.getOrderName());
                 objOrd.put("price", ord.getPrice());
+                objOrdArray.put(objOrd);
             }
             obj.put("Order", objOrdArray);
         }
