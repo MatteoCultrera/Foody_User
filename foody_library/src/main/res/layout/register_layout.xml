@@ -1,10 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <android.support.constraint.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
-    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context="com.example.foodyuser.RegisterActivity"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:background="@drawable/login_background">
 
     <android.support.design.widget.FloatingActionButton
@@ -35,27 +33,16 @@
             android:layout_height="wrap_content"
             android:layout_marginStart="15dp"
             android:layout_marginTop="29dp"
-            android:layout_marginEnd="8dp"
-            android:background="@android:color/transparent"
+            android:layout_marginEnd="58dp"
             android:drawableLeft="@drawable/profile_icon"
             android:drawablePadding="16dp"
             android:fontFamily="@font/roboto_regular"
             android:hint="Username"
-            app:layout_constraintEnd_toEndOf="@+id/view_div_register"
+            app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent" />
 
-        <View
-            android:id="@+id/view_div_register"
-            android:layout_width="0dp"
-            android:layout_height="1dp"
-            android:layout_marginTop="9.5dp"
-            android:layout_marginEnd="58dp"
-            android:alpha="0.1"
-            android:background="#232F34"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/username_register" />
+
 
         <EditText
             android:id="@+id/password_register"
@@ -63,27 +50,30 @@
             android:layout_height="wrap_content"
             android:layout_marginStart="15dp"
             android:layout_marginTop="9.5dp"
-            android:layout_marginEnd="8dp"
-            android:background="@android:color/transparent"
+            android:layout_marginEnd="58dp"
             android:drawableLeft="@drawable/password_icon"
             android:drawablePadding="16dp"
             android:fontFamily="@font/roboto_regular"
             android:hint="Password"
-            app:layout_constraintEnd_toEndOf="@+id/view_div_register"
+            app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/view_div_register" />
+            app:layout_constraintTop_toBottomOf="@id/username_register" />
 
-        <View
-            android:id="@+id/view_div_register_2"
+        <EditText
+            android:id="@+id/password_repeat_register"
             android:layout_width="0dp"
-            android:layout_height="1dp"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="15dp"
             android:layout_marginTop="9.5dp"
             android:layout_marginEnd="58dp"
-            android:alpha="0.1"
-            android:background="#232F34"
+            android:drawableLeft="@drawable/password_icon"
+            android:drawablePadding="16dp"
+            android:fontFamily="@font/roboto_regular"
+            android:hint="Password"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@id/password_register" />
+
 
         <EditText
             android:id="@+id/email_register"
@@ -91,17 +81,16 @@
             android:layout_height="wrap_content"
             android:layout_marginStart="15dp"
             android:layout_marginTop="9.5dp"
-            android:layout_marginEnd="8dp"
+            android:layout_marginEnd="58dp"
             android:layout_marginBottom="29dp"
-            android:background="@android:color/transparent"
             android:drawableLeft="@drawable/email_icon"
             android:drawablePadding="16dp"
             android:fontFamily="@font/roboto_regular"
             android:hint="Email"
             app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintEnd_toEndOf="@+id/view_div_register_2"
+            app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/view_div_register_2" />
+            app:layout_constraintTop_toBottomOf="@id/password_repeat_register" />
 
     </android.support.constraint.ConstraintLayout>
 
