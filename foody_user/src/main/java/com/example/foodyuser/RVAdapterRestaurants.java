@@ -70,9 +70,6 @@ public class RVAdapterRestaurants  extends RecyclerView.Adapter<RVAdapterRestaur
             public void onClick(View v) {
                 Log.d("TITLECHECK","Clicked");
                 Intent intent = new Intent(v.getContext(), RestaurantShow.class);
-                Pair<View, String> image = Pair.create((View)cardViewHolder.restaurantBackground, v.getContext().getString(R.string.transition_restaurant_card_image));
-                Pair<View, String> shadow = Pair.create((View)cardViewHolder.restaurantShadow, v.getContext().getString(R.string.transition_restaurant_card_shadow));
-
                 intent.putExtra("restaurant_name",cardViewHolder.restaurantName.getText().toString());
 
                 File storage = cardViewHolder.card.getContext().getExternalFilesDir(Environment.DIRECTORY_DOCUMENTS);
@@ -81,10 +78,8 @@ public class RVAdapterRestaurants  extends RecyclerView.Adapter<RVAdapterRestaur
                 if (f.exists())
                     f.delete();
 
-                ActivityOptionsCompat options =
-                        ActivityOptionsCompat.makeSceneTransitionAnimation((Activity)v.getContext(),image, shadow);
                 //Start the Intent
-                ActivityCompat.startActivity(v.getContext(), intent, options.toBundle());
+                cardViewHolder.card.getContext().startActivity(intent);
             }
         });
 
