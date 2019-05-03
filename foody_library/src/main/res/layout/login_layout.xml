@@ -2,183 +2,136 @@
 <android.support.constraint.ConstraintLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
-    android:layout_height="match_parent">
-
-    <android.support.constraint.ConstraintLayout
-        android:id="@+id/constraintLayout6"
-        android:layout_width="0dp"
-        android:layout_height="61dp"
-        android:layout_marginStart="16dp"
-        android:layout_marginTop="16dp"
-        android:layout_marginEnd="16dp"
-        android:layout_marginBottom="8dp"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.0"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.0">
-
-        <ImageView
-            android:id="@+id/imageView3"
-            android:layout_width="30dp"
-            android:layout_height="30dp"
-            android:layout_marginTop="8dp"
-            android:layout_marginEnd="161dp"
-            android:adjustViewBounds="true"
-            android:contentDescription="@null"
-            android:padding="2dp"
-            android:scaleType="fitCenter"
-            android:src="@drawable/mail_black"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintHorizontal_bias="0.0"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent" />
-
-        <EditText
-            android:id="@+id/emailLogin"
-            style="@android:style/Widget.Material.EditText"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_marginStart="8dp"
-            android:layout_marginTop="11dp"
-            android:background="@android:color/transparent"
-            android:fontFamily="@font/roboto_regular"
-            android:hint="@string/email_hint"
-            android:inputType="textEmailAddress"
-            android:maxLength="254"
-            android:maxLines="1"
-            android:textColor="@color/primaryText"
-            android:textSize="15sp"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintHorizontal_bias="0.0"
-            app:layout_constraintStart_toEndOf="@+id/imageView3"
-            app:layout_constraintTop_toTopOf="parent" />
-
-        <View
-            android:id="@+id/email_error_line"
-            android:layout_width="match_parent"
-            android:layout_height="1dp"
-            android:layout_marginTop="3dp"
-            android:alpha="0.2"
-            android:background="@android:color/black"
-            app:layout_constraintTop_toBottomOf="@+id/imageView3"
-            tools:layout_editor_absoluteX="16dp" />
-
-        <TextView
-            android:id="@+id/email_error"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="@string/error_email"
-            android:textColor="#C90006"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintStart_toStartOf="parent" />
+    android:layout_height="match_parent"
+    android:background="@drawable/login_background">
 
 
-    </android.support.constraint.ConstraintLayout>
+    <android.support.design.widget.FloatingActionButton
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="8dp"
+        android:layout_marginEnd="8dp"
+        android:src="@drawable/back_white"
+        app:layout_constraintBottom_toBottomOf="@+id/constraintLayout8"
+        app:layout_constraintEnd_toEndOf="@+id/constraintLayout8"
+        app:layout_constraintStart_toEndOf="@+id/constraintLayout8"
+        app:layout_constraintTop_toTopOf="@+id/constraintLayout8"
+        android:scaleX="-1"/>
 
     <android.support.constraint.ConstraintLayout
         android:id="@+id/constraintLayout8"
-        android:layout_width="0dp"
-        android:layout_height="59dp"
-        android:layout_marginStart="16dp"
-        android:layout_marginTop="21dp"
-        android:layout_marginEnd="16dp"
-        android:layout_marginBottom="8dp"
+        android:layout_width="316dp"
+        android:layout_height="wrap_content"
+        android:background="@drawable/login_button_background"
+        android:elevation="5dp"
         app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.0"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/constraintLayout6"
-        app:layout_constraintVertical_bias="0.0">
+        app:layout_constraintTop_toTopOf="parent">
 
-        <ImageView
-            android:id="@+id/imageView5"
-            android:layout_width="30dp"
-            android:layout_height="30dp"
-            android:layout_marginTop="8dp"
-            android:layout_marginEnd="161dp"
-            android:adjustViewBounds="true"
-            android:contentDescription="@null"
-            android:padding="2dp"
-            android:scaleType="fitCenter"
-            android:src="@drawable/address2_black"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintHorizontal_bias="0.0"
+        <EditText
+            android:id="@+id/username_login"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="15dp"
+            android:layout_marginTop="29dp"
+            android:layout_marginEnd="8dp"
+            android:background="@android:color/transparent"
+            android:drawableLeft="@drawable/profile_icon"
+            android:drawablePadding="16dp"
+            android:fontFamily="@font/roboto_regular"
+            android:hint="Username"
+            app:layout_constraintEnd_toEndOf="@+id/view_div_login"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent" />
 
+        <View
+            android:id="@+id/view_div_login"
+            android:layout_width="0dp"
+            android:layout_height="1dp"
+            android:layout_marginTop="9.5dp"
+            android:layout_marginEnd="58dp"
+            android:alpha="0.1"
+            android:background="#232F34"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/username_login" />
+
         <EditText
-            android:id="@+id/password"
-            style="@android:style/Widget.Material.EditText"
+            android:id="@+id/password_login"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:layout_marginStart="8dp"
-            android:layout_marginTop="11dp"
+            android:layout_marginStart="15dp"
+            android:layout_marginTop="9.5dp"
+            android:layout_marginEnd="8dp"
+            android:layout_marginBottom="29dp"
             android:background="@android:color/transparent"
+            android:drawableLeft="@drawable/password_icon"
+            android:drawablePadding="16dp"
             android:fontFamily="@font/roboto_regular"
-            android:hint="@string/password_hint"
-            android:inputType="textPassword"
-            android:maxLength="254"
-            android:scrollHorizontally="false"
-            android:textColor="@color/primaryText"
-            android:textSize="15sp"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintHorizontal_bias="0.0"
-            app:layout_constraintStart_toEndOf="@+id/imageView5"
-            app:layout_constraintTop_toTopOf="parent" />
-
-        <View
-            android:id="@+id/password_error_line"
-            android:layout_width="match_parent"
-            android:layout_height="1dp"
-            android:layout_marginTop="6dp"
-            android:alpha="0.2"
-            android:background="@android:color/black"
-            app:layout_constraintTop_toBottomOf="@+id/password"
-            tools:layout_editor_absoluteX="16dp" />
-
-        <TextView
-            android:id="@+id/password_error"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="@string/error_password"
-            android:textColor="#C90006"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintStart_toStartOf="parent" />
-
+            android:hint="Password"
+            app:layout_constraintEnd_toEndOf="@+id/view_div_login"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/view_div_login"
+            app:layout_constraintBottom_toBottomOf="parent"/>
 
     </android.support.constraint.ConstraintLayout>
 
-    <android.support.design.button.MaterialButton
-        android:id="@+id/login"
-        android:layout_width="116dp"
-        android:layout_height="58dp"
-        android:layout_marginStart="64dp"
-        android:layout_marginTop="16dp"
+    <Button
+        style="@style/Widget.MaterialComponents.Button.TextButton"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
         android:layout_marginEnd="8dp"
-        android:backgroundTint="#11DB40"
-        android:text="LOGIN"
-        app:cornerRadius="140dp"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toStartOf="@+id/register"
-        app:layout_constraintHorizontal_bias="0.0"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
+        android:alpha="0.4"
+        android:fontFamily="@font/roboto_regular"
+        android:text="Forgot Password?"
+        android:textAllCaps="false"
+        android:textColor="#4A6572"
+        android:textSize="16sp"
+        app:layout_constraintEnd_toEndOf="@+id/constraintLayout8"
+        app:layout_constraintTop_toBottomOf="@id/constraintLayout8"
+        />
 
-    <android.support.design.button.MaterialButton
-        android:id="@+id/register"
-        android:layout_width="116dp"
-        android:layout_height="58dp"
-        android:layout_marginTop="16dp"
-        android:layout_marginEnd="64dp"
-        android:backgroundTint="#FF0000"
-        android:text="REG"
-        app:cornerRadius="140dp"
-        app:layout_constraintBottom_toBottomOf="parent"
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Login"
+        android:fontFamily="@font/roboto_bold"
+        android:textSize="32sp"
+        android:textColor="@color/primaryText"
+        app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
+        app:layout_constraintBottom_toTopOf="@id/constraintLayout8"
+        android:layout_marginBottom="44dp"/>
+
+    <android.support.constraint.ConstraintLayout
+        android:id="@+id/login_button"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="60dp"
+        android:background="@drawable/login_button_background"
+        android:clickable="true"
+        android:elevation="16dp"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/constraintLayout8">
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="23dp"
+            android:layout_marginTop="18.5dp"
+            android:layout_marginEnd="41dp"
+            android:layout_marginBottom="18.5dp"
+            android:fontFamily="@font/roboto_bold"
+            android:text="Register"
+            android:textColor="@color/colorAccent"
+            android:textSize="20sp"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
+
+
+    </android.support.constraint.ConstraintLayout>
 
 </android.support.constraint.ConstraintLayout>

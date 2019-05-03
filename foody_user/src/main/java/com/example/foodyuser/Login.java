@@ -35,6 +35,7 @@ public class Login extends AppCompatActivity {
         setContentView(R.layout.login_layout);
         correctness = true;
 
+        /*
         firebaseAuth = FirebaseAuth.getInstance();
         if (firebaseAuth.getCurrentUser() != null) {
             Intent intent = new Intent(Login.this, MainActivity.class);
@@ -154,6 +155,7 @@ public class Login extends AppCompatActivity {
             errorLine.setBackgroundColor(Color.BLACK);
         }
         updateSave();
+        */
     }
 
     private void updateSave(){
