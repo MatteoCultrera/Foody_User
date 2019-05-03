@@ -13,10 +13,12 @@ import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.TextView;
+
 import com.bumptech.glide.Glide;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.firebase.database.DataSnapshot;
@@ -32,7 +34,8 @@ import java.util.ArrayList;
 
 public class RestaurantShow extends AppCompatActivity {
 
-    TextView title, cuisines, deliveryPrice, distance;
+    //TextView title, cuisines, deliveryPrice, distance;
+    Toolbar toolbar;
     ImageView image;
     Restaurant thisRestaurant;
     ArrayList<Card> cards;
@@ -44,6 +47,8 @@ public class RestaurantShow extends AppCompatActivity {
     ConstraintLayout totalLayout;
     TextView total;
     int shortAnimDuration;
+
+    String reName;
 
 
     @Override
@@ -58,12 +63,12 @@ public class RestaurantShow extends AppCompatActivity {
     private boolean init(){
         shortAnimDuration = getResources().getInteger(android.R.integer.config_shortAnimTime);
 
-        title = findViewById(R.id.restaurant_title);
+        toolbar = findViewById(R.id.toolbar);
         totalLayout = findViewById(R.id.price_show_layout);
         total = findViewById(R.id.price_show);
-        cuisines = findViewById(R.id.restaurant_cuisines);
-        deliveryPrice = findViewById(R.id.restaurant_del_price);
-        distance = findViewById(R.id.restaurant_dist);
+        //cuisines = findViewById(R.id.restaurant_cuisines);
+        //deliveryPrice = findViewById(R.id.restaurant_del_price);
+        //distance = findViewById(R.id.restaurant_dist);
         image = findViewById(R.id.restaurant_image);
         menu = findViewById(R.id.menu);
         documentsDir = getExternalFilesDir(Environment.DIRECTORY_DOCUMENTS);
@@ -78,12 +83,21 @@ public class RestaurantShow extends AppCompatActivity {
 
 
         Bundle extras = getIntent().getExtras();
-        title.setText(extras.getString("restaurant_name",""));
+        toolbar.setTitle(extras.getString("restaurant_name",""));
+        reName = extras.getString("restaurant_name","");
         fetchRestaurant();
         fetchMenu();
         LinearLayoutManager llm = new LinearLayoutManager(this);
         menu.setLayoutManager(llm);
         updateFAB();
+
+        toolbar.setNavigationOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                onBackPressed();
+            }
+        });
+
         return true;
     }
 
@@ -137,20 +151,21 @@ public class RestaurantShow extends AppCompatActivity {
             return;
 
         DatabaseReference database = FirebaseDatabase.getInstance().getReference();
-        DatabaseReference ref = database.child("restaurantsInfo").child(title.getText().toString());
+        DatabaseReference ref = database.child("restaurantsInfo").child(reName);
         ref.addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
                 for (DataSnapshot ds : dataSnapshot.getChildren()) {
                     thisRestaurant = ds.getValue(Restaurant.class);
-                    cuisines.setText(thisRestaurant.getKitchensString());
-                    deliveryPrice.setText(thisRestaurant.getDeliveryPriceString());
-                    distance.setText(thisRestaurant.getDistanceString());
+                    //cuisines.setText(thisRestaurant.getKitchensString());
+                    //deliveryPrice.setText(thisRestaurant.getDeliveryPriceString());
+                    //distance.setText(thisRestaurant.getDistanceString());
                     StorageReference mStorageRef = FirebaseStorage.getInstance().getReference();
-                    mStorageRef.child("images/"+title.getText().toString()+"_profile.jpeg").getDownloadUrl()
+                    mStorageRef.child("images/"+reName+"_profile.jpeg").getDownloadUrl()
                             .addOnSuccessListener(new OnSuccessListener<Uri>() {
                                 @Override
                                 public void onSuccess(Uri uri) {
+
                                     Glide
                                             .with(getApplicationContext())
                                             .load(uri)
@@ -168,7 +183,7 @@ public class RestaurantShow extends AppCompatActivity {
 
     private void fetchMenu(){
         DatabaseReference database = FirebaseDatabase.getInstance().getReference();
-        DatabaseReference ref = database.child("restaurantsMenu").child(title.getText().toString());
+        DatabaseReference ref = database.child("restaurantsMenu").child(reName);
         ref.addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
@@ -198,6 +213,7 @@ public class RestaurantShow extends AppCompatActivity {
             File directory = getExternalFilesDir(Environment.DIRECTORY_DOCUMENTS);
             File toSave = new File(directory, getString(R.string.order_file_name));
             handler.saveStringToFile(jsonOrders, toSave);
+            Log.d("PROVA",jsonOrders);
         }
     }
 }
