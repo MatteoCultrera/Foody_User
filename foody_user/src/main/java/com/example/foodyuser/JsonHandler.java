@@ -226,6 +226,7 @@ class JsonHandler {
                     break;
                 case "price":
                     price = reader.nextDouble();
+                    break;
                 default:
                     reader.skipValue();
                     break;
