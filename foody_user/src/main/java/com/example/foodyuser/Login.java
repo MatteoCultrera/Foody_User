@@ -41,7 +41,7 @@ public class Login extends AppCompatActivity {
         }
         else {
             setContentView(R.layout.login_layout);
-            correctness = true;
+            correctness = false;
             email = findViewById(R.id.username_login);
             email.addTextChangedListener(new TextWatcher() {
                 @Override
@@ -63,6 +63,17 @@ public class Login extends AppCompatActivity {
             login.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
+                    if (email.getText().toString().equals("")) {
+                        email.setError(getResources().getString(R.string.empty_email));
+                        if (password.getText().toString().equals("")){
+                            password.setError(getResources().getString(R.string.empty_password));
+                        }
+                        return;
+                    }
+                    if (password.getText().toString().equals("")){
+                        password.setError(getResources().getString(R.string.empty_password));
+                        return;
+                    }
                     firebaseAuth.signInWithEmailAndPassword(email.getText().toString(), password.getText().toString())
                             .addOnCompleteListener(new OnCompleteListener<AuthResult>() {
                                 @Override

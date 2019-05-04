@@ -117,6 +117,40 @@ public class RegisterActivity extends AppCompatActivity {
         register.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
+                if (username.getText().toString().equals("")){
+                    username.setError(getResources().getString(R.string.empty_password));
+                    if (email.getText().toString().equals("")) {
+                        email.setError(getResources().getString(R.string.empty_email));
+                    }
+                    if (password1.getText().toString().equals("")){
+                        password1.setError(getResources().getString(R.string.empty_password));
+                    }
+                    if (password2.getText().toString().equals("")){
+                        password2.setError(getResources().getString(R.string.empty_password));
+                    }
+                    return;
+                }
+                if (email.getText().toString().equals("")) {
+                    email.setError(getResources().getString(R.string.empty_email));
+                    if (password1.getText().toString().equals("")){
+                        password1.setError(getResources().getString(R.string.empty_password));
+                    }
+                    if (password2.getText().toString().equals("")){
+                        password2.setError(getResources().getString(R.string.empty_password));
+                    }
+                    return;
+                }
+                if (password1.getText().toString().equals("")){
+                    password1.setError(getResources().getString(R.string.empty_password));
+                    if (password2.getText().toString().equals("")){
+                        password2.setError(getResources().getString(R.string.empty_password));
+                    }
+                    return;
+                }
+                if (password2.getText().toString().equals("")){
+                    password2.setError(getResources().getString(R.string.empty_password));
+                    return;
+                }
                 firebaseAuth.createUserWithEmailAndPassword(email.getText().toString(), password1.getText().toString())
                         .addOnCompleteListener(new OnCompleteListener<AuthResult>() {
                             @Override
