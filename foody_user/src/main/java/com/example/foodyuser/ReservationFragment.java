@@ -30,10 +30,8 @@ public class ReservationFragment extends Fragment {
 
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-
         View view = inflater.inflate(R.layout.fragment_reservation, container, false);
         reservation = view.findViewById(R.id.reservation_display);
-
         return view;
     }
 

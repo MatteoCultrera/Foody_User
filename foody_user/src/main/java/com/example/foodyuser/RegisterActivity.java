@@ -30,7 +30,7 @@ public class RegisterActivity extends AppCompatActivity {
     private FloatingActionButton register;
 
     @Override
-    protected void onCreate(Bundle savedInstanceState) {
+    protected void onCreate(final Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.register_layout);
 
@@ -122,6 +122,8 @@ public class RegisterActivity extends AppCompatActivity {
                             @Override
                             public void onComplete(@NonNull Task<AuthResult> task) {
                                 if (task.isSuccessful()) {
+                                    savedInstanceState.putString(username.getText().toString(), "name");
+                                    savedInstanceState.putString(email.getText().toString(), "email");
                                     Toast.makeText(getApplicationContext(), R.string.auth_success, Toast.LENGTH_SHORT).show();
                                     Intent intent = new Intent(RegisterActivity.this, MainActivity.class);
                                     intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK);

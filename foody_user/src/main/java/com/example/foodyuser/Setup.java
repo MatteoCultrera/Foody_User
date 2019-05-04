@@ -1,4 +1,5 @@
 package com.example.foodyuser;
+
 import android.app.AlertDialog;
 import android.content.Context;
 import android.content.DialogInterface;
@@ -27,8 +28,14 @@ import android.widget.ImageView;
 import android.widget.ListAdapter;
 import android.widget.TextView;
 
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.Query;
+import com.google.firebase.database.ValueEventListener;
 import com.yalantis.ucrop.UCrop;
 import com.yalantis.ucrop.UCropActivity;
 import java.io.File;
@@ -53,13 +60,13 @@ public class Setup extends AppCompatActivity {
     private final int GALLERY_REQUEST_CODE = 1;
     private final int REQUEST_CAPTURE_IMAGE = 100;
     private final String PROFILE_IMAGE = "ProfileImage.jpg";
-    private final String PLACEHOLDER_CAMERA="PlaceCamera.jpg";
+    private final String PLACEHOLDER_CAMERA = "PlaceCamera.jpg";
     private String placeholderPath;
     private File storageDir;
     private AlertDialog dialogDism;
-    private boolean unchanged, checkString = true;
+    private boolean unchanged, addressCheck, nameCheck, numberCheck, mailCheck;
     private String dialogCode = "ok";
-
+    private FirebaseAuth firebaseAuth;
     private SharedPreferences sharedPref;
     private SharedPreferences.Editor edit;
 
@@ -67,7 +74,7 @@ public class Setup extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_setup);
-
+        firebaseAuth = FirebaseAuth.getInstance();
         storageDir = getExternalFilesDir(Environment.DIRECTORY_PICTURES);
 
         init();
@@ -134,14 +141,14 @@ public class Setup extends AppCompatActivity {
 
     private void updateSave(){
 
-        if(!checkString){
-            save.setImageResource(R.drawable.save_dis);
-            save.setEnabled(false);
-            save.setClickable(false);
-        }else{
+        if(addressCheck && nameCheck && mailCheck && numberCheck){
             save.setImageResource(R.drawable.save_white);
             save.setEnabled(true);
             save.setClickable(true);
+        }else{
+            save.setImageResource(R.drawable.save_dis);
+            save.setEnabled(false);
+            save.setClickable(false);
         }
 
     }
@@ -154,13 +161,13 @@ public class Setup extends AppCompatActivity {
         Matcher matcher = regex.matcher(username);
 
         if(!matcher.matches()){
-            checkString = false;
+            nameCheck = false;
             errorName.setText(getResources().getString(R.string.error_name));
             errorLine.setBackgroundColor(getResources().getColor(R.color.errorColor,this.getTheme()));
             errorLine.setAlpha(1);
 
         }else{
-            checkString = true;
+            nameCheck = true;
             errorName.setText("");
             errorLine.setAlpha(0.2f);
             errorLine.setBackgroundColor(Color.BLACK);
@@ -176,12 +183,12 @@ public class Setup extends AppCompatActivity {
         View errorLine = findViewById(R.id.number_error_line);
 
         if(!Pattern.compile(regexpPhone).matcher(userNumber).matches()){
-            checkString = false;
+            numberCheck = false;
             errorPhone.setText(getResources().getString(R.string.error_number));
             errorLine.setBackgroundColor(getResources().getColor(R.color.errorColor,this.getTheme()));
             errorLine.setAlpha(1);
         }else{
-            checkString = true;
+            numberCheck = true;
             errorPhone.setText("");
             errorLine.setAlpha(0.2f);
             errorLine.setBackgroundColor(Color.BLACK);
@@ -197,11 +204,11 @@ public class Setup extends AppCompatActivity {
 
         if(!Pattern.compile(regexpEmail).matcher(emailToCheck).matches()) {
             errorMail.setText(getResources().getString(R.string.error_email));
-            checkString = false;
+            mailCheck = false;
             errorLine.setBackgroundColor(getResources().getColor(R.color.errorColor, this.getTheme()));
             errorLine.setAlpha(1);
         }else{
-            checkString = true;
+            mailCheck = true;
             errorMail.setText("");
             errorLine.setAlpha(0.2f);
             errorLine.setBackgroundColor(Color.BLACK);
@@ -217,11 +224,11 @@ public class Setup extends AppCompatActivity {
 
         if(!Pattern.compile(regexpAddress).matcher(addressToCheck).matches()) {
             errorAddress.setText(getResources().getString(R.string.error_address));
-            checkString = false;
+            addressCheck = false;
             errorLine.setBackgroundColor(getResources().getColor(R.color.errorColor, this.getTheme()));
             errorLine.setAlpha(1);
         }else{
-            checkString = true;
+            addressCheck = true;
             errorAddress.setText("");
             errorLine.setAlpha(0.2f);
             errorLine.setBackgroundColor(Color.BLACK);
@@ -290,14 +297,12 @@ public class Setup extends AppCompatActivity {
         if(f.exists())
             profilePicture.setImageURI(Uri.fromFile(f));
 
-
-        name.setText(sharedPref.getString("name", getResources().getString(R.string.name_Walter)));
-        email.setText(sharedPref.getString("email", getResources().getString(R.string.mail_Walter)));
-        address.setText(sharedPref.getString("address", getResources().getString(R.string.address_Walter)));
-        phoneNumber.setText(sharedPref.getString("phoneNumber", getResources().getString(R.string.phone_Walter)));
-        bio.setText(sharedPref.getString("bio", getResources().getString(R.string.bio_Walter)));
+        name.setText(sharedPref.getString("name", getResources().getString(R.string.name_hint)));
+        email.setText(sharedPref.getString("email", getResources().getString(R.string.email_hint)));
+        address.setText(sharedPref.getString("address", getResources().getString(R.string.address_hint)));
+        phoneNumber.setText(sharedPref.getString("phoneNumber", getResources().getString(R.string.phone_hint)));
+        bio.setText(sharedPref.getString("bio", getResources().getString(R.string.bio_hint)));
         edit.apply();
-
 
         //onTextChange to notify the user that there are fields that are not saved
         this.name.addTextChangedListener(new TextWatcher() {
@@ -596,9 +601,9 @@ public class Setup extends AppCompatActivity {
 
         }
 
-        String userName = email.getText().toString().replace(".", "");
+        FirebaseUser user = firebaseAuth.getCurrentUser();
         DatabaseReference database = FirebaseDatabase.getInstance().getReference()
-                .child("endUsers/" + userName);
+                .child("endUsers/" + user.getUid());
         HashMap<String, Object> child = new HashMap<>();
         UserInfo info = new UserInfo(name.getText().toString(), email.getText().toString(), address.getText().toString(),
                 phoneNumber.getText().toString(), bio.getText().toString());
