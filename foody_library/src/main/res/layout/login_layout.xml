@@ -8,6 +8,7 @@
 
 
     <android.support.design.widget.FloatingActionButton
+        android:id="@+id/FAB_login"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginStart="8dp"
@@ -36,10 +37,10 @@
             android:layout_marginStart="15dp"
             android:layout_marginTop="29dp"
             android:layout_marginEnd="58dp"
-            android:drawableLeft="@drawable/profile_icon"
+            android:drawableStart="@drawable/profile_icon"
             android:drawablePadding="16dp"
             android:fontFamily="@font/roboto_regular"
-            android:hint="Username"
+            android:hint="@string/email_hint"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent" />
@@ -55,7 +56,8 @@
             android:drawableLeft="@drawable/password_icon"
             android:drawablePadding="16dp"
             android:fontFamily="@font/roboto_regular"
-            android:hint="Password"
+            android:hint="@string/password_hint"
+            android:inputType="textPassword"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@id/username_login"
@@ -70,7 +72,7 @@
         android:layout_marginEnd="8dp"
         android:alpha="0.4"
         android:fontFamily="@font/roboto_regular"
-        android:text="Forgot Password?"
+        android:text="@string/forgot_password"
         android:textAllCaps="false"
         android:textColor="#4A6572"
         android:textSize="16sp"
@@ -81,7 +83,7 @@
     <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Login"
+        android:text="@string/login"
         android:fontFamily="@font/roboto_bold"
         android:textSize="32sp"
         android:textColor="@color/primaryText"
@@ -91,7 +93,7 @@
         android:layout_marginBottom="44dp"/>
 
     <android.support.constraint.ConstraintLayout
-        android:id="@+id/login_button"
+        android:id="@+id/register_button"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginTop="60dp"
@@ -109,7 +111,7 @@
             android:layout_marginEnd="41dp"
             android:layout_marginBottom="18.5dp"
             android:fontFamily="@font/roboto_bold"
-            android:text="Register"
+            android:text="@string/register"
             android:textColor="@color/colorAccent"
             android:textSize="20sp"
             app:layout_constraintBottom_toBottomOf="parent"
