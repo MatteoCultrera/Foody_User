@@ -83,4 +83,7 @@
     <string name="register">Registrati</string>
     <string name="forgot_password">Password dimenticata?</string>
     <string name="hint_second_password">Conferma password</string>
+    <string name="empty_email">Campo e-mail vuoto</string>
+    <string name="empty_password">Campo password vuoto</string>
+    <string name="empty_username">Campo username vuoto</string>
 </resources>

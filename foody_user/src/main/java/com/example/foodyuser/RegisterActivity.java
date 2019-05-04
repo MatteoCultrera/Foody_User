@@ -30,7 +30,7 @@ public class RegisterActivity extends AppCompatActivity {
     private FloatingActionButton register;
 
     @Override
-    protected void onCreate(Bundle savedInstanceState) {
+    protected void onCreate(final Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.register_layout);
 
@@ -117,11 +117,47 @@ public class RegisterActivity extends AppCompatActivity {
         register.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
+                if (username.getText().toString().equals("")){
+                    username.setError(getResources().getString(R.string.empty_password));
+                    if (email.getText().toString().equals("")) {
+                        email.setError(getResources().getString(R.string.empty_email));
+                    }
+                    if (password1.getText().toString().equals("")){
+                        password1.setError(getResources().getString(R.string.empty_password));
+                    }
+                    if (password2.getText().toString().equals("")){
+                        password2.setError(getResources().getString(R.string.empty_password));
+                    }
+                    return;
+                }
+                if (email.getText().toString().equals("")) {
+                    email.setError(getResources().getString(R.string.empty_email));
+                    if (password1.getText().toString().equals("")){
+                        password1.setError(getResources().getString(R.string.empty_password));
+                    }
+                    if (password2.getText().toString().equals("")){
+                        password2.setError(getResources().getString(R.string.empty_password));
+                    }
+                    return;
+                }
+                if (password1.getText().toString().equals("")){
+                    password1.setError(getResources().getString(R.string.empty_password));
+                    if (password2.getText().toString().equals("")){
+                        password2.setError(getResources().getString(R.string.empty_password));
+                    }
+                    return;
+                }
+                if (password2.getText().toString().equals("")){
+                    password2.setError(getResources().getString(R.string.empty_password));
+                    return;
+                }
                 firebaseAuth.createUserWithEmailAndPassword(email.getText().toString(), password1.getText().toString())
                         .addOnCompleteListener(new OnCompleteListener<AuthResult>() {
                             @Override
                             public void onComplete(@NonNull Task<AuthResult> task) {
                                 if (task.isSuccessful()) {
+                                    savedInstanceState.putString(username.getText().toString(), "name");
+                                    savedInstanceState.putString(email.getText().toString(), "email");
                                     Toast.makeText(getApplicationContext(), R.string.auth_success, Toast.LENGTH_SHORT).show();
                                     Intent intent = new Intent(RegisterActivity.this, MainActivity.class);
                                     intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK);

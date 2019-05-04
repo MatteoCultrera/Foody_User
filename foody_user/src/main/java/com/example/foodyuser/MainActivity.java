@@ -75,7 +75,7 @@ public class MainActivity extends AppCompatActivity {
                 if(id == R.id.discover && active != discover){
                     FragmentTransaction transaction = fm.beginTransaction();
                     transaction.setCustomAnimations(R.anim.enter_from_left,R.anim.exit_to_right);
-                    transaction.replace(R.id.mainFrame, discover).commit();
+                    transaction.replace(R.id.mainFrame, discover).show(discover).commit();
                     active = discover;
                     return true;
                 }else if(id == R.id.orders && active != reservations){
@@ -93,7 +93,7 @@ public class MainActivity extends AppCompatActivity {
                 }else if(id == R.id.prof && active != user){
                     FragmentTransaction transaction = fm.beginTransaction();
                     transaction.setCustomAnimations(R.anim.enter_from_right,R.anim.exit_to_left);
-                    transaction.replace(R.id.mainFrame, user).commit();
+                    transaction.replace(R.id.mainFrame, user).show(user).commit();
                     active = user;
                     return true;
                 }

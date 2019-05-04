@@ -3,13 +3,6 @@
     <string name="app_name">Foody</string>
 
     <string name="foody_level">Foody Principiante</string>
-
-    <string name="name_Walter">Walter White</string>
-    <string name="phone_Walter">3312174516</string>
-    <string name="mail_Walter">Heisenberg@gmail.com</string>
-    <string name="address_Walter">308 Negra Arroyo Lane, Albuquerque, New Mexico, 87104</string>
-    <string name="bio_Walter">My name is Walter White and I love to cook!</string>
-
     <string name="okButton">Ok</string>
     <string name="edit">Modifica %1$s</string>
     <string name="discover">Esplora</string>

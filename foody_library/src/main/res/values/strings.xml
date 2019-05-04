@@ -83,4 +83,7 @@
     <string name="register">Register</string>
     <string name="login" translatable="false">Login</string>
     <string name="forgot_password">Forgot password?</string>
+    <string name="empty_email">E-mail field is empty</string>
+    <string name="empty_password">Password field is empty</string>
+    <string name="empty_username">Username field is empty</string>
 </resources>
