@@ -31,8 +31,6 @@ public class Login extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         setTheme(R.style.AppTheme);
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.login_layout);
-        correctness = true;
 
         firebaseAuth = FirebaseAuth.getInstance();
         if (firebaseAuth.getCurrentUser() != null) {
@@ -42,6 +40,8 @@ public class Login extends AppCompatActivity {
             startActivity(intent);
         }
         else {
+            setContentView(R.layout.login_layout);
+            correctness = true;
             email = findViewById(R.id.username_login);
             email.addTextChangedListener(new TextWatcher() {
                 @Override
