@@ -19,6 +19,7 @@ import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.text.Editable;
 import android.text.TextWatcher;
+import android.util.Log;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
@@ -27,7 +28,10 @@ import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.ListAdapter;
 import android.widget.TextView;
+import android.widget.Toast;
 
+import com.google.android.gms.tasks.OnFailureListener;
+import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.DataSnapshot;
@@ -36,6 +40,9 @@ import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.Query;
 import com.google.firebase.database.ValueEventListener;
+import com.google.firebase.storage.FirebaseStorage;
+import com.google.firebase.storage.StorageReference;
+import com.google.firebase.storage.UploadTask;
 import com.yalantis.ucrop.UCrop;
 import com.yalantis.ucrop.UCropActivity;
 import java.io.File;
@@ -264,6 +271,10 @@ public class Setup extends AppCompatActivity {
 
     private void init(){
         unchanged = true;
+        mailCheck = true;
+        addressCheck = true;
+        nameCheck = true;
+        numberCheck = true;
         this.profilePicture = findViewById(R.id.profilePicture);
         this.editImage = findViewById(R.id.edit_profile_picture);
         this.name = findViewById(R.id.userName);
@@ -461,10 +472,10 @@ public class Setup extends AppCompatActivity {
         if(!dest.exists())
             return null;
         return  BitmapFactory.decodeFile(dest.getPath(), options);
-
     }
 
     private void showPickImageDialog(){
+        updateSave();
         final Item[] items = {
                 new Item(getString(R.string.alert_dialog_image_gallery), R.drawable.collections_black),
                 new Item(getString(R.string.alert_dialog_image_camera), R.drawable.camera_black)
@@ -610,6 +621,25 @@ public class Setup extends AppCompatActivity {
         child.put("info", info);
         database.updateChildren(child);
 
+        FirebaseStorage storage;
+        StorageReference storageReference;
+        storage = FirebaseStorage.getInstance();
+        storageReference = storage.getReference();
+        StorageReference ref = storageReference.child("images/users/" + firebaseAuth.getCurrentUser().getUid() + ".jpeg");
+        ref.putFile(Uri.fromFile(new File(storageDir, PROFILE_IMAGE)))
+                .addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
+                    @Override
+                    public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
+                        Log.d("SWSW", "success");
+                    }
+                })
+                .addOnFailureListener(new OnFailureListener() {
+                    @Override
+                    public void onFailure(@NonNull Exception e) {
+                        Toast.makeText(getApplicationContext(), "Failed "+e.getMessage(), Toast.LENGTH_SHORT).show();
+                    }
+                });
+
         edit.putString("name", name.getText().toString());
         edit.putString("email", email.getText().toString());
         edit.putString("address", address.getText().toString());
@@ -624,9 +654,8 @@ public class Setup extends AppCompatActivity {
             try {
                 FileOutputStream outputStream = null;
                 try {
-                    outputStream = new FileOutputStream(path); //here is set your file path where you want to save or also here you can set file object directly
-
-                    bitmap.compress(Bitmap.CompressFormat.JPEG, 100, outputStream); // bitmap is your Bitmap instance, if you want to compress it you can compress reduce percentage
+                    outputStream = new FileOutputStream(path);
+                    bitmap.compress(Bitmap.CompressFormat.JPEG, 100, outputStream);
                 } catch (Exception e) {
                     e.printStackTrace();
                 } finally {
