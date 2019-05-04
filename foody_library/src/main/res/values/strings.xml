@@ -1,6 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string name="name_hint">Name</string>
+    <string name="username_hint" translatable="false">Username</string>
+    <string name="hint_second_password">Confirm password</string>
     <string name="email_hint">E-mail</string>
     <string name="address_hint">Address</string>
     <string name="phone_hint">Phone Number</string>
@@ -22,6 +24,7 @@
     <string name="error_address">Invalid Address</string>
     <string name="error_email">Invalid E-mail</string>
     <string name="error_bio">Invalid Bio</string>
+    <string name="error_equals">Passwords must be equals</string>
     <string name="error_password">Invalid Password</string>
 
     <string name="error_dish_name_missing">Dish Name Missing</string>
@@ -77,4 +80,7 @@
     <string name="login_failure">Login failed</string>
     <string name="auth_success">Authentication completed</string>
     <string name="auth_failure">Authentication failed</string>
+    <string name="register">Register</string>
+    <string name="login" translatable="false">Login</string>
+    <string name="forgot_password">Forgot password?</string>
 </resources>
