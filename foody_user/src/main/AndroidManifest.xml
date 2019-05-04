@@ -21,7 +21,8 @@
 
         <activity
             android:name=".Login"
-            android:theme="@style/SplashTheme">
+            android:theme="@style/SplashTheme"
+            android:windowSoftInputMode="adjustResize">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
@@ -36,7 +37,10 @@
         <activity
             android:name=".RestaurantsList"
             android:screenOrientation="portrait" />
-        <activity android:name=".RegisterActivity" />
+        <activity android:name=".RegisterActivity"
+            android:windowSoftInputMode="adjustResize">
+
+        </activity>
         <activity
             android:name=".Setup"
             android:windowSoftInputMode="adjustResize" />
