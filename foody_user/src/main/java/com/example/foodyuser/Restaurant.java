@@ -3,7 +3,7 @@ package com.example.foodyuser;
 import java.util.ArrayList;
 
 public class Restaurant {
-    private String name;
+    private String username;
     private ArrayList<String> cuisines;
     private float deliveryPrice;
     private float distance;
@@ -11,18 +11,18 @@ public class Restaurant {
     public Restaurant() {}
 
     public Restaurant(String name, ArrayList<String> cuisines, float deliveryPrice, float distance){
-        this.name = name;
+        this.username = name;
         this.cuisines = cuisines;
         this.deliveryPrice = deliveryPrice;
         this.distance = distance;
     }
 
-    public String getName() {
-        return name;
+    public String getUsername() {
+        return username;
     }
 
-    public void setName(String name) {
-        this.name = name;
+    public void setUsername(String name) {
+        this.username = name;
     }
 
     public ArrayList<String> getCuisines() {

@@ -8,7 +8,7 @@ public class RestaurantInfo {
     private String address;
     private String numberPhone;
     private ArrayList<String> daysTime;
-    private int deliveryCost;
+    private int deliveryPrice;
     private ArrayList<Integer> cuisines;
 
     public RestaurantInfo(String username, String email, String address, String numberPhone,
@@ -18,7 +18,7 @@ public class RestaurantInfo {
         this.address = address;
         this.numberPhone = numberPhone;
         this.daysTime = daysTime;
-        this.deliveryCost = deliveryCost;
+        this.deliveryPrice = deliveryCost;
         this.cuisines = cuisineTypes;
     }
 
@@ -29,7 +29,7 @@ public class RestaurantInfo {
         this.username = username;
         this.email = email;
         this.daysTime = daysTime;
-        this.deliveryCost = deliveryCost;
+        this.deliveryPrice = deliveryCost;
     }
 
     public String getUsername() {
@@ -72,12 +72,12 @@ public class RestaurantInfo {
         this.daysTime = daysTime;
     }
 
-    public int getDeliveryCost() {
-        return deliveryCost;
+    public int getDeliveryPrice() {
+        return deliveryPrice;
     }
 
-    public void setDeliveryCost(int deliveryCost) {
-        this.deliveryCost = deliveryCost;
+    public void setDeliveryPrice(int deliveryCost) {
+        this.deliveryPrice = deliveryCost;
     }
 
     public ArrayList<Integer> getCuisineTypes() {
