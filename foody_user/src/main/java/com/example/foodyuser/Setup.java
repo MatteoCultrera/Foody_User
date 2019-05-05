@@ -610,6 +610,24 @@ public class Setup extends AppCompatActivity {
             File profile = new File(storageDir, PROFILE_IMAGE);
             saveBitmap(bitmap, profile.getPath());
 
+            FirebaseStorage storage;
+            StorageReference storageReference;
+            storage = FirebaseStorage.getInstance();
+            storageReference = storage.getReference();
+            StorageReference ref = storageReference.child("images/users/" + firebaseAuth.getCurrentUser().getUid() + ".jpeg");
+            ref.putFile(Uri.fromFile(new File(storageDir, PROFILE_IMAGE)))
+                    .addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
+                        @Override
+                        public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
+                            Log.d("SWSW", "success");
+                        }
+                    })
+                    .addOnFailureListener(new OnFailureListener() {
+                        @Override
+                        public void onFailure(@NonNull Exception e) {
+                            Toast.makeText(getApplicationContext(), "Failed "+e.getMessage(), Toast.LENGTH_SHORT).show();
+                        }
+                    });
         }
 
         FirebaseUser user = firebaseAuth.getCurrentUser();
@@ -620,25 +638,6 @@ public class Setup extends AppCompatActivity {
                 phoneNumber.getText().toString(), bio.getText().toString());
         child.put("info", info);
         database.updateChildren(child);
-
-        FirebaseStorage storage;
-        StorageReference storageReference;
-        storage = FirebaseStorage.getInstance();
-        storageReference = storage.getReference();
-        StorageReference ref = storageReference.child("images/users/" + firebaseAuth.getCurrentUser().getUid() + ".jpeg");
-        ref.putFile(Uri.fromFile(new File(storageDir, PROFILE_IMAGE)))
-                .addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
-                    @Override
-                    public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
-                        Log.d("SWSW", "success");
-                    }
-                })
-                .addOnFailureListener(new OnFailureListener() {
-                    @Override
-                    public void onFailure(@NonNull Exception e) {
-                        Toast.makeText(getApplicationContext(), "Failed "+e.getMessage(), Toast.LENGTH_SHORT).show();
-                    }
-                });
 
         edit.putString("name", name.getText().toString());
         edit.putString("email", email.getText().toString());

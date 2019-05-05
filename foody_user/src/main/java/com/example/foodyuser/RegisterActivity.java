@@ -1,6 +1,7 @@
 package com.example.foodyuser;
 
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.support.annotation.NonNull;
 import android.support.constraint.ConstraintLayout;
 import android.support.design.widget.FloatingActionButton;
@@ -8,7 +9,6 @@ import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.text.Editable;
 import android.text.TextWatcher;
-import android.util.Log;
 import android.view.View;
 import android.widget.EditText;
 import android.widget.Toast;
@@ -17,7 +17,11 @@ import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
 
+import java.util.HashMap;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -28,12 +32,16 @@ public class RegisterActivity extends AppCompatActivity {
     private FirebaseAuth firebaseAuth;
     private ConstraintLayout login;
     private FloatingActionButton register;
+    private SharedPreferences sharedPref;
+    private SharedPreferences.Editor edit;
 
     @Override
     protected void onCreate(final Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.register_layout);
 
+        sharedPref = this.getSharedPreferences("myPreference", MODE_PRIVATE);
+        edit = sharedPref.edit();
         firebaseAuth = FirebaseAuth.getInstance();
         checkUser = false;
         checkEmail = false;
@@ -156,8 +164,14 @@ public class RegisterActivity extends AppCompatActivity {
                             @Override
                             public void onComplete(@NonNull Task<AuthResult> task) {
                                 if (task.isSuccessful()) {
-                                    savedInstanceState.putString(username.getText().toString(), "name");
-                                    savedInstanceState.putString(email.getText().toString(), "email");
+                                    UserInfo info = new UserInfo(username.getText().toString(), email.getText().toString());
+                                    FirebaseUser user = firebaseAuth.getCurrentUser();
+                                    DatabaseReference database = FirebaseDatabase.getInstance().getReference()
+                                            .child("endUsers/" + user.getUid());
+                                    HashMap<String, Object> child = new HashMap<>();
+                                    child.put("info", info);
+                                    database.updateChildren(child);
+                                    edit.apply();
                                     Toast.makeText(getApplicationContext(), R.string.auth_success, Toast.LENGTH_SHORT).show();
                                     Intent intent = new Intent(RegisterActivity.this, MainActivity.class);
                                     intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK);
@@ -230,7 +244,6 @@ public class RegisterActivity extends AppCompatActivity {
     }
 
     private void updateSave(){
-        Log.d("SWSW", ""+checkEqual+checkEmail+checkUser+checkPass);
         if(checkEmail && checkPass && checkUser && checkEqual){
             register.setClickable(true);
         }else{

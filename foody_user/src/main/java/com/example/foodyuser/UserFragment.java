@@ -74,6 +74,7 @@ public class UserFragment extends Fragment {
     }
 
     private void init(View view){
+        sharedPref = view.getContext().getSharedPreferences("myPreference", MODE_PRIVATE);
         edit = sharedPref.edit();
         firebaseAuth = FirebaseAuth.getInstance();
         profilePicture = view.findViewById(R.id.profilePicture);
@@ -100,9 +101,12 @@ public class UserFragment extends Fragment {
                         bio.setText(info.getBiography());
                         edit.putString("name", info.getUsername());
                         edit.putString("email", info.getEmail());
-                        edit.putString("address", info.getAddress());
-                        edit.putString("phoneNumber", info.getNumberPhone());
-                        edit.putString("bio", info.getBiography());
+                        if (!address.getText().toString().equals(getResources().getString(R.string.address_hint)))
+                            edit.putString("address", info.getAddress());
+                        if (!phoneNumber.getText().toString().equals(""))
+                            edit.putString("phoneNumber", info.getNumberPhone());
+                        if (!bio.getText().toString().equals(""))
+                            edit.putString("bio", info.getBiography());
                         edit.apply();
                     }
                 }
