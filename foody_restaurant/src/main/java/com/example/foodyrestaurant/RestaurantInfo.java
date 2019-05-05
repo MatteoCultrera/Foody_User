@@ -1,30 +1,35 @@
-package com.example.foodybiker;
+package com.example.foodyrestaurant;
 
 import java.util.ArrayList;
 
-public class BikerInfo {
+public class RestaurantInfo {
     private String username;
     private String email;
     private String address;
-    private String city;
     private String numberPhone;
     private ArrayList<String> daysTime;
+    private int deliveryCost;
+    private ArrayList<Integer> cuisines;
 
-    BikerInfo () {}
-
-    BikerInfo (String username, String email, ArrayList<String> daysTime) {
-        this.username = username;
-        this.email = email;
-        this.daysTime= daysTime;
-    }
-
-    public BikerInfo(String username, String email, String address, String city, String numberPhone, ArrayList<String> daysTime) {
+    public RestaurantInfo(String username, String email, String address, String numberPhone,
+                          ArrayList<String> daysTime, Integer deliveryCost, ArrayList<Integer> cuisineTypes) {
         this.username = username;
         this.email = email;
         this.address = address;
-        this.city = city;
         this.numberPhone = numberPhone;
         this.daysTime = daysTime;
+        this.deliveryCost = deliveryCost;
+        this.cuisines = cuisineTypes;
+    }
+
+    public RestaurantInfo() {
+    }
+
+    public RestaurantInfo(String username, String email, ArrayList<String> daysTime, Integer deliveryCost) {
+        this.username = username;
+        this.email = email;
+        this.daysTime = daysTime;
+        this.deliveryCost = deliveryCost;
     }
 
     public String getUsername() {
@@ -51,14 +56,6 @@ public class BikerInfo {
         this.address = address;
     }
 
-    public String getCity() {
-        return city;
-    }
-
-    public void setCity(String city) {
-        this.city = city;
-    }
-
     public String getNumberPhone() {
         return numberPhone;
     }
@@ -73,5 +70,21 @@ public class BikerInfo {
 
     public void setDaysTime(ArrayList<String> daysTime) {
         this.daysTime = daysTime;
+    }
+
+    public int getDeliveryCost() {
+        return deliveryCost;
+    }
+
+    public void setDeliveryCost(int deliveryCost) {
+        this.deliveryCost = deliveryCost;
+    }
+
+    public ArrayList<Integer> getCuisineTypes() {
+        return cuisines;
+    }
+
+    public void setCuisineTypes(ArrayList<Integer> cuisineTypes) {
+        this.cuisines = cuisineTypes;
     }
 }
