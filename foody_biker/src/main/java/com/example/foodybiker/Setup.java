@@ -20,6 +20,7 @@ import android.support.v4.content.FileProvider;
 import android.support.v7.app.AppCompatActivity;
 import android.text.Editable;
 import android.text.TextWatcher;
+import android.util.Log;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
@@ -30,12 +31,25 @@ import android.widget.ImageView;
 import android.widget.ListAdapter;
 import android.widget.TextView;
 import android.widget.TimePicker;
+import android.widget.Toast;
 
+import com.google.android.gms.tasks.OnFailureListener;
+import com.google.android.gms.tasks.OnSuccessListener;
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.auth.UserInfo;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.storage.FirebaseStorage;
+import com.google.firebase.storage.StorageReference;
+import com.google.firebase.storage.UploadTask;
 import com.yalantis.ucrop.UCrop;
 import com.yalantis.ucrop.UCropActivity;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -62,12 +76,12 @@ public class Setup extends AppCompatActivity {
     private File storageDir;
     private TextView tv;
     private int caller;
-    private boolean unchanged, checkString = true;
+    private boolean unchanged, addressCheck, nameCheck, numberCheck, mailCheck, cityCheck;
     private String dialogCode = "ok";
     private String openHour, closeHour;
     private AlertDialog dialogDism;
     private TimePickerDialog timePicker;
-
+    private FirebaseAuth firebaseAuth;
     private SharedPreferences sharedPref;
     private SharedPreferences.Editor edit;
 
@@ -75,7 +89,7 @@ public class Setup extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_setup);
-
+        firebaseAuth = FirebaseAuth.getInstance();
         storageDir = getExternalFilesDir(Environment.DIRECTORY_PICTURES);
 
         init();
@@ -185,15 +199,14 @@ public class Setup extends AppCompatActivity {
     }
 
     private void updateSave(){
-
-        if(!checkString){
-            save.setImageResource(R.drawable.save_dis);
-            save.setEnabled(false);
-            save.setClickable(false);
-        }else{
+        if(nameCheck && numberCheck && cityCheck && addressCheck && mailCheck){
             save.setImageResource(R.drawable.save_white);
             save.setEnabled(true);
             save.setClickable(true);
+        }else{
+            save.setImageResource(R.drawable.save_dis);
+            save.setEnabled(false);
+            save.setClickable(false);
         }
 
     }
@@ -206,13 +219,13 @@ public class Setup extends AppCompatActivity {
         Matcher matcher = regex.matcher(username);
 
         if(!matcher.matches()){
-            checkString = false;
+            nameCheck = false;
             errorName.setText(getResources().getString(R.string.error_name));
             errorLine.setBackgroundColor(getResources().getColor(R.color.errorColor,this.getTheme()));
             errorLine.setAlpha(1);
 
         }else{
-            checkString = true;
+            nameCheck = true;
             errorName.setText("");
             errorLine.setAlpha(0.2f);
             errorLine.setBackgroundColor(Color.BLACK);
@@ -228,12 +241,12 @@ public class Setup extends AppCompatActivity {
         View errorLine = findViewById(R.id.number_error_line);
 
         if(!Pattern.compile(regexpPhone).matcher(userNumber).matches()){
-            checkString = false;
+            numberCheck = false;
             errorPhone.setText(getResources().getString(R.string.error_number));
             errorLine.setBackgroundColor(getResources().getColor(R.color.errorColor,this.getTheme()));
             errorLine.setAlpha(1);
         }else{
-            checkString = true;
+            numberCheck = true;
             errorPhone.setText("");
             errorLine.setAlpha(0.2f);
             errorLine.setBackgroundColor(Color.BLACK);
@@ -249,11 +262,11 @@ public class Setup extends AppCompatActivity {
 
         if(!Pattern.compile(regexpEmail).matcher(emailToCheck).matches()) {
             errorMail.setText(getResources().getString(R.string.error_email));
-            checkString = false;
+            mailCheck = false;
             errorLine.setBackgroundColor(getResources().getColor(R.color.errorColor, this.getTheme()));
             errorLine.setAlpha(1);
         }else{
-            checkString = true;
+            mailCheck = true;
             errorMail.setText("");
             errorLine.setAlpha(0.2f);
             errorLine.setBackgroundColor(Color.BLACK);
@@ -269,11 +282,11 @@ public class Setup extends AppCompatActivity {
 
         if(!Pattern.compile(regexpAddress).matcher(addressToCheck).matches()) {
             errorAddress.setText(getResources().getString(R.string.error_address));
-            checkString = false;
+            addressCheck = false;
             errorLine.setBackgroundColor(getResources().getColor(R.color.errorColor, this.getTheme()));
             errorLine.setAlpha(1);
         }else{
-            checkString = true;
+            addressCheck = true;
             errorAddress.setText("");
             errorLine.setAlpha(0.2f);
             errorLine.setBackgroundColor(Color.BLACK);
@@ -290,13 +303,13 @@ public class Setup extends AppCompatActivity {
         Matcher matcher = regex.matcher(c);
 
         if(!matcher.matches()){
-            checkString = false;
+            cityCheck = false;
             errorCity.setText(getResources().getString(R.string.invalid_city));
             errorLine.setBackgroundColor(getResources().getColor(R.color.errorColor,this.getTheme()));
             errorLine.setAlpha(1);
 
         }else{
-            checkString = true;
+            cityCheck = true;
             errorCity.setText("");
             errorLine.setAlpha(0.2f);
             errorLine.setBackgroundColor(Color.BLACK);
@@ -331,6 +344,11 @@ public class Setup extends AppCompatActivity {
     }
 
     private void init(){
+        addressCheck = true;
+        cityCheck = true;
+        numberCheck = true;
+        nameCheck = true;
+        mailCheck = true;
         unchanged = true;
         this.profilePicture = findViewById(R.id.profilePicture);
         this.editImage = findViewById(R.id.edit_profile_picture);
@@ -379,11 +397,11 @@ public class Setup extends AppCompatActivity {
             profilePicture.setImageURI(Uri.fromFile(f));
 
 
-        name.setText(sharedPref.getString("name", getResources().getString(R.string.name_foo)));
-        email.setText(sharedPref.getString("email", getResources().getString(R.string.mail_foo)));
-        address.setText(sharedPref.getString("address", getResources().getString(R.string.address_foo)));
-        phoneNumber.setText(sharedPref.getString("phoneNumber", getResources().getString(R.string.phone_foo)));
-        city.setText(sharedPref.getString("city", getResources().getString(R.string.city_foo)));
+        name.setText(sharedPref.getString("name", getResources().getString(R.string.name_hint)));
+        email.setText(sharedPref.getString("email", getResources().getString(R.string.email_hint)));
+        address.setText(sharedPref.getString("address", getResources().getString(R.string.address_hint)));
+        phoneNumber.setText(sharedPref.getString("phoneNumber", getResources().getString(R.string.phone_hint)));
+        city.setText(sharedPref.getString("city", getResources().getString(R.string.city_hint)));
         monday.setText(sharedPref.getString("monTime", getResources().getString(R.string.free)));
         tuesday.setText(sharedPref.getString("tueTime", getResources().getString(R.string.free)));
         wednesday.setText(sharedPref.getString("wedTime", getResources().getString(R.string.free)));
@@ -715,7 +733,42 @@ public class Setup extends AppCompatActivity {
             File profile = new File(storageDir, PROFILE_IMAGE);
             saveBitmap(bitmap, profile.getPath());
 
+            FirebaseStorage storage;
+            StorageReference storageReference;
+            storage = FirebaseStorage.getInstance();
+            storageReference = storage.getReference();
+            StorageReference ref = storageReference.child("images/bikers/" + firebaseAuth.getCurrentUser().getUid() + ".jpeg");
+            ref.putFile(Uri.fromFile(new File(storageDir, PROFILE_IMAGE)))
+                    .addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
+                        @Override
+                        public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
+                            Log.d("SWSW", "success");
+                        }
+                    })
+                    .addOnFailureListener(new OnFailureListener() {
+                        @Override
+                        public void onFailure(@NonNull Exception e) {
+                            Toast.makeText(getApplicationContext(), "Failed "+e.getMessage(), Toast.LENGTH_SHORT).show();
+                        }
+                    });
         }
+
+        FirebaseUser user = firebaseAuth.getCurrentUser();
+        DatabaseReference database = FirebaseDatabase.getInstance().getReference()
+                .child("Bikers/" + user.getUid());
+        HashMap<String, Object> child = new HashMap<>();
+        ArrayList<String> days = new ArrayList<>();
+        days.add(monday.getText().toString());
+        days.add(tuesday.getText().toString());
+        days.add(wednesday.getText().toString());
+        days.add(thursday.getText().toString());
+        days.add(friday.getText().toString());
+        days.add(saturday.getText().toString());
+        days.add(sunday.getText().toString());
+        BikerInfo info = new BikerInfo(name.getText().toString(), email.getText().toString(), address.getText().toString(),
+                phoneNumber.getText().toString(), city.getText().toString(), days);
+        child.put("info", info);
+        database.updateChildren(child);
 
         edit.putString("name", name.getText().toString());
         edit.putString("email", email.getText().toString());
