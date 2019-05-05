@@ -6,6 +6,8 @@ import android.os.Bundle;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
+import android.view.View;
+import android.widget.ImageView;
 import android.widget.TextView;
 
 import java.io.File;
@@ -17,6 +19,7 @@ public class Order extends AppCompatActivity {
     RVAdapterOrder adapter;
     RecyclerView ordersList;
     TextView total;
+    ImageView backButton;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -27,6 +30,7 @@ public class Order extends AppCompatActivity {
     }
 
     public void init(){
+        backButton = findViewById(R.id.backButton);
         JsonHandler handler =  new JsonHandler();
         File directory = getExternalFilesDir(Environment.DIRECTORY_DOCUMENTS);
         File orderFile = new File(directory, getString(R.string.order_file_name));
@@ -39,6 +43,12 @@ public class Order extends AppCompatActivity {
         LinearLayoutManager llm = new LinearLayoutManager(this);
         ordersList.setLayoutManager(llm);
 
+        backButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                onBackPressed();
+            }
+        });
 
         adapter = new RVAdapterOrder(orders, this);
         ordersList.setAdapter(adapter);

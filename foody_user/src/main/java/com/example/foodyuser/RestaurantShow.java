@@ -1,6 +1,8 @@
 package com.example.foodyuser;
 
 import android.animation.LayoutTransition;
+import android.app.AlertDialog;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.res.ColorStateList;
 import android.net.Uri;
@@ -48,6 +50,10 @@ public class RestaurantShow extends AppCompatActivity {
     TextView total;
     int shortAnimDuration;
 
+    private boolean unchanged;
+    private String dialogCode = "ok";
+    private AlertDialog dialogDism;
+
     String reName;
 
 
@@ -61,6 +67,7 @@ public class RestaurantShow extends AppCompatActivity {
     }
 
     private boolean init(){
+        unchanged = true;
         shortAnimDuration = getResources().getInteger(android.R.integer.config_shortAnimTime);
 
         toolbar = findViewById(R.id.toolbar);
@@ -94,17 +101,59 @@ public class RestaurantShow extends AppCompatActivity {
         toolbar.setNavigationOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                onBackPressed();
+                backToRestList(v);
             }
         });
+
+        Log.d("ORDERS", "init: print orders");
 
         return true;
     }
 
+    @Override
+    protected void onResume() {
+        super.onResume();
+        //TODO LIST: on back from cart update the quantity
+        Log.d("ORDERS", "onResume: print orders");
+        for(int i = 0; i < orders.size(); i++)
+            Log.d("ORDERS", "i " + i + " order name " + orders.get(i).getOrderName() + " quantity " + orders.get(i).getPieces());
+    }
+
+    public void backToRestList(View view) {
+        if (unchanged){
+            super.onBackPressed();
+        }
+        else {
+            AlertDialog.Builder builder = new AlertDialog.Builder(this, R.style.AppCompatAlertDialogStyle);
+            builder.setNegativeButton(getResources().getString(R.string.cancel), new DialogInterface.OnClickListener() {
+                @Override
+                public void onClick(DialogInterface dialog, int which) {
+                    dialogCode = "ok";
+                    dialog.dismiss();
+                }
+            });
+            builder.setPositiveButton(getResources().getString(R.string.accept), new DialogInterface.OnClickListener() {
+                @Override
+                public void onClick(DialogInterface dialogInterface, int i) {
+                    dialogCode = "ok";
+                    RestaurantShow.super.onBackPressed();
+                }
+            });
+            builder.setTitle(getResources().getString(R.string.alert_dialog_back_title));
+            builder.setMessage(getResources().getString(R.string.alert_dialog_back_message));
+            builder.setCancelable(false);
+            dialogCode = "back";
+            dialogDism = builder.show();
+        }
+    }
+
+
     public void updateFAB(){
         if(orders.size() == 0){
+            unchanged = true;
             totalDisappear();
         }else{
+            unchanged = false;
             totalAppear();
         }
 
