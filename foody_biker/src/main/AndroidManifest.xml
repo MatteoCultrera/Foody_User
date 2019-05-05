@@ -17,9 +17,10 @@
         <activity android:name=".Setup"
             android:windowSoftInputMode="adjustResize">
         </activity>
-
+        <activity android:name=".RegisterActivity"/>
+        <activity android:name=".MainActivity"/>
         <activity
-            android:name=".MainActivity"
+            android:name=".Login"
             android:hardwareAccelerated="true">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN"/>

@@ -103,9 +103,9 @@ public class UserFragment extends Fragment {
                         edit.putString("email", info.getEmail());
                         if (!address.getText().toString().equals(getResources().getString(R.string.address_hint)))
                             edit.putString("address", info.getAddress());
-                        if (!phoneNumber.getText().toString().equals(""))
+                        if (!phoneNumber.getText().toString().equals(getResources().getString(R.string.phone_hint)))
                             edit.putString("phoneNumber", info.getNumberPhone());
-                        if (!bio.getText().toString().equals(""))
+                        if (!bio.getText().toString().equals(getResources().getString(R.string.bio_hint)))
                             edit.putString("bio", info.getBiography());
                         edit.apply();
                     }
