@@ -37,6 +37,8 @@ import com.bumptech.glide.request.RequestOptions;
 import com.bumptech.glide.signature.ObjectKey;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.storage.FirebaseStorage;
@@ -87,13 +89,13 @@ public class Setup extends AppCompatActivity {
     private ArrayList<Integer> indexFoods;
     private SharedPreferences sharedPref;
     private SharedPreferences.Editor edit;
-
+    private FirebaseAuth firebaseAuth;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_setup);
-
+        firebaseAuth = FirebaseAuth.getInstance();
         storageDir = getExternalFilesDir(Environment.DIRECTORY_PICTURES);
 
         init();
@@ -386,6 +388,10 @@ public class Setup extends AppCompatActivity {
     }
 
     private void init(){
+        nameCheck = true;
+        addressCheck = true;
+        emailCheck = true;
+        numberCheck = true;
         unchanged = true;
         this.profilePicture = findViewById(R.id.profilePicture);
         this.editImage = findViewById(R.id.edit_profile_picture);
@@ -825,6 +831,25 @@ public class Setup extends AppCompatActivity {
             edit.putString("profileSignature", String.valueOf(System.currentTimeMillis()));
             File profile = new File(storageDir, PROFILE_IMAGE);
             saveBitmap(bitmap, profile.getPath());
+
+            FirebaseStorage storage;
+            StorageReference storageReference;
+            storage = FirebaseStorage.getInstance();
+            storageReference = storage.getReference();
+            StorageReference ref = storageReference.child("images/RossoPomodoro_profile.jpeg");
+            ref.putFile(Uri.fromFile(new File(storageDir, PROFILE_IMAGE)))
+                    .addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
+                        @Override
+                        public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
+                            Log.d("SWSW", "success");
+                        }
+                    })
+                    .addOnFailureListener(new OnFailureListener() {
+                        @Override
+                        public void onFailure(@NonNull Exception e) {
+                            Toast.makeText(getApplicationContext(), "Failed "+e.getMessage(), Toast.LENGTH_SHORT).show();
+                        }
+                    });
         }
 
         edit.putString("name", name.getText().toString());
@@ -873,6 +898,7 @@ public class Setup extends AppCompatActivity {
         }
         edit.apply();
 
+        FirebaseUser user = firebaseAuth.getCurrentUser();
         ArrayList<String> days = new ArrayList<>();
         days.add(monday.getText().toString());
         days.add(tuesday.getText().toString());
@@ -884,29 +910,12 @@ public class Setup extends AppCompatActivity {
         RestaurantInfo restaurant = new RestaurantInfo(name.getText().toString(), email.getText().toString(),
                 address.getText().toString(), phoneNumber.getText().toString(), days, deliveryPrice, indexFoods);
         DatabaseReference database = FirebaseDatabase.getInstance().getReference()
-                .child("restaurantsInfo/" + name.getText().toString());
+                .child("restaurantsInfo/" + user.getUid());
         HashMap<String, Object> child = new HashMap<>();
         child.put("info", restaurant);
         database.updateChildren(child);
 
-        FirebaseStorage storage;
-        StorageReference storageReference;
-        storage = FirebaseStorage.getInstance();
-        storageReference = storage.getReference();
-        StorageReference ref = storageReference.child("images/RossoPomodoro_profile.jpeg");
-        ref.putFile(Uri.fromFile(new File(storageDir, PROFILE_IMAGE)))
-                .addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
-                    @Override
-                    public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
-                        Log.d("SWSW", "success");
-                    }
-                })
-                .addOnFailureListener(new OnFailureListener() {
-                    @Override
-                    public void onFailure(@NonNull Exception e) {
-                        Toast.makeText(getApplicationContext(), "Failed "+e.getMessage(), Toast.LENGTH_SHORT).show();
-                    }
-                });
+
         finish();
     }
 
