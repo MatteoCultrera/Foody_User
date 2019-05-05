@@ -71,7 +71,7 @@ public class RestaurantsList extends AppCompatActivity {
                 for (DataSnapshot ds : dataSnapshot.getChildren()) {
                     add = true;
                     for (Restaurant rest : restaurants){
-                        if (ds.getKey().compareTo(rest.getName()) == 0) {
+                        if (ds.getKey().compareTo(rest.getUsername()) == 0) {
                             add = false;
                             break;
                         }
@@ -140,7 +140,7 @@ public class RestaurantsList extends AppCompatActivity {
         restName = new ArrayList<>();
 
         for (int i = 0; i < restaurants.size(); i++) {
-            if (restaurants.get(i).getName().toLowerCase().contains(text.toLowerCase()))
+            if (restaurants.get(i).getUsername().toLowerCase().contains(text.toLowerCase()))
                 restName.add(restaurants.get(i));
         }
         for (int j = 0; j < restName.size(); j++) {

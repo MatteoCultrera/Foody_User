@@ -128,7 +128,7 @@ public class UserFragment extends Fragment {
                         address.setText(info.getAddress());
                         phoneNumber.setText(info.getNumberPhone());
                         int deliveryPrice;
-                        deliveryPrice = info.getDeliveryCost();
+                        deliveryPrice = info.getDeliveryPrice();
                         double price = 0.5 *  deliveryPrice;
                         String text = String.format(Locale.UK,"%.2f", price) + getResources().getString(R.string.value);
                         delivPrice.setText(text);
@@ -154,7 +154,7 @@ public class UserFragment extends Fragment {
                         edit.putString("name", info.getUsername());
                         edit.putString("email", info.getEmail());
                         edit.putString("foodType", cuisineText);
-                        edit.putInt("delivPrice", info.getDeliveryCost());
+                        edit.putInt("delivPrice", info.getDeliveryPrice());
                         if (!address.getText().toString().equals(getResources().getString(R.string.address_hint)))
                             edit.putString("address", info.getAddress());
                         if (!phoneNumber.getText().toString().equals(getResources().getString(R.string.phone_hint)))

@@ -49,7 +49,7 @@ public class RVAdapterRestaurants  extends RecyclerView.Adapter<RVAdapterRestaur
     @Override
     public void onBindViewHolder(@NonNull final CardViewHolder cardViewHolder, int i) {
 
-        cardViewHolder.restaurantName.setText(restaurants.get(i).getName());
+        cardViewHolder.restaurantName.setText(restaurants.get(i).getUsername());
         cardViewHolder.restaurantDescription.setText(restaurants.get(i).getKitchensString());
         cardViewHolder.restaurantDeliveryPrice.setText(restaurants.get(i).getDeliveryPriceString());
         cardViewHolder.restaurantDistance.setText(restaurants.get(i).getDistanceString());
