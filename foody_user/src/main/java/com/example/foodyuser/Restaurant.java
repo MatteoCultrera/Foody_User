@@ -1,16 +1,19 @@
 package com.example.foodyuser;
 
 import java.util.ArrayList;
+import java.util.Locale;
 
 public class Restaurant {
+    private String uid;
     private String username;
     private ArrayList<String> cuisines;
-    private float deliveryPrice;
+    private ArrayList<Integer> cuisineTypes;
+    private int deliveryPrice;
     private float distance;
 
     public Restaurant() {}
 
-    public Restaurant(String name, ArrayList<String> cuisines, float deliveryPrice, float distance){
+    public Restaurant(String name, ArrayList<String> cuisines, int deliveryPrice, float distance){
         this.username = name;
         this.cuisines = cuisines;
         this.deliveryPrice = deliveryPrice;
@@ -33,11 +36,11 @@ public class Restaurant {
         this.cuisines = cuisines;
     }
 
-    public float getDeliveryPrice() {
+    public int getDeliveryPrice() {
         return deliveryPrice;
     }
 
-    public void setDeliveryPrice(float deliveryPrice) {
+    public void setDeliveryPrice(int deliveryPrice) {
         this.deliveryPrice = deliveryPrice;
     }
 
@@ -64,12 +67,27 @@ public class Restaurant {
     }
 
     public String getDeliveryPriceString(){
-        String returner = String.format("%.2f", deliveryPrice);
-        return returner;
+        double delivery = (float) this.deliveryPrice * 0.5;
+        return String.format(Locale.UK, "%.2f", delivery);
     }
 
     public String getDistanceString(){
-        String returner = String.format("%.2f Km", distance);
-        return returner;
+        return String.format(Locale.UK, "%.2f Km", distance);
+    }
+
+    public ArrayList<Integer> getCuisineTypes() {
+        return cuisineTypes;
+    }
+
+    public void setCuisineTypes(ArrayList<Integer> cuisineTypes) {
+        this.cuisineTypes = cuisineTypes;
+    }
+
+    public String getUid() {
+        return uid;
+    }
+
+    public void setUid(String uid) {
+        this.uid = uid;
     }
 }

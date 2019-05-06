@@ -47,14 +47,14 @@ public class RVAdapterRestaurants  extends RecyclerView.Adapter<RVAdapterRestaur
     }
 
     @Override
-    public void onBindViewHolder(@NonNull final CardViewHolder cardViewHolder, int i) {
+    public void onBindViewHolder(@NonNull final CardViewHolder cardViewHolder, final int i) {
 
         cardViewHolder.restaurantName.setText(restaurants.get(i).getUsername());
         cardViewHolder.restaurantDescription.setText(restaurants.get(i).getKitchensString());
         cardViewHolder.restaurantDeliveryPrice.setText(restaurants.get(i).getDeliveryPriceString());
         cardViewHolder.restaurantDistance.setText(restaurants.get(i).getDistanceString());
         StorageReference mStorageRef = FirebaseStorage.getInstance().getReference();
-        mStorageRef.child("images/"+cardViewHolder.restaurantName.getText().toString()+"_profile.jpeg").getDownloadUrl()
+        mStorageRef.child("images/"+restaurants.get(i).getUid()+"_profile.jpeg").getDownloadUrl()
                 .addOnSuccessListener(new OnSuccessListener<Uri>() {
                     @Override
                     public void onSuccess(Uri uri) {
@@ -70,7 +70,7 @@ public class RVAdapterRestaurants  extends RecyclerView.Adapter<RVAdapterRestaur
             public void onClick(View v) {
                 Log.d("TITLECHECK","Clicked");
                 Intent intent = new Intent(v.getContext(), RestaurantShow.class);
-                intent.putExtra("restaurant_name",cardViewHolder.restaurantName.getText().toString());
+                intent.putExtra("restaurant_name", restaurants.get(i).getUid());
 
                 File storage = cardViewHolder.card.getContext().getExternalFilesDir(Environment.DIRECTORY_DOCUMENTS);
                 String filename = cardViewHolder.card.getContext().getString(R.string.order_file_name);

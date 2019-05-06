@@ -56,7 +56,6 @@ public class RestaurantShow extends AppCompatActivity {
 
     String reName;
 
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -88,10 +87,7 @@ public class RestaurantShow extends AppCompatActivity {
 
         totalLayout.getLayoutTransition().enableTransitionType(LayoutTransition.CHANGING);
 
-
-
         Bundle extras = getIntent().getExtras();
-        toolbar.setTitle(extras.getString("restaurant_name",""));
         reName = extras.getString("restaurant_name","");
         fetchRestaurant();
         fetchMenu();
@@ -211,7 +207,7 @@ public class RestaurantShow extends AppCompatActivity {
                     deliveryPrice.setText(thisRestaurant.getDeliveryPriceString());
                     //distance.setText(thisRestaurant.getDistanceString());
                     StorageReference mStorageRef = FirebaseStorage.getInstance().getReference();
-                    mStorageRef.child("images/"+reName+"_profile.jpeg").getDownloadUrl()
+                    mStorageRef.child("images/"+ reName +"_profile.jpeg").getDownloadUrl()
                             .addOnSuccessListener(new OnSuccessListener<Uri>() {
                                 @Override
                                 public void onSuccess(Uri uri) {
@@ -223,6 +219,7 @@ public class RestaurantShow extends AppCompatActivity {
                                 }
                             });
                 }
+                toolbar.setTitle(thisRestaurant.getUsername());
             }
             @Override
             public void onCancelled(@NonNull DatabaseError databaseError) {
