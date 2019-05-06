@@ -98,41 +98,46 @@
     <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="@string/register"
+        android:layout_marginTop="8dp"
+        android:layout_marginBottom="20dp"
         android:fontFamily="@font/roboto_bold"
-        android:textSize="32sp"
+        android:text="@string/register"
         android:textColor="@color/primaryText"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
+        android:textSize="32sp"
         app:layout_constraintBottom_toTopOf="@id/constraintLayout4"
-        android:layout_marginBottom="44dp"/>
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="0.8" />
 
     <android.support.constraint.ConstraintLayout
         android:id="@+id/login_button"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:background="@drawable/register_button_background"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        android:layout_marginTop="92.5dp"
-        android:elevation="16dp"
+        android:layout_marginTop="20dp"
+        android:background="@drawable/login_button_background"
         android:clickable="true"
-        >
+        android:elevation="16dp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/constraintLayout4"
+        app:layout_constraintVertical_bias="0.3">
+
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="@string/login"
-            android:fontFamily="@font/roboto_bold"
-            android:textSize="20sp"
-            android:textColor="@color/colorAccent"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintTop_toTopOf="parent"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            android:layout_marginEnd="23dp"
             android:layout_marginStart="29dp"
             android:layout_marginTop="18.5dp"
-            android:layout_marginBottom="18.5dp" />
+            android:layout_marginEnd="23dp"
+            android:layout_marginBottom="18.5dp"
+            android:fontFamily="@font/roboto_bold"
+            android:text="@string/login"
+            android:textColor="@color/colorAccent"
+            android:textSize="20sp"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
 
 
     </android.support.constraint.ConstraintLayout>
