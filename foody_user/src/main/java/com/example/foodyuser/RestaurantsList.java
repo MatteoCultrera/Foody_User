@@ -20,6 +20,7 @@ import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.Query;
 import com.google.firebase.database.ValueEventListener;
 
 import java.util.ArrayList;
@@ -64,30 +65,29 @@ public class RestaurantsList extends AppCompatActivity {
         searchField = findViewById(R.id.search_field);
 
         DatabaseReference database = FirebaseDatabase.getInstance().getReference();
-        DatabaseReference ref = database.child("restaurantsInfo");
-        ref.addValueEventListener(new ValueEventListener() {
+        Query query = database.child("restaurantsInfo");
+        query.addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
                 for (DataSnapshot ds : dataSnapshot.getChildren()) {
-                    add = true;
-                    for (Restaurant rest : restaurants){
-                        if (ds.getKey().compareTo(rest.getUsername()) == 0) {
-                            add = false;
-                            break;
+                    Restaurant restaurant = new Restaurant();
+                    for (DataSnapshot ds1 : ds.getChildren()) {
+                        restaurant = ds1.getValue(Restaurant.class);
+                        ArrayList<String> types = new ArrayList<>();
+                        for (Integer i : restaurant.getCuisineTypes()) {
+                            types.add(foodCategories[i]);
                         }
+                        restaurant.setCuisines(types);
+                        restaurants.add(restaurant);
+                        restName.add(restaurant);
+                        restCuisine.add(restaurant);
                     }
-                    if (add) {
-                        for (DataSnapshot ds1 : ds.getChildren()) {
-                            Restaurant restaurant = ds1.getValue(Restaurant.class);
-                            restaurants.add(restaurant);
-                            restName.add(restaurant);
-                            restCuisine.add(restaurant);
-                        }
-                    }
+                    restaurant.setUid(ds.getKey());
                 }
                 adapter = new RVAdapterRestaurants(restaurants);
                 restaurantList.setAdapter(adapter);
             }
+
             @Override
             public void onCancelled(@NonNull DatabaseError databaseError) {
                 Log.d("SWSW", databaseError.getMessage());
@@ -134,7 +134,6 @@ public class RestaurantsList extends AppCompatActivity {
         super.onBackPressed();
     }
 
-    //TODO
     private void filter(String text) {
         ArrayList<Restaurant> filteredNames = new ArrayList<>();
         restName = new ArrayList<>();

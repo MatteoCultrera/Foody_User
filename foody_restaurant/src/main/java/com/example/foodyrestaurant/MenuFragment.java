@@ -14,6 +14,8 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 import com.bumptech.glide.Glide;
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
@@ -33,6 +35,8 @@ public class MenuFragment extends Fragment {
     private File storageDir;
     private final JsonHandler jsonHandler = new JsonHandler();
     private ArrayList<Card> cards;
+    private FirebaseAuth firebaseAuth;
+    private FirebaseUser user;
 
     public MenuFragment() {}
 
@@ -57,7 +61,7 @@ public class MenuFragment extends Fragment {
         jsonHandler.saveStringToFile(json, file);
 
         DatabaseReference database = FirebaseDatabase.getInstance().getReference()
-                .child("restaurantsMenu").child("RossoPomodoro").child("Card");
+                .child("restaurantsMenu").child(user.getUid()).child("Card");
         HashMap<String, Object> child = new HashMap<>();
         for (int i = 0; i < cards.size(); i++) {
             if (cards.get(i).getDishes().size() != 0)
@@ -70,7 +74,8 @@ public class MenuFragment extends Fragment {
         storageDir = Objects.requireNonNull(getActivity()).getExternalFilesDir(Environment.DIRECTORY_DOCUMENTS);
         LinearLayoutManager llm = new LinearLayoutManager(view.getContext());
         menu.setLayoutManager(llm);
-
+        firebaseAuth = FirebaseAuth.getInstance();
+        user = firebaseAuth.getCurrentUser();
         FloatingActionButton editMode = view.findViewById(R.id.edit_mode);
         ImageView profileImage = view.findViewById(R.id.mainImage);
         ImageView profileShadow = view.findViewById(R.id.shadow);
@@ -85,7 +90,7 @@ public class MenuFragment extends Fragment {
                 .into(profileImage);
 
         DatabaseReference database = FirebaseDatabase.getInstance().getReference();
-        DatabaseReference ref = database.child("restaurantsMenu").child("RossoPomodoro");
+        DatabaseReference ref = database.child("restaurantsMenu").child(user.getUid());
         ref.addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
