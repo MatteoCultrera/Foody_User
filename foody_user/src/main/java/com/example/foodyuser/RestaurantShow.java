@@ -89,6 +89,7 @@ public class RestaurantShow extends AppCompatActivity {
         totalLayout.getLayoutTransition().enableTransitionType(LayoutTransition.CHANGING);
 
 
+
         Bundle extras = getIntent().getExtras();
         toolbar.setTitle(extras.getString("restaurant_name",""));
         reName = extras.getString("restaurant_name","");
