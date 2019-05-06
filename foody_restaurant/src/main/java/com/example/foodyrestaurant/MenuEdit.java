@@ -21,6 +21,9 @@ import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.Toast;
+
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import java.io.File;
@@ -50,6 +53,8 @@ public class MenuEdit extends AppCompatActivity {
     private AlertDialog dialogDism;
     private String dialogCode = "ok";
     private String writingCard = "";
+    private FirebaseAuth firebaseAuth;
+    private FirebaseUser user;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -100,6 +105,8 @@ public class MenuEdit extends AppCompatActivity {
         LinearLayoutManager llm = new LinearLayoutManager(this);
         recyclerMenu.setLayoutManager(llm);
         mainFAB = findViewById(R.id.mainFAB);
+        firebaseAuth = FirebaseAuth.getInstance();
+        user = firebaseAuth.getCurrentUser();
 
         if(fileTmp.exists()){
             cards = jsonHandler.getCards(fileTmp);
@@ -123,7 +130,7 @@ public class MenuEdit extends AppCompatActivity {
                     Toast.makeText(getApplicationContext(), R.string.noSave, Toast.LENGTH_SHORT).show();
                 } else {
                     DatabaseReference database = FirebaseDatabase.getInstance().getReference()
-                            .child("restaurantsMenu").child("RossoPomodoro").child("Card");
+                            .child("restaurantsMenu").child(user.getUid()).child("Card");
                     HashMap<String, Object> child = new HashMap<>();
                     for (int i = 0; i < cards.size(); i++) {
                         if (cards.get(i).getDishes().size() != 0)
@@ -271,7 +278,7 @@ public class MenuEdit extends AppCompatActivity {
                 recyclerAdapter.notifyItemRangeRemoved(i, cards.size());
 
                 DatabaseReference database = FirebaseDatabase.getInstance().getReference()
-                        .child("restaurantsMenu").child("RossoPomodoro").child("Card");
+                        .child("restaurantsMenu").child(user.getUid()).child("Card");
                 database.child(Integer.toString(i)).removeValue();
 
                 unchanged = false;

@@ -25,6 +25,8 @@ import android.widget.ListAdapter;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.yalantis.ucrop.UCrop;
@@ -63,6 +65,8 @@ public class MenuEditItem extends AppCompatActivity {
     private final int REQUEST_CAPTURE_IMAGE = 100;
     private String placeholderPath;
     private File storageImageDir;
+    private FirebaseAuth firebaseAuth;
+    private FirebaseUser user;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -126,7 +130,8 @@ public class MenuEditItem extends AppCompatActivity {
 
     private void init(){
         storageImageDir = getExternalFilesDir(Environment.DIRECTORY_PICTURES);
-
+        firebaseAuth = FirebaseAuth.getInstance();
+        user = firebaseAuth.getCurrentUser();
         File file = new File(storageDir, JSON_PATH);
         jsonHandler = new JsonHandler();
         final RecyclerView recyclerMenu = findViewById(R.id.menu_items);
@@ -204,7 +209,7 @@ public class MenuEditItem extends AppCompatActivity {
             }
 
             DatabaseReference database = FirebaseDatabase.getInstance().getReference()
-                    .child("restaurantsMenu").child("RossoPomodoro").child("Card");
+                    .child("restaurantsMenu").child(user.getUid()).child("Card");
             HashMap<String, Object> child = new HashMap<>();
             for (int i = 0; i < cards.size(); i++) {
                 if (cards.get(i).getDishes().size() != 0)
