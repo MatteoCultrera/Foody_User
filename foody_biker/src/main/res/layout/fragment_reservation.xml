@@ -209,11 +209,25 @@
                         android:layout_height="wrap_content"
                         android:layout_marginStart="26dp"
                         android:fontFamily="@font/roboto_bold"
-                        android:text="Pickup Order"
-                        android:textColor="@color/colorAccent"
+                        android:text="Deliver To"
+                        android:textColor="@color/colorPrimaryDark"
                         android:textSize="20sp"
                         app:layout_constraintStart_toEndOf="@id/deliver_time"
                         app:layout_constraintTop_toTopOf="parent" />
+
+                    <de.hdodenhof.circleimageview.CircleImageView
+                        android:id="@+id/deliver_image"
+                        android:layout_width="50dp"
+                        android:layout_height="50dp"
+                        android:layout_marginTop="4dp"
+                        android:layout_marginBottom="8dp"
+                        android:src="@drawable/profile_placeholder"
+                        app:layout_constraintBottom_toTopOf="@+id/linearLayout"
+                        app:layout_constraintEnd_toEndOf="parent"
+                        app:layout_constraintHorizontal_bias="0.0"
+                        app:layout_constraintStart_toStartOf="@id/deliver_to"
+                        app:layout_constraintTop_toBottomOf="@id/deliver_to" />
+
 
                     <TextView
                         android:id="@+id/deliver_user_name"
@@ -222,12 +236,12 @@
                         android:layout_marginStart="10dp"
                         android:layout_marginTop="4dp"
                         android:fontFamily="@font/roboto_regular"
-                        android:text="RossoPomodoro"
+                        android:text="Simona Currà"
                         android:textColor="@color/primaryText"
                         android:textSize="16sp"
                         app:layout_constraintEnd_toEndOf="parent"
                         app:layout_constraintHorizontal_bias="0.0"
-                        app:layout_constraintStart_toStartOf="@id/deliver_to"
+                        app:layout_constraintStart_toEndOf="@id/deliver_image"
                         app:layout_constraintTop_toBottomOf="@id/deliver_to" />
 
                     <TextView
@@ -257,11 +271,12 @@
                         app:layout_constraintTop_toTopOf="@+id/deliver_time" />
 
                     <LinearLayout
+                        android:id="@+id/linearLayout"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_marginTop="8dp"
                         android:background="@drawable/button_call"
-                        app:layout_constraintStart_toStartOf="@+id/deliver_user_address"
+                        app:layout_constraintStart_toStartOf="@+id/deliver_to"
                         app:layout_constraintTop_toBottomOf="@+id/deliver_user_address">
 
                         <ImageView
@@ -280,7 +295,7 @@
                             android:layout_marginEnd="15dp"
                             android:layout_marginBottom="10dp"
                             android:fontFamily="@font/roboto_regular"
-                            android:text="CALL RESTAURANT"
+                            android:text="CALL USER"
                             android:textColor="#10858D"
                             android:textSize="14sp" />
                     </LinearLayout>
