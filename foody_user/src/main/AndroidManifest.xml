@@ -32,11 +32,9 @@
         <activity android:name=".Order" />
         <activity
             android:name=".RestaurantShow"
-            android:screenOrientation="portrait"
             android:theme="@style/restaurantMenu" />
         <activity
-            android:name=".RestaurantsList"
-            android:screenOrientation="portrait" />
+            android:name=".RestaurantsList" />
         <activity android:name=".RegisterActivity"
             android:windowSoftInputMode="adjustResize">
 
