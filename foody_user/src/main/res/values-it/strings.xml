@@ -28,4 +28,6 @@
     <string name="your_order">Il Tuo Ordine</string>
     <string name="total">Totale:</string>
     <string name="delete_filter">Azzera filtri</string>
+
+    <string name="place_order">CONFERMA ORDINE</string>
 </resources>

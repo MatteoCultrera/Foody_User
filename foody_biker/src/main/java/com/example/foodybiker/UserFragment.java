@@ -65,6 +65,16 @@ public class UserFragment extends Fragment {
         super.onViewCreated(view, savedInstanceState);
     }
 
+    @Override
+    public void onResume() {
+        super.onResume();
+        Context context = Objects.requireNonNull(getActivity()).getApplicationContext();
+        sharedPref = context.getSharedPreferences("myPreference", MODE_PRIVATE);
+        storageDir = getActivity().getExternalFilesDir(Environment.DIRECTORY_PICTURES);
+
+        init(Objects.requireNonNull(getView()));
+    }
+
     private void init(View view){
         sharedPref = view.getContext().getSharedPreferences("myPreference", MODE_PRIVATE);
         edit = sharedPref.edit();
@@ -206,15 +216,5 @@ public class UserFragment extends Fragment {
             }
         });
 
-    }
-
-    @Override
-    public void onResume() {
-        super.onResume();
-        Context context = Objects.requireNonNull(getActivity()).getApplicationContext();
-        sharedPref = context.getSharedPreferences("myPreference", MODE_PRIVATE);
-        storageDir = getActivity().getExternalFilesDir(Environment.DIRECTORY_PICTURES);
-
-        init(Objects.requireNonNull(getView()));
     }
 }
