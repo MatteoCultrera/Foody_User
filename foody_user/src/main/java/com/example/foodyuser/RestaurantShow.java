@@ -191,6 +191,8 @@ public class RestaurantShow extends AppCompatActivity {
         for(int i = 0; i < size; i++){
             totalPrice+=orders.get(i).getPrice()*orders.get(i).getPieces();
         }
+        Log.d("PROVA", "delivery " + thisRestaurant.getDeliveryPrice() + " totalPrice " + totalPrice);
+        //totalPrice+=thisRestaurant.getDeliveryPrice();
         total.setText(String.format("%.2f €", totalPrice));
     }
 
