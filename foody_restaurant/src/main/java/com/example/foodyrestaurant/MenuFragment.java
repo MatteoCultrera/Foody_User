@@ -86,7 +86,7 @@ public class MenuFragment extends Fragment {
                 .into(profileShadow);
         Glide
                 .with(this)
-                .load(R.drawable.pizza)
+                .load(R.drawable.profile_placeholder)
                 .into(profileImage);
 
         DatabaseReference database = FirebaseDatabase.getInstance().getReference();
