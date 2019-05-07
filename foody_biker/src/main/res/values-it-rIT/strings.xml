@@ -12,4 +12,5 @@
     <string name="map">Mappa</string>
     <string name="profile">Profilo</string>
     <string name="orders">Prenotazioni</string>
+    <string name="notes">Note:</string>
 </resources>

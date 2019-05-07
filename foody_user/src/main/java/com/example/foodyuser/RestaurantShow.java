@@ -52,6 +52,7 @@ public class RestaurantShow extends AppCompatActivity {
     TextView total;
     int shortAnimDuration;
 
+
     private boolean unchanged;
     private String dialogCode = "ok";
     private AlertDialog dialogDism;

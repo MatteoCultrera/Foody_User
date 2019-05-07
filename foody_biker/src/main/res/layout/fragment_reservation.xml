@@ -1,10 +1,12 @@
 <?xml version="1.0" encoding="utf-8"?>
 <android.support.constraint.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/main_layout"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    android:background="@color/dark_white_background">
+    android:background="@color/dark_white_background"
+    android:clickable="true">
 
     <android.support.constraint.ConstraintLayout
         android:id="@+id/constraint"
@@ -45,6 +47,8 @@
     </android.support.constraint.ConstraintLayout>
 
     <android.support.v7.widget.CardView
+        android:id="@+id/card_order"
+        android:animateLayoutChanges="true"
         android:layout_width="0dp"
         android:layout_height="0dp"
         app:layout_constraintStart_toStartOf="parent"
@@ -310,8 +314,41 @@
                     android:layout_height="0dp"
                     android:layout_weight="0.5"
                     android:visibility="visible"
-                    android:background="@android:color/holo_blue_bright"
-                    ></android.support.constraint.ConstraintLayout>
+                    android:background="@android:color/white"
+                    >
+
+                    <TextView
+                        android:id="@+id/textView2"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:fontFamily="@font/roboto_regular"
+                        android:text="@string/notes"
+                        android:textColor="@color/primaryText"
+                        android:textSize="14sp"
+                        app:layout_constraintStart_toStartOf="parent"
+                        app:layout_constraintTop_toTopOf="parent"
+                        android:layout_marginStart="60dp"
+                        android:layout_marginTop="10dp"/>
+
+                    <TextView
+                        android:id="@+id/notes_box"
+                        android:layout_width="0dp"
+                        android:layout_height="0dp"
+                        android:layout_marginStart="60dp"
+                        android:layout_marginTop="4dp"
+                        android:layout_marginEnd="8dp"
+                        android:layout_marginBottom="8dp"
+                        android:text="AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA"
+                        android:textColor="@color/secondaryText"
+                        android:textSize="12sp"
+                        app:layout_constraintBottom_toBottomOf="parent"
+                        app:layout_constraintEnd_toEndOf="parent"
+                        app:layout_constraintStart_toStartOf="parent"
+                        app:layout_constraintTop_toBottomOf="@+id/textView2"
+                        app:layout_constraintVertical_bias="0.0"
+                        app:layout_goneMarginStart="80dp"
+                        />
+                </android.support.constraint.ConstraintLayout>
 
 
             </LinearLayout>
@@ -331,10 +368,41 @@
                 />
 
 
+
         </android.support.constraint.ConstraintLayout>
 
     </android.support.v7.widget.CardView>
 
 
+    <android.support.constraint.ConstraintLayout
+        android:id="@+id/order_delivered_layout"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:background="@drawable/order_delivered_background"
+        android:elevation="8dp"
+        android:animateLayoutChanges="true"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintVertical_bias="0.95"
+        android:clickable="true">
+        <TextView
+            android:id="@+id/order_delivered"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_margin="16dp"
+            android:layout_marginStart="16.5dp"
+            android:layout_marginEnd="10dp"
+            android:drawableEnd="@drawable/bike_white"
+            android:drawablePadding="10dp"
+            android:fontFamily="@font/roboto_regular"
+            android:gravity="center"
+            android:textColor="@android:color/white"
+            android:textSize="16sp"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
+    </android.support.constraint.ConstraintLayout>
 
 </android.support.constraint.ConstraintLayout>
