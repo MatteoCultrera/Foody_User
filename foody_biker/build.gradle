@@ -61,7 +61,6 @@ dependencies {
     implementation 'com.firebaseui:firebase-ui-database:4.3.2'
 
     //Glide image loader
-
     implementation 'com.github.bumptech.glide:glide:4.8.0'
 
 }
