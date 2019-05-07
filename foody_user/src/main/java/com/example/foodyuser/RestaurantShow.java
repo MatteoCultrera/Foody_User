@@ -56,6 +56,8 @@ public class RestaurantShow extends AppCompatActivity {
     private FirebaseAuth firebaseAuth;
     private FirebaseUser firebaseUser;
 
+    static int delPriceToPass;
+
 
     private boolean unchanged;
     private String dialogCode = "ok";
@@ -194,9 +196,13 @@ public class RestaurantShow extends AppCompatActivity {
         for(int i = 0; i < size; i++){
             totalPrice+=orders.get(i).getPrice()*orders.get(i).getPieces();
         }
-        Log.d("PROVA", "delivery " + thisRestaurant.getDeliveryPrice() + " totalPrice " + totalPrice);
-        //totalPrice+=thisRestaurant.getDeliveryPrice();
+        delPriceToPass = thisRestaurant.getDeliveryPrice();
+        totalPrice+=delPriceToPass*0.5;
         total.setText(String.format("%.2f €", totalPrice));
+    }
+
+    static public int getRestDeliveryPrice() {
+        return delPriceToPass;
     }
 
     private void fetchRestaurant(){
