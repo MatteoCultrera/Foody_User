@@ -6,11 +6,12 @@ import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.constraint.ConstraintLayout;
 import android.support.design.widget.FloatingActionButton;
+import android.support.design.widget.TextInputEditText;
+import android.support.design.widget.TextInputLayout;
 import android.support.v7.app.AppCompatActivity;
 import android.text.Editable;
 import android.text.TextWatcher;
 import android.view.View;
-import android.widget.EditText;
 import android.widget.Toast;
 
 import com.google.android.gms.tasks.OnCompleteListener;
@@ -28,7 +29,8 @@ import java.util.regex.Pattern;
 
 public class RegisterActivity extends AppCompatActivity {
 
-    private EditText username, password1, password2, email;
+    private TextInputEditText username, password1, password2, email;
+    private TextInputLayout usernameL, password1L, password2L, emailL;
     private boolean checkUser, checkPass, checkEqual, checkEmail;
     private FirebaseAuth firebaseAuth;
     private ConstraintLayout login;
@@ -49,6 +51,7 @@ public class RegisterActivity extends AppCompatActivity {
         checkEqual = false;
         checkPass = false;
         username = findViewById(R.id.username_register);
+        usernameL = findViewById(R.id.username_register_outer);
         username.addTextChangedListener(new TextWatcher() {
             @Override
             public void beforeTextChanged(CharSequence charSequence, int i, int i1, int i2) {
@@ -66,9 +69,11 @@ public class RegisterActivity extends AppCompatActivity {
             }
         });
         password1 = findViewById(R.id.password_register);
+        password1L = findViewById(R.id.password_register_outer);
         password1.addTextChangedListener(new TextWatcher() {
             @Override
             public void beforeTextChanged(CharSequence charSequence, int i, int i1, int i2) {
+
             }
 
             @Override
@@ -78,9 +83,11 @@ public class RegisterActivity extends AppCompatActivity {
 
             @Override
             public void afterTextChanged(Editable editable) {
+
             }
         });
         password2 = findViewById(R.id.password_repeat_register);
+        password2L = findViewById(R.id.password_repeat_register_outer);
         password2.addTextChangedListener(new TextWatcher() {
             @Override
             public void beforeTextChanged(CharSequence charSequence, int i, int i1, int i2) {
@@ -98,6 +105,7 @@ public class RegisterActivity extends AppCompatActivity {
             }
         });
         email = findViewById(R.id.email_register);
+        emailL = findViewById(R.id.email_register_outer);
         email.addTextChangedListener(new TextWatcher() {
             @Override
             public void beforeTextChanged(CharSequence charSequence, int i, int i1, int i2) {
@@ -127,37 +135,37 @@ public class RegisterActivity extends AppCompatActivity {
             @Override
             public void onClick(View view) {
                 if (username.getText().toString().equals("")){
-                    username.setError(getResources().getString(R.string.empty_password));
+                    usernameL.setError(getResources().getString(R.string.empty_password));
                     if (email.getText().toString().equals("")) {
-                        email.setError(getResources().getString(R.string.empty_email));
+                        emailL.setError(getResources().getString(R.string.empty_email));
                     }
                     if (password1.getText().toString().equals("")){
-                        password1.setError(getResources().getString(R.string.empty_password));
+                        password1L.setError(getResources().getString(R.string.empty_password));
                     }
                     if (password2.getText().toString().equals("")){
-                        password2.setError(getResources().getString(R.string.empty_password));
+                        password2L.setError(getResources().getString(R.string.empty_password));
                     }
                     return;
                 }
                 if (email.getText().toString().equals("")) {
-                    email.setError(getResources().getString(R.string.empty_email));
+                    emailL.setError(getResources().getString(R.string.empty_email));
                     if (password1.getText().toString().equals("")){
-                        password1.setError(getResources().getString(R.string.empty_password));
+                        password1L.setError(getResources().getString(R.string.empty_password));
                     }
                     if (password2.getText().toString().equals("")){
-                        password2.setError(getResources().getString(R.string.empty_password));
+                        password2L.setError(getResources().getString(R.string.empty_password));
                     }
                     return;
                 }
                 if (password1.getText().toString().equals("")){
-                    password1.setError(getResources().getString(R.string.empty_password));
+                    password1L.setError(getResources().getString(R.string.empty_password));
                     if (password2.getText().toString().equals("")){
-                        password2.setError(getResources().getString(R.string.empty_password));
+                        password2L.setError(getResources().getString(R.string.empty_password));
                     }
                     return;
                 }
                 if (password2.getText().toString().equals("")){
-                    password2.setError(getResources().getString(R.string.empty_password));
+                    password2L.setError(getResources().getString(R.string.empty_password));
                     return;
                 }
                 firebaseAuth.createUserWithEmailAndPassword(email.getText().toString(), password1.getText().toString())
@@ -197,11 +205,11 @@ public class RegisterActivity extends AppCompatActivity {
     private void checkPasswordEqual() {
         if(password1.getText().toString().equals(password2.getText().toString())){
             checkEqual = true;
-            password2.setError(null);
+            password2L.setError(null);
         }
         else{
             checkEqual = false;
-            password2.setError(getResources().getString(R.string.error_equals));
+            password2L.setError(getResources().getString(R.string.error_equals));
         }
         updateSave();
     }
@@ -209,18 +217,14 @@ public class RegisterActivity extends AppCompatActivity {
     private void checkName(){
         String name = username.getText().toString();
         String regx = "^[\\p{L} .'-]+$";
-        Pattern regex = Pattern.compile(regx);
-        Matcher matcher = regex.matcher(name);
 
-        if(!matcher.matches()){
+        if(!Pattern.compile(regx).matcher(name).matches()) {
             checkUser = false;
-            username.setError(getResources().getString(R.string.error_name));
-
+            usernameL.setError(getResources().getString(R.string.error_name));
         }else{
             checkUser = true;
-            username.setError(null);
+            usernameL.setError(null);
         }
-
         updateSave();
     }
 
@@ -229,11 +233,11 @@ public class RegisterActivity extends AppCompatActivity {
         final String passwordToCheck = password1.getText().toString();
 
         if(!Pattern.compile(regexPassword).matcher(passwordToCheck).matches()) {
-            password1.setError(getResources().getString(R.string.error_password));
+            password1L.setError(getResources().getString(R.string.error_password));
             checkPass = false;
         }else{
             checkPass = true;
-            password1.setError(null);
+            password1L.setError(null);
         }
         updateSave();
     }
@@ -243,11 +247,11 @@ public class RegisterActivity extends AppCompatActivity {
         final String emailToCheck = email.getText().toString();
 
         if(!Pattern.compile(regexpEmail).matcher(emailToCheck).matches()) {
-            email.setError(getResources().getString(R.string.error_email));
+            emailL.setError(getResources().getString(R.string.error_email));
             checkEmail = false;
         }else{
             checkEmail = true;
-            email.setError(null);
+            emailL.setError(null);
         }
         updateSave();
     }
