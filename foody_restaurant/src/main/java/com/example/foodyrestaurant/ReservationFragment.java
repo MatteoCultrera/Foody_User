@@ -3,6 +3,7 @@ package com.example.foodyrestaurant;
 import android.os.Bundle;
 import android.os.Environment;
 import android.support.annotation.NonNull;
+import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -10,6 +11,13 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.database.ChildEventListener;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
 
 import java.io.File;
 import java.util.ArrayList;
@@ -23,6 +31,7 @@ public class ReservationFragment extends Fragment {
     private File storageDir;
     private final JsonHandler jsonHandler = new JsonHandler();
     private ArrayList<Reservation> reservations;
+    private String restaurantUid = FirebaseAuth.getInstance().getCurrentUser().getUid();
 
     public ReservationFragment() {
         // Required empty public constructor
@@ -152,7 +161,45 @@ public class ReservationFragment extends Fragment {
             jsonHandler.saveStringToFile(json, file);
         }
 
-        RVAdapterRes adapter = new RVAdapterRes(reservations);
+        final RVAdapterRes adapter = new RVAdapterRes(reservations);
         reservation.setAdapter(adapter);
+
+        //Add the notification to the restaurant, when a new reservation is added
+        DatabaseReference restaurantReservations = FirebaseDatabase.getInstance().getReference().child("Reservations")
+                                        .child("Restaurants").child(restaurantUid);
+        restaurantReservations.addChildEventListener(new ChildEventListener() {
+            @Override
+            public void onChildAdded(@NonNull DataSnapshot dataSnapshot, @Nullable String s) {
+                Reservation res = dataSnapshot.getValue(Reservation.class);
+                int index;
+                for(index=0; index < reservations.size(); index++){
+                    if(res.getOrderTime().compareTo(reservations.get(index).getOrderTime()) > 0)
+                        break;
+                }
+                reservations.add(index, res);
+                adapter.notifyItemInserted(index);
+                adapter.notifyItemRangeChanged(index, reservations.size());
+            }
+
+            @Override
+            public void onChildChanged(@NonNull DataSnapshot dataSnapshot, @Nullable String s) {
+
+            }
+
+            @Override
+            public void onChildRemoved(@NonNull DataSnapshot dataSnapshot) {
+
+            }
+
+            @Override
+            public void onChildMoved(@NonNull DataSnapshot dataSnapshot, @Nullable String s) {
+
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError databaseError) {
+
+            }
+        });
     }
 }
