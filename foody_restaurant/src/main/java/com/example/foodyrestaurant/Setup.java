@@ -837,7 +837,7 @@ public class Setup extends AppCompatActivity {
             StorageReference storageReference;
             storage = FirebaseStorage.getInstance();
             storageReference = storage.getReference();
-            StorageReference ref = storageReference.child("images/restaurant/"+ user.getUid() +"_profile.jpeg");
+            StorageReference ref = storageReference.child("images/restaurants/"+ user.getUid() +"_profile.jpeg");
             ref.putFile(Uri.fromFile(new File(storageDir, PROFILE_IMAGE)))
                     .addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
                         @Override
