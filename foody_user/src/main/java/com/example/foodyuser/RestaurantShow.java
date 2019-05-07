@@ -208,7 +208,7 @@ public class RestaurantShow extends AppCompatActivity {
                     deliveryPrice.setText(thisRestaurant.getDeliveryPriceString());
                     //distance.setText(thisRestaurant.getDistanceString());
                     StorageReference mStorageRef = FirebaseStorage.getInstance().getReference();
-                    mStorageRef.child("images/"+ reName +"_profile.jpeg").getDownloadUrl()
+                    mStorageRef.child("images/restaurants/"+ reName +"_profile.jpeg").getDownloadUrl()
                             .addOnSuccessListener(new OnSuccessListener<Uri>() {
                                 @Override
                                 public void onSuccess(Uri uri) {
