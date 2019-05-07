@@ -499,25 +499,23 @@
             <android.support.constraint.ConstraintLayout
                 android:id="@+id/table"
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content"
+                android:layout_height="0dp"
                 android:layout_marginLeft="16dp"
-                android:layout_marginRight="16dp"
                 app:layout_constraintLeft_toLeftOf="parent"
-                app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintTop_toBottomOf="@+id/tableText">
 
                 <TextView
                     android:id="@+id/dayString"
                     android:layout_width="wrap_content"
                     android:layout_height="24dp"
-                    android:layout_marginTop="12dp"
                     android:layout_marginStart="54dp"
+                    android:layout_marginTop="12dp"
                     android:gravity="center_vertical"
                     android:text="@string/day"
                     android:textColor="@color/secondaryText"
                     android:textSize="12sp"
                     app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toTopOf="parent"/>
+                    app:layout_constraintTop_toTopOf="parent" />
 
                 <TextView
                     android:layout_width="wrap_content"
@@ -539,67 +537,65 @@
                     android:layout_height="1.5dp"
                     android:layout_marginTop="12dp"
                     android:background="#707070"
-                    tools:layout_editor_absoluteX="16dp"
-                    app:layout_constraintTop_toBottomOf="@id/dayString"/>
+                    app:layout_constraintTop_toBottomOf="@id/dayString"
+                    tools:layout_editor_absoluteX="16dp" />
 
                 <CheckBox
                     android:id="@+id/checkMonday"
+                    style="@style/Base.Theme.MaterialComponents.Light"
                     android:layout_width="24dp"
                     android:layout_height="24dp"
-                    style="@style/Base.Theme.MaterialComponents.Light"
-                    app:layout_constraintTop_toBottomOf="@id/firstDiv"
-                    app:layout_constraintStart_toStartOf="parent"
-                    android:onClick="lockUnlock"
-                    android:layout_marginTop="12dp"
                     android:layout_marginStart="16dp"
-                    android:button="@null"
+                    android:layout_marginTop="12dp"
                     android:background="?android:attr/listChoiceIndicatorMultiple"
+                    android:button="@null"
                     android:gravity="center"
-                    />
+                    android:onClick="lockUnlock"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toBottomOf="@id/firstDiv" />
 
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="24dp"
-                    android:text="@string/Monday"
-                    android:fontFamily="@font/roboto_regular"
-                    android:textColor="@color/primaryText"
-                    app:layout_constraintTop_toBottomOf="@id/firstDiv"
+                    android:layout_marginStart="12dp"
                     android:layout_marginTop="12dp"
+                    android:fontFamily="@font/roboto_regular"
+                    android:gravity="center"
+                    android:text="@string/Monday"
+                    android:textColor="@color/primaryText"
                     android:textSize="16sp"
                     app:layout_constraintStart_toEndOf="@id/checkMonday"
-                    android:layout_marginStart="12dp"
-                    android:gravity="center"/>
+                    app:layout_constraintTop_toBottomOf="@id/firstDiv" />
 
                 <ImageButton
                     android:id="@+id/editMonday"
                     android:layout_width="24dp"
                     android:layout_height="24dp"
-                    android:src="@drawable/edit_black"
-                    android:background="@android:color/transparent"
-                    android:scaleType="fitCenter"
-                    android:adjustViewBounds="true"
-                    android:padding="2dp"
-                    android:onClick="showPickTime"
-                    android:contentDescription="@null"
-                    app:layout_constraintTop_toBottomOf="@id/firstDiv"
-                    app:layout_constraintEnd_toEndOf="parent"
                     android:layout_marginTop="12dp"
                     android:layout_marginEnd="16dp"
-                    />
+                    android:adjustViewBounds="true"
+                    android:background="@android:color/transparent"
+                    android:contentDescription="@null"
+                    android:onClick="showPickTime"
+                    android:padding="2dp"
+                    android:scaleType="fitCenter"
+                    android:src="@drawable/edit_black"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintTop_toBottomOf="@id/firstDiv" />
 
                 <TextView
                     android:id="@+id/timeMonday"
                     android:layout_width="wrap_content"
                     android:layout_height="24dp"
-                    android:gravity="center"
+                    android:layout_marginTop="12dp"
+                    android:layout_marginEnd="12dp"
                     android:fontFamily="@font/roboto_regular"
-                    android:textSize="16sp"
+                    android:gravity="center"
                     android:text="@string/Closed"
                     android:textColor="@color/primaryText"
-                    app:layout_constraintTop_toBottomOf="@id/firstDiv"
+                    android:textSize="16sp"
                     app:layout_constraintEnd_toStartOf="@id/editMonday"
-                    android:layout_marginTop="12dp"
-                    android:layout_marginEnd="12dp"/>
+                    app:layout_constraintTop_toBottomOf="@id/firstDiv" />
 
                 <View
                     android:id="@+id/mondayDiv"
@@ -607,68 +603,66 @@
                     android:layout_height="0.5dp"
                     android:layout_marginTop="12dp"
                     android:background="#707070"
-                    tools:layout_editor_absoluteX="16dp"
-                    app:layout_constraintTop_toBottomOf="@id/timeMonday"/>
+                    app:layout_constraintTop_toBottomOf="@id/timeMonday"
+                    tools:layout_editor_absoluteX="16dp" />
 
 
                 <CheckBox
                     android:id="@+id/checkTuesday"
+                    style="@style/Base.Theme.MaterialComponents.Light"
                     android:layout_width="24dp"
                     android:layout_height="24dp"
-                    android:onClick="lockUnlock"
-                    style="@style/Base.Theme.MaterialComponents.Light"
-                    app:layout_constraintTop_toBottomOf="@id/mondayDiv"
-                    app:layout_constraintStart_toStartOf="parent"
-                    android:layout_marginTop="12dp"
                     android:layout_marginStart="16dp"
-                    android:button="@null"
+                    android:layout_marginTop="12dp"
                     android:background="?android:attr/listChoiceIndicatorMultiple"
+                    android:button="@null"
                     android:gravity="center"
-                    />
+                    android:onClick="lockUnlock"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toBottomOf="@id/mondayDiv" />
 
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="24dp"
-                    android:text="@string/Tuesday"
-                    android:fontFamily="@font/roboto_regular"
-                    android:textColor="@color/primaryText"
-                    app:layout_constraintTop_toBottomOf="@id/mondayDiv"
+                    android:layout_marginStart="12dp"
                     android:layout_marginTop="12dp"
+                    android:fontFamily="@font/roboto_regular"
+                    android:gravity="center"
+                    android:text="@string/Tuesday"
+                    android:textColor="@color/primaryText"
                     android:textSize="16sp"
                     app:layout_constraintStart_toEndOf="@id/checkTuesday"
-                    android:layout_marginStart="12dp"
-                    android:gravity="center"/>
+                    app:layout_constraintTop_toBottomOf="@id/mondayDiv" />
 
                 <ImageButton
                     android:id="@+id/editTuesday"
                     android:layout_width="24dp"
                     android:layout_height="24dp"
-                    android:src="@drawable/edit_black"
-                    android:background="@android:color/transparent"
-                    android:scaleType="fitCenter"
-                    android:adjustViewBounds="true"
-                    android:padding="2dp"
-                    android:onClick="showPickTime"
-                    android:contentDescription="@null"
-                    app:layout_constraintTop_toBottomOf="@id/mondayDiv"
-                    app:layout_constraintEnd_toEndOf="parent"
                     android:layout_marginTop="12dp"
                     android:layout_marginEnd="16dp"
-                    />
+                    android:adjustViewBounds="true"
+                    android:background="@android:color/transparent"
+                    android:contentDescription="@null"
+                    android:onClick="showPickTime"
+                    android:padding="2dp"
+                    android:scaleType="fitCenter"
+                    android:src="@drawable/edit_black"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintTop_toBottomOf="@id/mondayDiv" />
 
                 <TextView
                     android:id="@+id/timeTuesday"
                     android:layout_width="wrap_content"
                     android:layout_height="24dp"
-                    android:gravity="center"
-                    android:fontFamily="@font/roboto_regular"
-                    android:textSize="16sp"
-                    android:text="@string/Closed"
-                    app:layout_constraintTop_toBottomOf="@id/mondayDiv"
-                    app:layout_constraintEnd_toStartOf="@id/editTuesday"
                     android:layout_marginTop="12dp"
+                    android:layout_marginEnd="12dp"
+                    android:fontFamily="@font/roboto_regular"
+                    android:gravity="center"
+                    android:text="@string/Closed"
                     android:textColor="@color/primaryText"
-                    android:layout_marginEnd="12dp"/>
+                    android:textSize="16sp"
+                    app:layout_constraintEnd_toStartOf="@id/editTuesday"
+                    app:layout_constraintTop_toBottomOf="@id/mondayDiv" />
 
                 <View
                     android:id="@+id/tuesdayDiv"
@@ -676,68 +670,66 @@
                     android:layout_height="0.5dp"
                     android:layout_marginTop="12dp"
                     android:background="#707070"
-                    tools:layout_editor_absoluteX="16dp"
-                    app:layout_constraintTop_toBottomOf="@id/timeTuesday"/>
+                    app:layout_constraintTop_toBottomOf="@id/timeTuesday"
+                    tools:layout_editor_absoluteX="16dp" />
 
 
                 <CheckBox
                     android:id="@+id/checkWednesday"
+                    style="@style/Base.Theme.MaterialComponents.Light"
                     android:layout_width="24dp"
                     android:layout_height="24dp"
-                    style="@style/Base.Theme.MaterialComponents.Light"
-                    app:layout_constraintTop_toBottomOf="@id/tuesdayDiv"
-                    app:layout_constraintStart_toStartOf="parent"
-                    android:layout_marginTop="12dp"
                     android:layout_marginStart="16dp"
-                    android:button="@null"
-                    android:onClick="lockUnlock"
+                    android:layout_marginTop="12dp"
                     android:background="?android:attr/listChoiceIndicatorMultiple"
+                    android:button="@null"
                     android:gravity="center"
-                    />
+                    android:onClick="lockUnlock"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toBottomOf="@id/tuesdayDiv" />
 
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="24dp"
-                    android:text="@string/Wednesday"
-                    android:fontFamily="@font/roboto_regular"
-                    android:textColor="@color/primaryText"
-                    app:layout_constraintTop_toBottomOf="@id/tuesdayDiv"
+                    android:layout_marginStart="12dp"
                     android:layout_marginTop="12dp"
+                    android:fontFamily="@font/roboto_regular"
+                    android:gravity="center"
+                    android:text="@string/Wednesday"
+                    android:textColor="@color/primaryText"
                     android:textSize="16sp"
                     app:layout_constraintStart_toEndOf="@id/checkWednesday"
-                    android:layout_marginStart="12dp"
-                    android:gravity="center"/>
+                    app:layout_constraintTop_toBottomOf="@id/tuesdayDiv" />
 
                 <ImageButton
                     android:id="@+id/editWednesday"
                     android:layout_width="24dp"
                     android:layout_height="24dp"
-                    android:src="@drawable/edit_black"
-                    android:background="@android:color/transparent"
-                    android:scaleType="fitCenter"
-                    android:adjustViewBounds="true"
-                    android:padding="2dp"
-                    android:onClick="showPickTime"
-                    android:contentDescription="@null"
-                    app:layout_constraintTop_toBottomOf="@id/tuesdayDiv"
-                    app:layout_constraintEnd_toEndOf="parent"
                     android:layout_marginTop="12dp"
                     android:layout_marginEnd="16dp"
-                    />
+                    android:adjustViewBounds="true"
+                    android:background="@android:color/transparent"
+                    android:contentDescription="@null"
+                    android:onClick="showPickTime"
+                    android:padding="2dp"
+                    android:scaleType="fitCenter"
+                    android:src="@drawable/edit_black"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintTop_toBottomOf="@id/tuesdayDiv" />
 
                 <TextView
                     android:id="@+id/timeWednesday"
                     android:layout_width="wrap_content"
                     android:layout_height="24dp"
-                    android:gravity="center"
+                    android:layout_marginTop="12dp"
+                    android:layout_marginEnd="12dp"
                     android:fontFamily="@font/roboto_regular"
-                    android:textSize="16sp"
+                    android:gravity="center"
                     android:text="@string/Closed"
                     android:textColor="@color/primaryText"
-                    app:layout_constraintTop_toBottomOf="@id/tuesdayDiv"
+                    android:textSize="16sp"
                     app:layout_constraintEnd_toStartOf="@id/editWednesday"
-                    android:layout_marginTop="12dp"
-                    android:layout_marginEnd="12dp"/>
+                    app:layout_constraintTop_toBottomOf="@id/tuesdayDiv" />
 
                 <View
                     android:id="@+id/wednesdayDiv"
@@ -745,67 +737,65 @@
                     android:layout_height="0.5dp"
                     android:layout_marginTop="12dp"
                     android:background="#707070"
-                    tools:layout_editor_absoluteX="16dp"
-                    app:layout_constraintTop_toBottomOf="@id/timeWednesday"/>
+                    app:layout_constraintTop_toBottomOf="@id/timeWednesday"
+                    tools:layout_editor_absoluteX="16dp" />
 
                 <CheckBox
                     android:id="@+id/checkThursday"
+                    style="@style/Base.Theme.MaterialComponents.Light"
                     android:layout_width="24dp"
                     android:layout_height="24dp"
-                    style="@style/Base.Theme.MaterialComponents.Light"
-                    app:layout_constraintTop_toBottomOf="@id/wednesdayDiv"
-                    app:layout_constraintStart_toStartOf="parent"
-                    android:layout_marginTop="12dp"
                     android:layout_marginStart="16dp"
-                    android:button="@null"
-                    android:onClick="lockUnlock"
+                    android:layout_marginTop="12dp"
                     android:background="?android:attr/listChoiceIndicatorMultiple"
+                    android:button="@null"
                     android:gravity="center"
-                    />
+                    android:onClick="lockUnlock"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toBottomOf="@id/wednesdayDiv" />
 
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="24dp"
-                    android:text="@string/Thursday"
-                    android:fontFamily="@font/roboto_regular"
-                    android:textColor="@color/primaryText"
-                    app:layout_constraintTop_toBottomOf="@id/wednesdayDiv"
+                    android:layout_marginStart="12dp"
                     android:layout_marginTop="12dp"
+                    android:fontFamily="@font/roboto_regular"
+                    android:gravity="center"
+                    android:text="@string/Thursday"
+                    android:textColor="@color/primaryText"
                     android:textSize="16sp"
                     app:layout_constraintStart_toEndOf="@id/checkThursday"
-                    android:layout_marginStart="12dp"
-                    android:gravity="center"/>
+                    app:layout_constraintTop_toBottomOf="@id/wednesdayDiv" />
 
                 <ImageButton
                     android:id="@+id/editThursday"
                     android:layout_width="24dp"
                     android:layout_height="24dp"
-                    android:src="@drawable/edit_black"
-                    android:background="@android:color/transparent"
-                    android:scaleType="fitCenter"
-                    android:adjustViewBounds="true"
-                    android:padding="2dp"
-                    android:onClick="showPickTime"
-                    android:contentDescription="@null"
-                    app:layout_constraintTop_toBottomOf="@id/wednesdayDiv"
-                    app:layout_constraintEnd_toEndOf="parent"
                     android:layout_marginTop="12dp"
                     android:layout_marginEnd="16dp"
-                    />
+                    android:adjustViewBounds="true"
+                    android:background="@android:color/transparent"
+                    android:contentDescription="@null"
+                    android:onClick="showPickTime"
+                    android:padding="2dp"
+                    android:scaleType="fitCenter"
+                    android:src="@drawable/edit_black"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintTop_toBottomOf="@id/wednesdayDiv" />
 
                 <TextView
                     android:id="@+id/timeThursday"
                     android:layout_width="wrap_content"
                     android:layout_height="24dp"
-                    android:gravity="center"
+                    android:layout_marginTop="12dp"
+                    android:layout_marginEnd="12dp"
                     android:fontFamily="@font/roboto_regular"
-                    android:textSize="16sp"
+                    android:gravity="center"
                     android:text="@string/Closed"
                     android:textColor="@color/primaryText"
-                    app:layout_constraintTop_toBottomOf="@id/wednesdayDiv"
+                    android:textSize="16sp"
                     app:layout_constraintEnd_toStartOf="@id/editThursday"
-                    android:layout_marginTop="12dp"
-                    android:layout_marginEnd="12dp"/>
+                    app:layout_constraintTop_toBottomOf="@id/wednesdayDiv" />
 
                 <View
                     android:id="@+id/thursdayDiv"
@@ -813,67 +803,65 @@
                     android:layout_height="0.5dp"
                     android:layout_marginTop="12dp"
                     android:background="#707070"
-                    tools:layout_editor_absoluteX="16dp"
-                    app:layout_constraintTop_toBottomOf="@id/timeThursday"/>
+                    app:layout_constraintTop_toBottomOf="@id/timeThursday"
+                    tools:layout_editor_absoluteX="16dp" />
 
                 <CheckBox
                     android:id="@+id/checkFriday"
+                    style="@style/Base.Theme.MaterialComponents.Light"
                     android:layout_width="24dp"
                     android:layout_height="24dp"
-                    style="@style/Base.Theme.MaterialComponents.Light"
-                    app:layout_constraintTop_toBottomOf="@id/thursdayDiv"
-                    app:layout_constraintStart_toStartOf="parent"
-                    android:layout_marginTop="12dp"
                     android:layout_marginStart="16dp"
-                    android:button="@null"
-                    android:onClick="lockUnlock"
+                    android:layout_marginTop="12dp"
                     android:background="?android:attr/listChoiceIndicatorMultiple"
+                    android:button="@null"
                     android:gravity="center"
-                    />
+                    android:onClick="lockUnlock"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toBottomOf="@id/thursdayDiv" />
 
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="24dp"
-                    android:text="@string/Friday"
-                    android:fontFamily="@font/roboto_regular"
-                    android:textColor="@color/primaryText"
-                    app:layout_constraintTop_toBottomOf="@id/thursdayDiv"
+                    android:layout_marginStart="12dp"
                     android:layout_marginTop="12dp"
+                    android:fontFamily="@font/roboto_regular"
+                    android:gravity="center"
+                    android:text="@string/Friday"
+                    android:textColor="@color/primaryText"
                     android:textSize="16sp"
                     app:layout_constraintStart_toEndOf="@id/checkFriday"
-                    android:layout_marginStart="12dp"
-                    android:gravity="center"/>
+                    app:layout_constraintTop_toBottomOf="@id/thursdayDiv" />
 
                 <ImageButton
                     android:id="@+id/editFriday"
                     android:layout_width="24dp"
                     android:layout_height="24dp"
-                    android:src="@drawable/edit_black"
-                    android:background="@android:color/transparent"
-                    android:scaleType="fitCenter"
-                    android:adjustViewBounds="true"
-                    android:padding="2dp"
-                    android:onClick="showPickTime"
-                    android:contentDescription="@null"
-                    app:layout_constraintTop_toBottomOf="@id/thursdayDiv"
-                    app:layout_constraintEnd_toEndOf="parent"
                     android:layout_marginTop="12dp"
                     android:layout_marginEnd="16dp"
-                    />
+                    android:adjustViewBounds="true"
+                    android:background="@android:color/transparent"
+                    android:contentDescription="@null"
+                    android:onClick="showPickTime"
+                    android:padding="2dp"
+                    android:scaleType="fitCenter"
+                    android:src="@drawable/edit_black"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintTop_toBottomOf="@id/thursdayDiv" />
 
                 <TextView
                     android:id="@+id/timeFriday"
                     android:layout_width="wrap_content"
                     android:layout_height="24dp"
-                    android:gravity="center"
+                    android:layout_marginTop="12dp"
+                    android:layout_marginEnd="12dp"
                     android:fontFamily="@font/roboto_regular"
-                    android:textSize="16sp"
+                    android:gravity="center"
                     android:text="@string/Closed"
                     android:textColor="@color/primaryText"
-                    app:layout_constraintTop_toBottomOf="@id/thursdayDiv"
+                    android:textSize="16sp"
                     app:layout_constraintEnd_toStartOf="@id/editFriday"
-                    android:layout_marginTop="12dp"
-                    android:layout_marginEnd="12dp"/>
+                    app:layout_constraintTop_toBottomOf="@id/thursdayDiv" />
 
                 <View
                     android:id="@+id/fridayDiv"
@@ -881,67 +869,65 @@
                     android:layout_height="0.5dp"
                     android:layout_marginTop="12dp"
                     android:background="#707070"
-                    tools:layout_editor_absoluteX="16dp"
-                    app:layout_constraintTop_toBottomOf="@id/timeFriday"/>
+                    app:layout_constraintTop_toBottomOf="@id/timeFriday"
+                    tools:layout_editor_absoluteX="16dp" />
 
                 <CheckBox
                     android:id="@+id/checkSaturday"
+                    style="@style/Base.Theme.MaterialComponents.Light"
                     android:layout_width="24dp"
                     android:layout_height="24dp"
-                    style="@style/Base.Theme.MaterialComponents.Light"
-                    app:layout_constraintTop_toBottomOf="@id/fridayDiv"
-                    app:layout_constraintStart_toStartOf="parent"
-                    android:layout_marginTop="12dp"
                     android:layout_marginStart="16dp"
-                    android:button="@null"
-                    android:onClick="lockUnlock"
+                    android:layout_marginTop="12dp"
                     android:background="?android:attr/listChoiceIndicatorMultiple"
+                    android:button="@null"
                     android:gravity="center"
-                    />
+                    android:onClick="lockUnlock"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toBottomOf="@id/fridayDiv" />
 
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="24dp"
-                    android:text="@string/Saturday"
-                    android:fontFamily="@font/roboto_regular"
-                    android:textColor="@color/primaryText"
-                    app:layout_constraintTop_toBottomOf="@id/fridayDiv"
+                    android:layout_marginStart="12dp"
                     android:layout_marginTop="12dp"
+                    android:fontFamily="@font/roboto_regular"
+                    android:gravity="center"
+                    android:text="@string/Saturday"
+                    android:textColor="@color/primaryText"
                     android:textSize="16sp"
                     app:layout_constraintStart_toEndOf="@id/checkSaturday"
-                    android:layout_marginStart="12dp"
-                    android:gravity="center"/>
+                    app:layout_constraintTop_toBottomOf="@id/fridayDiv" />
 
                 <ImageButton
                     android:id="@+id/editSaturday"
                     android:layout_width="24dp"
                     android:layout_height="24dp"
-                    android:src="@drawable/edit_black"
-                    android:background="@android:color/transparent"
-                    android:scaleType="fitCenter"
-                    android:adjustViewBounds="true"
-                    android:padding="2dp"
-                    android:onClick="showPickTime"
-                    android:contentDescription="@null"
-                    app:layout_constraintTop_toBottomOf="@id/fridayDiv"
-                    app:layout_constraintEnd_toEndOf="parent"
                     android:layout_marginTop="12dp"
                     android:layout_marginEnd="16dp"
-                    />
+                    android:adjustViewBounds="true"
+                    android:background="@android:color/transparent"
+                    android:contentDescription="@null"
+                    android:onClick="showPickTime"
+                    android:padding="2dp"
+                    android:scaleType="fitCenter"
+                    android:src="@drawable/edit_black"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintTop_toBottomOf="@id/fridayDiv" />
 
                 <TextView
                     android:id="@+id/timeSaturday"
                     android:layout_width="wrap_content"
                     android:layout_height="24dp"
-                    android:gravity="center"
+                    android:layout_marginTop="12dp"
+                    android:layout_marginEnd="12dp"
                     android:fontFamily="@font/roboto_regular"
-                    android:textSize="16sp"
+                    android:gravity="center"
                     android:text="@string/Closed"
                     android:textColor="@color/primaryText"
-                    app:layout_constraintTop_toBottomOf="@id/fridayDiv"
+                    android:textSize="16sp"
                     app:layout_constraintEnd_toStartOf="@id/editSaturday"
-                    android:layout_marginTop="12dp"
-                    android:layout_marginEnd="12dp"/>
+                    app:layout_constraintTop_toBottomOf="@id/fridayDiv" />
 
                 <View
                     android:id="@+id/saturdayDiv"
@@ -949,81 +935,90 @@
                     android:layout_height="0.5dp"
                     android:layout_marginTop="12dp"
                     android:background="#707070"
-                    tools:layout_editor_absoluteX="16dp"
-                    app:layout_constraintTop_toBottomOf="@id/timeSaturday"/>
+                    app:layout_constraintTop_toBottomOf="@id/timeSaturday"
+                    tools:layout_editor_absoluteX="16dp" />
 
                 <CheckBox
                     android:id="@+id/checkSunday"
+                    style="@style/Base.Theme.MaterialComponents.Light"
                     android:layout_width="24dp"
                     android:layout_height="24dp"
-                    style="@style/Base.Theme.MaterialComponents.Light"
-                    app:layout_constraintTop_toBottomOf="@id/saturdayDiv"
-                    app:layout_constraintStart_toStartOf="parent"
-                    android:layout_marginTop="12dp"
                     android:layout_marginStart="16dp"
-                    android:button="@null"
-                    android:onClick="lockUnlock"
+                    android:layout_marginTop="12dp"
                     android:background="?android:attr/listChoiceIndicatorMultiple"
+                    android:button="@null"
                     android:gravity="center"
-                    />
+                    android:onClick="lockUnlock"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toBottomOf="@id/saturdayDiv" />
 
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="24dp"
-                    android:text="@string/Sunday"
-                    android:fontFamily="@font/roboto_regular"
-                    android:textColor="@color/primaryText"
-                    app:layout_constraintTop_toBottomOf="@id/saturdayDiv"
+                    android:layout_marginStart="12dp"
                     android:layout_marginTop="12dp"
+                    android:fontFamily="@font/roboto_regular"
+                    android:gravity="center"
+                    android:text="@string/Sunday"
+                    android:textColor="@color/primaryText"
                     android:textSize="16sp"
                     app:layout_constraintStart_toEndOf="@id/checkSunday"
-                    android:layout_marginStart="12dp"
-                    android:gravity="center"/>
+                    app:layout_constraintTop_toBottomOf="@id/saturdayDiv" />
 
                 <ImageButton
                     android:id="@+id/editSunday"
                     android:layout_width="24dp"
                     android:layout_height="24dp"
-                    android:src="@drawable/edit_black"
-                    android:background="@android:color/transparent"
-                    android:scaleType="fitCenter"
-                    android:adjustViewBounds="true"
-                    android:padding="2dp"
-                    android:onClick="showPickTime"
-                    android:contentDescription="@null"
-                    app:layout_constraintTop_toBottomOf="@id/saturdayDiv"
-                    app:layout_constraintEnd_toEndOf="parent"
                     android:layout_marginTop="12dp"
                     android:layout_marginEnd="16dp"
-                    />
+                    android:adjustViewBounds="true"
+                    android:background="@android:color/transparent"
+                    android:contentDescription="@null"
+                    android:onClick="showPickTime"
+                    android:padding="2dp"
+                    android:scaleType="fitCenter"
+                    android:src="@drawable/edit_black"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintTop_toBottomOf="@id/saturdayDiv" />
 
                 <TextView
                     android:id="@+id/timeSunday"
                     android:layout_width="wrap_content"
                     android:layout_height="24dp"
-                    android:gravity="center"
+                    android:layout_marginTop="12dp"
+                    android:layout_marginEnd="12dp"
                     android:fontFamily="@font/roboto_regular"
-                    android:textSize="16sp"
+                    android:gravity="center"
                     android:text="@string/Closed"
                     android:textColor="@color/primaryText"
-                    app:layout_constraintTop_toBottomOf="@id/saturdayDiv"
+                    android:textSize="16sp"
                     app:layout_constraintEnd_toStartOf="@id/editSunday"
-                    android:layout_marginTop="12dp"
-                    android:layout_marginEnd="12dp"/>
+                    app:layout_constraintTop_toBottomOf="@id/saturdayDiv" />
 
                 <View
                     android:id="@+id/sundayDiv"
                     android:layout_width="match_parent"
                     android:layout_height="0.5dp"
                     android:layout_marginTop="12dp"
+                    android:layout_marginBottom="20dp"
                     android:background="#707070"
-                    tools:layout_editor_absoluteX="16dp"
-                    app:layout_constraintTop_toBottomOf="@id/timeSunday"
                     app:layout_constraintBottom_toBottomOf="parent"
-                    android:layout_marginBottom="20dp"/>
+                    app:layout_constraintTop_toBottomOf="@id/timeSunday"
+                    tools:layout_editor_absoluteX="16dp" />
 
             </android.support.constraint.ConstraintLayout>
 
+            <android.support.design.button.MaterialButton
+                android:id="@+id/logout_button"
+                android:layout_width="116dp"
+                android:layout_height="58dp"
+                android:backgroundTint="#FF0000"
+                android:text="@string/logout"
+                app:cornerRadius="140dp"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/table"
+                />
 
         </android.support.constraint.ConstraintLayout>
 
