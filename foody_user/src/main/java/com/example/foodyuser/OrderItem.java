@@ -6,6 +6,9 @@ public class OrderItem {
     private String orderName;
     private float price;
 
+    public OrderItem() {
+    }
+
     public OrderItem(int pieces, String orderName, float price){
         this.price = price;
         this.orderName = orderName;

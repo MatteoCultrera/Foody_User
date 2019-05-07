@@ -40,6 +40,7 @@
             android:layout_marginStart="16dp"
             android:background="@android:color/transparent"
             android:src="@drawable/back_white"
+            android:contentDescription="@null"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent"/>
@@ -96,7 +97,6 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:fontFamily="@font/roboto_bold"
-            android:text="36.50 €"
             android:textSize="30sp"
             android:textColor="@color/colorAccent"
             app:layout_constraintTop_toTopOf="parent"
@@ -105,6 +105,7 @@
             android:layout_marginEnd="24dp"/>
 
         <android.support.design.button.MaterialButton
+            android:id="@+id/placeOrder"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             app:cornerRadius="30dp"

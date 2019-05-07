@@ -10,18 +10,17 @@ class Reservation {
         DONE,
     }
 
-    private final String reservationID;
-    private final ArrayList<Dish> dishesOrdered;
+    private String reservationID;
+    private ArrayList<Dish> dishesOrdered;
     private boolean accepted;
     private prepStatus preparationStatus;
-    private final String userName;
-    private final String userPhone;
-    private final String userLevel;
-    private final String userEmail;
-    private final String userAddress;
-
-    private final String resNote;
-    private final String orderTime;
+    private String userName;
+    private String userPhone;
+    private String userLevel;
+    private String userEmail;
+    private String userAddress;
+    private String resNote;
+    private String orderTime;
     private int toBePrepared;
 
     Reservation(String identifier, ArrayList<Dish> dishes, prepStatus preparationStatus, boolean accepted,
@@ -45,6 +44,10 @@ class Reservation {
         return reservationID;
     }
 
+    void setDishesOrdered(ArrayList<Dish> dishesOrdered){
+        this.dishesOrdered = dishesOrdered;
+    }
+
     ArrayList<Dish> getDishesOrdered() {
         return dishesOrdered;
     }
@@ -63,10 +66,10 @@ class Reservation {
                 ret = "Done";
                 break;
             case DOING:
-                ret="Doing";
+                ret = "Doing";
                 break;
             default:
-                ret="Status Unknown";
+                ret = "Status Unknown";
                 break;
         }
         return ret;
