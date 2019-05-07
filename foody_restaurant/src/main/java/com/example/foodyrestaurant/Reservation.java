@@ -10,18 +10,18 @@ class Reservation {
         DONE,
     }
 
-    private final String reservationID;
-    private final ArrayList<Dish> dishesOrdered;
+    private String reservationID;
+    private ArrayList<Dish> dishesOrdered;
     private boolean accepted;
     private prepStatus preparationStatus;
-    private final String userName;
-    private final String userPhone;
-    private final String userLevel;
-    private final String userEmail;
-    private final String userAddress;
-
-    private final String resNote;
-    private final String orderTime;
+    private String userName;
+    private String userPhone;
+    private String userLevel;
+    private String userEmail;
+    private String userAddress;
+    private String userUID;
+    private String resNote;
+    private String orderTime;
     private int toBePrepared;
 
     Reservation(String identifier, ArrayList<Dish> dishes, prepStatus preparationStatus, boolean accepted,
@@ -126,5 +126,13 @@ class Reservation {
 
     void setToBePrepared(int toBePrepared) {
         this.toBePrepared = toBePrepared;
+    }
+
+    public String getUserUID() {
+        return userUID;
+    }
+
+    public void setUserUID(String userUID) {
+        this.userUID = userUID;
     }
 }

@@ -16,14 +16,21 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.LinearLayout;
 import android.widget.TextView;
+import android.widget.Toast;
+
+import com.google.android.gms.tasks.OnFailureListener;
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 
 public class RVAdapterRes extends RecyclerView.Adapter<RVAdapterRes.CardViewHolder>{
 
     private final List<Reservation> reservations;
-
     RVAdapterRes(List<Reservation> reservations){
         this.reservations = reservations;
     }

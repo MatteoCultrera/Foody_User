@@ -21,6 +21,7 @@ class Reservation {
     private String userAddress;
     private String resNote;
     private String orderTime;
+    private String userUID;
     private int toBePrepared;
 
     Reservation(String identifier, ArrayList<Dish> dishes, prepStatus preparationStatus, boolean accepted,
@@ -130,4 +131,5 @@ class Reservation {
     void setToBePrepared(int toBePrepared) {
         this.toBePrepared = toBePrepared;
     }
+
 }

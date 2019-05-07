@@ -35,6 +35,5 @@
     <string name="delete_filter">Delete filters</string>
 
     <string name="order_file_name" translatable="false">ordersFileName</string>
-    <string name="error_order">Cannot satisfy your request</string>
     <string name="place_order">PLACE ORDER</string>
 </resources>

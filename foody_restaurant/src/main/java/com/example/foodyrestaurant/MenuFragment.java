@@ -1,6 +1,7 @@
 package com.example.foodyrestaurant;
 
 import android.content.Intent;
+import android.net.Uri;
 import android.os.Bundle;
 import android.os.Environment;
 import android.support.annotation.NonNull;
@@ -14,6 +15,8 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 import com.bumptech.glide.Glide;
+import com.google.android.gms.tasks.OnFailureListener;
+import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.DataSnapshot;
@@ -21,6 +24,8 @@ import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
+import com.google.firebase.storage.FirebaseStorage;
+import com.google.firebase.storage.StorageReference;
 
 import java.io.File;
 import java.util.ArrayList;
@@ -77,17 +82,33 @@ public class MenuFragment extends Fragment {
         firebaseAuth = FirebaseAuth.getInstance();
         user = firebaseAuth.getCurrentUser();
         FloatingActionButton editMode = view.findViewById(R.id.edit_mode);
-        ImageView profileImage = view.findViewById(R.id.mainImage);
+        final ImageView profileImage = view.findViewById(R.id.mainImage);
         ImageView profileShadow = view.findViewById(R.id.shadow);
-
+        StorageReference mStorageRef = FirebaseStorage.getInstance().getReference();
+        mStorageRef.child("images/restaurants/"+ user.getUid() +"_profile.jpeg").getDownloadUrl()
+                .addOnSuccessListener(new OnSuccessListener<Uri>() {
+                    @Override
+                    public void onSuccess(Uri uri) {
+                        Glide
+                                .with(profileImage.getContext())
+                                .load(uri)
+                                .into(profileImage);
+                    }
+                })
+                .addOnFailureListener(new OnFailureListener() {
+                    @Override
+                    public void onFailure(@NonNull Exception e) {
+                        Glide
+                                .with(profileImage.getContext())
+                                .load(R.drawable.profile_placeholder)
+                                .into(profileImage);
+                    }
+                });
         Glide
                 .with(this)
                 .load(R.drawable.shadow)
                 .into(profileShadow);
-        Glide
-                .with(this)
-                .load(R.drawable.profile_placeholder)
-                .into(profileImage);
+
 
         DatabaseReference database = FirebaseDatabase.getInstance().getReference();
         DatabaseReference ref = database.child("restaurantsMenu").child(user.getUid());

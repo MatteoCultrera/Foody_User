@@ -16,13 +16,23 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.LinearLayout;
 import android.widget.TextView;
+import android.widget.Toast;
+
+import com.google.android.gms.tasks.OnFailureListener;
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 
 public class RVAdapterRes extends RecyclerView.Adapter<RVAdapterRes.CardViewHolder>{
 
     private final List<Reservation> reservations;
+    private FirebaseAuth firebaseAuth;
+    private FirebaseUser firebaseUser;
 
     RVAdapterRes(List<Reservation> reservations){
         this.reservations = reservations;
@@ -37,6 +47,8 @@ public class RVAdapterRes extends RecyclerView.Adapter<RVAdapterRes.CardViewHold
     @Override
     public CardViewHolder onCreateViewHolder(@NonNull ViewGroup viewGroup, int i) {
         View v = LayoutInflater.from(viewGroup.getContext()).inflate(R.layout.reservation_card_display, viewGroup, false);
+        firebaseAuth = FirebaseAuth.getInstance();
+        firebaseUser = firebaseAuth.getCurrentUser();
         return new CardViewHolder(v);
     }
 
@@ -112,6 +124,40 @@ public class RVAdapterRes extends RecyclerView.Adapter<RVAdapterRes.CardViewHold
                 reservations.get(i).setAccepted(true);
                 reservations.get(i).setPreparationStatus(Reservation.prepStatus.DOING);
                 pvh.status.setText(reservations.get(i).getPreparationStatusString());
+
+                DatabaseReference database = FirebaseDatabase.getInstance().getReference()
+                        .child("reservations").child("users").child(reservations.get(i).getUserUID());
+                HashMap<String, Object> child = new HashMap<>();
+                ArrayList<OrderItem> dishes = new ArrayList<>();
+                for(Dish d : reservations.get(i).getDishesOrdered()){
+                    OrderItem order = new OrderItem();
+                    order.setPieces(d.getQuantity());
+                    order.setOrderName(d.getDishName());
+                    dishes.add(order);
+                }
+                String reservationID = reservations.get(i).getUserUID() + reservations.get(i).getReservationID();
+                ReservationDBUser reservation = new ReservationDBUser(reservationID,
+                        firebaseUser.getUid(), dishes, true, null, null);
+                child.put(reservationID, reservation);
+                database.updateChildren(child).addOnFailureListener(new OnFailureListener() {
+                    @Override
+                    public void onFailure(@NonNull Exception e) {
+                        Toast.makeText(context, R.string.error_order, Toast.LENGTH_SHORT).show();
+                    }
+                });
+
+                DatabaseReference databaseRest = FirebaseDatabase.getInstance().getReference()
+                        .child("reservations").child("restaurant").child(firebaseUser.getUid());
+                HashMap<String, Object> childRest = new HashMap<>();
+                ReservationDBRestaurant reservationRest = new ReservationDBRestaurant(reservationID,
+                        "", dishes, true, null, reservations.get(i).getUserPhone(), reservations.get(i).getUserName(), null, null);
+                childRest.put(reservationID, reservationRest);
+                databaseRest.updateChildren(childRest).addOnFailureListener(new OnFailureListener() {
+                    @Override
+                    public void onFailure(@NonNull Exception e) {
+                        Toast.makeText(context, R.string.error_order, Toast.LENGTH_SHORT).show();
+                    }
+                });
             }
         });
 

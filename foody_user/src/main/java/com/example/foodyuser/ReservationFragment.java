@@ -100,6 +100,12 @@ public class ReservationFragment extends Fragment {
                             sharedPreferences.getString("email", ""), sharedPreferences.getString("address", ""));
                     reservations.add(reservation);
                 }
+                reservations.sort(new Comparator<Reservation>() {
+                    @Override
+                    public int compare(Reservation o1, Reservation o2) {
+                        return o1.getOrderTime().compareTo(o2.getOrderTime());
+                    }
+                });
                 RVAdapterRes adapter = new RVAdapterRes(reservations);
                 reservation.setAdapter(adapter);
             }
@@ -107,7 +113,14 @@ public class ReservationFragment extends Fragment {
             @Override
             public void onCancelled(@NonNull DatabaseError databaseError) {
                 reservations = jsonHandler.getReservations(file);
-
+                reservations.sort(new Comparator<Reservation>() {
+                    @Override
+                    public int compare(Reservation o1, Reservation o2) {
+                        return o1.getOrderTime().compareTo(o2.getOrderTime());
+                    }
+                });
+                RVAdapterRes adapter = new RVAdapterRes(reservations);
+                reservation.setAdapter(adapter);
             }
         });
     }
