@@ -397,11 +397,11 @@ public class Setup extends AppCompatActivity {
             profilePicture.setImageURI(Uri.fromFile(f));
 
 
-        name.setText(sharedPref.getString("name", getResources().getString(R.string.name_hint)));
-        email.setText(sharedPref.getString("email", getResources().getString(R.string.email_hint)));
-        address.setText(sharedPref.getString("address", getResources().getString(R.string.address_hint)));
-        phoneNumber.setText(sharedPref.getString("phoneNumber", getResources().getString(R.string.phone_hint)));
-        city.setText(sharedPref.getString("city", getResources().getString(R.string.city_hint)));
+        name.setText(sharedPref.getString("name", ""));
+        email.setText(sharedPref.getString("email", ""));
+        address.setText(sharedPref.getString("address", ""));
+        phoneNumber.setText(sharedPref.getString("phoneNumber", ""));
+        city.setText(sharedPref.getString("city",""));
         monday.setText(sharedPref.getString("monTime", getResources().getString(R.string.free)));
         tuesday.setText(sharedPref.getString("tueTime", getResources().getString(R.string.free)));
         wednesday.setText(sharedPref.getString("wedTime", getResources().getString(R.string.free)));
