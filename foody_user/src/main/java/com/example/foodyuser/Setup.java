@@ -30,6 +30,7 @@ import android.widget.ListAdapter;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.bumptech.glide.Glide;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.firebase.auth.FirebaseAuth;
@@ -303,10 +304,33 @@ public class Setup extends AppCompatActivity {
         errorAddress.setText("");
         errorBio.setText("");
 
-        File f = new File(storageDir, PROFILE_IMAGE);
+        final String PROFILE_IMAGE = "ProfileImage.jpg";
+        final File f = new File(storageDir, PROFILE_IMAGE);
 
-        if(f.exists())
+        if(f.exists()){
             profilePicture.setImageURI(Uri.fromFile(f));
+        } else{
+            StorageReference mStorageRef = FirebaseStorage.getInstance().getReference();
+            mStorageRef.child("images/users/" + firebaseAuth.getCurrentUser().getUid() + ".jpeg").getDownloadUrl()
+                    .addOnSuccessListener(new OnSuccessListener<Uri>() {
+                        @Override
+                        public void onSuccess(Uri uri) {
+                            Glide
+                                    .with(profilePicture.getContext())
+                                    .load(uri)
+                                    .into(profilePicture);
+                            //TODO: salvare l'uri qua nel path dell'immagine profilo
+                        }
+                    }).addOnFailureListener(new OnFailureListener() {
+                @Override
+                public void onFailure(@NonNull Exception e) {
+                    Glide
+                            .with(profilePicture.getContext())
+                            .load(R.drawable.profile_placeholder)
+                            .into(profilePicture);
+                }
+            });
+        }
 
         name.setText(sharedPref.getString("name", ""));
         email.setText(sharedPref.getString("email", ""));
