@@ -12,4 +12,8 @@
     <string name="profile">Profile</string>
     <string name="orders">Reservations</string>
     <string name="notes">Notes:</string>
+
+    <string name="delivering_order">Delivering Order</string>
+    <string name="pending_orders"> Pending Orders</string>
+    <string name="no_order_deliver">No Delivering Order</string>
 </resources>
