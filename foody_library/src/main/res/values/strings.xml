@@ -87,4 +87,5 @@
     <string name="empty_password">Password field is empty</string>
     <string name="empty_username">Username field is empty</string>
     <string name="logout">Logout</string>
+    <string name="error_order">Cannot satisfy your request</string>
 </resources>

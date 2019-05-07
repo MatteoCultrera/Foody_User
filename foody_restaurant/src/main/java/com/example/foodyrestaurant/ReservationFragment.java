@@ -80,21 +80,20 @@ public class ReservationFragment extends Fragment {
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
                 reservations = new ArrayList<>();
                 for (DataSnapshot ds : dataSnapshot.getChildren()) {
-                    Log.d("SWSW", ds.getKey());
                     ReservationDBRestaurant reservationDB = ds.getValue(ReservationDBRestaurant.class);
                     ArrayList<Dish> dishes = new ArrayList<>();
                     for(OrderItem o : reservationDB.getDishesOrdered()){
-                        Log.d("SWSW", o.getOrderName());
                         Dish dish = new Dish();
                         dish.setQuantity(o.getPieces());
                         dish.setDishName(o.getOrderName());
                         dishes.add(dish);
                     }
-                    String orderID = reservationDB.getReservationID().substring(27);
+                    String orderID = reservationDB.getReservationID().substring(28);
                     Reservation reservation = new Reservation(orderID, dishes, Reservation.prepStatus.PENDING,
-                            reservationDB.isAccepted(), reservationDB.getOrderTime(), sharedPreferences.getString("name", ""),
-                            sharedPreferences.getString("phoneNumber", ""), reservationDB.getResNote(), "",
+                            reservationDB.isAccepted(), reservationDB.getOrderTime(), reservationDB.getNameUser(),
+                            reservationDB.getNumberPhone(), reservationDB.getResNote(), "",
                             sharedPreferences.getString("email", ""), sharedPreferences.getString("address", ""));
+                    reservation.setUserUID(reservationDB.getReservationID().substring(0, 28));
                     reservations.add(reservation);
                 }
 
