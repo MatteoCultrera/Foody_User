@@ -833,10 +833,11 @@ public class Setup extends AppCompatActivity {
             saveBitmap(bitmap, profile.getPath());
 
             FirebaseStorage storage;
+            FirebaseUser user = firebaseAuth.getCurrentUser();
             StorageReference storageReference;
             storage = FirebaseStorage.getInstance();
             storageReference = storage.getReference();
-            StorageReference ref = storageReference.child("images/RossoPomodoro_profile.jpeg");
+            StorageReference ref = storageReference.child("images/restaurant/"+ user.getUid() +"_profile.jpeg");
             ref.putFile(Uri.fromFile(new File(storageDir, PROFILE_IMAGE)))
                     .addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
                         @Override
