@@ -73,11 +73,13 @@ public class RestaurantsList extends AppCompatActivity {
                     Restaurant restaurant = new Restaurant();
                     for (DataSnapshot ds1 : ds.getChildren()) {
                         restaurant = ds1.getValue(Restaurant.class);
-                        ArrayList<String> types = new ArrayList<>();
-                        for (Integer i : restaurant.getCuisineTypes()) {
-                            types.add(foodCategories[i]);
+                        if (restaurant.getCuisineTypes() != null) {
+                            ArrayList<String> types = new ArrayList<>();
+                            for (Integer i : restaurant.getCuisineTypes()) {
+                                types.add(foodCategories[i]);
+                            }
+                            restaurant.setCuisines(types);
                         }
-                        restaurant.setCuisines(types);
                         restaurants.add(restaurant);
                         restName.add(restaurant);
                         restCuisine.add(restaurant);
