@@ -24,6 +24,8 @@ import android.widget.TextView;
 import com.bumptech.glide.Glide;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
@@ -38,19 +40,21 @@ import java.util.ArrayList;
 
 public class RestaurantShow extends AppCompatActivity {
 
-    TextView deliveryPrice;
-    Toolbar toolbar;
-    ImageView image;
-    Restaurant thisRestaurant;
-    ArrayList<Card> cards;
-    RecyclerView menu;
-    File documentsDir;
-    JsonHandler handlerOrders;
-    ArrayList<OrderItem> orders;
-    RVAdapterMenu menuAdapter;
-    ConstraintLayout totalLayout;
-    TextView total;
-    int shortAnimDuration;
+    private TextView deliveryPrice;
+    private Toolbar toolbar;
+    private ImageView image;
+    private Restaurant thisRestaurant;
+    private ArrayList<Card> cards;
+    private RecyclerView menu;
+    private File documentsDir;
+    private JsonHandler handlerOrders;
+    private ArrayList<OrderItem> orders;
+    private RVAdapterMenu menuAdapter;
+    private ConstraintLayout totalLayout;
+    private TextView total;
+    private int shortAnimDuration;
+    private FirebaseAuth firebaseAuth;
+    private FirebaseUser firebaseUser;
 
     private boolean unchanged;
     private String dialogCode = "ok";
@@ -70,7 +74,8 @@ public class RestaurantShow extends AppCompatActivity {
     private boolean init(){
         unchanged = true;
         shortAnimDuration = getResources().getInteger(android.R.integer.config_shortAnimTime);
-
+        firebaseAuth = FirebaseAuth.getInstance();
+        firebaseUser = firebaseAuth.getCurrentUser();
         toolbar = findViewById(R.id.toolbar);
         totalLayout = findViewById(R.id.price_show_layout);
         total = findViewById(R.id.price_show);
@@ -168,9 +173,8 @@ public class RestaurantShow extends AppCompatActivity {
             public void onClick(View v) {
                 //Launch order Activity
                 Intent intent = new Intent(totalLayout.getContext(), Order.class);
-
+                intent.putExtra("restaurantID", firebaseUser.getUid());
                 startActivity(intent);
-
             }
         });
 
