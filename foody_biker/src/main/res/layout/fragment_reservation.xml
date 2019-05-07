@@ -1,0 +1,344 @@
+<?xml version="1.0" encoding="utf-8"?>
+<android.support.constraint.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:background="@color/dark_white_background">
+
+    <android.support.constraint.ConstraintLayout
+        android:id="@+id/constraint"
+        android:layout_width="match_parent"
+        android:layout_height="80dp"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        android:background="@drawable/toolbar_reservation_background"
+        >
+
+        <TextView
+            android:id="@+id/string_up"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Delivering Order"
+            android:fontFamily="@font/roboto_bold"
+            android:textColor="@color/whiteText"
+            android:textSize="18sp"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            android:layout_marginTop="16dp"
+            />
+
+        <TextView
+            android:id="@+id/string_down"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:fontFamily="@font/roboto_regular"
+            android:text="10 Pending Orders"
+            android:textColor="@color/whiteText"
+            android:textSize="16sp"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/string_up" />
+
+    </android.support.constraint.ConstraintLayout>
+
+    <android.support.v7.widget.CardView
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/constraint"
+        app:layout_constraintBottom_toBottomOf="parent"
+        android:layout_marginTop="8dp"
+        android:layout_marginBottom="8dp"
+        android:layout_marginStart="16dp"
+        android:layout_marginEnd="16dp"
+        app:cardCornerRadius="16dp"
+        android:elevation="8dp">
+
+        <android.support.constraint.ConstraintLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            >
+
+            <LinearLayout
+                android:orientation="vertical"
+                android:layout_width="0dp"
+                android:layout_height="0dp"
+                android:elevation="2dp"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintTop_toTopOf="@id/vertical_line"
+                app:layout_constraintBottom_toBottomOf="@id/vertical_line">
+
+
+                <android.support.constraint.ConstraintLayout
+                    android:layout_weight="1"
+                    android:id="@+id/pickup_layout"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="10dp"
+                    android:layout_marginEnd="8dp"
+                    android:elevation="2dp">
+
+                    <TextView
+                        android:id="@+id/pickup_time"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="12:30"
+                        android:textSize="20sp"
+                        app:layout_constraintBottom_toBottomOf="@+id/pickup_to"
+                        app:layout_constraintStart_toStartOf="parent"
+                        app:layout_constraintTop_toTopOf="@id/pickup_to" />
+
+                    <TextView
+                        android:id="@+id/pickup_to"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginStart="26dp"
+                        android:fontFamily="@font/roboto_bold"
+                        android:text="Pickup Order"
+                        android:textColor="@color/colorAccent"
+                        android:textSize="20sp"
+                        app:layout_constraintStart_toEndOf="@id/pickup_time"
+                        app:layout_constraintTop_toTopOf="parent" />
+
+                    <TextView
+                        android:id="@+id/pickup_restaurant_name"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_marginStart="10dp"
+                        android:layout_marginTop="4dp"
+                        android:fontFamily="@font/roboto_regular"
+                        android:text="RossoPomodoro"
+                        android:textColor="@color/primaryText"
+                        android:textSize="16sp"
+                        app:layout_constraintEnd_toEndOf="parent"
+                        app:layout_constraintHorizontal_bias="0.0"
+                        app:layout_constraintStart_toStartOf="@id/pickup_to"
+                        app:layout_constraintTop_toBottomOf="@id/pickup_to" />
+
+                    <TextView
+                        android:id="@+id/pickup_restaurant_address"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="4dp"
+                        android:layout_marginEnd="8dp"
+                        android:fontFamily="@font/roboto_regular"
+                        android:text="Via Pia oid soin dson idson oive 15, Torino, TO"
+                        android:textColor="@color/secondaryText"
+                        android:textSize="14sp"
+                        app:layout_constraintEnd_toEndOf="parent"
+                        app:layout_constraintHorizontal_bias="0.0"
+                        app:layout_constraintStart_toStartOf="@+id/pickup_restaurant_name"
+                        app:layout_constraintTop_toBottomOf="@id/pickup_restaurant_name" />
+
+                    <View
+                        android:layout_width="9dp"
+                        android:layout_height="9dp"
+                        android:layout_marginStart="8dp"
+                        android:layout_marginEnd="8dp"
+                        android:background="@drawable/toolbar_circle"
+                        app:layout_constraintBottom_toBottomOf="@+id/pickup_time"
+                        app:layout_constraintEnd_toStartOf="@+id/pickup_to"
+                        app:layout_constraintStart_toEndOf="@+id/pickup_time"
+                        app:layout_constraintTop_toTopOf="@+id/pickup_time" />
+
+                    <LinearLayout
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="8dp"
+                        android:background="@drawable/button_call"
+                        app:layout_constraintStart_toStartOf="@+id/pickup_restaurant_address"
+                        app:layout_constraintTop_toBottomOf="@+id/pickup_restaurant_address">
+
+                        <ImageView
+                            android:layout_width="18dp"
+                            android:layout_height="18dp"
+                            android:layout_marginStart="14dp"
+                            android:layout_marginTop="10dp"
+                            android:layout_marginEnd="9.1dp"
+                            android:layout_marginBottom="10dp"
+                            android:src="@drawable/phone_green" />
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_marginTop="10dp"
+                            android:layout_marginEnd="15dp"
+                            android:layout_marginBottom="10dp"
+                            android:fontFamily="@font/roboto_regular"
+                            android:text="CALL RESTAURANT"
+                            android:textColor="#10858D"
+                            android:textSize="14sp" />
+                    </LinearLayout>
+
+
+                </android.support.constraint.ConstraintLayout>
+
+                <android.support.constraint.ConstraintLayout
+                    android:id="@+id/deliver_layout"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="10dp"
+                    android:layout_marginEnd="8dp"
+                    android:elevation="2dp"
+                    android:layout_weight="1"
+                    app:layout_constraintBottom_toBottomOf="@id/vertical_line"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintHorizontal_bias="0.0"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toTopOf="@+id/vertical_line"
+                    app:layout_constraintVertical_bias="0.72">
+
+                    <TextView
+                        android:id="@+id/deliver_time"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="12:30"
+                        android:textSize="20sp"
+                        app:layout_constraintBottom_toBottomOf="@+id/deliver_to"
+                        app:layout_constraintStart_toStartOf="parent"
+                        app:layout_constraintTop_toTopOf="@id/deliver_to" />
+
+                    <TextView
+                        android:id="@+id/deliver_to"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginStart="26dp"
+                        android:fontFamily="@font/roboto_bold"
+                        android:text="Deliver To"
+                        android:textColor="@color/colorPrimaryDark"
+                        android:textSize="20sp"
+                        app:layout_constraintStart_toEndOf="@id/deliver_time"
+                        app:layout_constraintTop_toTopOf="parent" />
+
+                    <de.hdodenhof.circleimageview.CircleImageView
+                        android:id="@+id/deliver_image"
+                        android:layout_width="50dp"
+                        android:layout_height="50dp"
+                        android:layout_marginTop="4dp"
+                        android:layout_marginBottom="8dp"
+                        android:src="@drawable/profile_placeholder"
+                        app:layout_constraintBottom_toTopOf="@+id/linearLayout"
+                        app:layout_constraintEnd_toEndOf="parent"
+                        app:layout_constraintHorizontal_bias="0.0"
+                        app:layout_constraintStart_toStartOf="@id/deliver_to"
+                        app:layout_constraintTop_toBottomOf="@id/deliver_to" />
+
+
+                    <TextView
+                        android:id="@+id/deliver_user_name"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_marginStart="10dp"
+                        android:layout_marginTop="4dp"
+                        android:fontFamily="@font/roboto_regular"
+                        android:text="Simona Currà"
+                        android:textColor="@color/primaryText"
+                        android:textSize="16sp"
+                        app:layout_constraintEnd_toEndOf="parent"
+                        app:layout_constraintHorizontal_bias="0.0"
+                        app:layout_constraintStart_toEndOf="@id/deliver_image"
+                        app:layout_constraintTop_toBottomOf="@id/deliver_to" />
+
+                    <TextView
+                        android:id="@+id/deliver_user_address"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="4dp"
+                        android:layout_marginEnd="8dp"
+                        android:fontFamily="@font/roboto_regular"
+                        android:text="Via Piave 15 oids oih oihsd oi oshd , Torino, TO"
+                        android:textColor="@color/secondaryText"
+                        android:textSize="14sp"
+                        app:layout_constraintEnd_toEndOf="parent"
+                        app:layout_constraintHorizontal_bias="0.0"
+                        app:layout_constraintStart_toStartOf="@+id/deliver_user_name"
+                        app:layout_constraintTop_toBottomOf="@id/deliver_user_name" />
+
+                    <View
+                        android:layout_width="9dp"
+                        android:layout_height="9dp"
+                        android:layout_marginStart="8dp"
+                        android:layout_marginEnd="8dp"
+                        android:background="@drawable/toolbar_circle"
+                        app:layout_constraintBottom_toBottomOf="@+id/deliver_time"
+                        app:layout_constraintEnd_toStartOf="@+id/deliver_to"
+                        app:layout_constraintStart_toEndOf="@+id/deliver_time"
+                        app:layout_constraintTop_toTopOf="@+id/deliver_time" />
+
+                    <LinearLayout
+                        android:id="@+id/linearLayout"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="8dp"
+                        android:background="@drawable/button_call"
+                        app:layout_constraintStart_toStartOf="@+id/deliver_to"
+                        app:layout_constraintTop_toBottomOf="@+id/deliver_user_address">
+
+                        <ImageView
+                            android:layout_width="18dp"
+                            android:layout_height="18dp"
+                            android:layout_marginStart="14dp"
+                            android:layout_marginTop="10dp"
+                            android:layout_marginEnd="9.1dp"
+                            android:layout_marginBottom="10dp"
+                            android:src="@drawable/phone_green" />
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_marginTop="10dp"
+                            android:layout_marginEnd="15dp"
+                            android:layout_marginBottom="10dp"
+                            android:fontFamily="@font/roboto_regular"
+                            android:text="CALL USER"
+                            android:textColor="#10858D"
+                            android:textSize="14sp" />
+                    </LinearLayout>
+
+
+                </android.support.constraint.ConstraintLayout>
+
+            </LinearLayout>
+
+
+
+
+            <View
+                android:id="@+id/vertical_line"
+                android:layout_width="1dp"
+                android:layout_height="0dp"
+                android:layout_marginStart="73dp"
+                android:layout_marginTop="16dp"
+                android:background="#707070"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent"
+                app:layout_constraintBottom_toTopOf="@id/note_layout"
+                android:layout_marginBottom="8dp"
+                />
+
+
+            <android.support.constraint.ConstraintLayout
+                android:id="@+id/note_layout"
+                android:layout_width="match_parent"
+                android:layout_height="80dp"
+                android:visibility="visible"
+                android:layout_marginBottom="60dp"
+                android:background="@android:color/holo_blue_bright"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintBottom_toBottomOf="parent"
+                ></android.support.constraint.ConstraintLayout>
+
+
+        </android.support.constraint.ConstraintLayout>
+
+    </android.support.v7.widget.CardView>
+
+
+
+</android.support.constraint.ConstraintLayout>
