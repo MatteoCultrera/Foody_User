@@ -86,4 +86,5 @@
     <string name="empty_email">E-mail field is empty</string>
     <string name="empty_password">Password field is empty</string>
     <string name="empty_username">Username field is empty</string>
+    <string name="logout">Logout</string>
 </resources>

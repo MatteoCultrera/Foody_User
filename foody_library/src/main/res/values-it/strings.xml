@@ -86,4 +86,5 @@
     <string name="empty_email">Campo e-mail vuoto</string>
     <string name="empty_password">Campo password vuoto</string>
     <string name="empty_username">Campo username vuoto</string>
+    <string name="logout">Logout</string>
 </resources>
