@@ -22,6 +22,7 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.bumptech.glide.Glide;
+import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
@@ -208,11 +209,10 @@ public class RestaurantShow extends AppCompatActivity {
                     deliveryPrice.setText(thisRestaurant.getDeliveryPriceString());
                     //distance.setText(thisRestaurant.getDistanceString());
                     StorageReference mStorageRef = FirebaseStorage.getInstance().getReference();
-                    mStorageRef.child("images/"+ reName +"_profile.jpeg").getDownloadUrl()
+                    mStorageRef.child("images/restaurants/"+ reName +"_profile.jpeg").getDownloadUrl()
                             .addOnSuccessListener(new OnSuccessListener<Uri>() {
                                 @Override
                                 public void onSuccess(Uri uri) {
-
                                     Glide
                                             .with(getApplicationContext())
                                             .load(uri)

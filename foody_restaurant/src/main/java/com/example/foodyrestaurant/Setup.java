@@ -180,10 +180,10 @@ public class Setup extends AppCompatActivity {
             .apply(glideOptions)
             .into(profilePicture);
 
-        name.setText(savedInstanceState.getString("name", getResources().getString(R.string.name_hint)));
-        email.setText(savedInstanceState.getString("email", getResources().getString(R.string.email_hint)));
-        address.setText(savedInstanceState.getString("address", getResources().getString(R.string.address_hint)));
-        phoneNumber.setText(savedInstanceState.getString("phoneNumber", getResources().getString(R.string.phone_hint)));
+        name.setText(savedInstanceState.getString("name", ""));
+        email.setText(savedInstanceState.getString("email", ""));
+        address.setText(savedInstanceState.getString("address", ""));
+        phoneNumber.setText(savedInstanceState.getString("phoneNumber", ""));
         monday.setText(savedInstanceState.getString("monTime", getResources().getString(R.string.Closed)));
         tuesday.setText(savedInstanceState.getString("tueTime", getResources().getString(R.string.Closed)));
         wednesday.setText(savedInstanceState.getString("wedTime", getResources().getString(R.string.Closed)));
@@ -833,10 +833,11 @@ public class Setup extends AppCompatActivity {
             saveBitmap(bitmap, profile.getPath());
 
             FirebaseStorage storage;
+            FirebaseUser user = firebaseAuth.getCurrentUser();
             StorageReference storageReference;
             storage = FirebaseStorage.getInstance();
             storageReference = storage.getReference();
-            StorageReference ref = storageReference.child("images/RossoPomodoro_profile.jpeg");
+            StorageReference ref = storageReference.child("images/restaurants/"+ user.getUid() +"_profile.jpeg");
             ref.putFile(Uri.fromFile(new File(storageDir, PROFILE_IMAGE)))
                     .addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
                         @Override

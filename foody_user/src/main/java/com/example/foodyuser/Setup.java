@@ -308,11 +308,11 @@ public class Setup extends AppCompatActivity {
         if(f.exists())
             profilePicture.setImageURI(Uri.fromFile(f));
 
-        name.setText(sharedPref.getString("name", getResources().getString(R.string.name_hint)));
-        email.setText(sharedPref.getString("email", getResources().getString(R.string.email_hint)));
-        address.setText(sharedPref.getString("address", getResources().getString(R.string.address_hint)));
-        phoneNumber.setText(sharedPref.getString("phoneNumber", getResources().getString(R.string.phone_hint)));
-        bio.setText(sharedPref.getString("bio", getResources().getString(R.string.bio_hint)));
+        name.setText(sharedPref.getString("name", ""));
+        email.setText(sharedPref.getString("email", ""));
+        address.setText(sharedPref.getString("address", ""));
+        phoneNumber.setText(sharedPref.getString("phoneNumber", ""));
+        bio.setText(sharedPref.getString("bio", ""));
         edit.apply();
 
         //onTextChange to notify the user that there are fields that are not saved
