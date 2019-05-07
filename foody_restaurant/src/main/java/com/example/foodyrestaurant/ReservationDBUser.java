@@ -1,48 +1,26 @@
-package com.example.foodyuser;
+package com.example.foodyrestaurant;
 
 import java.util.ArrayList;
 
-public class ReservationDBRestaurant {
+public class ReservationDBUser {
 
     private String reservationID;
-    private String bikerID;
+    private String restaurantID;
     private ArrayList<OrderItem> dishesOrdered;
     private boolean accepted;
     private String resNote;
-    private String numberPhone;
-    private String nameUser;
     private String orderTime;
-    private String orderTimeBiker;
 
-    public ReservationDBRestaurant() {
+    public ReservationDBUser() {
     }
 
-    public ReservationDBRestaurant(String reservationID, String bikerID, ArrayList<OrderItem> dishesOrdered, boolean accepted, String resNote, String numberPhone, String nameUser, String orderTime, String orderTimeBiker) {
+    public ReservationDBUser(String reservationID, String restaurantID, ArrayList<OrderItem> dishesOrdered, boolean accepted, String resNote, String orderTime) {
         this.reservationID = reservationID;
-        this.bikerID = bikerID;
+        this.restaurantID = restaurantID;
         this.dishesOrdered = dishesOrdered;
         this.accepted = accepted;
         this.resNote = resNote;
-        this.numberPhone = numberPhone;
-        this.nameUser = nameUser;
         this.orderTime = orderTime;
-        this.orderTimeBiker = orderTimeBiker;
-    }
-
-    public String getNumberPhone() {
-        return numberPhone;
-    }
-
-    public void setNumberPhone(String numberPhone) {
-        this.numberPhone = numberPhone;
-    }
-
-    public String getNameUser() {
-        return nameUser;
-    }
-
-    public void setNameUser(String nameUser) {
-        this.nameUser = nameUser;
     }
 
     public String getReservationID() {
@@ -53,12 +31,12 @@ public class ReservationDBRestaurant {
         this.reservationID = reservationID;
     }
 
-    public String getBikerID() {
-        return bikerID;
+    public String getRestaurantID() {
+        return restaurantID;
     }
 
-    public void setBikerID(String bikerID) {
-        this.bikerID = bikerID;
+    public void setRestaurantID(String restaurantID) {
+        this.restaurantID = restaurantID;
     }
 
     public ArrayList<OrderItem> getDishesOrdered() {
@@ -93,11 +71,4 @@ public class ReservationDBRestaurant {
         this.orderTime = orderTime;
     }
 
-    public String getOrderTimeBiker() {
-        return orderTimeBiker;
-    }
-
-    public void setOrderTimeBiker(String orderTimeBiker) {
-        this.orderTimeBiker = orderTimeBiker;
-    }
 }

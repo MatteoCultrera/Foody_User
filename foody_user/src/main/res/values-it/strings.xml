@@ -30,5 +30,4 @@
     <string name="delete_filter">Azzera filtri</string>
 
     <string name="place_order">CONFERMA ORDINE</string>
-    <string name="error_order">Impossibile completare la richiesta</string>
 </resources>

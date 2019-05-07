@@ -1,4 +1,4 @@
-package com.example.foodyuser;
+package com.example.foodyrestaurant;
 
 import java.util.ArrayList;
 
@@ -44,6 +44,7 @@ public class ReservationDBRestaurant {
     public void setNameUser(String nameUser) {
         this.nameUser = nameUser;
     }
+
 
     public String getReservationID() {
         return reservationID;
