@@ -13,6 +13,7 @@ class Dish {
     private String dishDescription;
     private Float price;
     private Uri image;
+    private String imagePath;
     private boolean added;
     private int quantity;
     private boolean prepared;
@@ -74,6 +75,12 @@ class Dish {
 
     Float getPrice(){
         return price;
+    }
+
+    String getImagePath(){
+        if(image != null)
+            return image.getPath();
+        return null;
     }
 
     @Exclude
