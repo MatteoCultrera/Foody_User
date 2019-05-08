@@ -16,4 +16,11 @@
     <string name="delivering_order">Delivering Order</string>
     <string name="pending_orders"> Pending Orders</string>
     <string name="no_order_deliver">No Delivering Order</string>
+    <string name="order_delivered">Order Delivered</string>
+
+    <string name="pickup_from">Pickup From</string>
+    <string name="deliver_to">Deliver To</string>
+
+    <string name="call_restaurant">CALL RESTAURANT</string>
+    <string name="call_user">CALL USER</string>
 </resources>
