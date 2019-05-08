@@ -164,11 +164,13 @@ public class RestaurantsList extends AppCompatActivity {
         else {
             for (int i = 0; i < restaurants.size(); i++) {
                 ArrayList<String> cuisines = restaurants.get(i).getCuisines();
-                for (String c : cuisines) {
-                    for (String s : text) {
-                        if (c.toLowerCase().contains(s.toLowerCase())) {
-                            if (!restCuisine.contains(restaurants.get(i))){
-                                restCuisine.add(restaurants.get(i));
+                if(cuisines != null) {
+                    for (String c : cuisines) {
+                        for (String s : text) {
+                            if (c.toLowerCase().contains(s.toLowerCase())) {
+                                if (!restCuisine.contains(restaurants.get(i))) {
+                                    restCuisine.add(restaurants.get(i));
+                                }
                             }
                         }
                     }
