@@ -16,6 +16,7 @@ import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
@@ -25,10 +26,15 @@ import android.widget.ListAdapter;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.google.android.gms.tasks.OnFailureListener;
+import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.storage.FirebaseStorage;
+import com.google.firebase.storage.StorageReference;
+import com.google.firebase.storage.UploadTask;
 import com.yalantis.ucrop.UCrop;
 import com.yalantis.ucrop.UCropActivity;
 
@@ -67,6 +73,7 @@ public class MenuEditItem extends AppCompatActivity {
     private File storageImageDir;
     private FirebaseAuth firebaseAuth;
     private FirebaseUser user;
+    private FirebaseStorage firebaseStorage;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -207,13 +214,35 @@ public class MenuEditItem extends AppCompatActivity {
                     }
                 }
             }
-
+            /*FirebaseStorage storage;
+            StorageReference storageReference;
+            storage = FirebaseStorage.getInstance();
+            storageReference = storage.getReference();*/
             DatabaseReference database = FirebaseDatabase.getInstance().getReference()
                     .child("restaurantsMenu").child(user.getUid()).child("Card");
             HashMap<String, Object> child = new HashMap<>();
             for (int i = 0; i < cards.size(); i++) {
                 if (cards.get(i).getDishes().size() != 0)
                     child.put(Integer.toString(i), cards.get(i));
+                /*for(Dish d : cards.get(i).getDishes()){
+                    if (d.getImage() != null) {
+                        StorageReference ref = storageReference.child("images/" + firebaseAuth.getCurrentUser().getUid() + "/"
+                                + d.getImage().getPath() + ".jpeg");
+                        ref.putFile(d.getImage())
+                                .addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
+                                    @Override
+                                    public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
+                                        Log.d("SWSW", "success");
+                                    }
+                                })
+                                .addOnFailureListener(new OnFailureListener() {
+                                    @Override
+                                    public void onFailure(@NonNull Exception e) {
+                                        Toast.makeText(getApplicationContext(), "Failed " + e.getMessage(), Toast.LENGTH_SHORT).show();
+                                    }
+                                });
+                    }
+                }*/
             }
             database.updateChildren(child);
 
@@ -269,6 +298,20 @@ public class MenuEditItem extends AppCompatActivity {
                     System.out.println("Cannot delete the file.");
                 }
             }
+
+            /*FirebaseStorage storage;
+            StorageReference storageReference;
+            storage = FirebaseStorage.getInstance();
+            storageReference = storage.getReference();
+            StorageReference ref = storageReference.child("images/" + firebaseAuth.getCurrentUser().getUid() + "/"
+                    + dishes.get(position).getImage().getPath() + ".jpeg");
+            ref.delete()
+                    .addOnSuccessListener(new OnSuccessListener<Void>() {
+                        @Override
+                        public void onSuccess(Void aVoid) {
+                            Log.d("SWSW", "image deleted");
+                        }
+                    });*/
         }
         dishes.remove(position);
         recyclerAdapter.notifyItemRemoved(position);
