@@ -54,9 +54,9 @@ public class Order extends AppCompatActivity {
         firebaseAuth = FirebaseAuth.getInstance();
         firebaseUser = firebaseAuth.getCurrentUser();
         backButton = findViewById(R.id.backButton);
-        placeOrder = findViewById(R.id.placeOrder);
+        placeOrder = findViewById(R.id.place_order);
         JsonHandler handler =  new JsonHandler();
-        File directory = getExternalFilesDir(Environment.DIRECTORY_DOCUMENTS);
+        final File directory = getExternalFilesDir(Environment.DIRECTORY_DOCUMENTS);
         File orderFile = new File(directory, getString(R.string.order_file_name));
         Bundle extras = getIntent().getExtras();
         final String restID = extras.getString("restaurantID","");
@@ -98,7 +98,9 @@ public class Order extends AppCompatActivity {
                         Toast.makeText(getApplicationContext(), R.string.error_order, Toast.LENGTH_SHORT).show();
                     }
                 });
-                finish();
+
+                orders.clear();
+                closeActivity();
             }
         });
 
@@ -128,7 +130,28 @@ public class Order extends AppCompatActivity {
     }
 
     public void closeActivity(){
+        if(orders.size() == 0){
+            Log.d("TRYUNODUE","DELETEDE");
+            File directory = getExternalFilesDir(Environment.DIRECTORY_DOCUMENTS);
+            File orderFile = new File(directory, getString(R.string.order_file_name));
+            if(orderFile.exists())
+                orderFile.delete();
+        }
         finish();
+    }
+
+    @Override
+    protected void onPause() {
+        super.onPause();
+        JsonHandler handler = new JsonHandler();
+        if(orders!=null && orders.size() > 0){
+            Log.d("TRYUNODUE", "Orders Big");
+            String jsonOrders = handler.ordersToJSON(orders);
+            File directory = getExternalFilesDir(Environment.DIRECTORY_DOCUMENTS);
+            File toSave = new File(directory, getString(R.string.order_file_name));
+            handler.saveStringToFile(jsonOrders, toSave);
+            Log.d("PROVA",jsonOrders);
+        }
     }
 
     public void updatePrice(){

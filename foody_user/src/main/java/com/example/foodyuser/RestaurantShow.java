@@ -67,9 +67,6 @@ public class RestaurantShow extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_restaurant_show);
-
-        if(!init())
-            finish();
     }
 
     private boolean init(){
@@ -118,10 +115,9 @@ public class RestaurantShow extends AppCompatActivity {
     @Override
     protected void onResume() {
         super.onResume();
-        //TODO LIST: on back from cart update the quantity
-        Log.d("ORDERS", "onResume: print orders");
-        for(int i = 0; i < orders.size(); i++)
-            Log.d("ORDERS", "i " + i + " order name " + orders.get(i).getOrderName() + " quantity " + orders.get(i).getPieces());
+
+        if(!init())
+            finish();
     }
 
     public void backToRestList(View view) {
