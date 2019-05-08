@@ -160,6 +160,7 @@ public class Order extends AppCompatActivity {
         for(int i = 0; i < orders.size(); i++)
             tp += orders.get(i).getTotal();
 
+        tp+=RestaurantShow.getRestDeliveryPrice()*0.5;
         total.setText(String.format(Locale.UK, "%.2f €", tp));
     }
 }
