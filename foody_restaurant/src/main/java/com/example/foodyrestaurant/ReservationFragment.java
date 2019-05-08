@@ -97,6 +97,7 @@ public class ReservationFragment extends Fragment {
                             sharedPreferences.getString("email", ""), reservationDB.getUserAddress());
                     reservation.setUserUID(reservationDB.getReservationID().substring(0, 28));
                     reservation.setDeliveryTime(reservationDB.getOrderTime());
+                    reservation.setTotalPrice(reservationDB.getTotalCost());
                     reservations.add(reservation);
                 }
 

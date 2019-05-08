@@ -12,6 +12,7 @@ import android.support.design.widget.FloatingActionButton;
 import android.support.v7.widget.AppCompatImageButton;
 import android.support.v7.widget.CardView;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -139,12 +140,13 @@ public class RVAdapterRes extends RecyclerView.Adapter<RVAdapterRes.CardViewHold
                     OrderItem order = new OrderItem();
                     order.setPieces(d.getQuantity());
                     order.setOrderName(d.getDishName());
+                    order.setPrice(d.getPrice());
                     dishes.add(order);
                 }
                 String reservationID = reservations.get(i).getUserUID() + reservations.get(i).getReservationID();
                 ReservationDBUser reservation = new ReservationDBUser(reservationID,
                         firebaseUser.getUid(), dishes, true, null, reservations.get(i).getDeliveryTime(),
-                        "doing");
+                        "doing", reservations.get(i).getTotalPrice());
                 child.put(reservationID, reservation);
                 database.updateChildren(child).addOnFailureListener(new OnFailureListener() {
                     @Override
@@ -159,7 +161,7 @@ public class RVAdapterRes extends RecyclerView.Adapter<RVAdapterRes.CardViewHold
                 ReservationDBRestaurant reservationRest = new ReservationDBRestaurant(reservationID,
                         "", dishes, true, null, reservations.get(i).getUserPhone(),
                         reservations.get(i).getUserName(), reservations.get(i).getDeliveryTime(),
-                        reservations.get(i).getOrderTime(), "doing", reservations.get(i).getUserAddress());
+                        reservations.get(i).getOrderTime(), "doing", reservations.get(i).getUserAddress(), reservations.get(i).getTotalPrice());
                 childRest.put(reservationID, reservationRest);
                 databaseRest.updateChildren(childRest).addOnFailureListener(new OnFailureListener() {
                     @Override
@@ -202,7 +204,7 @@ public class RVAdapterRes extends RecyclerView.Adapter<RVAdapterRes.CardViewHold
                 }
                 String reservationID = reservations.get(i).getUserUID() + reservations.get(i).getReservationID();
                 ReservationDBUser reservation = new ReservationDBUser(reservationID,
-                        firebaseUser.getUid(), dishes, false, null, null, "done");
+                        firebaseUser.getUid(), dishes, false, null, null, "done", reservations.get(i).getTotalPrice());
                 child.put(reservationID, reservation);
                 database.updateChildren(child).addOnFailureListener(new OnFailureListener() {
                     @Override
@@ -217,7 +219,7 @@ public class RVAdapterRes extends RecyclerView.Adapter<RVAdapterRes.CardViewHold
                 ReservationDBRestaurant reservationRest = new ReservationDBRestaurant(reservationID,
                         "", dishes, false, null, reservations.get(i).getUserPhone(),
                         reservations.get(i).getUserName(), null, null, "done",
-                        reservations.get(i).getUserAddress());
+                        reservations.get(i).getUserAddress(), reservations.get(i).getTotalPrice());
                 childRest.put(reservationID, reservationRest);
                 databaseRest.updateChildren(childRest).addOnFailureListener(new OnFailureListener() {
                     @Override

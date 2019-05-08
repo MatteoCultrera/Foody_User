@@ -15,11 +15,12 @@ public class ReservationDBRestaurant {
     private String orderTime;
     private String status;
     private String orderTimeBiker;
+    private String totalCost;
 
     public ReservationDBRestaurant() {
     }
 
-    public ReservationDBRestaurant(String reservationID, String bikerID, ArrayList<OrderItem> dishesOrdered, boolean accepted, String resNote, String numberPhone, String nameUser, String orderTime, String orderTimeBiker, String status, String userAddress) {
+    public ReservationDBRestaurant(String reservationID, String bikerID, ArrayList<OrderItem> dishesOrdered, boolean accepted, String resNote, String numberPhone, String nameUser, String orderTime, String orderTimeBiker, String status, String userAddress, String totalCost) {
         this.reservationID = reservationID;
         this.bikerID = bikerID;
         this.dishesOrdered = dishesOrdered;
@@ -31,6 +32,15 @@ public class ReservationDBRestaurant {
         this.orderTimeBiker = orderTimeBiker;
         this.status = status;
         this.userAddress = userAddress;
+        this.totalCost = totalCost;
+    }
+
+    public String getTotalCost() {
+        return totalCost;
+    }
+
+    public void setTotalCost(String totalCost) {
+        this.totalCost = totalCost;
     }
 
     public String getUserAddress() {

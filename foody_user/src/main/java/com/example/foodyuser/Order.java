@@ -75,7 +75,8 @@ public class Order extends AppCompatActivity {
                 calendar2.add(Calendar.MINUTE, 20);
                 String deliveryTime = new SimpleDateFormat("HH:mm", Locale.UK).format(calendar.getTime());
                 String bikerTime = new SimpleDateFormat("HH:mm", Locale.UK).format(calendar2.getTime());
-                ReservationDBUser reservation = new ReservationDBUser(identifier, restID, orders, false, null, deliveryTime, "pending");
+                ReservationDBUser reservation = new ReservationDBUser(identifier, restID, orders, false, null,
+                        deliveryTime, "pending", total.getText().toString());
                 child.put(identifier, reservation);
                 database.updateChildren(child).addOnFailureListener(new OnFailureListener() {
                     @Override
@@ -90,7 +91,7 @@ public class Order extends AppCompatActivity {
                 ReservationDBRestaurant reservationRest = new ReservationDBRestaurant(identifier, "", orders, false,
                         null,sharedPreferences.getString("phoneNumber", null),
                         sharedPreferences.getString("name", null), deliveryTime, bikerTime, "pending",
-                        sharedPreferences.getString("address", null));
+                        sharedPreferences.getString("address", null), total.getText().toString());
                 childRest.put(identifier, reservationRest);
                 databaseRest.updateChildren(childRest).addOnFailureListener(new OnFailureListener() {
                     @Override
