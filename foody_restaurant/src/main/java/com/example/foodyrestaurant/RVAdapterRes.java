@@ -197,6 +197,7 @@ public class RVAdapterRes extends RecyclerView.Adapter<RVAdapterRes.CardViewHold
                     OrderItem order = new OrderItem();
                     order.setPieces(d.getQuantity());
                     order.setOrderName(d.getDishName());
+                    order.setPrice(d.getPrice());
                     dishes.add(order);
                 }
                 String reservationID = reservations.get(i).getUserUID() + reservations.get(i).getReservationID();

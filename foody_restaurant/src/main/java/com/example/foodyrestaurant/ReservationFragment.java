@@ -87,6 +87,7 @@ public class ReservationFragment extends Fragment {
                         Dish dish = new Dish();
                         dish.setQuantity(o.getPieces());
                         dish.setDishName(o.getOrderName());
+                        dish.setPrice(o.getPrice());
                         dishes.add(dish);
                     }
                     String orderID = reservationDB.getReservationID().substring(28);
