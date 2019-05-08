@@ -44,6 +44,7 @@ public class ReservationFragment extends Fragment {
     private FirebaseAuth firebaseAuth;
     private FirebaseUser firebaseUser;
     private SharedPreferences sharedPreferences;
+    private View thisView;
 
     public ReservationFragment() {
     }
@@ -58,7 +59,7 @@ public class ReservationFragment extends Fragment {
     @Override
     public void onViewCreated(@NonNull View view, Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
-        init(view);
+        thisView = view;
     }
 
     @Override
@@ -93,19 +94,30 @@ public class ReservationFragment extends Fragment {
                         dish.setDishName(o.getOrderName());
                         dishes.add(dish);
                     }
-                    String orderID = reservationDBUser.getReservationID().substring(27);
-                    Reservation reservation = new Reservation(orderID, dishes, Reservation.prepStatus.PENDING,
+                    Reservation.prepStatus status;
+                    String orderID = reservationDBUser.getReservationID().substring(28);
+                    if (reservationDBUser.getStatus().equals("pending")){
+                        status = Reservation.prepStatus.PENDING;
+                    } else if (reservationDBUser.getStatus().equals("doing")){
+                        status = Reservation.prepStatus.DOING;
+                    } else{
+                        status = Reservation.prepStatus.DONE;
+                    }
+                    Reservation reservation = new Reservation(orderID, dishes, status,
                             reservationDBUser.isAccepted(), reservationDBUser.getOrderTime(), sharedPreferences.getString("name", ""),
                             sharedPreferences.getString("phoneNumber", ""), reservationDBUser.getResNote(), "",
                             sharedPreferences.getString("email", ""), sharedPreferences.getString("address", ""));
                     reservations.add(reservation);
                 }
+
                 reservations.sort(new Comparator<Reservation>() {
                     @Override
                     public int compare(Reservation o1, Reservation o2) {
+
                         return o1.getOrderTime().compareTo(o2.getOrderTime());
                     }
                 });
+
                 RVAdapterRes adapter = new RVAdapterRes(reservations);
                 reservation.setAdapter(adapter);
             }
@@ -123,5 +135,11 @@ public class ReservationFragment extends Fragment {
                 reservation.setAdapter(adapter);
             }
         });
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+        init(thisView);
     }
 }

@@ -10,17 +10,19 @@ public class ReservationDBUser {
     private boolean accepted;
     private String resNote;
     private String orderTime;
+    private String status;
 
     public ReservationDBUser() {
     }
 
-    public ReservationDBUser(String reservationID, String restaurantID, ArrayList<OrderItem> dishesOrdered, boolean accepted, String resNote, String orderTime) {
+    public ReservationDBUser(String reservationID, String restaurantID, ArrayList<OrderItem> dishesOrdered, boolean accepted, String resNote, String orderTime, String status) {
         this.reservationID = reservationID;
         this.restaurantID = restaurantID;
         this.dishesOrdered = dishesOrdered;
         this.accepted = accepted;
         this.resNote = resNote;
         this.orderTime = orderTime;
+        this.status = status;
     }
 
     public String getReservationID() {
@@ -71,4 +73,11 @@ public class ReservationDBUser {
         this.orderTime = orderTime;
     }
 
+    public String getStatus() {
+        return status;
+    }
+
+    public void setStatus(String status) {
+        this.status = status;
+    }
 }
