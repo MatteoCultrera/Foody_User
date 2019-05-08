@@ -5,6 +5,8 @@ import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.constraint.ConstraintLayout;
 import android.support.design.widget.FloatingActionButton;
+import android.support.design.widget.TextInputEditText;
+import android.support.design.widget.TextInputLayout;
 import android.support.v7.app.AppCompatActivity;
 import android.text.Editable;
 import android.text.TextWatcher;
@@ -21,7 +23,8 @@ import java.util.regex.Pattern;
 
 public class Login extends AppCompatActivity {
 
-    private EditText email, password;
+    private TextInputEditText email, password;
+    private TextInputLayout emailL, passwordL;
     private FirebaseAuth firebaseAuth;
     private FloatingActionButton login;
     private ConstraintLayout register;
@@ -43,6 +46,7 @@ public class Login extends AppCompatActivity {
             setContentView(R.layout.login_layout);
             correctness = false;
             email = findViewById(R.id.username_login);
+            emailL = findViewById(R.id.username_login_outer);
             email.addTextChangedListener(new TextWatcher() {
                 @Override
                 public void beforeTextChanged(CharSequence charSequence, int i, int i1, int i2) {
@@ -58,20 +62,21 @@ public class Login extends AppCompatActivity {
                 }
             });
             password = findViewById(R.id.password_login);
+            passwordL = findViewById(R.id.password_login_outer);
             login = findViewById(R.id.FAB_login);
             register = findViewById(R.id.register_button);
             login.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
                     if (email.getText().toString().equals("")) {
-                        email.setError(getResources().getString(R.string.empty_email));
+                        emailL.setError(getResources().getString(R.string.empty_email));
                         if (password.getText().toString().equals("")){
-                            password.setError(getResources().getString(R.string.empty_password));
+                            passwordL.setError(getResources().getString(R.string.empty_password));
                         }
                         return;
                     }
                     if (password.getText().toString().equals("")){
-                        password.setError(getResources().getString(R.string.empty_password));
+                        passwordL.setError(getResources().getString(R.string.empty_password));
                         return;
                     }
                     firebaseAuth.signInWithEmailAndPassword(email.getText().toString(), password.getText().toString())
@@ -105,11 +110,11 @@ public class Login extends AppCompatActivity {
         final String emailToCheck = email.getText().toString();
 
         if(!Pattern.compile(regexpEmail).matcher(emailToCheck).matches()) {
-            email.setError(getResources().getString(R.string.error_email));
+            emailL.setError(getResources().getString(R.string.error_email));
             correctness = false;
         }else{
             correctness = true;
-            email.setError(null);
+            emailL.setError(null);
         }
         updateSave();
     }

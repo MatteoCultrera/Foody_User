@@ -172,9 +172,8 @@ public class RestaurantShow extends AppCompatActivity {
         totalLayout.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                //Launch order Activity
                 Intent intent = new Intent(totalLayout.getContext(), Order.class);
-                intent.putExtra("restaurantID", firebaseUser.getUid());
+                intent.putExtra("restaurantID", reName);
                 startActivity(intent);
             }
         });
