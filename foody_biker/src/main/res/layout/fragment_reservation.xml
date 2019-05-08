@@ -1,12 +1,12 @@
 <?xml version="1.0" encoding="utf-8"?>
 <android.support.constraint.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/main_layout"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:background="@color/dark_white_background"
-    android:clickable="true">
+    android:clickable="true"
+    android:focusable="true">
 
     <android.support.constraint.ConstraintLayout
         android:id="@+id/constraint"
@@ -16,9 +16,11 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toTopOf="parent"
         android:background="@drawable/toolbar_reservation_background"
+        android:elevation="16dp"
         >
 
         <ImageButton
+            android:contentDescription="@string/notes"
             android:id="@+id/switch_button"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
@@ -33,7 +35,6 @@
             android:id="@+id/string_up"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Delivering Order"
             android:fontFamily="@font/roboto_bold"
             android:textColor="@color/whiteText"
             android:textSize="18sp"
@@ -48,7 +49,6 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:fontFamily="@font/roboto_regular"
-            android:text="10 Pending Orders"
             android:textColor="@color/whiteText"
             android:textSize="16sp"
             app:layout_constraintEnd_toEndOf="parent"
@@ -63,10 +63,12 @@
         android:layout_height="0dp"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/constraint"
+        app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintBottom_toBottomOf="parent"
-        android:layout_marginStart="16dp"
-        android:layout_marginEnd="16dp"/>
+        android:visibility="gone"
+        android:paddingTop="92dp"
+        android:paddingBottom="90dp"
+        android:clipToPadding="false"/>
 
     <android.support.v7.widget.CardView
         android:id="@+id/card_order"
@@ -83,7 +85,7 @@
         android:layout_marginEnd="16dp"
         app:cardCornerRadius="16dp"
         android:elevation="8dp"
-        android:visibility="gone">
+        android:visibility="visible">
 
         <android.support.constraint.ConstraintLayout
             android:layout_width="match_parent"
@@ -115,7 +117,6 @@
                         android:id="@+id/pickup_time"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:text="12:30"
                         android:textSize="20sp"
                         app:layout_constraintBottom_toBottomOf="@+id/pickup_to"
                         app:layout_constraintStart_toStartOf="parent"
@@ -127,7 +128,7 @@
                         android:layout_height="wrap_content"
                         android:layout_marginStart="26dp"
                         android:fontFamily="@font/roboto_bold"
-                        android:text="Pickup Order"
+                        android:text="@string/pickup_from"
                         android:textColor="@color/colorAccent"
                         android:textSize="20sp"
                         app:layout_constraintStart_toEndOf="@id/pickup_time"
@@ -140,7 +141,6 @@
                         android:layout_marginStart="10dp"
                         android:layout_marginTop="4dp"
                         android:fontFamily="@font/roboto_regular"
-                        android:text="RossoPomodoro"
                         android:textColor="@color/primaryText"
                         android:textSize="16sp"
                         app:layout_constraintEnd_toEndOf="parent"
@@ -155,7 +155,6 @@
                         android:layout_marginTop="4dp"
                         android:layout_marginEnd="8dp"
                         android:fontFamily="@font/roboto_regular"
-                        android:text="Via Pia oid soin dson idson oive 15, Torino, TO"
                         android:textColor="@color/secondaryText"
                         android:textSize="14sp"
                         app:layout_constraintEnd_toEndOf="parent"
@@ -198,7 +197,7 @@
                             android:layout_marginEnd="15dp"
                             android:layout_marginBottom="10dp"
                             android:fontFamily="@font/roboto_regular"
-                            android:text="CALL RESTAURANT"
+                            android:text="@string/call_restaurant"
                             android:textColor="#10858D"
                             android:textSize="14sp" />
                     </LinearLayout>
@@ -225,7 +224,6 @@
                         android:id="@+id/deliver_time"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:text="12:30"
                         android:textSize="20sp"
                         app:layout_constraintBottom_toBottomOf="@+id/deliver_to"
                         app:layout_constraintStart_toStartOf="parent"
@@ -237,9 +235,9 @@
                         android:layout_height="wrap_content"
                         android:layout_marginStart="26dp"
                         android:fontFamily="@font/roboto_bold"
-                        android:text="Deliver To"
                         android:textColor="@color/colorPrimaryDark"
                         android:textSize="20sp"
+                        android:text="@string/deliver_to"
                         app:layout_constraintStart_toEndOf="@id/deliver_time"
                         app:layout_constraintTop_toTopOf="parent" />
 
@@ -264,7 +262,6 @@
                         android:layout_marginStart="10dp"
                         android:layout_marginTop="4dp"
                         android:fontFamily="@font/roboto_regular"
-                        android:text="Simona Currà"
                         android:textColor="@color/primaryText"
                         android:textSize="16sp"
                         app:layout_constraintEnd_toEndOf="parent"
@@ -279,7 +276,6 @@
                         android:layout_marginTop="4dp"
                         android:layout_marginEnd="8dp"
                         android:fontFamily="@font/roboto_regular"
-                        android:text="Via Piave 15 oids oih oihsd oi oshd , Torino, TO"
                         android:textColor="@color/secondaryText"
                         android:textSize="14sp"
                         app:layout_constraintEnd_toEndOf="parent"
@@ -323,7 +319,7 @@
                             android:layout_marginEnd="15dp"
                             android:layout_marginBottom="10dp"
                             android:fontFamily="@font/roboto_regular"
-                            android:text="CALL USER"
+                            android:text="@string/call_user"
                             android:textColor="#10858D"
                             android:textSize="14sp" />
                     </LinearLayout>
@@ -361,7 +357,6 @@
                         android:layout_marginTop="4dp"
                         android:layout_marginEnd="8dp"
                         android:layout_marginBottom="8dp"
-                        android:text="AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA"
                         android:textColor="@color/secondaryText"
                         android:textSize="12sp"
                         app:layout_constraintBottom_toBottomOf="parent"
@@ -408,7 +403,8 @@
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintVertical_bias="0.95"
-        android:clickable="true">
+        android:clickable="true"
+        android:focusable="true">
         <TextView
             android:id="@+id/order_delivered"
             android:layout_width="wrap_content"
