@@ -10,17 +10,29 @@ public class ReservationDBUser {
     private boolean accepted;
     private String resNote;
     private String orderTime;
+    private String status;
+    private String totalCost;
 
     public ReservationDBUser() {
     }
 
-    public ReservationDBUser(String reservationID, String restaurantID, ArrayList<OrderItem> dishesOrdered, boolean accepted, String resNote, String orderTime) {
+    public ReservationDBUser(String reservationID, String restaurantID, ArrayList<OrderItem> dishesOrdered, boolean accepted, String resNote, String orderTime, String status, String totalCost) {
         this.reservationID = reservationID;
         this.restaurantID = restaurantID;
         this.dishesOrdered = dishesOrdered;
         this.accepted = accepted;
         this.resNote = resNote;
         this.orderTime = orderTime;
+        this.status = status;
+        this.totalCost = totalCost;
+    }
+
+    public String getTotalCost() {
+        return totalCost;
+    }
+
+    public void setTotalCost(String totalCost) {
+        this.totalCost = totalCost;
     }
 
     public String getReservationID() {
@@ -71,4 +83,11 @@ public class ReservationDBUser {
         this.orderTime = orderTime;
     }
 
+    public String getStatus() {
+        return status;
+    }
+
+    public void setStatus(String status) {
+        this.status = status;
+    }
 }

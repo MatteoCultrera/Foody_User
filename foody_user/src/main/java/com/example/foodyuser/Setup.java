@@ -669,7 +669,7 @@ public class Setup extends AppCompatActivity {
         edit.putString("phoneNumber", phoneNumber.getText().toString());
         edit.putString("bio", bio.getText().toString());
         edit.apply();
-        finish();
+        Toast.makeText(getApplicationContext(), R.string.save, Toast.LENGTH_SHORT).show();
     }
 
     private void saveBitmap(Bitmap bitmap,String path){

@@ -916,8 +916,7 @@ public class Setup extends AppCompatActivity {
         child.put("info", restaurant);
         database.updateChildren(child);
 
-
-        finish();
+        Toast.makeText(getApplicationContext(), R.string.save, Toast.LENGTH_SHORT).show();
     }
 
     private void saveBitmap(Bitmap bitmap,String path){

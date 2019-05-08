@@ -18,4 +18,11 @@
     <string name="delivering_order">Ordine In Consegna</string>
     <string name="pending_orders">Ordini In Sospeso</string>
     <string name="no_order_deliver">Nessun Ordine In Consegna</string>
+    <string name="order_delivered">Ordine Consegnato</string>
+    <string name="pickup_from">Ritira Da</string>
+    <string name="deliver_to">Consegna A</string>
+
+
+    <string name="call_restaurant">CHIAMA RISTORANTE</string>
+    <string name="call_user">CHIAMA UTENTE</string>
 </resources>

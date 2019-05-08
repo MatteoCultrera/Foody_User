@@ -88,4 +88,5 @@
     <string name="empty_username">Campo username vuoto</string>
     <string name="logout">Logout</string>
     <string name="error_order">Impossibile completare la richiesta</string>
+    <string name="save">I dati sono stati salvati</string>
 </resources>

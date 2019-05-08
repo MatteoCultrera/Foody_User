@@ -14,29 +14,34 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageButton;
-import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import com.google.firebase.auth.FirebaseAuth;
-import com.google.firebase.database.ChildEventListener;
+import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.Query;
+import com.google.firebase.database.ValueEventListener;
 
 import java.util.ArrayList;
+import java.util.Comparator;
 
 public class ReservationFragment extends Fragment {
 
-    TextView restaurantName, restaurantAddress, userName, userAddress, notes, orderDelivered, primaryText, secondaryText;
-    ConstraintLayout orderDeliveredLayout, mainLayout;
+    TextView restaurantName, restaurantAddress, userName,
+            userAddress, notes, orderDelivered, primaryText, secondaryText, pickupTime, deliveryTime;
+    ConstraintLayout orderDeliveredLayout, mainLayout, noteLayout;
     boolean canClick;
     CardView card;
     ArrayList<Reservation> reservations;
-    private String bikerUid = FirebaseAuth.getInstance().getCurrentUser().getUid();
     Reservation activeReservation;
     RecyclerView orderList;
     ImageButton switchButton;
+    RVAdapterReservation adapter;
+    private FirebaseUser firebaseUser;
+    private FirebaseAuth firebaseAuth;
 
     public ReservationFragment(){}
 
@@ -59,37 +64,29 @@ public class ReservationFragment extends Fragment {
 
 
     public void init(final View view){
-
-        //TODO: fetch infos about active reservation and reservations, and delete this stub code
-
+        firebaseAuth = FirebaseAuth.getInstance();
+        firebaseUser = firebaseAuth.getCurrentUser();
         activeReservation = null;
         reservations = new ArrayList<>();
-        reservations.add(
-                new Reservation("RossoPomodoro",
-                        "Via Piave 17, Torino TO",
-                        "12:30",
-                        "Simona Currà",
-                        "Via Circonvallazione 64, Torino TO",
-                        "13:30", null)
-        );
+        final DatabaseReference database = FirebaseDatabase.getInstance().getReference().child("reservations").child("Bikers");
+        Query query = database.child(firebaseUser.getUid());
+        query.addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                for (DataSnapshot ds : dataSnapshot.getChildren()) {
+                    ReservationDBBiker reservationDB = ds.getValue(ReservationDBBiker.class);
+                    Reservation reservation = new Reservation(reservationDB.getRestaurantName(), reservationDB.getRestaurantAddress(),
+                            reservationDB.getOrderTimeBiker(), reservationDB.getUserName(), reservationDB.getUserAddress(),
+                            reservationDB.getOrderTime(), null);
+                    reservations.add(reservation);
+                }
+                orderList.setAdapter(adapter);
+            }
 
-        reservations.add(
-                new Reservation("Zen Garden",
-                        "Via Monte Pasubio 16, Torino TO",
-                        "19:30",
-                        "Matteo Cultrera",
-                        "Via Borgosesia 46, Torino TO",
-                        "20:45", null)
-        );
-
-        reservations.add(
-                new Reservation("La Piola",
-                        "Via De Luigis 235, Torino TO",
-                        "21:30",
-                        "Daniele Leto",
-                        "Via Del Mare 46, Torino TO",
-                        "20:45", "Campanello rotto, per favore citofonare")
-        );
+            @Override
+            public void onCancelled(@NonNull DatabaseError databaseError) {
+            }
+        });
 
         restaurantName = view.findViewById(R.id.pickup_restaurant_name);
         restaurantAddress = view.findViewById(R.id.pickup_restaurant_address);
@@ -105,6 +102,9 @@ public class ReservationFragment extends Fragment {
         primaryText = view.findViewById(R.id.string_up);
         secondaryText = view.findViewById(R.id.string_down);
         switchButton = view.findViewById(R.id.switch_button);
+        noteLayout = view.findViewById(R.id.note_layout);
+        pickupTime = view.findViewById(R.id.pickup_time);
+        deliveryTime = view.findViewById(R.id.deliver_time);
 
         orderDeliveredLayout.getLayoutTransition().enableTransitionType(LayoutTransition.CHANGING);
 
@@ -121,15 +121,31 @@ public class ReservationFragment extends Fragment {
         orderDeliveredLayout.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if(canClick == false && activeReservation != null){
-                    orderDelivered.setText("Order Delivered");
+                if(!canClick && card.getVisibility() == View.VISIBLE){
+                    orderDelivered.setText(getString(R.string.order_delivered));
                     canClick = true;
-                }else{
+                }else if(card.getVisibility() == View.VISIBLE){
                     //TODO: notify server that order was delivered
                     setInterface(false);
                     canClick = false;
                     setActiveReservation(null);
+                    adapter.setOrderActive(false);
+                    orderDelivered.setText("");
+                    updateTitles();
                 }
+            }
+        });
+
+        switchButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                orderDelivered.setText("");
+                canClick = false;
+                if(card.getVisibility() == View.VISIBLE)
+                    setInterface(false);
+                else
+                    setInterface(true);
+                updateTitles();
             }
         });
 
@@ -137,68 +153,40 @@ public class ReservationFragment extends Fragment {
         LinearLayoutManager llm = new LinearLayoutManager(view.getContext());
         orderList.setLayoutManager(llm);
 
-        final RVAdapterReservation adapterReservation = new RVAdapterReservation(reservations, this);
-
-        orderList.setAdapter(adapterReservation);
+        adapter = new RVAdapterReservation(reservations, this, activeReservation!=null);
 
         setActiveReservation(activeReservation);
         setInterface(activeReservation!=null);
+    }
 
-        //Add the notification when the biker receive the new
-        DatabaseReference bikerReservations = FirebaseDatabase.getInstance().getReference().child("reservations")
-                                                .child("biker").child(bikerUid);
-        bikerReservations.addChildEventListener(new ChildEventListener() {
-            @Override
-            public void onChildAdded(@NonNull DataSnapshot dataSnapshot, @Nullable String s) {
-                Reservation res = dataSnapshot.getValue(Reservation.class);
-                int index;
-                for(index = 0; index<reservations.size(); index++){
-                    if(res.getUserDeliveryTime().compareTo(reservations.get(index).getUserDeliveryTime()) > 0)
-                        break;
-                }
-                reservations.add(index,res);
-                adapterReservation.notifyItemInserted(index);
-                adapterReservation.notifyItemRangeChanged(index, reservations.size());
+    public void updateTitles(){
+        if(card.getVisibility() == View.GONE){
+            primaryText.setText(reservations.size()+" "+getString(R.string.pending_orders));
+            if(activeReservation == null){
+                secondaryText.setText(getString(R.string.no_order_deliver));
+            }else {
+                secondaryText.setText(getString(R.string.delivering_order));
             }
-
-            @Override
-            public void onChildChanged(@NonNull DataSnapshot dataSnapshot, @Nullable String s) {
-
+        }else{
+              if(activeReservation == null){
+                primaryText.setText(getString(R.string.no_order_deliver));
+            }else {
+                primaryText.setText(getString(R.string.delivering_order));
             }
-
-            @Override
-            public void onChildRemoved(@NonNull DataSnapshot dataSnapshot) {
-
-            }
-
-            @Override
-            public void onChildMoved(@NonNull DataSnapshot dataSnapshot, @Nullable String s) {
-
-            }
-
-            @Override
-            public void onCancelled(@NonNull DatabaseError databaseError) {
-
-            }
-        });
+            secondaryText.setText(reservations.size()+" "+getString(R.string.pending_orders));
+        }
     }
 
     public void setInterface(Boolean deliveringOrder){
-        if(deliveringOrder == true){
+        updateTitles();
+        if(deliveringOrder ){
             card.setVisibility(View.VISIBLE);
             orderList.setVisibility(View.GONE);
-            primaryText.setText(getString(R.string.delivering_order));
-            secondaryText.setText(reservations.size()+" "+getString(R.string.pending_orders));
             orderDeliveredLayout.setBackgroundResource(R.drawable.order_delivered_background);
         }else{
             card.setVisibility(View.GONE);
             orderList.setVisibility(View.VISIBLE);
-            primaryText.setText(reservations.size()+" "+getString(R.string.pending_orders));
             orderDeliveredLayout.setBackgroundResource(R.drawable.order_delivered_background_dis);
-            if(activeReservation == null)
-                secondaryText.setText(getString(R.string.no_order_deliver));
-            else
-                secondaryText.setText(getString(R.string.delivering_order));
         }
     }
 
@@ -207,15 +195,36 @@ public class ReservationFragment extends Fragment {
         if(reservation == null){
             switchButton.setImageResource(R.drawable.swap_dis);
             switchButton.setClickable(false);
+            adapter.setOrderActive(false);
+            for(int i = 0; i < reservations.size() ; i++){
+                adapter.notifyItemChanged(i);
+            }
         }else{
             switchButton.setImageResource(R.drawable.swap_white);
             switchButton.setClickable(true);
+            adapter.setOrderActive(true);
+            for(int i = 0; i < reservations.size() ; i++){
+                adapter.notifyItemChanged(i);
+            }
+            restaurantName.setText(activeReservation.getRestaurantName());
+            restaurantAddress.setText(activeReservation.getRestaurantAddress());
+            userName.setText(activeReservation.getUserName());
+            userAddress.setText(activeReservation.getUserAddress());
+            pickupTime.setText(activeReservation.getRestaurantPickupTime());
+            deliveryTime.setText(activeReservation.getUserDeliveryTime());
+            if(activeReservation.getNotes() == null){
+                noteLayout.setVisibility(View.GONE);
+            }else{
+                noteLayout.setVisibility(View.VISIBLE);
+                notes.setText(activeReservation.getNotes());
+            }
+
         }
     }
 
-    public boolean canAccept(){
-        return activeReservation == null;
+    public void removeItem(int pos){
+        reservations.remove(pos);
+        adapter.notifyItemRemoved(pos);
+        adapter.notifyItemRangeChanged(pos, reservations.size());
     }
-
-
 }

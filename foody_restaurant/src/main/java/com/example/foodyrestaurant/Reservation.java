@@ -22,7 +22,9 @@ class Reservation {
     private String userUID;
     private String resNote;
     private String orderTime;
+    private String deliveryTime;
     private int toBePrepared;
+    private String totalPrice;
 
     Reservation(String identifier, ArrayList<Dish> dishes, prepStatus preparationStatus, boolean accepted,
                        String orderTime, String userName, String userPhone, String resNote, String userLevel,
@@ -39,6 +41,22 @@ class Reservation {
         this.userEmail = userEmail;
         this.userAddress = userAddress;
         toBePrepared = dishes.size();
+    }
+
+    public String getTotalPrice() {
+        return totalPrice;
+    }
+
+    public void setTotalPrice(String totalPrice) {
+        this.totalPrice = totalPrice;
+    }
+
+    public String getDeliveryTime() {
+        return deliveryTime;
+    }
+
+    public void setDeliveryTime(String deliveryTime) {
+        this.deliveryTime = deliveryTime;
     }
 
     String getReservationID() {
