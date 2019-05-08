@@ -270,12 +270,7 @@ public class UserFragment extends Fragment {
         Context context = Objects.requireNonNull(getActivity()).getApplicationContext();
         sharedPref = context.getSharedPreferences("myPreference", MODE_PRIVATE);
         storageDir = getActivity().getExternalFilesDir(Environment.DIRECTORY_PICTURES);
-        new Thread(new Runnable() {
-            @Override
-            public void run() {
-                init(Objects.requireNonNull(getView()));
-            }
-        }).start();
 
+                init(Objects.requireNonNull(getView()));
     }
 }

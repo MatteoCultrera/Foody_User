@@ -8,6 +8,7 @@ class Card {
     private ArrayList<Dish> dishes;
     private boolean editing;
     private boolean selected;
+    private String pathPhoto;
 
     public Card(){}
 
@@ -21,6 +22,14 @@ class Card {
     public Card(String title, ArrayList<Dish> dishes){
         this.title = title;
         this.dishes = dishes;
+    }
+
+    public String getPathPhoto() {
+        return pathPhoto;
+    }
+
+    public void setPathPhoto(String pathPhoto) {
+        this.pathPhoto = pathPhoto;
     }
 
     public void print(){

@@ -55,12 +55,7 @@ public class MenuFragment extends Fragment {
     @Override
     public void onViewCreated(@NonNull final View view, Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
-        new Thread(new Runnable() {
-            @Override
-            public void run() {
-                init(view);
-            }
-        }).start();
+        init(view);
     }
 
     @Override

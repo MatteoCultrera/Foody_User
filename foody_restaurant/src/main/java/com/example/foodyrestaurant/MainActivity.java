@@ -39,12 +39,7 @@ public class MainActivity extends AppCompatActivity {
                     active = user;
                 }
             }
-            new Thread(new Runnable() {
-                @Override
-                public void run() {
-                    init();
-                }
-            }).start();
+            init();
             return;
         }
         menu = new MenuFragment();
@@ -54,12 +49,7 @@ public class MainActivity extends AppCompatActivity {
         fm.beginTransaction().add(R.id.mainFrame, reservations, "2").commit();
         fm.beginTransaction().add(R.id.mainFrame, menu, "1").show(menu).commit();
         active = menu;
-        new Thread(new Runnable() {
-            @Override
-            public void run() {
-                init();
-            }
-        }).start();
+        init();
     }
 
     @Override
