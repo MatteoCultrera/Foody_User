@@ -93,7 +93,7 @@ public class ReservationFragment extends Fragment {
                     Reservation reservation = new Reservation(orderID, dishes, Reservation.prepStatus.PENDING,
                             reservationDB.isAccepted(), reservationDB.getOrderTimeBiker(), reservationDB.getNameUser(),
                             reservationDB.getNumberPhone(), reservationDB.getResNote(), "",
-                            sharedPreferences.getString("email", ""), sharedPreferences.getString("address", ""));
+                            sharedPreferences.getString("email", ""), reservationDB.getUserAddress());
                     reservation.setUserUID(reservationDB.getReservationID().substring(0, 28));
                     reservation.setDeliveryTime(reservationDB.getOrderTime());
                     reservations.add(reservation);

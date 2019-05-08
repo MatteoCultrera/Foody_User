@@ -89,7 +89,8 @@ public class Order extends AppCompatActivity {
                 HashMap<String, Object> childRest = new HashMap<>();
                 ReservationDBRestaurant reservationRest = new ReservationDBRestaurant(identifier, "", orders, false,
                         null,sharedPreferences.getString("phoneNumber", null),
-                        sharedPreferences.getString("name", null), deliveryTime, bikerTime, "pending");
+                        sharedPreferences.getString("name", null), deliveryTime, bikerTime, "pending",
+                        sharedPreferences.getString("address", null));
                 childRest.put(identifier, reservationRest);
                 databaseRest.updateChildren(childRest).addOnFailureListener(new OnFailureListener() {
                     @Override

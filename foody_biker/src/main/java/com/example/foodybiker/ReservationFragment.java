@@ -16,7 +16,17 @@ import android.view.ViewGroup;
 import android.widget.ImageButton;
 import android.widget.TextView;
 
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.Query;
+import com.google.firebase.database.ValueEventListener;
+
 import java.util.ArrayList;
+import java.util.Comparator;
 
 public class ReservationFragment extends Fragment {
 
@@ -30,6 +40,8 @@ public class ReservationFragment extends Fragment {
     RecyclerView orderList;
     ImageButton switchButton;
     RVAdapterReservation adapter;
+    private FirebaseUser firebaseUser;
+    private FirebaseAuth firebaseAuth;
 
     public ReservationFragment(){}
 
@@ -52,37 +64,29 @@ public class ReservationFragment extends Fragment {
 
 
     public void init(final View view){
-
-        //TODO: fetch infos about active reservation and reservations, and delete this stub code
-
+        firebaseAuth = FirebaseAuth.getInstance();
+        firebaseUser = firebaseAuth.getCurrentUser();
         activeReservation = null;
         reservations = new ArrayList<>();
-        reservations.add(
-                new Reservation("RossoPomodoro",
-                        "Via Piave 17, Torino TO",
-                        "12:30",
-                        "Simona Currà",
-                        "Via Circonvallazione 64, Torino TO",
-                        "13:30", null)
-        );
+        final DatabaseReference database = FirebaseDatabase.getInstance().getReference().child("reservations").child("Bikers");
+        Query query = database.child(firebaseUser.getUid());
+        query.addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                for (DataSnapshot ds : dataSnapshot.getChildren()) {
+                    ReservationDBBiker reservationDB = ds.getValue(ReservationDBBiker.class);
+                    Reservation reservation = new Reservation(reservationDB.getRestaurantName(), reservationDB.getRestaurantAddress(),
+                            reservationDB.getOrderTimeBiker(), reservationDB.getUserName(), reservationDB.getUserAddress(),
+                            reservationDB.getOrderTime(), null);
+                    reservations.add(reservation);
+                }
+                orderList.setAdapter(adapter);
+            }
 
-        reservations.add(
-                new Reservation("Zen Garden",
-                        "Via Monte Pasubio 16, Torino TO",
-                        "19:30",
-                        "Matteo Cultrera",
-                        "Via Borgosesia 46, Torino TO",
-                        "20:45", null)
-        );
-
-        reservations.add(
-                new Reservation("La Piola",
-                        "Via De Luigis 235, Torino TO",
-                        "21:30",
-                        "Daniele Leto",
-                        "Via Del Mare 46, Torino TO",
-                        "20:45", "Campanello rotto, per favore citofonare")
-        );
+            @Override
+            public void onCancelled(@NonNull DatabaseError databaseError) {
+            }
+        });
 
         restaurantName = view.findViewById(R.id.pickup_restaurant_name);
         restaurantAddress = view.findViewById(R.id.pickup_restaurant_address);
@@ -151,12 +155,8 @@ public class ReservationFragment extends Fragment {
 
         adapter = new RVAdapterReservation(reservations, this, activeReservation!=null);
 
-        orderList.setAdapter(adapter);
-
         setActiveReservation(activeReservation);
         setInterface(activeReservation!=null);
-
-
     }
 
     public void updateTitles(){
@@ -227,8 +227,4 @@ public class ReservationFragment extends Fragment {
         adapter.notifyItemRemoved(pos);
         adapter.notifyItemRangeChanged(pos, reservations.size());
     }
-
-
-
-
 }

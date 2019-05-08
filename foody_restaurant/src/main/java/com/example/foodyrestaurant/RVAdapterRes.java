@@ -159,7 +159,7 @@ public class RVAdapterRes extends RecyclerView.Adapter<RVAdapterRes.CardViewHold
                 ReservationDBRestaurant reservationRest = new ReservationDBRestaurant(reservationID,
                         "", dishes, true, null, reservations.get(i).getUserPhone(),
                         reservations.get(i).getUserName(), reservations.get(i).getDeliveryTime(),
-                        reservations.get(i).getOrderTime(), "doing");
+                        reservations.get(i).getOrderTime(), "doing", reservations.get(i).getUserAddress());
                 childRest.put(reservationID, reservationRest);
                 databaseRest.updateChildren(childRest).addOnFailureListener(new OnFailureListener() {
                     @Override
@@ -173,7 +173,7 @@ public class RVAdapterRes extends RecyclerView.Adapter<RVAdapterRes.CardViewHold
                 HashMap<String, Object> childBiker = new HashMap<>();
                 ReservationDBBiker reservationBiker = new ReservationDBBiker(reservationID, reservations.get(i).getDeliveryTime(),
                         reservations.get(i).getOrderTime(), sharedPreferences.getString("name", null),
-                        reservations.get(i).getUserName(),sharedPreferences.getString("address", null),
+                        reservations.get(i).getUserName(), sharedPreferences.getString("address", null),
                         reservations.get(i).getUserAddress());
                 childBiker.put(reservationID, reservationBiker);
                 databaseBiker.updateChildren(childBiker).addOnFailureListener(new OnFailureListener() {
@@ -215,7 +215,8 @@ public class RVAdapterRes extends RecyclerView.Adapter<RVAdapterRes.CardViewHold
                 HashMap<String, Object> childRest = new HashMap<>();
                 ReservationDBRestaurant reservationRest = new ReservationDBRestaurant(reservationID,
                         "", dishes, false, null, reservations.get(i).getUserPhone(),
-                        reservations.get(i).getUserName(), null, null, "done");
+                        reservations.get(i).getUserName(), null, null, "done",
+                        reservations.get(i).getUserAddress());
                 childRest.put(reservationID, reservationRest);
                 databaseRest.updateChildren(childRest).addOnFailureListener(new OnFailureListener() {
                     @Override

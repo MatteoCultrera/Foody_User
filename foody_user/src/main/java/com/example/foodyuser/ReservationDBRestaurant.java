@@ -10,6 +10,7 @@ public class ReservationDBRestaurant {
     private boolean accepted;
     private String resNote;
     private String numberPhone;
+    private String userAddress;
     private String nameUser;
     private String orderTime;
     private String status;
@@ -18,7 +19,7 @@ public class ReservationDBRestaurant {
     public ReservationDBRestaurant() {
     }
 
-    public ReservationDBRestaurant(String reservationID, String bikerID, ArrayList<OrderItem> dishesOrdered, boolean accepted, String resNote, String numberPhone, String nameUser, String orderTime, String orderTimeBiker, String status) {
+    public ReservationDBRestaurant(String reservationID, String bikerID, ArrayList<OrderItem> dishesOrdered, boolean accepted, String resNote, String numberPhone, String nameUser, String orderTime, String orderTimeBiker, String status, String userAddress) {
         this.reservationID = reservationID;
         this.bikerID = bikerID;
         this.dishesOrdered = dishesOrdered;
@@ -29,6 +30,15 @@ public class ReservationDBRestaurant {
         this.orderTime = orderTime;
         this.orderTimeBiker = orderTimeBiker;
         this.status = status;
+        this.userAddress = userAddress;
+    }
+
+    public String getUserAddress() {
+        return userAddress;
+    }
+
+    public void setUserAddress(String userAddress) {
+        this.userAddress = userAddress;
     }
 
     public String getNumberPhone() {
