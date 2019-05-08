@@ -94,7 +94,7 @@ public class ReservationFragment extends Fragment {
                         dishes.add(dish);
                     }
                     Reservation.prepStatus status;
-                    String orderID = reservationDBUser.getReservationID().substring(27);
+                    String orderID = reservationDBUser.getReservationID().substring(28);
                     if (reservationDBUser.getStatus().equals("pending")){
                         status = Reservation.prepStatus.PENDING;
                     } else if (reservationDBUser.getStatus().equals("doing")){
