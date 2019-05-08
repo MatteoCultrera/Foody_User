@@ -1,53 +1,265 @@
-<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:tools="http://schemas.android.com/tools"
+<?xml version="1.0" encoding="utf-8"?>
+<android.support.constraint.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/main_layout"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="#E4E4E4"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    tools:context="com.example.foodyrestaurant.MenuFragment">
+    android:background="@color/dark_white_background"
+    android:clickable="true"
+    android:focusable="true">
 
     <android.support.constraint.ConstraintLayout
+        android:id="@+id/constraint"
         android:layout_width="match_parent"
-        android:layout_height="match_parent">
+        android:layout_height="80dp"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        android:background="@drawable/toolbar_reservation_background"
+        android:elevation="16dp"
+        >
 
-        <android.support.constraint.ConstraintLayout
-            android:id="@+id/fragment_reservation"
-            android:layout_width="0dp"
-            android:layout_height="56dp"
-            android:background="@color/colorPrimaryLight"
-            android:elevation="16dp"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintEnd_toEndOf="parent"
+        <ImageButton
+            android:id="@+id/switch_button"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:src="@drawable/swap_white"
+            android:background="@android:color/transparent"
+            app:layout_constraintStart_toEndOf="@id/string_up"
+            android:layout_marginStart="30dp"
+            app:layout_constraintTop_toTopOf="@id/string_up"
+            app:layout_constraintBottom_toBottomOf="@id/string_down"/>
+
+        <TextView
+            android:id="@+id/string_up"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:fontFamily="@font/roboto_bold"
+            android:textColor="@color/whiteText"
+            android:textSize="18sp"
+            android:text="Your Reservation"
             app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintTop_toTopOf="parent"
-            app:layout_constraintVertical_bias="0.0">
+            android:layout_marginTop="16dp"
+            />
 
-            <TextView
-                android:id="@+id/textView"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:fontFamily="@font/roboto"
-                android:text="@string/orders"
-                android:textColor="@android:color/white"
-                android:textSize="20sp"
-                app:layout_constraintBottom_toBottomOf="parent"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toTopOf="parent" />
-
-        </android.support.constraint.ConstraintLayout>
-
-        <android.support.v7.widget.RecyclerView
-            android:id="@+id/reservation_display"
-            android:layout_width="0dp"
-            android:layout_height="0dp"
-            android:clipToPadding="false"
-            android:paddingTop="10dp"
-            app:layout_constraintBottom_toBottomOf="parent"
+        <TextView
+            android:id="@+id/string_down"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:fontFamily="@font/roboto_regular"
+            android:textColor="@color/whiteText"
+            android:textSize="16sp"
+            android:text="All Reservations"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/fragment_reservation" />
+            app:layout_constraintTop_toBottomOf="@id/string_up" />
 
     </android.support.constraint.ConstraintLayout>
 
-</FrameLayout>
+    <android.support.v7.widget.RecyclerView
+        android:id="@+id/user_reservation_order_list"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintBottom_toBottomOf="parent"
+        android:visibility="gone"
+        android:paddingTop="92dp"
+        android:paddingBottom="90dp"
+        android:clipToPadding="false"/>
+
+    <android.support.v7.widget.CardView
+        android:id="@+id/user_reservation_card"
+        android:animateLayoutChanges="true"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/constraint"
+        app:layout_constraintBottom_toBottomOf="parent"
+        android:layout_marginTop="8dp"
+        android:layout_marginBottom="8dp"
+        android:layout_marginStart="16dp"
+        android:layout_marginEnd="16dp"
+        app:cardCornerRadius="16dp"
+        android:elevation="8dp"
+        android:visibility="visible">
+
+        <android.support.constraint.ConstraintLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            >
+
+            <ImageView
+                android:id="@+id/user_reservation_restaurant_image"
+                android:layout_width="0dp"
+                android:layout_height="0dp"
+                android:src="@drawable/user_static_background"
+                app:layout_constraintBottom_toTopOf="@+id/photo_guideline"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent"
+                android:scaleType="centerCrop"/>
+
+            <ImageView
+                android:id="@+id/user_reservation_restaurant_shadow"
+                android:layout_width="0dp"
+                android:elevation="2dp"
+                android:layout_height="0dp"
+                android:src="@drawable/shadow_drop_down"
+                app:layout_constraintBottom_toTopOf="@+id/photo_guideline"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent"
+                android:scaleType="centerCrop"/>
+
+            <TextView
+                android:id="@+id/user_reservation_restaurant_name"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="RossoPomodoro"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent"
+                android:textColor="@color/whiteText"
+                android:elevation="5dp"
+                android:fontFamily="@font/roboto_bold"
+                android:textSize="24sp"
+                android:layout_marginStart="16dp"
+                android:layout_marginTop="16dp"/>
+
+            <TextView
+                android:id="@+id/user_reservation_restaurant_address"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Via Piave 35, Torino TO"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/user_reservation_restaurant_name"
+                android:textColor="@color/whiteText"
+                android:elevation="5dp"
+                android:fontFamily="@font/roboto_regular"
+                android:textSize="14sp"
+                android:layout_marginStart="16dp"
+                />
+
+            <android.support.constraint.Guideline
+                android:id="@+id/photo_guideline"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                app:layout_constraintGuide_percent="0.35"/>
+
+            <TextView
+                android:id="@+id/user_reservation_your_dishes"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Your Dishes"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/photo_guideline"
+                android:textColor="@color/colorPrimary"
+                android:fontFamily="@font/roboto_regular"
+                android:textSize="21sp"
+                android:layout_marginStart="16dp"
+                android:layout_marginTop="16dp"/>
+
+            <ScrollView
+                android:id="@+id/user_reservation_dish_list"
+                android:layout_width="match_parent"
+                android:layout_height="0dp"
+
+                android:paddingStart="16dp"
+                android:paddingEnd="16dp"
+                app:layout_constraintBottom_toTopOf="@+id/dishes_guideline"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/user_reservation_your_dishes"></ScrollView>
+
+            <TextView
+                android:id="@+id/user_reservation_total_string"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Total"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/dishes_guideline"
+                android:textColor="@color/colorAccent"
+                android:fontFamily="@font/roboto_bold"
+                android:textSize="21sp"
+                android:layout_marginStart="16dp"
+                android:layout_marginTop="16dp"/>
+
+            <View
+                android:layout_width="match_parent"
+                android:layout_height="1dp"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/dishes_guideline"
+                android:background="@color/primaryText"
+                android:layout_marginStart="16dp"
+                android:layout_marginEnd="16dp"/>
+
+            <TextView
+                android:id="@+id/user_reservation_total"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="16dp"
+                android:layout_marginEnd="16dp"
+                android:fontFamily="@font/roboto_bold"
+                android:text="35.70 €"
+                android:textColor="@color/colorAccent"
+                android:textSize="21sp"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/dishes_guideline" />
+
+
+
+            <android.support.constraint.Guideline
+                android:id="@+id/dishes_guideline"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                app:layout_constraintGuide_percent="0.75"/>
+
+            <android.support.constraint.Guideline
+                android:id="@+id/end_guideline"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                app:layout_constraintGuide_percent="0.85"/>
+
+
+            <TextView
+                android:id="@+id/user_reservation_delivery_time_string"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Delivery Time"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/end_guideline"
+                android:textColor="@color/colorPrimary"
+                android:fontFamily="@font/roboto_bold"
+                android:textSize="21sp"
+                android:layout_marginStart="16dp"
+                android:layout_marginTop="16dp"/>
+
+            <TextView
+                android:id="@+id/user_reservation_delivery_time"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="19.30"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/end_guideline"
+                android:textColor="@color/colorPrimary"
+                android:fontFamily="@font/roboto_bold"
+                android:textSize="21sp"
+                android:layout_marginEnd="16dp"
+                android:layout_marginTop="16dp"/>
+
+        </android.support.constraint.ConstraintLayout>
+
+    </android.support.v7.widget.CardView>
+
+
+
+
+</android.support.constraint.ConstraintLayout>
