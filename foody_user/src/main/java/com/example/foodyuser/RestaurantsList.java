@@ -53,7 +53,12 @@ public class RestaurantsList extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_restaurants_list);
 
-        init();
+        new Thread(new Runnable() {
+            @Override
+            public void run() {
+                init();
+            }
+        }).start();
     }
 
     private void init(){

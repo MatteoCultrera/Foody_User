@@ -52,9 +52,14 @@ public class ReservationFragment extends Fragment {
     }
 
     @Override
-    public void onViewCreated(@NonNull View view, Bundle savedInstanceState) {
+    public void onViewCreated(@NonNull final View view, Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
-        init(view);
+        new Thread(new Runnable() {
+            @Override
+            public void run() {
+                init(view);
+            }
+        });
     }
 
     @Override
