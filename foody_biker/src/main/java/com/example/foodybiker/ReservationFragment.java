@@ -17,6 +17,13 @@ import android.widget.ImageButton;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.database.ChildEventListener;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
+
 import java.util.ArrayList;
 
 public class ReservationFragment extends Fragment {
@@ -26,6 +33,7 @@ public class ReservationFragment extends Fragment {
     boolean canClick;
     CardView card;
     ArrayList<Reservation> reservations;
+    private String bikerUid = FirebaseAuth.getInstance().getCurrentUser().getUid();
     Reservation activeReservation;
     RecyclerView orderList;
     ImageButton switchButton;
@@ -129,14 +137,50 @@ public class ReservationFragment extends Fragment {
         LinearLayoutManager llm = new LinearLayoutManager(view.getContext());
         orderList.setLayoutManager(llm);
 
-        RVAdapterReservation adapterReservation = new RVAdapterReservation(reservations, this);
+        final RVAdapterReservation adapterReservation = new RVAdapterReservation(reservations, this);
 
         orderList.setAdapter(adapterReservation);
 
         setActiveReservation(activeReservation);
         setInterface(activeReservation!=null);
 
+        //Add the notification when the biker receive the new
+        DatabaseReference bikerReservations = FirebaseDatabase.getInstance().getReference().child("reservations")
+                                                .child("biker").child(bikerUid);
+        bikerReservations.addChildEventListener(new ChildEventListener() {
+            @Override
+            public void onChildAdded(@NonNull DataSnapshot dataSnapshot, @Nullable String s) {
+                Reservation res = dataSnapshot.getValue(Reservation.class);
+                int index;
+                for(index = 0; index<reservations.size(); index++){
+                    if(res.getUserDeliveryTime().compareTo(reservations.get(index).getUserDeliveryTime()) > 0)
+                        break;
+                }
+                reservations.add(index,res);
+                adapterReservation.notifyItemInserted(index);
+                adapterReservation.notifyItemRangeChanged(index, reservations.size());
+            }
 
+            @Override
+            public void onChildChanged(@NonNull DataSnapshot dataSnapshot, @Nullable String s) {
+
+            }
+
+            @Override
+            public void onChildRemoved(@NonNull DataSnapshot dataSnapshot) {
+
+            }
+
+            @Override
+            public void onChildMoved(@NonNull DataSnapshot dataSnapshot, @Nullable String s) {
+
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError databaseError) {
+
+            }
+        });
     }
 
     public void setInterface(Boolean deliveringOrder){

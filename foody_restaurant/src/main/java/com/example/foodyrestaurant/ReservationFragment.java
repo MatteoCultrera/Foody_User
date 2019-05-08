@@ -165,8 +165,8 @@ public class ReservationFragment extends Fragment {
         reservation.setAdapter(adapter);
 
         //Add the notification to the restaurant, when a new reservation is added
-        DatabaseReference restaurantReservations = FirebaseDatabase.getInstance().getReference().child("Reservations")
-                                        .child("Restaurants").child(restaurantUid);
+        DatabaseReference restaurantReservations = FirebaseDatabase.getInstance().getReference().child("reservations")
+                                        .child("restaurant").child(restaurantUid);
         restaurantReservations.addChildEventListener(new ChildEventListener() {
             @Override
             public void onChildAdded(@NonNull DataSnapshot dataSnapshot, @Nullable String s) {
