@@ -1,6 +1,7 @@
 package com.example.foodyrestaurant;
 
 import android.content.Context;
+import android.net.Uri;
 import android.support.annotation.NonNull;
 import android.support.constraint.ConstraintLayout;
 import android.support.v4.content.ContextCompat;
@@ -79,11 +80,14 @@ public class RVAdapter extends RecyclerView.Adapter<RVAdapter.CardViewHolder>{
                     RequestOptions options = new RequestOptions();
                     options.fitCenter()
                             .signature(new ObjectKey(f.getPath() + f.lastModified()));
-                    Glide
-                            .with(image.getContext())
-                            .load(dishes.get(j).getImage())
-                            .apply(options)
-                            .into(image);
+                    if(dishes.get(j).getImagePath() != null) {
+                        Uri uri = Uri.fromFile(new File(dishes.get(j).getImagePath()));
+                        Glide
+                                .with(image.getContext())
+                                .load(uri)
+                                .apply(options)
+                                .into(image);
+                    }
                 }
                 pvh.menuDishes.addView(dish);
                 dishes.get(j).setAdded(true);
