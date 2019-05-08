@@ -3,6 +3,8 @@ package com.example.foodyrestaurant;
 import android.net.Uri;
 import android.support.annotation.NonNull;
 
+import com.google.firebase.database.Exclude;
+
 import java.util.Locale;
 
 class Dish {
@@ -16,6 +18,7 @@ class Dish {
     private boolean prepared;
     private boolean available;
     private boolean editImage;
+    private String pathDB;
 
     public Dish(){}
 
@@ -29,6 +32,14 @@ class Dish {
         prepared = false;
         editImage = false;
         available = true;
+    }
+
+    public String getPathDB() {
+        return pathDB;
+    }
+
+    public void setPathDB(String pathDB) {
+        this.pathDB = pathDB;
     }
 
     void setAvailable(boolean b){
@@ -65,6 +76,7 @@ class Dish {
         return price;
     }
 
+    @Exclude
     Uri getImage(){
         return image;
     }
