@@ -137,7 +137,7 @@ public class RVAdapterRes extends RecyclerView.Adapter<RVAdapterRes.CardViewHold
                 }
                 String reservationID = reservations.get(i).getUserUID() + reservations.get(i).getReservationID();
                 ReservationDBUser reservation = new ReservationDBUser(reservationID,
-                        firebaseUser.getUid(), dishes, true, null, null);
+                        firebaseUser.getUid(), dishes, true, null, null, "doing");
                 child.put(reservationID, reservation);
                 database.updateChildren(child).addOnFailureListener(new OnFailureListener() {
                     @Override
@@ -150,7 +150,8 @@ public class RVAdapterRes extends RecyclerView.Adapter<RVAdapterRes.CardViewHold
                         .child("reservations").child("restaurant").child(firebaseUser.getUid());
                 HashMap<String, Object> childRest = new HashMap<>();
                 ReservationDBRestaurant reservationRest = new ReservationDBRestaurant(reservationID,
-                        "", dishes, true, null, reservations.get(i).getUserPhone(), reservations.get(i).getUserName(), null, null);
+                        "", dishes, true, null, reservations.get(i).getUserPhone(),
+                        reservations.get(i).getUserName(), null, null, "doing");
                 childRest.put(reservationID, reservationRest);
                 databaseRest.updateChildren(childRest).addOnFailureListener(new OnFailureListener() {
                     @Override
@@ -164,6 +165,41 @@ public class RVAdapterRes extends RecyclerView.Adapter<RVAdapterRes.CardViewHold
         pvh.decline.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                DatabaseReference database = FirebaseDatabase.getInstance().getReference()
+                        .child("reservations").child("users").child(reservations.get(i).getUserUID());
+                HashMap<String, Object> child = new HashMap<>();
+                ArrayList<OrderItem> dishes = new ArrayList<>();
+                for(Dish d : reservations.get(i).getDishesOrdered()){
+                    OrderItem order = new OrderItem();
+                    order.setPieces(d.getQuantity());
+                    order.setOrderName(d.getDishName());
+                    dishes.add(order);
+                }
+                String reservationID = reservations.get(i).getUserUID() + reservations.get(i).getReservationID();
+                ReservationDBUser reservation = new ReservationDBUser(reservationID,
+                        firebaseUser.getUid(), dishes, false, null, null, "done");
+                child.put(reservationID, reservation);
+                database.updateChildren(child).addOnFailureListener(new OnFailureListener() {
+                    @Override
+                    public void onFailure(@NonNull Exception e) {
+                        Toast.makeText(context, R.string.error_order, Toast.LENGTH_SHORT).show();
+                    }
+                });
+
+                DatabaseReference databaseRest = FirebaseDatabase.getInstance().getReference()
+                        .child("reservations").child("restaurant").child(firebaseUser.getUid());
+                HashMap<String, Object> childRest = new HashMap<>();
+                ReservationDBRestaurant reservationRest = new ReservationDBRestaurant(reservationID,
+                        "", dishes, false, null, reservations.get(i).getUserPhone(),
+                        reservations.get(i).getUserName(), null, null, "done");
+                childRest.put(reservationID, reservationRest);
+                databaseRest.updateChildren(childRest).addOnFailureListener(new OnFailureListener() {
+                    @Override
+                    public void onFailure(@NonNull Exception e) {
+                        Toast.makeText(context, R.string.error_order, Toast.LENGTH_SHORT).show();
+                    }
+                });
+
                 reservations.get(i).setAccepted(false);
                 reservations.remove(i);
                 notifyItemRemoved(i);

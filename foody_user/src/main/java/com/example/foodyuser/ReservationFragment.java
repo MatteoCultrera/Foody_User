@@ -93,8 +93,16 @@ public class ReservationFragment extends Fragment {
                         dish.setDishName(o.getOrderName());
                         dishes.add(dish);
                     }
+                    Reservation.prepStatus status;
                     String orderID = reservationDBUser.getReservationID().substring(27);
-                    Reservation reservation = new Reservation(orderID, dishes, Reservation.prepStatus.PENDING,
+                    if (reservationDBUser.getStatus().equals("pending")){
+                        status = Reservation.prepStatus.PENDING;
+                    } else if (reservationDBUser.getStatus().equals("doing")){
+                        status = Reservation.prepStatus.DOING;
+                    } else{
+                        status = Reservation.prepStatus.DONE;
+                    }
+                    Reservation reservation = new Reservation(orderID, dishes, status,
                             reservationDBUser.isAccepted(), reservationDBUser.getOrderTime(), sharedPreferences.getString("name", ""),
                             sharedPreferences.getString("phoneNumber", ""), reservationDBUser.getResNote(), "",
                             sharedPreferences.getString("email", ""), sharedPreferences.getString("address", ""));

@@ -67,7 +67,7 @@ public class Order extends AppCompatActivity {
                         .child("reservations").child("users").child(firebaseUser.getUid());
                 HashMap<String, Object> child = new HashMap<>();
                 String identifier = firebaseUser.getUid() + System.currentTimeMillis();
-                ReservationDBUser reservation = new ReservationDBUser(identifier, restID, orders, false, null, null);
+                ReservationDBUser reservation = new ReservationDBUser(identifier, restID, orders, false, null, null, "pending");
                 child.put(identifier, reservation);
                 database.updateChildren(child).addOnFailureListener(new OnFailureListener() {
                     @Override
@@ -81,7 +81,7 @@ public class Order extends AppCompatActivity {
                 HashMap<String, Object> childRest = new HashMap<>();
                 ReservationDBRestaurant reservationRest = new ReservationDBRestaurant(identifier, "", orders, false,
                         null,sharedPreferences.getString("phoneNumber", null),
-                        sharedPreferences.getString("name", null), null, null);
+                        sharedPreferences.getString("name", null), null, null, "pending");
                 childRest.put(identifier, reservationRest);
                 databaseRest.updateChildren(childRest).addOnFailureListener(new OnFailureListener() {
                     @Override
