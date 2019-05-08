@@ -14,21 +14,22 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageButton;
-import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import java.util.ArrayList;
 
 public class ReservationFragment extends Fragment {
 
-    TextView restaurantName, restaurantAddress, userName, userAddress, notes, orderDelivered, primaryText, secondaryText;
-    ConstraintLayout orderDeliveredLayout, mainLayout;
+    TextView restaurantName, restaurantAddress, userName,
+            userAddress, notes, orderDelivered, primaryText, secondaryText, pickupTime, deliveryTime;
+    ConstraintLayout orderDeliveredLayout, mainLayout, noteLayout;
     boolean canClick;
     CardView card;
     ArrayList<Reservation> reservations;
     Reservation activeReservation;
     RecyclerView orderList;
     ImageButton switchButton;
+    RVAdapterReservation adapter;
 
     public ReservationFragment(){}
 
@@ -97,6 +98,9 @@ public class ReservationFragment extends Fragment {
         primaryText = view.findViewById(R.id.string_up);
         secondaryText = view.findViewById(R.id.string_down);
         switchButton = view.findViewById(R.id.switch_button);
+        noteLayout = view.findViewById(R.id.note_layout);
+        pickupTime = view.findViewById(R.id.pickup_time);
+        deliveryTime = view.findViewById(R.id.deliver_time);
 
         orderDeliveredLayout.getLayoutTransition().enableTransitionType(LayoutTransition.CHANGING);
 
@@ -113,15 +117,31 @@ public class ReservationFragment extends Fragment {
         orderDeliveredLayout.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if(canClick == false && activeReservation != null){
-                    orderDelivered.setText("Order Delivered");
+                if(!canClick && card.getVisibility() == View.VISIBLE){
+                    orderDelivered.setText(getString(R.string.order_delivered));
                     canClick = true;
-                }else{
+                }else if(card.getVisibility() == View.VISIBLE){
                     //TODO: notify server that order was delivered
                     setInterface(false);
                     canClick = false;
                     setActiveReservation(null);
+                    adapter.setOrderActive(false);
+                    orderDelivered.setText("");
+                    updateTitles();
                 }
+            }
+        });
+
+        switchButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                orderDelivered.setText("");
+                canClick = false;
+                if(card.getVisibility() == View.VISIBLE)
+                    setInterface(false);
+                else
+                    setInterface(true);
+                updateTitles();
             }
         });
 
@@ -129,9 +149,9 @@ public class ReservationFragment extends Fragment {
         LinearLayoutManager llm = new LinearLayoutManager(view.getContext());
         orderList.setLayoutManager(llm);
 
-        RVAdapterReservation adapterReservation = new RVAdapterReservation(reservations, this);
+        adapter = new RVAdapterReservation(reservations, this, activeReservation!=null);
 
-        orderList.setAdapter(adapterReservation);
+        orderList.setAdapter(adapter);
 
         setActiveReservation(activeReservation);
         setInterface(activeReservation!=null);
@@ -139,22 +159,34 @@ public class ReservationFragment extends Fragment {
 
     }
 
+    public void updateTitles(){
+        if(card.getVisibility() == View.GONE){
+            primaryText.setText(reservations.size()+" "+getString(R.string.pending_orders));
+            if(activeReservation == null){
+                secondaryText.setText(getString(R.string.no_order_deliver));
+            }else {
+                secondaryText.setText(getString(R.string.delivering_order));
+            }
+        }else{
+              if(activeReservation == null){
+                primaryText.setText(getString(R.string.no_order_deliver));
+            }else {
+                primaryText.setText(getString(R.string.delivering_order));
+            }
+            secondaryText.setText(reservations.size()+" "+getString(R.string.pending_orders));
+        }
+    }
+
     public void setInterface(Boolean deliveringOrder){
-        if(deliveringOrder == true){
+        updateTitles();
+        if(deliveringOrder ){
             card.setVisibility(View.VISIBLE);
             orderList.setVisibility(View.GONE);
-            primaryText.setText(getString(R.string.delivering_order));
-            secondaryText.setText(reservations.size()+" "+getString(R.string.pending_orders));
             orderDeliveredLayout.setBackgroundResource(R.drawable.order_delivered_background);
         }else{
             card.setVisibility(View.GONE);
             orderList.setVisibility(View.VISIBLE);
-            primaryText.setText(reservations.size()+" "+getString(R.string.pending_orders));
             orderDeliveredLayout.setBackgroundResource(R.drawable.order_delivered_background_dis);
-            if(activeReservation == null)
-                secondaryText.setText(getString(R.string.no_order_deliver));
-            else
-                secondaryText.setText(getString(R.string.delivering_order));
         }
     }
 
@@ -163,15 +195,40 @@ public class ReservationFragment extends Fragment {
         if(reservation == null){
             switchButton.setImageResource(R.drawable.swap_dis);
             switchButton.setClickable(false);
+            adapter.setOrderActive(false);
+            for(int i = 0; i < reservations.size() ; i++){
+                adapter.notifyItemChanged(i);
+            }
         }else{
             switchButton.setImageResource(R.drawable.swap_white);
             switchButton.setClickable(true);
+            adapter.setOrderActive(true);
+            for(int i = 0; i < reservations.size() ; i++){
+                adapter.notifyItemChanged(i);
+            }
+            restaurantName.setText(activeReservation.getRestaurantName());
+            restaurantAddress.setText(activeReservation.getRestaurantAddress());
+            userName.setText(activeReservation.getUserName());
+            userAddress.setText(activeReservation.getUserAddress());
+            pickupTime.setText(activeReservation.getRestaurantPickupTime());
+            deliveryTime.setText(activeReservation.getUserDeliveryTime());
+            if(activeReservation.getNotes() == null){
+                noteLayout.setVisibility(View.GONE);
+            }else{
+                noteLayout.setVisibility(View.VISIBLE);
+                notes.setText(activeReservation.getNotes());
+            }
+
         }
     }
 
-    public boolean canAccept(){
-        return activeReservation == null;
+    public void removeItem(int pos){
+        reservations.remove(pos);
+        adapter.notifyItemRemoved(pos);
+        adapter.notifyItemRangeChanged(pos, reservations.size());
     }
+
+
 
 
 }
