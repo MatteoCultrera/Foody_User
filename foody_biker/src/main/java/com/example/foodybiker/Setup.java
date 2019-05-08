@@ -790,7 +790,7 @@ public class Setup extends AppCompatActivity {
         edit.putBoolean("satState", satC.isChecked());
         edit.putBoolean("sunState", sunC.isChecked());
         edit.apply();
-        finish();
+        Toast.makeText(getApplicationContext(), R.string.save, Toast.LENGTH_SHORT).show();
     }
 
     private void saveBitmap(Bitmap bitmap,String path){

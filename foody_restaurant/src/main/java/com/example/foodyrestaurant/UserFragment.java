@@ -97,7 +97,7 @@ public class UserFragment extends Fragment {
         edit = sharedPref.edit();
         firebaseAuth = FirebaseAuth.getInstance();
         profilePicture = view.findViewById(R.id.profilePicture);
-        ImageView profileShadow = view.findViewById(R.id.shadow);
+        final ImageView profileShadow = view.findViewById(R.id.shadow);
         FloatingActionButton editMode = view.findViewById(R.id.edit_mode);
         name = view.findViewById(R.id.userName);
         email = view.findViewById(R.id.emailAddress);
@@ -224,7 +224,7 @@ public class UserFragment extends Fragment {
                     .into(profilePicture);
         } else {
             StorageReference mStorageRef = FirebaseStorage.getInstance().getReference();
-            mStorageRef.child("images/restaurants/" + firebaseAuth.getCurrentUser().getUid() + ".jpeg").getDownloadUrl()
+            mStorageRef.child("images/restaurants/" + firebaseAuth.getCurrentUser().getUid() + "_profile.jpeg").getDownloadUrl()
                     .addOnSuccessListener(new OnSuccessListener<Uri>() {
                         @Override
                         public void onSuccess(Uri uri) {
@@ -232,6 +232,11 @@ public class UserFragment extends Fragment {
                                     .with(profilePicture.getContext())
                                     .load(uri)
                                     .into(profilePicture);
+
+                            Glide
+                                    .with(profileShadow.getContext())
+                                    .load(R.drawable.shadow)
+                                    .into(profileShadow);
                             //TODO: salvare l'uri qua nel path dell'immagine profilo
                         }
                     }).addOnFailureListener(new OnFailureListener() {
@@ -244,11 +249,6 @@ public class UserFragment extends Fragment {
                 }
             });
         }
-
-        Glide
-                .with(this)
-                .load(R.drawable.shadow)
-                .into(profileShadow);
 
         editMode.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -270,7 +270,12 @@ public class UserFragment extends Fragment {
         Context context = Objects.requireNonNull(getActivity()).getApplicationContext();
         sharedPref = context.getSharedPreferences("myPreference", MODE_PRIVATE);
         storageDir = getActivity().getExternalFilesDir(Environment.DIRECTORY_PICTURES);
+        new Thread(new Runnable() {
+            @Override
+            public void run() {
+                init(Objects.requireNonNull(getView()));
+            }
+        }).start();
 
-        init(Objects.requireNonNull(getView()));
     }
 }

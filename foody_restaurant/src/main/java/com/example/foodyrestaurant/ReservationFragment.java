@@ -52,9 +52,14 @@ public class ReservationFragment extends Fragment {
     }
 
     @Override
-    public void onViewCreated(@NonNull View view, Bundle savedInstanceState) {
+    public void onViewCreated(@NonNull final View view, Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
-        init(view);
+        new Thread(new Runnable() {
+            @Override
+            public void run() {
+                init(view);
+            }
+        });
     }
 
     @Override
@@ -87,6 +92,7 @@ public class ReservationFragment extends Fragment {
                         Dish dish = new Dish();
                         dish.setQuantity(o.getPieces());
                         dish.setDishName(o.getOrderName());
+                        dish.setPrice(o.getPrice());
                         dishes.add(dish);
                     }
                     String orderID = reservationDB.getReservationID().substring(28);
@@ -96,6 +102,7 @@ public class ReservationFragment extends Fragment {
                             sharedPreferences.getString("email", ""), reservationDB.getUserAddress());
                     reservation.setUserUID(reservationDB.getReservationID().substring(0, 28));
                     reservation.setDeliveryTime(reservationDB.getOrderTime());
+                    reservation.setTotalPrice(reservationDB.getTotalCost());
                     reservations.add(reservation);
                 }
 

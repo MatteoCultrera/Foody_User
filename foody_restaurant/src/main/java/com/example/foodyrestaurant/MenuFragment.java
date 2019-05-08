@@ -53,9 +53,14 @@ public class MenuFragment extends Fragment {
     }
 
     @Override
-    public void onViewCreated(@NonNull View view, Bundle savedInstanceState) {
+    public void onViewCreated(@NonNull final View view, Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
-        init(view);
+        new Thread(new Runnable() {
+            @Override
+            public void run() {
+                init(view);
+            }
+        }).start();
     }
 
     @Override
@@ -83,7 +88,7 @@ public class MenuFragment extends Fragment {
         user = firebaseAuth.getCurrentUser();
         FloatingActionButton editMode = view.findViewById(R.id.edit_mode);
         final ImageView profileImage = view.findViewById(R.id.mainImage);
-        ImageView profileShadow = view.findViewById(R.id.shadow);
+        final ImageView profileShadow = view.findViewById(R.id.shadow);
         StorageReference mStorageRef = FirebaseStorage.getInstance().getReference();
         mStorageRef.child("images/restaurants/"+ user.getUid() +"_profile.jpeg").getDownloadUrl()
                 .addOnSuccessListener(new OnSuccessListener<Uri>() {
@@ -93,6 +98,10 @@ public class MenuFragment extends Fragment {
                                 .with(profileImage.getContext())
                                 .load(uri)
                                 .into(profileImage);
+                        Glide
+                                .with(profileShadow.getContext())
+                                .load(R.drawable.shadow)
+                                .into(profileShadow);
                     }
                 })
                 .addOnFailureListener(new OnFailureListener() {
@@ -104,10 +113,7 @@ public class MenuFragment extends Fragment {
                                 .into(profileImage);
                     }
                 });
-        Glide
-                .with(this)
-                .load(R.drawable.shadow)
-                .into(profileShadow);
+
 
 
         DatabaseReference database = FirebaseDatabase.getInstance().getReference();

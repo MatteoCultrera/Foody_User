@@ -58,8 +58,6 @@
     <string name="notesPlaceholder">Notes:</string>
     <string name="additional">Additional info:</string>
     <string name="idRes" translatable="false">ID:</string>
-
-    <string name="save">Your data has been saved</string>
     <string name="noSave">Your data has been already saved</string>
     <string name="delete">Delete</string>
 </resources>
