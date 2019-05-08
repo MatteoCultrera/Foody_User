@@ -59,6 +59,7 @@ public class ReservationFragment extends Fragment {
     public void onViewCreated(@NonNull View view, Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
         init(view);
+        Log.d("TRYUNODUE", "onViewCreated()");
     }
 
     @Override
@@ -103,6 +104,7 @@ public class ReservationFragment extends Fragment {
                 reservations.sort(new Comparator<Reservation>() {
                     @Override
                     public int compare(Reservation o1, Reservation o2) {
+
                         return o1.getOrderTime().compareTo(o2.getOrderTime());
                     }
                 });
@@ -124,4 +126,5 @@ public class ReservationFragment extends Fragment {
             }
         });
     }
+
 }

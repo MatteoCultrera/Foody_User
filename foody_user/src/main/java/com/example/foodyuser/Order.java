@@ -52,9 +52,9 @@ public class Order extends AppCompatActivity {
         firebaseAuth = FirebaseAuth.getInstance();
         firebaseUser = firebaseAuth.getCurrentUser();
         backButton = findViewById(R.id.backButton);
-        placeOrder = findViewById(R.id.placeOrder);
+        placeOrder = findViewById(R.id.place_order);
         JsonHandler handler =  new JsonHandler();
-        File directory = getExternalFilesDir(Environment.DIRECTORY_DOCUMENTS);
+        final File directory = getExternalFilesDir(Environment.DIRECTORY_DOCUMENTS);
         File orderFile = new File(directory, getString(R.string.order_file_name));
         Bundle extras = getIntent().getExtras();
         final String restID = extras.getString("restaurantID","");
@@ -89,6 +89,10 @@ public class Order extends AppCompatActivity {
                         Toast.makeText(getApplicationContext(), R.string.error_order, Toast.LENGTH_SHORT).show();
                     }
                 });
+
+                File orderFile = new File(directory, getString(R.string.order_file_name));
+                if(orderFile.exists())
+                    orderFile.delete();
                 finish();
             }
         });
