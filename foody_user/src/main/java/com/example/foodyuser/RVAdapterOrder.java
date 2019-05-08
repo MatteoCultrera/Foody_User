@@ -66,9 +66,10 @@ public class RVAdapterOrder  extends RecyclerView.Adapter<RVAdapterOrder.CardVie
                     fatherClass.updatePrice();
                 }
                 else{
-                    if(orders.size() == 1)
+                    if(orders.size() == 1){
+                        fatherClass.removeItem(pos);
                         fatherClass.closeActivity();
-                    else{
+                    } else{
                         fatherClass.removeItem(pos);
                         fatherClass.updatePrice();
                     }

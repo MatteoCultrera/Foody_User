@@ -44,6 +44,7 @@ public class ReservationFragment extends Fragment {
     private FirebaseAuth firebaseAuth;
     private FirebaseUser firebaseUser;
     private SharedPreferences sharedPreferences;
+    private View thisView;
 
     public ReservationFragment() {
     }
@@ -58,8 +59,7 @@ public class ReservationFragment extends Fragment {
     @Override
     public void onViewCreated(@NonNull View view, Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
-        init(view);
-        Log.d("TRYUNODUE", "onViewCreated()");
+        thisView = view;
     }
 
     @Override
@@ -101,6 +101,7 @@ public class ReservationFragment extends Fragment {
                             sharedPreferences.getString("email", ""), sharedPreferences.getString("address", ""));
                     reservations.add(reservation);
                 }
+
                 reservations.sort(new Comparator<Reservation>() {
                     @Override
                     public int compare(Reservation o1, Reservation o2) {
@@ -108,6 +109,7 @@ public class ReservationFragment extends Fragment {
                         return o1.getOrderTime().compareTo(o2.getOrderTime());
                     }
                 });
+
                 RVAdapterRes adapter = new RVAdapterRes(reservations);
                 reservation.setAdapter(adapter);
             }
@@ -127,4 +129,9 @@ public class ReservationFragment extends Fragment {
         });
     }
 
+    @Override
+    public void onResume() {
+        super.onResume();
+        init(thisView);
+    }
 }
