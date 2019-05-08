@@ -22,6 +22,7 @@ class Reservation {
     private String userUID;
     private String resNote;
     private String orderTime;
+    private String deliveryTime;
     private int toBePrepared;
 
     Reservation(String identifier, ArrayList<Dish> dishes, prepStatus preparationStatus, boolean accepted,
@@ -39,6 +40,14 @@ class Reservation {
         this.userEmail = userEmail;
         this.userAddress = userAddress;
         toBePrepared = dishes.size();
+    }
+
+    public String getDeliveryTime() {
+        return deliveryTime;
+    }
+
+    public void setDeliveryTime(String deliveryTime) {
+        this.deliveryTime = deliveryTime;
     }
 
     String getReservationID() {
