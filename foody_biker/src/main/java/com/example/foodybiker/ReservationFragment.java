@@ -80,6 +80,7 @@ public class ReservationFragment extends Fragment {
                     Reservation reservation = new Reservation(reservationDB.getRestaurantName(), reservationDB.getRestaurantAddress(),
                             reservationDB.getOrderTimeBiker(), reservationDB.getUserName(), reservationDB.getUserAddress(),
                             reservationDB.getOrderTime(), null);
+                    reservation.setReservationID(ds.getKey());
                     reservations.add(reservation);
                 }
                 orderList.setAdapter(adapter);
@@ -167,12 +168,12 @@ public class ReservationFragment extends Fragment {
             @Override
             public void onChildAdded(@NonNull DataSnapshot dataSnapshot, @Nullable String s) {
                 Log.d("NOTIFICATION", "Data snapshot: "+dataSnapshot.getKey());
-                /*for(DataSnapshot ds : dataSnapshot.getChildren()){
+                for(DataSnapshot ds : dataSnapshot.getChildren()){
                     ReservationDBBiker reservationDB = ds.getValue(ReservationDBBiker.class);
                     Reservation reservation = new Reservation(reservationDB.getRestaurantName(), reservationDB.getRestaurantAddress(),
                             reservationDB.getOrderTimeBiker(), reservationDB.getUserName(), reservationDB.getUserAddress(),
                             reservationDB.getOrderTime(), null);
-                    if()
+                    reservation.setReservationID(ds.getKey());
 
                     reservations.add(reservation);
                     int index;
@@ -183,7 +184,7 @@ public class ReservationFragment extends Fragment {
                     reservations.add(index,reservation);
                     adapter.notifyItemInserted(index);
                     adapter.notifyItemRangeChanged(index, reservations.size());
-                }*/
+                }
 
             }
 
