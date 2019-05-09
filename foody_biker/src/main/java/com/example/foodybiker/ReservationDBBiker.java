@@ -9,6 +9,7 @@ public class ReservationDBBiker {
     private String userName;
     private String restaurantAddress;
     private String userAddress;
+    private String status;
 
     public ReservationDBBiker() {}
 
@@ -20,6 +21,14 @@ public class ReservationDBBiker {
         this.userName = userName;
         this.restaurantAddress = restaurantAddress;
         this.userAddress = userAddress;
+    }
+
+    public String getStatus() {
+        return status;
+    }
+
+    public void setStatus(String status) {
+        this.status = status;
     }
 
     public String getReservationID() {

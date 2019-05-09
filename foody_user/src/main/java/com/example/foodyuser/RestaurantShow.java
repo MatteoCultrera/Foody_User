@@ -55,10 +55,7 @@ public class RestaurantShow extends AppCompatActivity {
     private int shortAnimDuration;
     private FirebaseAuth firebaseAuth;
     private FirebaseUser firebaseUser;
-
     static int delPriceToPass;
-
-
     private boolean unchanged;
     private String dialogCode = "ok";
     private AlertDialog dialogDism;

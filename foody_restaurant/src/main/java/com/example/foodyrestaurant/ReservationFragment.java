@@ -91,7 +91,6 @@ public class ReservationFragment extends Fragment {
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
                 for (DataSnapshot ds : dataSnapshot.getChildren()) {
-                    Log.d("SWSW", "query");
                     ReservationDBRestaurant reservationDB = ds.getValue(ReservationDBRestaurant.class);
                     ArrayList<Dish> dishes = new ArrayList<>();
                     for(OrderItem o : reservationDB.getDishesOrdered()){
@@ -129,7 +128,8 @@ public class ReservationFragment extends Fragment {
                     public void onChildAdded(@NonNull DataSnapshot dataSnapshot, @Nullable String s) {
                         ReservationDBRestaurant reservationDB = dataSnapshot.getValue(ReservationDBRestaurant.class);
                         for (Reservation r : reservations){
-                            if (r.getReservationID().equals(reservationDB.getReservationID())){
+                            String orderID = reservationDB.getReservationID().substring(28);
+                            if (r.getReservationID().equals(orderID)){
                                 toAdd = false;
                             }
                         }
@@ -162,6 +162,8 @@ public class ReservationFragment extends Fragment {
                             reservations.add(index, reservation);
                             adapter.notifyItemInserted(index);
                             adapter.notifyItemRangeChanged(index, reservations.size());
+
+                            father.setNotification(1);
                         }
                     }
 

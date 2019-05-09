@@ -84,11 +84,13 @@ public class ReservationFragment extends Fragment {
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
                 for (DataSnapshot ds : dataSnapshot.getChildren()) {
                     ReservationDBBiker reservationDB = ds.getValue(ReservationDBBiker.class);
-                    Reservation reservation = new Reservation(reservationDB.getRestaurantName(), reservationDB.getRestaurantAddress(),
-                            reservationDB.getOrderTimeBiker(), reservationDB.getUserName(), reservationDB.getUserAddress(),
-                            reservationDB.getOrderTime(), null);
-                    reservation.setReservationID(ds.getKey());
-                    reservations.add(reservation);
+                    if (reservationDB.getStatus() == null || reservationDB.getStatus().equals("accepted")) {
+                            Reservation reservation = new Reservation(reservationDB.getRestaurantName(), reservationDB.getRestaurantAddress(),
+                                    reservationDB.getOrderTimeBiker(), reservationDB.getUserName(), reservationDB.getUserAddress(),
+                                    reservationDB.getOrderTime(), null);
+                            reservation.setReservationID(ds.getKey());
+                            reservations.add(reservation);
+                    }
                 }
                 orderList.setAdapter(adapter);
 
@@ -99,23 +101,28 @@ public class ReservationFragment extends Fragment {
                     @Override
                     public void onChildAdded(@NonNull DataSnapshot dataSnapshot, @Nullable String s) {
                         ReservationDBBiker reservationDB = dataSnapshot.getValue(ReservationDBBiker.class);
-                        for (Reservation r : reservations){
-                            if (r.getReservationID().equals(reservationDB.getReservationID()))
-                                toAdd = false;
-                        }
-                        if (toAdd) {
-                            Reservation reservation = new Reservation(reservationDB.getRestaurantName(), reservationDB.getRestaurantAddress(),
-                                    reservationDB.getOrderTimeBiker(), reservationDB.getUserName(), reservationDB.getUserAddress(),
-                                    reservationDB.getOrderTime(), null);
-
-                            int index;
-                            for (index = 0; index < reservations.size(); index++) {
-                                if (reservation.getUserDeliveryTime().compareTo(reservations.get(index).getUserDeliveryTime()) > 0)
-                                    break;
+                        if (reservationDB.getStatus() == null || reservationDB.getStatus().equals("accepted")) {
+                            for (Reservation r : reservations) {
+                                if (r.getReservationID().equals(reservationDB.getReservationID())) {
+                                    toAdd = false;
+                                }
                             }
-                            reservations.add(index, reservation);
-                            adapter.notifyItemInserted(index);
-                            adapter.notifyItemRangeChanged(index, reservations.size());
+                            if (toAdd) {
+                                Reservation reservation = new Reservation(reservationDB.getRestaurantName(), reservationDB.getRestaurantAddress(),
+                                        reservationDB.getOrderTimeBiker(), reservationDB.getUserName(), reservationDB.getUserAddress(),
+                                        reservationDB.getOrderTime(), null);
+
+                                int index;
+                                for (index = 0; index < reservations.size(); index++) {
+                                    if (reservation.getUserDeliveryTime().compareTo(reservations.get(index).getUserDeliveryTime()) > 0)
+                                        break;
+                                }
+                                reservations.add(index, reservation);
+                                adapter.notifyItemInserted(index);
+                                adapter.notifyItemRangeChanged(index, reservations.size());
+
+                                father.setNotification(1);
+                            }
                         }
                     }
 

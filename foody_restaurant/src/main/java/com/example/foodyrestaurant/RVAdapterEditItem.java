@@ -1,6 +1,7 @@
 package com.example.foodyrestaurant;
 
 import android.annotation.SuppressLint;
+import android.net.Uri;
 import android.support.annotation.NonNull;
 import android.support.design.button.MaterialButton;
 import android.support.v7.widget.CardView;
@@ -10,6 +11,7 @@ import android.text.InputFilter;
 import android.text.InputType;
 import android.text.Spanned;
 import android.text.TextWatcher;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.MotionEvent;
 import android.view.View;
@@ -19,6 +21,9 @@ import android.widget.EditText;
 
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.request.RequestOptions;
+import com.google.android.gms.tasks.OnSuccessListener;
+import com.google.firebase.storage.FirebaseStorage;
+import com.google.firebase.storage.StorageReference;
 
 import java.util.ArrayList;
 import java.util.Locale;
@@ -115,20 +120,29 @@ public class RVAdapterEditItem extends RecyclerView.Adapter<RVAdapterEditItem.Di
                 editItem.showPickImageDialog(i);
             }
         });
-        RequestOptions options = new RequestOptions();
-        options = options.fitCenter();
-        if(dishes.get(i).getImage() == null){
+        final RequestOptions options = new RequestOptions().fitCenter();
+        if(dishes.get(i).getPathDB() == null){
+            Log.d("SWSW", "if");
             Glide
                     .with(dishViewHolder.dishPicture.getContext())
                     .load(R.drawable.placeholder_plate)
                     .apply(options)
                     .into(dishViewHolder.dishPicture);
         }else{
-            Glide
-                    .with(dishViewHolder.dishPicture.getContext())
-                    .load(dishes.get(i).getImage())
-                    .apply(options)
-                    .into(dishViewHolder.dishPicture);
+            Log.d("SWSW", "else");
+            StorageReference mStorageRef = FirebaseStorage.getInstance().getReference();
+            mStorageRef.child(dishes.get(i).getPathDB()).getDownloadUrl()
+                    .addOnSuccessListener(new OnSuccessListener<Uri>() {
+                        @Override
+                        public void onSuccess(Uri uri) {
+                            Glide
+                                    .with(dishViewHolder.dishPicture.getContext())
+                                    .load(uri)
+                                    .apply(options)
+                                    .into(dishViewHolder.dishPicture);
+                        }
+                    });
+
         }
         dishViewHolder.nameListener.updatePosition(dishViewHolder.getAdapterPosition());
         dishViewHolder.descriptionListener.updatePosition(dishViewHolder.getAdapterPosition());

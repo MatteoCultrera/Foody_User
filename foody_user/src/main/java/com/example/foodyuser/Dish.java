@@ -11,6 +11,7 @@ class Dish {
     private String dishDescription;
     private Float price;
     private Uri image;
+    private String pathDB;
     private boolean added;
     private int quantity;
     private boolean prepared;
@@ -29,6 +30,14 @@ class Dish {
         prepared = false;
         editImage = false;
         available = true;
+    }
+
+    public String getPathDB() {
+        return pathDB;
+    }
+
+    public void setPathDB(String pathDB) {
+        this.pathDB = pathDB;
     }
 
     void setAvailable(boolean b){

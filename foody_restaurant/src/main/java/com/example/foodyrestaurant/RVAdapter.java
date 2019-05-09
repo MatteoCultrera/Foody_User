@@ -20,6 +20,9 @@ import android.widget.TextView;
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.request.RequestOptions;
 import com.bumptech.glide.signature.ObjectKey;
+import com.google.android.gms.tasks.OnSuccessListener;
+import com.google.firebase.storage.FirebaseStorage;
+import com.google.firebase.storage.StorageReference;
 
 import java.io.File;
 import java.util.ArrayList;
@@ -67,27 +70,24 @@ public class RVAdapter extends RecyclerView.Adapter<RVAdapter.CardViewHolder>{
                 TextView price = dish.findViewById(R.id.price);
                 final TextView priceF = dish.findViewById(R.id.price);
                 final int index = j;
-                ImageView image = dish.findViewById(R.id.food_image);
+                final ImageView image = dish.findViewById(R.id.food_image);
                 title.setText(dishes.get(j).getDishName());
                 subtitle.setText(dishes.get(j).getDishDescription());
                 price.setText(String.format(Locale.UK, "%.2f", dishes.get(j).getPrice()) + " €");
-                if (dishes.get(j).getImage() == null)
+                if (dishes.get(j).getPathDB() == null)
                     image.setVisibility(View.GONE);
                 else {
-                    File f = new File(dishes.get(j).getImage().getPath());
-                    if (!f.exists()) {
-                    }
-                    RequestOptions options = new RequestOptions();
-                    options.fitCenter()
-                            .signature(new ObjectKey(f.getPath() + f.lastModified()));
-                    if(dishes.get(j).getImagePath() != null) {
-                        Uri uri = Uri.fromFile(new File(dishes.get(j).getImagePath()));
-                        Glide
-                                .with(image.getContext())
-                                .load(uri)
-                                .apply(options)
-                                .into(image);
-                    }
+                    StorageReference mStorageRef = FirebaseStorage.getInstance().getReference();
+                    mStorageRef.child(dishes.get(j).getPathDB()).getDownloadUrl()
+                            .addOnSuccessListener(new OnSuccessListener<Uri>() {
+                                @Override
+                                public void onSuccess(Uri uri) {
+                                    Glide
+                                            .with(image.getContext())
+                                            .load(uri)
+                                            .into(image);
+                                }
+                            });
                 }
                 pvh.menuDishes.addView(dish);
                 dishes.get(j).setAdded(true);

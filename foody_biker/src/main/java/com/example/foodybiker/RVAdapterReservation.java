@@ -10,8 +10,15 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
+import android.widget.Toast;
 
 
+import com.google.android.gms.tasks.OnFailureListener;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
+
+import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 
 public class RVAdapterReservation extends RecyclerView.Adapter<RVAdapterReservation.CardViewHolder>{
@@ -44,9 +51,9 @@ public class RVAdapterReservation extends RecyclerView.Adapter<RVAdapterReservat
     }
 
     @Override
-    public void onBindViewHolder(@NonNull CardViewHolder pvh, int i) {
+    public void onBindViewHolder(@NonNull CardViewHolder pvh, final int i) {
         final Reservation currentRes = reservations.get(i);
-        final  int pos = i;
+        final int pos = i;
         pvh.restaurantName.setText(currentRes.getRestaurantName());
         pvh.restaurantAddress.setText(currentRes.getRestaurantAddress());
         pvh.restaurantTime.setText(currentRes.getRestaurantPickupTime());
@@ -66,6 +73,22 @@ public class RVAdapterReservation extends RecyclerView.Adapter<RVAdapterReservat
             pvh.accept.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
+                    DatabaseReference database = FirebaseDatabase.getInstance().getReference()
+                            .child("reservations").child("Bikers").child("pYlVkIDv53f4RAxAJgCCwPPiuoz2");
+                    HashMap<String, Object> child = new HashMap<>();
+                    ReservationDBBiker reservation = new ReservationDBBiker(reservations.get(pos).getReservationID(),
+                            reservations.get(pos).getUserDeliveryTime(), reservations.get(pos).getRestaurantPickupTime(),
+                            reservations.get(pos).getRestaurantName(), reservations.get(pos).getUserName(),
+                            reservations.get(pos).getRestaurantAddress(), reservations.get(pos).getUserAddress());
+                    reservation.setStatus("accepted");
+                    child.put(reservations.get(pos).getReservationID(), reservation);
+                    database.updateChildren(child).addOnFailureListener(new OnFailureListener() {
+                        @Override
+                        public void onFailure(@NonNull Exception e) {
+                            Toast.makeText(fatherFragment.getContext(), R.string.error_order, Toast.LENGTH_SHORT).show();
+                        }
+                    });
+
                     fatherFragment.setActiveReservation(currentRes);
                     fatherFragment.removeItem(pos);
                     fatherFragment.updateTitles();
@@ -75,6 +98,32 @@ public class RVAdapterReservation extends RecyclerView.Adapter<RVAdapterReservat
             pvh.decline.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
+                    DatabaseReference database = FirebaseDatabase.getInstance().getReference()
+                            .child("reservations").child("Bikers").child("YxbeTNGkOwXv18O7Atv27kIPYdK2");
+                    HashMap<String, Object> child = new HashMap<>();
+                    ReservationDBBiker reservation = new ReservationDBBiker(reservations.get(pos).getReservationID(),
+                            reservations.get(pos).getUserDeliveryTime(), reservations.get(pos).getRestaurantPickupTime(),
+                            reservations.get(pos).getRestaurantName(), reservations.get(pos).getUserName(),
+                            reservations.get(pos).getRestaurantAddress(), reservations.get(pos).getUserAddress());
+                    child.put(reservations.get(pos).getReservationID(), reservation);
+                    database.updateChildren(child).addOnFailureListener(new OnFailureListener() {
+                        @Override
+                        public void onFailure(@NonNull Exception e) {
+                            Toast.makeText(fatherFragment.getContext(), R.string.error_order, Toast.LENGTH_SHORT).show();
+                        }
+                    });
+                    DatabaseReference databaseSelf = FirebaseDatabase.getInstance().getReference()
+                            .child("reservations").child("Bikers").child("pYlVkIDv53f4RAxAJgCCwPPiuoz2");
+                    HashMap<String, Object> childSelf = new HashMap<>();
+                    reservation.setStatus("rejected");
+                    childSelf.put(reservations.get(pos).getReservationID(), reservation);
+                    databaseSelf.updateChildren(childSelf).addOnFailureListener(new OnFailureListener() {
+                        @Override
+                        public void onFailure(@NonNull Exception e) {
+                            Toast.makeText(fatherFragment.getContext(), R.string.error_order, Toast.LENGTH_SHORT).show();
+                        }
+                    });
+
                     fatherFragment.removeItem(pos);
                     fatherFragment.updateTitles();
                 }

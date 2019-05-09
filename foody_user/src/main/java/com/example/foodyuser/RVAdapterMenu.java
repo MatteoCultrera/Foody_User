@@ -1,6 +1,7 @@
 package com.example.foodyuser;
 
 import android.content.Context;
+import android.net.Uri;
 import android.support.annotation.NonNull;
 import android.support.constraint.ConstraintLayout;
 import android.support.v4.content.ContextCompat;
@@ -20,6 +21,9 @@ import android.widget.TextView;
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.request.RequestOptions;
 import com.bumptech.glide.signature.ObjectKey;
+import com.google.android.gms.tasks.OnSuccessListener;
+import com.google.firebase.storage.FirebaseStorage;
+import com.google.firebase.storage.StorageReference;
 
 import java.io.File;
 import java.util.ArrayList;
@@ -72,7 +76,7 @@ public class RVAdapterMenu extends RecyclerView.Adapter<RVAdapterMenu.CardViewHo
                     final TextView title = dish.findViewById(R.id.food_title);
                     TextView subtitle = dish.findViewById(R.id.food_subtitle);
                     final TextView price = dish.findViewById(R.id.price);
-                    ImageView image = dish.findViewById(R.id.food_image);
+                    final ImageView image = dish.findViewById(R.id.food_image);
                     ImageButton plus = dish.findViewById(R.id.button_plus);
                     ImageButton minus = dish.findViewById(R.id.button_minus);
                     TextView orderQuantity = dish.findViewById(R.id.order_quantity);
@@ -85,20 +89,20 @@ public class RVAdapterMenu extends RecyclerView.Adapter<RVAdapterMenu.CardViewHo
                     }
                     price.setText(String.format(Locale.UK, "%.2f", dishes.get(j).getPrice()) + " €");
 
-                    if (dishes.get(j).getImage() == null)
+                    if (dishes.get(j).getPathDB() == null)
                         image.setVisibility(View.GONE);
                     else {
-                        File f = new File(dishes.get(j).getImage().getPath());
-                        if (!f.exists()) {
-                        }
-                        RequestOptions options = new RequestOptions();
-                        options.fitCenter()
-                                .signature(new ObjectKey(f.getPath() + f.lastModified()));
-                        Glide
-                                .with(image.getContext())
-                                .load(dishes.get(j).getImage())
-                                .apply(options)
-                                .into(image);
+                        StorageReference mStorageRef = FirebaseStorage.getInstance().getReference();
+                        mStorageRef.child(dishes.get(j).getPathDB()).getDownloadUrl()
+                                .addOnSuccessListener(new OnSuccessListener<Uri>() {
+                                    @Override
+                                    public void onSuccess(Uri uri) {
+                                        Glide
+                                                .with(image.getContext())
+                                                .load(uri)
+                                                .into(image);
+                                    }
+                                });
                     }
 
                     pvh.menuDishes.addView(dish);
