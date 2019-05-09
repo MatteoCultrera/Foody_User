@@ -42,6 +42,7 @@ public class ReservationFragment extends Fragment {
     RecyclerView orderList;
     ImageButton switchButton;
     RVAdapterReservation adapter;
+    private boolean toAdd;
     private FirebaseUser firebaseUser;
     private FirebaseAuth firebaseAuth;
 
@@ -66,6 +67,7 @@ public class ReservationFragment extends Fragment {
 
 
     public void init(final View view){
+        toAdd = true;
         firebaseAuth = FirebaseAuth.getInstance();
         firebaseUser = firebaseAuth.getCurrentUser();
         activeReservation = null;
@@ -84,6 +86,55 @@ public class ReservationFragment extends Fragment {
                     reservations.add(reservation);
                 }
                 orderList.setAdapter(adapter);
+
+                //Add the notification that advise the biker when a new reservation has been assigned to him
+                DatabaseReference bikerReservations = FirebaseDatabase.getInstance().getReference().child("reservations")
+                        .child("Bikers").child(firebaseUser.getUid());
+                bikerReservations.addChildEventListener(new ChildEventListener() {
+                    @Override
+                    public void onChildAdded(@NonNull DataSnapshot dataSnapshot, @Nullable String s) {
+                        ReservationDBBiker reservationDB = dataSnapshot.getValue(ReservationDBBiker.class);
+                        for (Reservation r : reservations){
+                            if (r.getReservationID().equals(reservationDB.getReservationID())){
+                                toAdd = false;
+                            }
+                        }
+                        if (toAdd) {
+                            Reservation reservation = new Reservation(reservationDB.getRestaurantName(), reservationDB.getRestaurantAddress(),
+                                    reservationDB.getOrderTimeBiker(), reservationDB.getUserName(), reservationDB.getUserAddress(),
+                                    reservationDB.getOrderTime(), null);
+
+                            int index;
+                            for (index = 0; index < reservations.size(); index++) {
+                                if (reservation.getUserDeliveryTime().compareTo(reservations.get(index).getUserDeliveryTime()) > 0)
+                                    break;
+                            }
+                            reservations.add(index, reservation);
+                            adapter.notifyItemInserted(index);
+                            adapter.notifyItemRangeChanged(index, reservations.size());
+                        }
+                    }
+
+                    @Override
+                    public void onChildChanged(@NonNull DataSnapshot dataSnapshot, @Nullable String s) {
+
+                    }
+
+                    @Override
+                    public void onChildRemoved(@NonNull DataSnapshot dataSnapshot) {
+
+                    }
+
+                    @Override
+                    public void onChildMoved(@NonNull DataSnapshot dataSnapshot, @Nullable String s) {
+
+                    }
+
+                    @Override
+                    public void onCancelled(@NonNull DatabaseError databaseError) {
+
+                    }
+                });
             }
 
             @Override
@@ -160,54 +211,6 @@ public class ReservationFragment extends Fragment {
 
         setActiveReservation(activeReservation);
         setInterface(activeReservation!=null);
-
-        //Add the notification that advise the biker when a new reservation has been assigned to him
-        DatabaseReference bikerReservations = FirebaseDatabase.getInstance().getReference().child("reservations")
-                .child("Bikers").child(firebaseUser.getUid());
-        bikerReservations.addChildEventListener(new ChildEventListener() {
-            @Override
-            public void onChildAdded(@NonNull DataSnapshot dataSnapshot, @Nullable String s) {
-                Log.d("NOTIFICATION", "Data snapshot: "+dataSnapshot.getKey());
-                for(DataSnapshot ds : dataSnapshot.getChildren()){
-                    ReservationDBBiker reservationDB = ds.getValue(ReservationDBBiker.class);
-                    Reservation reservation = new Reservation(reservationDB.getRestaurantName(), reservationDB.getRestaurantAddress(),
-                            reservationDB.getOrderTimeBiker(), reservationDB.getUserName(), reservationDB.getUserAddress(),
-                            reservationDB.getOrderTime(), null);
-                    reservation.setReservationID(ds.getKey());
-
-                    reservations.add(reservation);
-                    int index;
-                    for(index = 0; index<reservations.size(); index++){
-                        if(reservation.getUserDeliveryTime().compareTo(reservations.get(index).getUserDeliveryTime()) > 0)
-                            break;
-                    }
-                    reservations.add(index,reservation);
-                    adapter.notifyItemInserted(index);
-                    adapter.notifyItemRangeChanged(index, reservations.size());
-                }
-
-            }
-
-            @Override
-            public void onChildChanged(@NonNull DataSnapshot dataSnapshot, @Nullable String s) {
-
-            }
-
-            @Override
-            public void onChildRemoved(@NonNull DataSnapshot dataSnapshot) {
-
-            }
-
-            @Override
-            public void onChildMoved(@NonNull DataSnapshot dataSnapshot, @Nullable String s) {
-
-            }
-
-            @Override
-            public void onCancelled(@NonNull DatabaseError databaseError) {
-
-            }
-        });
     }
 
     public void updateTitles(){
