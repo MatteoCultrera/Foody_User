@@ -18,6 +18,7 @@ import android.widget.TextView;
 
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.database.ChildEventListener;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
@@ -157,6 +158,44 @@ public class ReservationFragment extends Fragment {
 
         setActiveReservation(activeReservation);
         setInterface(activeReservation!=null);
+
+        //Add the notification that advise the biker when a new reservation has been assigned to him
+        DatabaseReference bikerReservations = FirebaseDatabase.getInstance().getReference().child("reservations")
+                .child("bikers").child(firebaseUser.getUid());
+        bikerReservations.addChildEventListener(new ChildEventListener() {
+            @Override
+            public void onChildAdded(@NonNull DataSnapshot dataSnapshot, @Nullable String s) {
+                Reservation res = dataSnapshot.getValue(Reservation.class);
+                int index;
+                for(index = 0; index<reservations.size(); index++){
+                    if(res.getUserDeliveryTime().compareTo(reservations.get(index).getUserDeliveryTime()) > 0)
+                        break;
+                }
+                reservations.add(index,res);
+                adapter.notifyItemInserted(index);
+                adapter.notifyItemRangeChanged(index, reservations.size());
+            }
+
+            @Override
+            public void onChildChanged(@NonNull DataSnapshot dataSnapshot, @Nullable String s) {
+
+            }
+
+            @Override
+            public void onChildRemoved(@NonNull DataSnapshot dataSnapshot) {
+
+            }
+
+            @Override
+            public void onChildMoved(@NonNull DataSnapshot dataSnapshot, @Nullable String s) {
+
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError databaseError) {
+
+            }
+        });
     }
 
     public void updateTitles(){
