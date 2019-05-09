@@ -10,6 +10,7 @@ import android.support.v7.widget.CardView;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.text.method.ScrollingMovementMethod;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -161,19 +162,29 @@ public class ReservationFragment extends Fragment {
 
         //Add the notification that advise the biker when a new reservation has been assigned to him
         DatabaseReference bikerReservations = FirebaseDatabase.getInstance().getReference().child("reservations")
-                .child("bikers").child(firebaseUser.getUid());
+                .child("Bikers").child(firebaseUser.getUid());
         bikerReservations.addChildEventListener(new ChildEventListener() {
             @Override
             public void onChildAdded(@NonNull DataSnapshot dataSnapshot, @Nullable String s) {
-                Reservation res = dataSnapshot.getValue(Reservation.class);
-                int index;
-                for(index = 0; index<reservations.size(); index++){
-                    if(res.getUserDeliveryTime().compareTo(reservations.get(index).getUserDeliveryTime()) > 0)
-                        break;
-                }
-                reservations.add(index,res);
-                adapter.notifyItemInserted(index);
-                adapter.notifyItemRangeChanged(index, reservations.size());
+                Log.d("NOTIFICATION", "Data snapshot: "+dataSnapshot.getKey());
+                /*for(DataSnapshot ds : dataSnapshot.getChildren()){
+                    ReservationDBBiker reservationDB = ds.getValue(ReservationDBBiker.class);
+                    Reservation reservation = new Reservation(reservationDB.getRestaurantName(), reservationDB.getRestaurantAddress(),
+                            reservationDB.getOrderTimeBiker(), reservationDB.getUserName(), reservationDB.getUserAddress(),
+                            reservationDB.getOrderTime(), null);
+                    if()
+
+                    reservations.add(reservation);
+                    int index;
+                    for(index = 0; index<reservations.size(); index++){
+                        if(reservation.getUserDeliveryTime().compareTo(reservations.get(index).getUserDeliveryTime()) > 0)
+                            break;
+                    }
+                    reservations.add(index,reservation);
+                    adapter.notifyItemInserted(index);
+                    adapter.notifyItemRangeChanged(index, reservations.size());
+                }*/
+
             }
 
             @Override
