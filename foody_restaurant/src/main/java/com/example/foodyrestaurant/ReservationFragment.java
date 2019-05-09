@@ -40,8 +40,15 @@ public class ReservationFragment extends Fragment {
     private FirebaseAuth firebaseAuth;
     private FirebaseUser firebaseUser;
     private SharedPreferences sharedPreferences;
+    private RVAdapterRes adapter;
+    private boolean toAdd;
+    MainActivity father;
 
     public ReservationFragment() {}
+
+    public void setFather(MainActivity father){
+        this.father = father;
+    }
 
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
@@ -67,6 +74,7 @@ public class ReservationFragment extends Fragment {
     }
 
     private void init(View view){
+        toAdd = true;
         firebaseAuth = FirebaseAuth.getInstance();
         firebaseUser = firebaseAuth.getCurrentUser();
         sharedPreferences = view.getContext().getSharedPreferences("myPreference", MODE_PRIVATE);
@@ -74,14 +82,16 @@ public class ReservationFragment extends Fragment {
         final File file = new File(storageDir, JSON_PATH);
         LinearLayoutManager llm = new LinearLayoutManager(view.getContext());
         reservation.setLayoutManager(llm);
+        reservations = new ArrayList<>();
+        adapter = new RVAdapterRes(reservations);
 
         final DatabaseReference database = FirebaseDatabase.getInstance().getReference().child("reservations").child("restaurant");
         Query query = database.child(firebaseUser.getUid());
         query.addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-                reservations = new ArrayList<>();
                 for (DataSnapshot ds : dataSnapshot.getChildren()) {
+                    Log.d("SWSW", "query");
                     ReservationDBRestaurant reservationDB = ds.getValue(ReservationDBRestaurant.class);
                     ArrayList<Dish> dishes = new ArrayList<>();
                     for(OrderItem o : reservationDB.getDishesOrdered()){
@@ -109,24 +119,53 @@ public class ReservationFragment extends Fragment {
                     }
                 });
 
-                final RVAdapterRes adapter = new RVAdapterRes(reservations);
                 reservation.setAdapter(adapter);
 
-                /*//Add the notification that advise the restaurant when a new reservation has been created
-                DatabaseReference restaurantReservations = FirebaseDatabase.getInstance().getReference().child("reservations")
+
+                //Add the notification that advise the biker when a new reservation has been assigned to him
+                DatabaseReference bikerReservations = FirebaseDatabase.getInstance().getReference().child("reservations")
                         .child("restaurant").child(firebaseUser.getUid());
-                restaurantReservations.addChildEventListener(new ChildEventListener() {
+                bikerReservations.addChildEventListener(new ChildEventListener() {
                     @Override
                     public void onChildAdded(@NonNull DataSnapshot dataSnapshot, @Nullable String s) {
-                        Reservation res = dataSnapshot.getValue(Reservation.class);
-                        int index;
-                        for(index=0; index < reservations.size(); index++){
-                            if(res.getOrderTime().compareTo(reservations.get(index).getOrderTime()) > 0)
-                                break;
+                        ReservationDBRestaurant reservationDB = dataSnapshot.getValue(ReservationDBRestaurant.class);
+                        for (Reservation r : reservations){
+                            if (r.getReservationID().equals(reservationDB.getReservationID())){
+                                toAdd = false;
+                            }
                         }
-                        reservations.add(index, res);
-                        adapter.notifyItemInserted(index);
-                        adapter.notifyItemRangeChanged(index, reservations.size());
+                        if (toAdd) {
+                            ArrayList<Dish> dishes = new ArrayList<>();
+                            for(OrderItem o : reservationDB.getDishesOrdered()) {
+                                Dish dish = new Dish();
+                                dish.setQuantity(o.getPieces());
+                                dish.setDishName(o.getOrderName());
+                                dish.setPrice(o.getPrice());
+                            }
+                            Reservation.prepStatus status;
+                            if (reservationDB.getStatus().equals("pending")){
+                                status = Reservation.prepStatus.PENDING;
+                            } else if (reservationDB.getStatus().equals("doing")){
+                                status = Reservation.prepStatus.DOING;
+                            } else{
+                                status = Reservation.prepStatus.DONE;
+                            }
+                            Reservation reservation = new Reservation(reservationDB.getReservationID(),dishes,
+                                    status,reservationDB.isAccepted(),reservationDB.getOrderTime(),reservationDB.getNameUser(),
+                                    reservationDB.getNumberPhone(),reservationDB.getResNote(),null,sharedPreferences.getString("email",null),
+                                    reservationDB.getUserAddress());
+
+                            int index;
+                            for (index = 0; index < reservations.size(); index++) {
+                                if (reservation.getOrderTime().compareTo(reservations.get(index).getOrderTime()) > 0)
+                                    break;
+                            }
+                            reservations.add(index, reservation);
+                            adapter.notifyItemInserted(index);
+                            adapter.notifyItemRangeChanged(index, reservations.size());
+
+                            father.setNotification(1);
+                        }
                     }
 
                     @Override
@@ -148,7 +187,8 @@ public class ReservationFragment extends Fragment {
                     public void onCancelled(@NonNull DatabaseError databaseError) {
 
                     }
-                });*/
+                });
+
             }
 
             @Override
@@ -160,7 +200,6 @@ public class ReservationFragment extends Fragment {
                         return o1.getOrderTime().compareTo(o2.getOrderTime());
                     }
                 });
-                RVAdapterRes adapter = new RVAdapterRes(reservations);
                 reservation.setAdapter(adapter);
             }
         });

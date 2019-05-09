@@ -2,14 +2,22 @@ package com.example.foodyrestaurant;
 
 import android.os.Bundle;
 import android.support.annotation.NonNull;
+import android.support.design.internal.BottomNavigationItemView;
+import android.support.design.internal.BottomNavigationMenuView;
 import android.support.design.widget.BottomNavigationView;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v7.app.AppCompatActivity;
+import android.view.LayoutInflater;
+import android.view.Menu;
 import android.view.MenuItem;
+import android.view.View;
 
 public class MainActivity extends AppCompatActivity {
+
+    private View notificationBadgeOne, notificationBadgeTwo, notificationBadgeThree;
+    BottomNavigationView bottomBar;
 
     private enum TabState {
         MENU,
@@ -17,9 +25,9 @@ public class MainActivity extends AppCompatActivity {
         USER,
     }
 
-    private Fragment menu = new MenuFragment();
-    private Fragment reservations = new ReservationFragment();
-    private Fragment user = new UserFragment();
+    private Fragment menu;
+    private Fragment reservations;
+    private Fragment user;
     private final FragmentManager fm = getSupportFragmentManager();
     private Fragment active;
     TabState stateApp;
@@ -44,6 +52,7 @@ public class MainActivity extends AppCompatActivity {
         }
         menu = new MenuFragment();
         reservations = new ReservationFragment();
+        ((ReservationFragment) reservations).setFather(this);
         user = new UserFragment();
         fm.beginTransaction().add(R.id.mainFrame, user, "3").commit();
         fm.beginTransaction().add(R.id.mainFrame, reservations, "2").commit();
@@ -65,18 +74,20 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void init(){
-        BottomNavigationView bottomBar = findViewById(R.id.bottom_navigation);
+        bottomBar = findViewById(R.id.bottom_navigation);
         bottomBar.setOnNavigationItemSelectedListener(new BottomNavigationView.OnNavigationItemSelectedListener() {
             @Override
             public boolean onNavigationItemSelected(@NonNull MenuItem menuItem) {
                 int id = menuItem.getItemId();
                 if(id == R.id.menu && active != menu){
+                    clearNotification(0);
                     FragmentTransaction transaction = fm.beginTransaction();
                     transaction.setCustomAnimations(R.anim.enter_from_left,R.anim.exit_to_right);
                     transaction.replace(R.id.mainFrame, menu).commit();
                     active = menu;
                     return true;
                 }else if(id == R.id.orders && active != reservations){
+                    clearNotification(1);
                     if(active == menu){
                         FragmentTransaction transaction =fm.beginTransaction();
                         transaction.setCustomAnimations(R.anim.enter_from_right,R.anim.exit_to_left);
@@ -89,6 +100,7 @@ public class MainActivity extends AppCompatActivity {
                     active = reservations;
                     return true;
                 }else if(id == R.id.prof && active != user){
+                    clearNotification(2);
                     FragmentTransaction transaction = fm.beginTransaction();
                     transaction.setCustomAnimations(R.anim.enter_from_right,R.anim.exit_to_left);
                     transaction.replace(R.id.mainFrame, user).commit();
@@ -98,6 +110,64 @@ public class MainActivity extends AppCompatActivity {
                 return false;
             }
         });
+
+        addBadgeView();
+    }
+
+    public void setNotification(int pos){
+        Menu menu = bottomBar.getMenu();
+        if(menu.getItem(pos).isChecked())
+            return;
+
+        switch (pos){
+            case 0:
+                notificationBadgeOne.setVisibility(View.VISIBLE);
+                break;
+            case 1:
+                notificationBadgeTwo.setVisibility(View.VISIBLE);
+                break;
+            case 2:
+                notificationBadgeThree.setVisibility(View.VISIBLE);
+                break;
+        }
+
+    }
+
+    public void clearNotification(int pos){
+        switch (pos){
+            case 0:
+                notificationBadgeOne.setVisibility(View.GONE);
+                break;
+            case 1:
+                notificationBadgeTwo.setVisibility(View.GONE);
+                break;
+            case 2:
+                notificationBadgeThree.setVisibility(View.GONE);
+                break;
+            default:
+                notificationBadgeOne.setVisibility(View.GONE);
+                notificationBadgeTwo.setVisibility(View.GONE);
+                notificationBadgeThree.setVisibility(View.GONE);
+                break;
+        }
+    }
+
+    private void addBadgeView() {
+
+        BottomNavigationMenuView menuView = (BottomNavigationMenuView) bottomBar.getChildAt(0);
+        BottomNavigationItemView itemViewOne = (BottomNavigationItemView) menuView.getChildAt(0);
+        BottomNavigationItemView itemViewTwo = (BottomNavigationItemView) menuView.getChildAt(1);
+        BottomNavigationItemView itemViewThree = (BottomNavigationItemView) menuView.getChildAt(2);
+
+        notificationBadgeOne = LayoutInflater.from(this).inflate(R.layout.view_notification_badge, menuView, false);
+        notificationBadgeTwo = LayoutInflater.from(this).inflate(R.layout.view_notification_badge, menuView, false);
+        notificationBadgeThree = LayoutInflater.from(this).inflate(R.layout.view_notification_badge, menuView, false);
+
+        itemViewOne.addView(notificationBadgeOne);
+        itemViewTwo.addView(notificationBadgeTwo);
+        itemViewThree.addView(notificationBadgeThree);
+
+        clearNotification(4);
     }
 
     @Override
