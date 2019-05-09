@@ -45,8 +45,13 @@ public class ReservationFragment extends Fragment {
     private FirebaseUser firebaseUser;
     private SharedPreferences sharedPreferences;
     private View thisView;
+    private MainActivity father;
 
     public ReservationFragment() {
+    }
+
+    public void setFather(MainActivity father){
+        this.father=father;
     }
 
     @Override

@@ -42,8 +42,13 @@ public class ReservationFragment extends Fragment {
     private SharedPreferences sharedPreferences;
     private RVAdapterRes adapter;
     private boolean toAdd;
+    MainActivity father;
 
     public ReservationFragment() {}
+
+    public void setFather(MainActivity father){
+        this.father = father;
+    }
 
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
