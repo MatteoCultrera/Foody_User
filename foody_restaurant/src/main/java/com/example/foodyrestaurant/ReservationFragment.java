@@ -42,8 +42,13 @@ public class ReservationFragment extends Fragment {
     private SharedPreferences sharedPreferences;
     private RVAdapterRes adapter;
     private boolean toAdd;
+    MainActivity father;
 
     public ReservationFragment() {}
+
+    public void setFather(MainActivity father){
+        this.father = father;
+    }
 
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
@@ -116,11 +121,10 @@ public class ReservationFragment extends Fragment {
 
                 reservation.setAdapter(adapter);
 
-
-                //Add the notification that advise the biker when a new reservation has been assigned to him
-                DatabaseReference bikerReservations = FirebaseDatabase.getInstance().getReference().child("reservations")
-                        .child("Bikers").child(firebaseUser.getUid());
-                bikerReservations.addChildEventListener(new ChildEventListener() {
+                //Add the notification that advise the restaurant when a new reservation has been assigned to him
+                DatabaseReference restaurantReservations = FirebaseDatabase.getInstance().getReference().child("reservations")
+                        .child("restaurant").child(firebaseUser.getUid());
+                restaurantReservations.addChildEventListener(new ChildEventListener() {
                     @Override
                     public void onChildAdded(@NonNull DataSnapshot dataSnapshot, @Nullable String s) {
                         ReservationDBRestaurant reservationDB = dataSnapshot.getValue(ReservationDBRestaurant.class);
