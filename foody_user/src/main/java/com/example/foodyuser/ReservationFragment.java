@@ -71,6 +71,7 @@ public class ReservationFragment extends Fragment {
     }
 
     private void init(View view){
+        /*
         firebaseAuth = FirebaseAuth.getInstance();
         firebaseUser = firebaseAuth.getCurrentUser();
         storageDir = Objects.requireNonNull(getActivity()).getExternalFilesDir(Environment.DIRECTORY_DOCUMENTS);
@@ -135,6 +136,7 @@ public class ReservationFragment extends Fragment {
                 reservation.setAdapter(adapter);
             }
         });
+        */
     }
 
     @Override

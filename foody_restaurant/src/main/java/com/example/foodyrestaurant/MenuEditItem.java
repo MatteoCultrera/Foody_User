@@ -73,7 +73,7 @@ public class MenuEditItem extends AppCompatActivity {
     private File storageImageDir;
     private FirebaseAuth firebaseAuth;
     private FirebaseUser user;
-    private FirebaseStorage firebaseStorage;
+    private String imageFileName;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -188,7 +188,6 @@ public class MenuEditItem extends AppCompatActivity {
             File oldFile = new File(storageDir, JSON_PATH);
             ArrayList<Card> oldCards = jsonHandler.getCards(oldFile);
             ArrayList<Dish> oldDishes = new ArrayList<>();
-
             for (int i = 0; i < cards.size(); i++) {
                 if (cards.get(i).getTitle().equals(className)) {
                     oldDishes = oldCards.get(i).getDishes();
@@ -214,38 +213,19 @@ public class MenuEditItem extends AppCompatActivity {
                     }
                 }
             }
-            /*FirebaseStorage storage;
-            StorageReference storageReference;
-            storage = FirebaseStorage.getInstance();
-            storageReference = storage.getReference();*/
             DatabaseReference database = FirebaseDatabase.getInstance().getReference()
                     .child("restaurantsMenu").child(user.getUid()).child("Card");
             HashMap<String, Object> child = new HashMap<>();
             for (int i = 0; i < cards.size(); i++) {
                 if (cards.get(i).getDishes().size() != 0)
                     child.put(Integer.toString(i), cards.get(i));
-                /*for(Dish d : cards.get(i).getDishes()){
+                for(Dish d : cards.get(i).getDishes()){
                     if (d.getImage() != null) {
-                        StorageReference ref = storageReference.child("images/" + firebaseAuth.getCurrentUser().getUid() + "/"
-                                + d.getImage().getPath() + ".jpeg");
-                        ref.putFile(d.getImage())
-                                .addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
-                                    @Override
-                                    public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
-                                        Log.d("SWSW", "success");
-                                    }
-                                })
-                                .addOnFailureListener(new OnFailureListener() {
-                                    @Override
-                                    public void onFailure(@NonNull Exception e) {
-                                        Toast.makeText(getApplicationContext(), "Failed " + e.getMessage(), Toast.LENGTH_SHORT).show();
-                                    }
-                                });
+
                     }
-                }*/
+                }
             }
             database.updateChildren(child);
-
             String json = jsonHandler.toJSON(cards);
             File file = new File(storageDir, JSON_REAL);
             File fileCopy = new File(storageDir, JSON_PATH);
@@ -299,19 +279,19 @@ public class MenuEditItem extends AppCompatActivity {
                 }
             }
 
-            /*FirebaseStorage storage;
+            FirebaseStorage storage;
             StorageReference storageReference;
             storage = FirebaseStorage.getInstance();
             storageReference = storage.getReference();
             StorageReference ref = storageReference.child("images/" + firebaseAuth.getCurrentUser().getUid() + "/"
-                    + dishes.get(position).getImage().getPath() + ".jpeg");
+                    + dishes.get(position).getPathDB() + ".jpeg");
             ref.delete()
                     .addOnSuccessListener(new OnSuccessListener<Void>() {
                         @Override
                         public void onSuccess(Void aVoid) {
                             Log.d("SWSW", "image deleted");
                         }
-                    });*/
+                    });
         }
         dishes.remove(position);
         recyclerAdapter.notifyItemRemoved(position);
@@ -475,15 +455,13 @@ public class MenuEditItem extends AppCompatActivity {
         dialogDism = builder.show();
     }
 
-    private  void pickFromGallery(){
+    private void pickFromGallery(){
 
         Intent intent = new Intent(Intent.ACTION_PICK);
         intent.setType("image/*");
         String[] mimeTypes = {"image/jpeg", "image/png"};
         intent.putExtra(Intent.EXTRA_MIME_TYPES,mimeTypes);
         startActivityForResult(intent,GALLERY_REQUEST_CODE);
-
-
     }
 
     private void pickFromCamera(){
@@ -544,6 +522,25 @@ public class MenuEditItem extends AppCompatActivity {
                     if(bitmap != null){
                         File placeholder = new File(storageDir, PLACEHOLDER_CAMERA);
                         Uri imageURi = saveBitmap(bitmap, placeholder.getPath());
+                        FirebaseStorage storage;
+                        StorageReference storageReference;
+                        storage = FirebaseStorage.getInstance();
+                        storageReference = storage.getReference();
+                        StorageReference ref = storageReference.child("images/" + firebaseAuth.getCurrentUser().getUid() + "/"
+                                + imageFileName + ".jpeg");
+                        ref.putFile(imageURi)
+                                .addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
+                                    @Override
+                                    public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
+                                        Log.d("SWSW", "success");
+                                    }
+                                })
+                                .addOnFailureListener(new OnFailureListener() {
+                                    @Override
+                                    public void onFailure(@NonNull Exception e) {
+                                        Toast.makeText(getApplicationContext(), "Failed " + e.getMessage(), Toast.LENGTH_SHORT).show();
+                                    }
+                                });
                         if(dishes.get(posToChange).isEditImage()){
                             File toDelete = new File(dishes.get(posToChange).getImage().getPath());
                             if(toDelete.exists())
@@ -553,6 +550,7 @@ public class MenuEditItem extends AppCompatActivity {
                         }else
                             dishes.get(posToChange).setEditImage(true);
                         dishes.get(posToChange).setImage(imageURi);
+                        dishes.get(posToChange).setPathDB(imageFileName);
                         recyclerAdapter.notifyItemChanged(posToChange);
                         unchanged = false;
                     }
@@ -595,13 +593,12 @@ public class MenuEditItem extends AppCompatActivity {
     private Uri saveBitmap(Bitmap bitmap,String path){
         if(bitmap!=null){
             String timeStamp = new SimpleDateFormat("yyyyMMdd_HHmmss", Locale.ITALY).format(new Date());
-            String imageFileName = "JPEG_" + timeStamp + "_";
+            imageFileName = "JPEG_" + timeStamp + "_";
             File fileToSave = new File(storageImageDir, imageFileName);
             try {
                 FileOutputStream outputStream = null;
                 try {
                     outputStream = new FileOutputStream(fileToSave.getPath());
-
                     bitmap.compress(Bitmap.CompressFormat.JPEG, 100, outputStream);
                 } catch (Exception e) {
                     e.printStackTrace();

@@ -112,7 +112,7 @@ public class ReservationFragment extends Fragment {
                 final RVAdapterRes adapter = new RVAdapterRes(reservations);
                 reservation.setAdapter(adapter);
 
-                //Add the notification that advise the restaurant when a new reservation has been created
+                /*//Add the notification that advise the restaurant when a new reservation has been created
                 DatabaseReference restaurantReservations = FirebaseDatabase.getInstance().getReference().child("reservations")
                         .child("restaurant").child(firebaseUser.getUid());
                 restaurantReservations.addChildEventListener(new ChildEventListener() {
@@ -148,7 +148,7 @@ public class ReservationFragment extends Fragment {
                     public void onCancelled(@NonNull DatabaseError databaseError) {
 
                     }
-                });
+                });*/
             }
 
             @Override
