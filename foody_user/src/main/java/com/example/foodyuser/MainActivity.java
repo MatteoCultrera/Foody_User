@@ -114,10 +114,6 @@ public class MainActivity extends AppCompatActivity {
             }
         });
         addBadgeView();
-        setNotification(0);
-        setNotification(1);
-        setNotification(2);
-
     }
 
     public void setNotification(int pos){
