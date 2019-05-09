@@ -48,6 +48,8 @@ public class ReservationFragment extends Fragment {
 
     public ReservationFragment(){}
 
+
+
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
@@ -95,9 +97,8 @@ public class ReservationFragment extends Fragment {
                     public void onChildAdded(@NonNull DataSnapshot dataSnapshot, @Nullable String s) {
                         ReservationDBBiker reservationDB = dataSnapshot.getValue(ReservationDBBiker.class);
                         for (Reservation r : reservations){
-                            if (r.getReservationID().equals(reservationDB.getReservationID())){
+                            if (r.getReservationID().equals(reservationDB.getReservationID()))
                                 toAdd = false;
-                            }
                         }
                         if (toAdd) {
                             Reservation reservation = new Reservation(reservationDB.getRestaurantName(), reservationDB.getRestaurantAddress(),
