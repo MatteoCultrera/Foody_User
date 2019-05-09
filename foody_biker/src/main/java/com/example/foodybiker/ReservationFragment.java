@@ -173,7 +173,7 @@ public class ReservationFragment extends Fragment {
             }else {
                 primaryText.setText(getString(R.string.delivering_order));
             }
-            secondaryText.setText(reservations.size()+" "+getString(R.string.pending_orders));
+            secondaryText.setText(  reservations.size()+" "+getString(R.string.pending_orders));
         }
     }
 
