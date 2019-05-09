@@ -23,11 +23,11 @@ class Dish {
 
     public Dish(){}
 
-    public Dish(String name, String description, Float price, Uri image){
+    public Dish(String name, String description, Float price, String image){
         dishName = name;
         dishDescription = description;
         this.price = price;
-        this.image = image;
+        this.pathDB = image;
         added = false;
         quantity = 0;
         prepared = false;
@@ -77,6 +77,7 @@ class Dish {
         return price;
     }
 
+    @Exclude
     String getImagePath(){
         if(image != null)
             return image.getPath();

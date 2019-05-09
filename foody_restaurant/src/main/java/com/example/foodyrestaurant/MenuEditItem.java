@@ -289,7 +289,6 @@ public class MenuEditItem extends AppCompatActivity {
                     .addOnSuccessListener(new OnSuccessListener<Void>() {
                         @Override
                         public void onSuccess(Void aVoid) {
-                            Log.d("SWSW", "image deleted");
                         }
                     });
         }
@@ -533,7 +532,6 @@ public class MenuEditItem extends AppCompatActivity {
                                 .addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
                                     @Override
                                     public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
-                                        Log.d("SWSW", "success");
                                     }
                                 })
                                 .addOnFailureListener(new OnFailureListener() {
@@ -551,7 +549,8 @@ public class MenuEditItem extends AppCompatActivity {
                         }else
                             dishes.get(posToChange).setEditImage(true);
                         dishes.get(posToChange).setImage(imageURi);
-                        dishes.get(posToChange).setPathDB(imageFileName);
+                        dishes.get(posToChange).setPathDB("images/" + firebaseAuth.getCurrentUser().getUid() + "/"
+                                + imageFileName + ".jpeg");
                         recyclerAdapter.notifyItemChanged(posToChange);
                         unchanged = false;
                     }
