@@ -5,7 +5,7 @@ public class Reservation {
     private String restaurantName, restaurantAddress,
             restaurantPickupTime, userName,
             userAddress, userDeliveryTime,
-            notes;
+            notes, reservationID;
 
 
     public Reservation(String restaurantName, String restaurantAddress, String restaurantPickupTime, String userName, String userAddress, String userDeliveryTime, String notes) {
@@ -18,6 +18,13 @@ public class Reservation {
         this.notes = notes;
     }
 
+    public String getReservationID() {
+        return reservationID;
+    }
+
+    public void setReservationID(String reservationID) {
+        this.reservationID = reservationID;
+    }
 
     public String getRestaurantName() {
         return restaurantName;
