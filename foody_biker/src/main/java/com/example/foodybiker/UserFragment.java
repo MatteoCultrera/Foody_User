@@ -7,8 +7,10 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.os.Environment;
 import android.support.annotation.NonNull;
+import android.support.design.button.MaterialButton;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.Fragment;
+import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -51,6 +53,7 @@ public class UserFragment extends Fragment {
     private SharedPreferences sharedPref;
     private SharedPreferences.Editor edit;
     private FirebaseAuth firebaseAuth;
+    private MaterialButton logout;
 
     public UserFragment(){}
 
@@ -86,6 +89,7 @@ public class UserFragment extends Fragment {
         this.address = view.findViewById(R.id.address);
         this.phoneNumber = view.findViewById(R.id.phoneNumber);
         this.city = view.findViewById(R.id.city);
+        this.logout = view.findViewById(R.id.logout_button);
 
         monTime = view.findViewById(R.id.monTime);
         tueTime = view.findViewById(R.id.tueTime);
@@ -213,6 +217,16 @@ public class UserFragment extends Fragment {
                     System.out.println("Delete Failure");
                 }
                 startActivity(intent);
+            }
+        });
+
+        logout.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                firebaseAuth.signOut();
+                Intent intent = new Intent(getActivity(), Login.class);
+                startActivity(intent);
+                getActivity().onBackPressed();
             }
         });
 

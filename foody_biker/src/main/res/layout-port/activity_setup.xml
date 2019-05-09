@@ -1008,18 +1008,6 @@
 
             </android.support.constraint.ConstraintLayout>
 
-            <android.support.design.button.MaterialButton
-                android:id="@+id/logout_button"
-                android:layout_width="116dp"
-                android:layout_height="58dp"
-                android:backgroundTint="#FF0000"
-                android:text="@string/logout"
-                app:cornerRadius="140dp"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@id/table"
-                />
-
         </android.support.constraint.ConstraintLayout>
 
     </ScrollView>
