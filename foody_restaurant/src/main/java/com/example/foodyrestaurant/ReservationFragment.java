@@ -120,11 +120,10 @@ public class ReservationFragment extends Fragment {
 
                 reservation.setAdapter(adapter);
 
-
-                //Add the notification that advise the biker when a new reservation has been assigned to him
-                DatabaseReference bikerReservations = FirebaseDatabase.getInstance().getReference().child("reservations")
+                //Add the notification that advise the restaurant when a new reservation has been assigned to him
+                DatabaseReference restaurantReservations = FirebaseDatabase.getInstance().getReference().child("reservations")
                         .child("restaurant").child(firebaseUser.getUid());
-                bikerReservations.addChildEventListener(new ChildEventListener() {
+                restaurantReservations.addChildEventListener(new ChildEventListener() {
                     @Override
                     public void onChildAdded(@NonNull DataSnapshot dataSnapshot, @Nullable String s) {
                         ReservationDBRestaurant reservationDB = dataSnapshot.getValue(ReservationDBRestaurant.class);

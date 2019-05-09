@@ -18,8 +18,11 @@ import android.widget.Toast;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ValueEventListener;
 
 import java.io.File;
 import java.lang.reflect.Array;
@@ -65,17 +68,18 @@ public class Order extends AppCompatActivity {
         placeOrder.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                DatabaseReference database = FirebaseDatabase.getInstance().getReference()
+                //Inserting the reservation inside the user reservation DB
+                final DatabaseReference database = FirebaseDatabase.getInstance().getReference()
                         .child("reservations").child("users").child(firebaseUser.getUid());
                 HashMap<String, Object> child = new HashMap<>();
-                String identifier = firebaseUser.getUid() + System.currentTimeMillis();
+                final String identifier = firebaseUser.getUid() + System.currentTimeMillis();
                 Calendar calendar = Calendar.getInstance();
                 Calendar calendar2 = Calendar.getInstance();
                 calendar.add(Calendar.MINUTE, 40);
                 calendar2.add(Calendar.MINUTE, 20);
                 String deliveryTime = new SimpleDateFormat("HH:mm", Locale.UK).format(calendar.getTime());
                 String bikerTime = new SimpleDateFormat("HH:mm", Locale.UK).format(calendar2.getTime());
-                ReservationDBUser reservation = new ReservationDBUser(identifier, restID, orders, false, null,
+                final ReservationDBUser reservation = new ReservationDBUser(identifier, restID, orders, false, null,
                         deliveryTime, "pending", total.getText().toString());
                 child.put(identifier, reservation);
                 database.updateChildren(child).addOnFailureListener(new OnFailureListener() {
@@ -85,6 +89,7 @@ public class Order extends AppCompatActivity {
                     }
                 });
 
+                //Inserting the new reservation inside the restaurant reservations DB
                 DatabaseReference databaseRest = FirebaseDatabase.getInstance().getReference()
                         .child("reservations").child("restaurant").child(restID);
                 HashMap<String, Object> childRest = new HashMap<>();
@@ -99,6 +104,30 @@ public class Order extends AppCompatActivity {
                         Toast.makeText(getApplicationContext(), R.string.error_order, Toast.LENGTH_SHORT).show();
                     }
                 });
+
+                //When the reservation is accepted or declined by the restaurant I notify it to the user
+                /*databaseRest.child(identifier).addListenerForSingleValueEvent(new ValueEventListener() {
+                    @Override
+                    public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                        ReservationDBRestaurant resRestUpdated = dataSnapshot.getValue(ReservationDBRestaurant.class);
+                        if(resRestUpdated.getReservationID().equals(identifier)){
+                            //Updating the reservation status inside the user reservations db
+                            reservation.setStatus(resRestUpdated.getStatus());
+                            database.child(identifier).setValue(reservation);
+
+                            if(reservation.getStatus().equals("doing"))
+                                Toast.makeText(getApplicationContext(),"Your reservation has been accepted",Toast.LENGTH_SHORT).show();
+                            else
+                                Toast.makeText(getApplicationContext(),"Your reservation has been rejected",Toast.LENGTH_SHORT).show();
+                        }
+                    }
+
+                    @Override
+                    public void onCancelled(@NonNull DatabaseError databaseError) {
+
+                    }
+                });*/
+                //TODO: to test it
 
                 orders.clear();
                 closeActivity();
