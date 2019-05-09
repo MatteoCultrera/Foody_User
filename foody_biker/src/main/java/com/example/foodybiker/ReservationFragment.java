@@ -45,8 +45,13 @@ public class ReservationFragment extends Fragment {
     private boolean toAdd;
     private FirebaseUser firebaseUser;
     private FirebaseAuth firebaseAuth;
+    MainActivity father;
 
     public ReservationFragment(){}
+
+    public void setFather(MainActivity father){
+        this.father = father;
+    }
 
     @Nullable
     @Override
