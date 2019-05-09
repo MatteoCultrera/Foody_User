@@ -71,13 +71,13 @@ public class ReservationFragment extends Fragment {
     }
 
     private void init(View view){
-        /*
         firebaseAuth = FirebaseAuth.getInstance();
         firebaseUser = firebaseAuth.getCurrentUser();
         storageDir = Objects.requireNonNull(getActivity()).getExternalFilesDir(Environment.DIRECTORY_DOCUMENTS);
         final File file = new File(storageDir, JSON_PATH);
+        /*
         LinearLayoutManager llm = new LinearLayoutManager(view.getContext());
-        reservation.setLayoutManager(llm);
+        reservation.setLayoutManager(llm);*/
         sharedPreferences = view.getContext().getSharedPreferences("myPreference", MODE_PRIVATE);
 
         final DatabaseReference database = FirebaseDatabase.getInstance().getReference().child("reservations").child("users");
@@ -119,9 +119,10 @@ public class ReservationFragment extends Fragment {
                     }
                 });
 
+                /*
                 RVAdapterRes adapter = new RVAdapterRes(reservations);
-                reservation.setAdapter(adapter);
-            }
+                reservation.setAdapter(adapter);*/
+               }
 
             @Override
             public void onCancelled(@NonNull DatabaseError databaseError) {
@@ -132,11 +133,11 @@ public class ReservationFragment extends Fragment {
                         return o1.getOrderTime().compareTo(o2.getOrderTime());
                     }
                 });
+                /*
                 RVAdapterRes adapter = new RVAdapterRes(reservations);
-                reservation.setAdapter(adapter);
+                reservation.setAdapter(adapter);*/
             }
         });
-        */
     }
 
     @Override

@@ -296,6 +296,7 @@ public class MenuEditItem extends AppCompatActivity {
         dishes.remove(position);
         recyclerAdapter.notifyItemRemoved(position);
         recyclerAdapter.notifyItemRangeChanged(position, dishes.size());
+        saveEnabled(true);
     }
 
     private ArrayList<Dish> getDishes(String fileName){
