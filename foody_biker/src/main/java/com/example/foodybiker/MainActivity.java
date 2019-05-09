@@ -128,9 +128,6 @@ public class MainActivity extends AppCompatActivity {
 
         active = map;
         addBadgeView();
-        setNotification(0);
-        setNotification(1);
-        setNotification(2);
     }
 
     public void setNotification(int pos){
