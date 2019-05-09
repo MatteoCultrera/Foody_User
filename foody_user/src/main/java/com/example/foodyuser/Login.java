@@ -41,6 +41,7 @@ public class Login extends AppCompatActivity {
             intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK);
             intent.addFlags(Intent.FLAG_ACTIVITY_NO_ANIMATION);
             startActivity(intent);
+            finish();
         }
         else {
             setContentView(R.layout.login_layout);
@@ -88,6 +89,7 @@ public class Login extends AppCompatActivity {
                                         Intent intent = new Intent(Login.this, MainActivity.class);
                                         intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK);
                                         startActivity(intent);
+                                        finish();
                                     } else {
                                         Toast.makeText(getApplicationContext(), R.string.login_failure, Toast.LENGTH_SHORT).show();
                                     }
@@ -100,6 +102,7 @@ public class Login extends AppCompatActivity {
                 public void onClick(View view) {
                     Intent intent = new Intent(Login.this, RegisterActivity.class);
                     startActivity(intent);
+                    finish();
                 }
             });
         }

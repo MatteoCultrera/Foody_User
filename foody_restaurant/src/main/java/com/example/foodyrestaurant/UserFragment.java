@@ -9,6 +9,7 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.provider.ContactsContract;
 import android.support.annotation.NonNull;
+import android.support.design.button.MaterialButton;
 import android.support.v4.app.Fragment;
 import android.os.Environment;
 import android.support.design.widget.FloatingActionButton;
@@ -54,6 +55,7 @@ public class UserFragment extends Fragment {
     private FirebaseAuth firebaseAuth;
     private ImageView profilePicture;
     private SharedPreferences.Editor edit;
+    private MaterialButton logout;
 
     public UserFragment() {}
 
@@ -103,6 +105,7 @@ public class UserFragment extends Fragment {
         email = view.findViewById(R.id.emailAddress);
         address = view.findViewById(R.id.address);
         phoneNumber = view.findViewById(R.id.phoneNumber);
+        this.logout = view.findViewById(R.id.logout_button);
 
         monTime = view.findViewById(R.id.monTime);
         tueTime = view.findViewById(R.id.tueTime);
@@ -262,6 +265,15 @@ public class UserFragment extends Fragment {
             }
         });
 
+        logout.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                firebaseAuth.signOut();
+                Intent intent = new Intent(getActivity(), Login.class);
+                startActivity(intent);
+                getActivity().onBackPressed();
+            }
+        });
     }
 
     @Override
@@ -271,6 +283,6 @@ public class UserFragment extends Fragment {
         sharedPref = context.getSharedPreferences("myPreference", MODE_PRIVATE);
         storageDir = getActivity().getExternalFilesDir(Environment.DIRECTORY_PICTURES);
 
-                init(Objects.requireNonNull(getView()));
+        init(Objects.requireNonNull(getView()));
     }
 }

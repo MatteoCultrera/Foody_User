@@ -9,6 +9,7 @@ import android.os.Bundle;
 import android.os.Environment;
 import android.provider.MediaStore;
 import android.support.annotation.NonNull;
+import android.support.design.button.MaterialButton;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.Fragment;
 import android.util.Log;
@@ -60,6 +61,7 @@ public class UserFragment extends Fragment {
     private SharedPreferences sharedPref;
     private SharedPreferences.Editor edit;
     private FirebaseAuth firebaseAuth;
+    private MaterialButton logout;
 
     public UserFragment() {}
 
@@ -84,6 +86,7 @@ public class UserFragment extends Fragment {
         this.address = view.findViewById(R.id.address);
         this.phoneNumber = view.findViewById(R.id.phoneNumber);
         this.bio = view.findViewById(R.id.bio);
+        this.logout = view.findViewById(R.id.logout_button);
 
         //setup of the Shared Preferences to save value in (key, value) format
         if (!email.getText().toString().equals("email")) {
@@ -164,6 +167,15 @@ public class UserFragment extends Fragment {
             }
         });
 
+        logout.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                firebaseAuth.signOut();
+                Intent intent = new Intent(getActivity(), Login.class);
+                startActivity(intent);
+                getActivity().onBackPressed();
+            }
+        });
     }
 
     @Override

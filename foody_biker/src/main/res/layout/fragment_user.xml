@@ -646,6 +646,18 @@
 
             </android.support.constraint.ConstraintLayout>
 
+            <android.support.design.button.MaterialButton
+                android:id="@+id/logout_button"
+                android:layout_width="116dp"
+                android:layout_height="58dp"
+                android:backgroundTint="#FF0000"
+                android:text="@string/logout"
+                app:cornerRadius="140dp"
+                android:layout_marginTop="10dp"
+                android:layout_gravity="center_horizontal"
+                android:layout_marginBottom="10dp"
+                />
+
         </LinearLayout>
     </ScrollView>
 
