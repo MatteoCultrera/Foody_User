@@ -117,6 +117,8 @@ public class ReservationFragment extends Fragment {
                             reservations.add(index, reservation);
                             adapter.notifyItemInserted(index);
                             adapter.notifyItemRangeChanged(index, reservations.size());
+
+                            father.setNotification(1);
                         }
                     }
 
