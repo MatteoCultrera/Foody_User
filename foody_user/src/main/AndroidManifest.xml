@@ -25,29 +25,32 @@
             android:windowSoftInputMode="adjustResize">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
-
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
+
+        <activity android:name=".RegisterActivity"
+            android:windowSoftInputMode="adjustResize">
+        </activity>
+
         <activity android:name=".Order" />
+
         <activity
             android:name=".RestaurantShow"
             android:theme="@style/restaurantMenu" />
+
         <activity
             android:name=".RestaurantsList" />
-        <activity android:name=".RegisterActivity"
-            android:windowSoftInputMode="adjustResize">
 
-        </activity>
         <activity
             android:name=".Setup"
             android:windowSoftInputMode="adjustResize" />
+
         <activity
             android:name=".MainActivity"
-            android:hardwareAccelerated="true"
-            >
-
+            android:hardwareAccelerated="true">
         </activity>
+
         <activity
             android:name="com.yalantis.ucrop.UCropActivity"
             android:theme="@style/Theme.AppCompat.Light.NoActionBar" />
