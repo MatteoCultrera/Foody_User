@@ -136,7 +136,7 @@ public class RVAdapterRes extends RecyclerView.Adapter<RVAdapterRes.CardViewHold
                         .child("reservations").child("users").child(reservations.get(i).getUserUID());
                 HashMap<String, Object> child = new HashMap<>();
                 ArrayList<OrderItem> dishes = new ArrayList<>();
-                for(Dish d : reservations.get(i).getDishesOrdered()){
+                for(Dish d : reservations.get(pos).getDishesOrdered()){
                     OrderItem order = new OrderItem();
                     order.setPieces(d.getQuantity());
                     order.setOrderName(d.getDishName());

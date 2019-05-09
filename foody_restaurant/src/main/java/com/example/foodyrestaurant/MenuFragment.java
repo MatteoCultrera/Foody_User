@@ -106,10 +106,12 @@ public class MenuFragment extends Fragment {
                                 .with(profileImage.getContext())
                                 .load(R.drawable.profile_placeholder)
                                 .into(profileImage);
+                        Glide
+                                .with(profileShadow.getContext())
+                                .load(R.drawable.shadow)
+                                .into(profileShadow);
                     }
                 });
-
-
 
         DatabaseReference database = FirebaseDatabase.getInstance().getReference();
         DatabaseReference ref = database.child("restaurantsMenu").child(user.getUid());

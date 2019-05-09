@@ -207,7 +207,7 @@ class JsonHandler {
         String price = null;
         int quantity = 0;
         boolean available = true, prepared = false;
-        Uri image = null;
+        String image = null;
 
         reader.beginObject();
         while(reader.hasNext()){
@@ -226,7 +226,7 @@ class JsonHandler {
                     price = reader.nextString();
                     break;
                 case "image":
-                    image = Uri.parse(reader.nextString().replace('\\', Character.MIN_VALUE));
+                    image = reader.nextString();
                     break;
                 case "quantity":
                     quantity = reader.nextInt();
@@ -261,7 +261,7 @@ class JsonHandler {
                     objDish.put("dishName", dish.getDishName());
                     objDish.put("dishDescription", dish.getDishDescription());
                     objDish.put("price", dish.getPrice());
-                    objDish.put("image", dish.getImage());
+                    objDish.put("image", dish.getPathDB());
                     objDish.put("available", dish.isAvailable());
                     objDishArray.put(objDish);
                 }
@@ -301,7 +301,7 @@ class JsonHandler {
                     objDish.put("dishName", dish.getDishName());
                     objDish.put("dishDescription", dish.getDishDescription());
                     objDish.put("price", dish.getPrice());
-                    objDish.put("image", dish.getImage());
+                    objDish.put("image", dish.getPathDB());
                     objDish.put("available", dish.isAvailable());
                     objDish.put("quantity", dish.getQuantity());
                     objDish.put("prepared", dish.isPrepared());
