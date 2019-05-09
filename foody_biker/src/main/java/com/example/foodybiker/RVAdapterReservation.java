@@ -10,8 +10,15 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
+import android.widget.Toast;
 
 
+import com.google.android.gms.tasks.OnFailureListener;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
+
+import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 
 public class RVAdapterReservation extends RecyclerView.Adapter<RVAdapterReservation.CardViewHolder>{
@@ -44,7 +51,7 @@ public class RVAdapterReservation extends RecyclerView.Adapter<RVAdapterReservat
     }
 
     @Override
-    public void onBindViewHolder(@NonNull CardViewHolder pvh, int i) {
+    public void onBindViewHolder(@NonNull CardViewHolder pvh, final int i) {
         final Reservation currentRes = reservations.get(i);
         final  int pos = i;
         pvh.restaurantName.setText(currentRes.getRestaurantName());
@@ -69,6 +76,29 @@ public class RVAdapterReservation extends RecyclerView.Adapter<RVAdapterReservat
                     fatherFragment.setActiveReservation(currentRes);
                     fatherFragment.removeItem(pos);
                     fatherFragment.updateTitles();
+
+                    /*DatabaseReference database = FirebaseDatabase.getInstance().getReference()
+                            .child("reservations").child("Bikers").child(reservations.get(i).get);
+                    HashMap<String, Object> child = new HashMap<>();
+                    ArrayList<OrderItem> dishes = new ArrayList<>();
+                    for(Dish d : reservations.get(i).getDishesOrdered()){
+                        OrderItem order = new OrderItem();
+                        order.setPieces(d.getQuantity());
+                        order.setOrderName(d.getDishName());
+                        order.setPrice(d.getPrice());
+                        dishes.add(order);
+                    }
+                    String reservationID = reservations.get(i).getUserUID() + reservations.get(i).getReservationID();
+                    ReservationDBUser reservation = new ReservationDBUser(reservationID,
+                            firebaseUser.getUid(), dishes, true, null, reservations.get(i).getDeliveryTime(),
+                            "doing", reservations.get(i).getTotalPrice());
+                    child.put(reservationID, reservation);
+                    database.updateChildren(child).addOnFailureListener(new OnFailureListener() {
+                        @Override
+                        public void onFailure(@NonNull Exception e) {
+                            Toast.makeText(context, R.string.error_order, Toast.LENGTH_SHORT).show();
+                        }
+                    });*/
                 }
             });
 
