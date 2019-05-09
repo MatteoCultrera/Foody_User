@@ -11,6 +11,10 @@ class Reservation {
     }
 
     private String reservationID;
+    private String restaurantID;
+    private String restaurantName;
+    private String restaurantAddress;
+    private String deliveryTime;
     private ArrayList<Dish> dishesOrdered;
     private boolean accepted;
     private prepStatus preparationStatus;
@@ -76,8 +80,40 @@ class Reservation {
         return ret;
     }
 
+    public String getDeliveryTime() {
+        return deliveryTime;
+    }
+
+    public void setDeliveryTime(String deliveryTime) {
+        this.deliveryTime = deliveryTime;
+    }
+
     void setPreparationStatus(prepStatus preparationStatus) {
         this.preparationStatus = preparationStatus;
+    }
+
+    public String getRestaurantID() {
+        return restaurantID;
+    }
+
+    public void setRestaurantID(String restaurantID) {
+        this.restaurantID = restaurantID;
+    }
+
+    public String getRestaurantName() {
+        return restaurantName;
+    }
+
+    public void setRestaurantName(String restaurantName) {
+        this.restaurantName = restaurantName;
+    }
+
+    public String getRestaurantAddress() {
+        return restaurantAddress;
+    }
+
+    public void setRestaurantAddress(String restaurantAddress) {
+        this.restaurantAddress = restaurantAddress;
     }
 
     String getOrderTime() {

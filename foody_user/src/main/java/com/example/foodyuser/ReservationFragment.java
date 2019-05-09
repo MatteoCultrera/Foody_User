@@ -36,7 +36,7 @@ public class ReservationFragment extends Fragment {
         DONE,
     }
 
-    private RecyclerView reservation;
+    private RecyclerView reservationRecycler;
     private final String JSON_PATH = "reservations.json";
     private File storageDir;
     private final JsonHandler jsonHandler = new JsonHandler();
@@ -52,7 +52,7 @@ public class ReservationFragment extends Fragment {
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_reservation, container, false);
-        reservation = view.findViewById(R.id.reservation_display);
+        reservationRecycler = view.findViewById(R.id.user_reservation_order_list);
         return view;
     }
 
@@ -75,9 +75,10 @@ public class ReservationFragment extends Fragment {
         firebaseUser = firebaseAuth.getCurrentUser();
         storageDir = Objects.requireNonNull(getActivity()).getExternalFilesDir(Environment.DIRECTORY_DOCUMENTS);
         final File file = new File(storageDir, JSON_PATH);
-        /*
+
+
         LinearLayoutManager llm = new LinearLayoutManager(view.getContext());
-        reservation.setLayoutManager(llm);*/
+        reservationRecycler.setLayoutManager(llm);
         sharedPreferences = view.getContext().getSharedPreferences("myPreference", MODE_PRIVATE);
 
         final DatabaseReference database = FirebaseDatabase.getInstance().getReference().child("reservations").child("users");
@@ -93,6 +94,7 @@ public class ReservationFragment extends Fragment {
                         Dish dish = new Dish();
                         dish.setQuantity(o.getPieces());
                         dish.setDishName(o.getOrderName());
+                        dish.setPrice(o.getPrice());
                         dishes.add(dish);
                     }
                     Reservation.prepStatus status;
@@ -108,6 +110,9 @@ public class ReservationFragment extends Fragment {
                             reservationDBUser.isAccepted(), reservationDBUser.getOrderTime(), sharedPreferences.getString("name", ""),
                             sharedPreferences.getString("phoneNumber", ""), reservationDBUser.getResNote(), "",
                             sharedPreferences.getString("email", ""), sharedPreferences.getString("address", ""));
+                    reservation.setRestaurantID(reservationDBUser.getRestaurantID());
+                    reservation.setDeliveryTime(reservationDBUser.getOrderTime());
+                    //TODO: Set restaurant name, address, photo, delivery price and delivery time
                     reservations.add(reservation);
                 }
 
@@ -119,9 +124,9 @@ public class ReservationFragment extends Fragment {
                     }
                 });
 
-                /*
+
                 RVAdapterRes adapter = new RVAdapterRes(reservations);
-                reservation.setAdapter(adapter);*/
+                reservationRecycler.setAdapter(adapter);
                }
 
             @Override
@@ -133,9 +138,9 @@ public class ReservationFragment extends Fragment {
                         return o1.getOrderTime().compareTo(o2.getOrderTime());
                     }
                 });
-                /*
+
                 RVAdapterRes adapter = new RVAdapterRes(reservations);
-                reservation.setAdapter(adapter);*/
+                reservationRecycler.setAdapter(adapter);
             }
         });
     }
