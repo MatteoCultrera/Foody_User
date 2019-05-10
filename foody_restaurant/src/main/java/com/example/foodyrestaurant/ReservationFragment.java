@@ -74,7 +74,6 @@ public class ReservationFragment extends Fragment {
     }
 
     private void init(View view){
-        toAdd = true;
         firebaseAuth = FirebaseAuth.getInstance();
         firebaseUser = firebaseAuth.getCurrentUser();
 
@@ -96,23 +95,35 @@ public class ReservationFragment extends Fragment {
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
                 for (DataSnapshot ds : dataSnapshot.getChildren()) {
                     ReservationDBRestaurant reservationDB = ds.getValue(ReservationDBRestaurant.class);
-                    ArrayList<Dish> dishes = new ArrayList<>();
-                    for(OrderItem o : reservationDB.getDishesOrdered()){
-                        Dish dish = new Dish();
-                        dish.setQuantity(o.getPieces());
-                        dish.setDishName(o.getOrderName());
-                        dish.setPrice(o.getPrice());
-                        dishes.add(dish);
+                    if(!reservationDB.getStatus().equals("Done")) {
+                        ArrayList<Dish> dishes = new ArrayList<>();
+                        for (OrderItem o : reservationDB.getDishesOrdered()) {
+                            Dish dish = new Dish();
+                            dish.setQuantity(o.getPieces());
+                            dish.setDishName(o.getOrderName());
+                            dish.setPrice(o.getPrice());
+                            dishes.add(dish);
+                        }
+                        Reservation.prepStatus status;
+                        if (reservationDB.getStatus().equals("Pending")){
+                            status = Reservation.prepStatus.PENDING;
+                        } else if (reservationDB.getStatus().equals("Doing")){
+                            status = Reservation.prepStatus.DOING;
+                        } else{
+                            status = Reservation.prepStatus.DONE;
+                        }
+                        String orderID = reservationDB.getReservationID().substring(28);
+                        Reservation reservation = new Reservation(orderID, dishes, status,
+                                reservationDB.isAccepted(), reservationDB.getOrderTimeBiker(), reservationDB.getNameUser(),
+                                reservationDB.getNumberPhone(), reservationDB.getResNote(), "",
+                                sharedPreferences.getString("email", ""), reservationDB.getUserAddress());
+                        reservation.setUserUID(reservationDB.getReservationID().substring(0, 28));
+                        reservation.setDeliveryTime(reservationDB.getOrderTime());
+                        reservation.setTotalPrice(reservationDB.getTotalCost());
+                        reservation.setRestaurantAddress(sharedPreferences.getString("address", null));
+                        reservation.setRestaurantName(sharedPreferences.getString("name", null));
+                        reservations.add(reservation);
                     }
-                    String orderID = reservationDB.getReservationID().substring(28);
-                    Reservation reservation = new Reservation(orderID, dishes, Reservation.prepStatus.PENDING,
-                            reservationDB.isAccepted(), reservationDB.getOrderTimeBiker(), reservationDB.getNameUser(),
-                            reservationDB.getNumberPhone(), reservationDB.getResNote(), "",
-                            sharedPreferences.getString("email", ""), reservationDB.getUserAddress());
-                    reservation.setUserUID(reservationDB.getReservationID().substring(0, 28));
-                    reservation.setDeliveryTime(reservationDB.getOrderTime());
-                    reservation.setTotalPrice(reservationDB.getTotalCost());
-                    reservations.add(reservation);
                 }
 
                 reservations.sort(new Comparator<Reservation>() {
@@ -132,14 +143,16 @@ public class ReservationFragment extends Fragment {
                     public void onChildAdded(@NonNull DataSnapshot dataSnapshot, @Nullable String s) {
                         Log.d("SWSW", "Dentro la notification");
                         ReservationDBRestaurant reservationDB = dataSnapshot.getValue(ReservationDBRestaurant.class);
+                        toAdd = true;
+                        String orderID = null;
                         for (Reservation r : reservations){
-                            String orderID = reservationDB.getReservationID().substring(28);
+                            orderID = reservationDB.getReservationID().substring(28);
                             if (r.getReservationID().equals(orderID)){
                                 toAdd = false;
+                                break;
                             }
                         }
-                        if (toAdd) {
-                            Log.d("SWSW", "Devo aggiungere la reservation");
+                        if (toAdd && !reservationDB.getStatus().equals("Done")) {
                             ArrayList<Dish> dishes = new ArrayList<>();
                             for(OrderItem o : reservationDB.getDishesOrdered()) {
                                 Dish dish = new Dish();
@@ -155,7 +168,7 @@ public class ReservationFragment extends Fragment {
                             } else{
                                 status = Reservation.prepStatus.DONE;
                             }
-                            Reservation reservation = new Reservation(reservationDB.getReservationID(),dishes,
+                            Reservation reservation = new Reservation(orderID ,dishes,
                                     status,reservationDB.isAccepted(),reservationDB.getOrderTime(),reservationDB.getNameUser(),
                                     reservationDB.getNumberPhone(),reservationDB.getResNote(),null,sharedPreferences.getString("email",null),
                                     reservationDB.getUserAddress());

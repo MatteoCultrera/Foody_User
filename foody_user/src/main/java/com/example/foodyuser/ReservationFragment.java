@@ -47,6 +47,9 @@ public class ReservationFragment extends Fragment {
     private SharedPreferences sharedPreferences;
     private View thisView;
     private MainActivity father;
+    private int pending;
+    private int doing;
+    private int done;
 
     public ReservationFragment() {
     }
@@ -89,12 +92,19 @@ public class ReservationFragment extends Fragment {
         reservationRecycler.setLayoutManager(llm);
         sharedPreferences = view.getContext().getSharedPreferences("myPreference", MODE_PRIVATE);
 
+        pending = sharedPreferences.getInt("pending",0);
+        doing = sharedPreferences.getInt("doing",0);
+        done = sharedPreferences.getInt("done",0);
+
         final DatabaseReference database = FirebaseDatabase.getInstance().getReference().child("reservations").child("users");
         Query query = database.child(firebaseUser.getUid());
         query.addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
                 reservations = new ArrayList<>();
+                int pending2=0;
+                int doing2=0;
+                int done2=0;
                 for (DataSnapshot ds : dataSnapshot.getChildren()) {
                     ReservationDBUser reservationDBUser = ds.getValue(ReservationDBUser.class);
                     ArrayList<Dish> dishes = new ArrayList<>();
@@ -108,10 +118,13 @@ public class ReservationFragment extends Fragment {
                     Reservation.prepStatus status;
                     String orderID = reservationDBUser.getReservationID().substring(28);
                     if (reservationDBUser.getStatus().equals("Pending")){
+                        pending2 ++;
                         status = Reservation.prepStatus.PENDING;
                     } else if (reservationDBUser.getStatus().equals("Doing")){
+                        doing2 ++;
                         status = Reservation.prepStatus.DOING;
                     } else{
+                        done2 ++;
                         status = Reservation.prepStatus.DONE;
                     }
                     Reservation reservation = new Reservation(orderID, dishes, status,
@@ -133,32 +146,12 @@ public class ReservationFragment extends Fragment {
                     }
                 });
 
-                /*database.child(firebaseUser.getUid()).addListenerForSingleValueEvent(new ValueEventListener() {
-                    @Override
-                    public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-                        for(DataSnapshot ds : dataSnapshot.getChildren()) {
-                            ReservationDBUser update = ds.getValue(ReservationDBUser.class);
-                            for (Reservation r : reservations) {
-                                String orderIDUpdate = update.getReservationID().substring(28);
-                                if (r.getReservationID().equals(orderIDUpdate)) {
-                                    Log.d("SWSW", r.getPreparationStatusString()+update.getStatus());
-                                    if (!r.getPreparationStatusString().equals(update.getStatus()) ||
-                                            r.isAccepted() != update.isAccepted()) {
-                                        father.setNotification(1);
-                                        break;
-                                    }
-                                    break;
-                                }
-                            }
-                        }
-                    }
-
-                    @Override
-                    public void onCancelled(@NonNull DatabaseError databaseError) {
-
-                    }
-                });*/
-
+                if(pending != pending2 || doing != doing2 || done != done2){
+                    sharedPreferences.edit().putInt("pending",pending2).apply();
+                    sharedPreferences.edit().putInt("doing",doing2).apply();
+                    sharedPreferences.edit().putInt("done",done2).apply();
+                    father.setNotification(1);
+                }
 
                 RVAdapterRes adapter = new RVAdapterRes(reservations);
                 reservationRecycler.setAdapter(adapter);

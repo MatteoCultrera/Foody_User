@@ -25,6 +25,8 @@ class Reservation {
     private String deliveryTime;
     private int toBePrepared;
     private String totalPrice;
+    private String restaurantName;
+    private String restaurantAddress;
 
     Reservation(String identifier, ArrayList<Dish> dishes, prepStatus preparationStatus, boolean accepted,
                        String orderTime, String userName, String userPhone, String resNote, String userLevel,
@@ -41,6 +43,22 @@ class Reservation {
         this.userEmail = userEmail;
         this.userAddress = userAddress;
         toBePrepared = dishes.size();
+    }
+
+    public String getRestaurantName() {
+        return restaurantName;
+    }
+
+    public void setRestaurantName(String restaurantName) {
+        this.restaurantName = restaurantName;
+    }
+
+    public String getRestaurantAddress() {
+        return restaurantAddress;
+    }
+
+    public void setRestaurantAddress(String restaurantAddress) {
+        this.restaurantAddress = restaurantAddress;
     }
 
     public String getTotalPrice() {
