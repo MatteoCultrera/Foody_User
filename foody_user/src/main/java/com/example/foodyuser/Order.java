@@ -63,6 +63,8 @@ public class Order extends AppCompatActivity {
         File orderFile = new File(directory, getString(R.string.order_file_name));
         Bundle extras = getIntent().getExtras();
         final String restID = extras.getString("restaurantID","");
+        final String restName = extras.getString("restaurantName", "");
+        final String restAddress = extras.getString("restaurantAddress", null);
 
         orders = handler.getOrders(orderFile);
         placeOrder.setOnClickListener(new View.OnClickListener() {
@@ -81,6 +83,8 @@ public class Order extends AppCompatActivity {
                 String bikerTime = new SimpleDateFormat("HH:mm", Locale.UK).format(calendar2.getTime());
                 final ReservationDBUser reservation = new ReservationDBUser(identifier, restID, orders, false, null,
                         deliveryTime, "pending", total.getText().toString());
+                reservation.setRestaurantName(restName);
+                reservation.setRestaurantAddress(restAddress);
                 child.put(identifier, reservation);
                 database.updateChildren(child).addOnFailureListener(new OnFailureListener() {
                     @Override
@@ -161,7 +165,6 @@ public class Order extends AppCompatActivity {
 
     public void closeActivity(){
         if(orders.size() == 0){
-            Log.d("TRYUNODUE","DELETEDE");
             File directory = getExternalFilesDir(Environment.DIRECTORY_DOCUMENTS);
             File orderFile = new File(directory, getString(R.string.order_file_name));
             if(orderFile.exists())
@@ -180,7 +183,6 @@ public class Order extends AppCompatActivity {
             File directory = getExternalFilesDir(Environment.DIRECTORY_DOCUMENTS);
             File toSave = new File(directory, getString(R.string.order_file_name));
             handler.saveStringToFile(jsonOrders, toSave);
-            Log.d("PROVA",jsonOrders);
         }
     }
 

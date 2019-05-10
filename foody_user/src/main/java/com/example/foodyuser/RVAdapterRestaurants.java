@@ -68,9 +68,10 @@ public class RVAdapterRestaurants  extends RecyclerView.Adapter<RVAdapterRestaur
         cardViewHolder.card.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Log.d("TITLECHECK","Clicked");
                 Intent intent = new Intent(v.getContext(), RestaurantShow.class);
-                intent.putExtra("restaurant_name", restaurants.get(i).getUid());
+                intent.putExtra("restaurant_id", restaurants.get(i).getUid());
+                intent.putExtra("restaurant_name", restaurants.get(i).getUsername());
+                intent.putExtra("restaurant_address", restaurants.get(i).getAddress());
 
                 File storage = cardViewHolder.card.getContext().getExternalFilesDir(Environment.DIRECTORY_DOCUMENTS);
                 String filename = cardViewHolder.card.getContext().getString(R.string.order_file_name);
@@ -113,9 +114,6 @@ public class RVAdapterRestaurants  extends RecyclerView.Adapter<RVAdapterRestaur
     }
 
 
-    //This method will filter the list
-    //here we are passing the filtered data
-    //and assigning it to the list with notifydatasetchanged method
     public void filterList(ArrayList<Restaurant> filtedNames) {
         this.restaurants = filtedNames;
         notifyDataSetChanged();
