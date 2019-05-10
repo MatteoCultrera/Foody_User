@@ -11,6 +11,7 @@ import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v7.app.AppCompatActivity;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -125,6 +126,8 @@ public class MainActivity extends AppCompatActivity {
         SharedPreferences sharedPref = this.getPreferences(Context.MODE_PRIVATE);
         if (sharedPref.getBoolean("hasNotification",false)){
             setNotification(1);
+
+            Log.d("SWSW", "init true");
         }
     }
 
@@ -167,6 +170,8 @@ public class MainActivity extends AppCompatActivity {
             SharedPreferences prefs = this.getPreferences(Context.MODE_PRIVATE);
             SharedPreferences.Editor editor = prefs.edit();
             editor.putBoolean("hasNotification", false);
+
+            Log.d("SWSW", "clear false");
             editor.apply();
         }
     }
@@ -198,11 +203,14 @@ public class MainActivity extends AppCompatActivity {
             SharedPreferences sharedPref = this.getPreferences(Context.MODE_PRIVATE);
             SharedPreferences.Editor editor = sharedPref.edit();
             editor.putBoolean("hasNotification", true);
+            Log.d("SWSW", "pause true");
             editor.apply();
         }else{
             SharedPreferences sharedPref = this.getPreferences(Context.MODE_PRIVATE);
             SharedPreferences.Editor editor = sharedPref.edit();
             editor.putBoolean("hasNotification", false);
+
+            Log.d("SWSW", "pause false");
             editor.apply();
         }
     }

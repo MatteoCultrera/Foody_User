@@ -146,43 +146,45 @@ public class ReservationFragment extends Fragment {
                         ReservationDBRestaurant reservationDB = dataSnapshot.getValue(ReservationDBRestaurant.class);
                         toAdd = true;
                         String orderID = null;
-                        for (Reservation r : reservations){
-                            orderID = reservationDB.getReservationID().substring(28);
-                            if (r.getReservationID().equals(orderID)){
-                                toAdd = false;
-                                break;
-                            }
-                        }
-                        if (toAdd && !reservationDB.getStatus().equals("Done")) {
-                            ArrayList<Dish> dishes = new ArrayList<>();
-                            for(OrderItem o : reservationDB.getDishesOrdered()) {
-                                Dish dish = new Dish();
-                                dish.setQuantity(o.getPieces());
-                                dish.setDishName(o.getOrderName());
-                                dish.setPrice(o.getPrice());
-                            }
-                            Reservation.prepStatus status;
-                            if (reservationDB.getStatus().equals("Pending")){
-                                status = Reservation.prepStatus.PENDING;
-                            } else if (reservationDB.getStatus().equals("Doing")){
-                                status = Reservation.prepStatus.DOING;
-                            } else{
-                                status = Reservation.prepStatus.DONE;
-                            }
-                            Reservation reservation = new Reservation(orderID ,dishes,
-                                    status,reservationDB.isAccepted(),reservationDB.getOrderTime(),reservationDB.getNameUser(),
-                                    reservationDB.getNumberPhone(),reservationDB.getResNote(),null,sharedPreferences.getString("email",null),
-                                    reservationDB.getUserAddress());
-
-                            int index;
-                            for (index = 0; index < reservations.size(); index++) {
-                                if (reservation.getOrderTime().compareTo(reservations.get(index).getOrderTime()) > 0)
+                        if(reservations != null && reservations.size() != 0) {
+                            for (Reservation r : reservations) {
+                                orderID = reservationDB.getReservationID().substring(28);
+                                if (r.getReservationID().equals(orderID)) {
+                                    toAdd = false;
                                     break;
+                                }
                             }
-                            reservations.add(index, reservation);
-                            adapter.notifyItemInserted(index);
-                            adapter.notifyItemRangeChanged(index, reservations.size());
-                            father.setNotification(1);
+                            if (toAdd && !reservationDB.getStatus().equals("Done")) {
+                                ArrayList<Dish> dishes = new ArrayList<>();
+                                for (OrderItem o : reservationDB.getDishesOrdered()) {
+                                    Dish dish = new Dish();
+                                    dish.setQuantity(o.getPieces());
+                                    dish.setDishName(o.getOrderName());
+                                    dish.setPrice(o.getPrice());
+                                }
+                                Reservation.prepStatus status;
+                                if (reservationDB.getStatus().equals("Pending")) {
+                                    status = Reservation.prepStatus.PENDING;
+                                } else if (reservationDB.getStatus().equals("Doing")) {
+                                    status = Reservation.prepStatus.DOING;
+                                } else {
+                                    status = Reservation.prepStatus.DONE;
+                                }
+                                Reservation reservation = new Reservation(orderID, dishes,
+                                        status, reservationDB.isAccepted(), reservationDB.getOrderTime(), reservationDB.getNameUser(),
+                                        reservationDB.getNumberPhone(), reservationDB.getResNote(), null, sharedPreferences.getString("email", null),
+                                        reservationDB.getUserAddress());
+
+                                int index;
+                                for (index = 0; index < reservations.size(); index++) {
+                                    if (reservation.getOrderTime().compareTo(reservations.get(index).getOrderTime()) > 0)
+                                        break;
+                                }
+                                reservations.add(index, reservation);
+                                adapter.notifyItemInserted(index);
+                                adapter.notifyItemRangeChanged(index, reservations.size());
+                                father.setNotification(1);
+                            }
                         }
                     }
 
