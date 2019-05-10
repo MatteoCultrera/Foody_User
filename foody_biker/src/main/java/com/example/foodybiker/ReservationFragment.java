@@ -105,7 +105,6 @@ public class ReservationFragment extends Fragment {
                             toAdd = true;
                             for (Reservation r : reservations) {
                                 if (r.getReservationID().equals(reservationDB.getReservationID())) {
-                                    Log.d("SWSW", ""+toAdd);
                                     toAdd = false;
                                 }
                             }
