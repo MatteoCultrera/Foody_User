@@ -933,6 +933,7 @@ public class Setup extends AppCompatActivity {
         database.updateChildren(child);
 
         Toast.makeText(getApplicationContext(), R.string.save, Toast.LENGTH_SHORT).show();
+        unchanged = true;
     }
 
     private void saveBitmap(Bitmap bitmap,String path){
