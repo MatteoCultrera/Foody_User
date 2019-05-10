@@ -11,6 +11,7 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Toast;
 
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
@@ -106,9 +107,9 @@ public class ReservationFragment extends Fragment {
                     }
                     Reservation.prepStatus status;
                     String orderID = reservationDBUser.getReservationID().substring(28);
-                    if (reservationDBUser.getStatus().equals("pending")){
+                    if (reservationDBUser.getStatus().equals("Pending")){
                         status = Reservation.prepStatus.PENDING;
-                    } else if (reservationDBUser.getStatus().equals("doing")){
+                    } else if (reservationDBUser.getStatus().equals("Doing")){
                         status = Reservation.prepStatus.DOING;
                     } else{
                         status = Reservation.prepStatus.DONE;
@@ -124,12 +125,37 @@ public class ReservationFragment extends Fragment {
                     reservation.setTotalCost(reservationDBUser.getTotalCost());
                     reservations.add(reservation);
                 }
-
                 reservations.sort(new Comparator<Reservation>() {
                     @Override
                     public int compare(Reservation o1, Reservation o2) {
 
                         return o1.getOrderTime().compareTo(o2.getOrderTime());
+                    }
+                });
+
+                database.child(firebaseUser.getUid()).addListenerForSingleValueEvent(new ValueEventListener() {
+                    @Override
+                    public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                        for(DataSnapshot ds : dataSnapshot.getChildren()) {
+                            ReservationDBUser update = ds.getValue(ReservationDBUser.class);
+                            for (Reservation r : reservations) {
+                                String orderIDUpdate = update.getReservationID().substring(28);
+                                if (r.getReservationID().equals(orderIDUpdate)) {
+                                    Log.d("SWSW", r.getPreparationStatusString()+update.getStatus());
+                                    if (!r.getPreparationStatusString().equals(update.getStatus()) ||
+                                            r.isAccepted() != update.isAccepted()) {
+                                        father.setNotification(1);
+                                        break;
+                                    }
+                                    break;
+                                }
+                            }
+                        }
+                    }
+
+                    @Override
+                    public void onCancelled(@NonNull DatabaseError databaseError) {
+
                     }
                 });
 
