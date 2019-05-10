@@ -133,7 +133,7 @@ public class ReservationFragment extends Fragment {
                     }
                 });
 
-                database.child(firebaseUser.getUid()).addListenerForSingleValueEvent(new ValueEventListener() {
+                /*database.child(firebaseUser.getUid()).addListenerForSingleValueEvent(new ValueEventListener() {
                     @Override
                     public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
                         for(DataSnapshot ds : dataSnapshot.getChildren()) {
@@ -157,7 +157,7 @@ public class ReservationFragment extends Fragment {
                     public void onCancelled(@NonNull DatabaseError databaseError) {
 
                     }
-                });
+                });*/
 
 
                 RVAdapterRes adapter = new RVAdapterRes(reservations);
