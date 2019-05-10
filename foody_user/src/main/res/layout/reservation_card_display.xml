@@ -1,7 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <android.support.constraint.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:background="@color/dark_white_background">
@@ -32,6 +31,7 @@
                 android:layout_width="0dp"
                 android:layout_height="120dp"
                 android:src="@drawable/user_static_background"
+                android:contentDescription="@null"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toTopOf="parent"
@@ -43,6 +43,7 @@
                 android:elevation="2dp"
                 android:layout_height="120dp"
                 android:src="@drawable/shadow_drop_down"
+                android:contentDescription="@null"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toTopOf="parent"
@@ -82,7 +83,7 @@
                 android:layout_marginTop="8dp"
                 android:layout_marginEnd="8dp"
                 android:fontFamily="@font/roboto_regular"
-                android:text="Order Status: DELIVERING"
+                android:text="@string/order_status"
                 android:textColor="@color/colorPrimary"
                 android:textSize="21sp"
                 app:layout_constraintEnd_toEndOf="parent"
@@ -137,13 +138,10 @@
                 android:layout_marginTop="16dp"
                 android:layout_marginEnd="16dp"
                 android:fontFamily="@font/roboto_bold"
-                android:text="35.70 €"
                 android:textColor="@color/colorAccent"
                 android:textSize="21sp"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintTop_toBottomOf="@id/user_reservation_dish_list" />
-
-
 
 
             <TextView
@@ -165,7 +163,6 @@
                 android:id="@+id/user_reservation_delivery_time"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="19.30"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintTop_toBottomOf="@id/user_reservation_total_string"
                 android:textColor="@color/colorPrimary"

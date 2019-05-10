@@ -6,6 +6,7 @@ import java.util.Locale;
 public class Restaurant {
     private String uid;
     private String username;
+    private String address;
     private ArrayList<String> cuisines;
     private ArrayList<Integer> cuisineTypes;
     private int deliveryPrice;
@@ -18,6 +19,14 @@ public class Restaurant {
         this.cuisines = cuisines;
         this.deliveryPrice = deliveryPrice;
         this.distance = distance;
+    }
+
+    public String getAddress() {
+        return address;
+    }
+
+    public void setAddress(String address) {
+        this.address = address;
     }
 
     public String getUsername() {

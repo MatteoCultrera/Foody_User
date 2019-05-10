@@ -60,7 +60,7 @@ public class RestaurantShow extends AppCompatActivity {
     private String dialogCode = "ok";
     private AlertDialog dialogDism;
 
-    String reName;
+    private String reName, reUsername, reAddress;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -92,7 +92,9 @@ public class RestaurantShow extends AppCompatActivity {
         totalLayout.getLayoutTransition().enableTransitionType(LayoutTransition.CHANGING);
 
         Bundle extras = getIntent().getExtras();
-        reName = extras.getString("restaurant_name","");
+        reName = extras.getString("restaurant_id","");
+        reUsername = extras.getString("restaurant_name", null);
+        reAddress = extras.getString("restaurant_address", null);
         fetchRestaurant();
         fetchMenu();
         LinearLayoutManager llm = new LinearLayoutManager(this);
@@ -169,6 +171,8 @@ public class RestaurantShow extends AppCompatActivity {
             public void onClick(View v) {
                 Intent intent = new Intent(totalLayout.getContext(), Order.class);
                 intent.putExtra("restaurantID", reName);
+                intent.putExtra("restaurantName", reUsername);
+                intent.putExtra("restaurantAddress", reAddress);
                 startActivity(intent);
             }
         });

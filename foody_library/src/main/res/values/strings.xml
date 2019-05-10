@@ -89,4 +89,7 @@
     <string name="logout">Logout</string>
     <string name="error_order">Cannot satisfy your request</string>
     <string name="save">Your data has been saved</string>
+    <string name="pending">Pending</string>
+    <string name="done">Done</string>
+    <string name="doing">Doing</string>
 </resources>

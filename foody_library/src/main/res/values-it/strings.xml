@@ -89,4 +89,7 @@
     <string name="logout">Logout</string>
     <string name="error_order">Impossibile completare la richiesta</string>
     <string name="save">I dati sono stati salvati</string>
+    <string name="pending">In attesa</string>
+    <string name="done">Completato</string>
+    <string name="doing">In corso</string>
 </resources>

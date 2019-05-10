@@ -77,7 +77,11 @@ public class ReservationFragment extends Fragment {
         toAdd = true;
         firebaseAuth = FirebaseAuth.getInstance();
         firebaseUser = firebaseAuth.getCurrentUser();
+
         sharedPreferences = view.getContext().getSharedPreferences("myPreference", MODE_PRIVATE);
+        int notificationFrame = sharedPreferences.getInt("Notification",4);
+        father.setNotification(notificationFrame);
+
         storageDir = Objects.requireNonNull(getActivity()).getExternalFilesDir(Environment.DIRECTORY_DOCUMENTS);
         final File file = new File(storageDir, JSON_PATH);
         LinearLayoutManager llm = new LinearLayoutManager(view.getContext());
@@ -163,7 +167,8 @@ public class ReservationFragment extends Fragment {
                             adapter.notifyItemInserted(index);
                             adapter.notifyItemRangeChanged(index, reservations.size());
 
-                            father.setNotification(1);
+                            if(father.setNotification(1))
+                                sharedPreferences.edit().putInt("Notification", 1).apply();
                         }
                     }
 
