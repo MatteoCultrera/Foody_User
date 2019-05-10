@@ -31,12 +31,6 @@ import static android.content.Context.MODE_PRIVATE;
 
 public class ReservationFragment extends Fragment {
 
-    enum prepStatus {
-        PENDING,
-        DOING,
-        DONE,
-    }
-
     private RecyclerView reservationRecycler;
     private final String JSON_PATH = "reservations.json";
     private File storageDir;
@@ -150,17 +144,34 @@ public class ReservationFragment extends Fragment {
                         int pending2=0;
                         int doing2=0;
                         int done2=0;
-                        int index;
+                        int index = 0;
 
                         for(DataSnapshot ds : dataSnapshot.getChildren()) {
-                            ReservationDBUser reservationDBUser = ds.getValue(ReservationDBUser.class);
+                            for(DataSnapshot ds2 : ds.getChildren()) {
 
-                            if (reservationDBUser.getStatus().toLowerCase().equals("pending")){
-                                pending2 ++;
-                            } else if (reservationDBUser.getStatus().toLowerCase().equals("doing")){
-                                doing2 ++;
-                            } else{
-                                done2 ++;
+                                ReservationDBUser reservationDBUser = ds2.getValue(ReservationDBUser.class);
+                                Log.d("SWSW", ds2.getKey());
+
+                                if (reservationDBUser.getStatus().toLowerCase().equals("pending")) {
+                                    pending2++;
+                                } else if (reservationDBUser.getStatus().toLowerCase().equals("doing")) {
+                                    if (reservationDBUser.getStatus().equals(reservations.get(index).getPreparationStatusString())) {
+                                        reservations.get(index).setPreparationStatus(Reservation.prepStatus.DOING);
+                                        adapter.notifyItemChanged(index);
+                                    }
+                                    doing2++;
+                                } else {
+                                    if (reservationDBUser.getStatus().equals(reservations.get(index).getPreparationStatusString()))
+                                        if (reservationDBUser.isAccepted()) {
+                                            reservations.get(index).setPreparationStatus(Reservation.prepStatus.DONE);
+                                            adapter.notifyItemChanged(index);
+                                        } else {
+                                            reservations.get(index).setPreparationStatus(Reservation.prepStatus.REJECTED);
+                                        }
+                                    done2++;
+                                }
+
+                                index++;
                             }
                         }
 

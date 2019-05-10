@@ -6,6 +6,7 @@ public class UserInfo {
     private String address;
     private String numberPhone;
     private String biography;
+    private String imagePath;
 
     public UserInfo(){}
 
@@ -60,5 +61,13 @@ public class UserInfo {
 
     public void setBiography(String biography) {
         this.biography = biography;
+    }
+
+    public String getImagePath() {
+        return imagePath;
+    }
+
+    public void setImagePath(String imagePath) {
+        this.imagePath = imagePath;
     }
 }

@@ -8,6 +8,7 @@ class Reservation {
         PENDING,
         DOING,
         DONE,
+        REJECTED
     }
 
     private String reservationID;
