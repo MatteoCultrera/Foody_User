@@ -10,6 +10,7 @@ import android.support.design.widget.TextInputLayout;
 import android.support.v7.app.AppCompatActivity;
 import android.text.Editable;
 import android.text.TextWatcher;
+import android.util.Log;
 import android.view.View;
 import android.widget.EditText;
 import android.widget.Toast;
@@ -48,6 +49,7 @@ public class Login extends AppCompatActivity {
             correctness = false;
             email = findViewById(R.id.username_login);
             emailL = findViewById(R.id.username_login_outer);
+
             email.addTextChangedListener(new TextWatcher() {
                 @Override
                 public void beforeTextChanged(CharSequence charSequence, int i, int i1, int i2) {
@@ -66,6 +68,23 @@ public class Login extends AppCompatActivity {
             passwordL = findViewById(R.id.password_login_outer);
             login = findViewById(R.id.FAB_login);
             register = findViewById(R.id.register_button);
+            password.addTextChangedListener(new TextWatcher() {
+                @Override
+                public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+
+                }
+
+                @Override
+                public void onTextChanged(CharSequence s, int start, int before, int count) {
+                    if(password.getText().length() > 0)
+                        passwordL.setError(null);
+                }
+
+                @Override
+                public void afterTextChanged(Editable s) {
+
+                }
+            });
             login.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
@@ -105,6 +124,9 @@ public class Login extends AppCompatActivity {
                     finish();
                 }
             });
+
+            emailL.clearFocus();
+            passwordL.clearFocus();
         }
     }
 

@@ -146,7 +146,6 @@ public class MainActivity extends AppCompatActivity {
                 notificationBadgeThree.setVisibility(View.VISIBLE);
                 break;
         }
-
     }
 
     public void clearNotification(int pos){
