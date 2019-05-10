@@ -62,6 +62,7 @@ public class UserFragment extends Fragment {
     private SharedPreferences.Editor edit;
     private FirebaseAuth firebaseAuth;
     private MaterialButton logout;
+    private String imagePath;
 
     public UserFragment() {}
 
@@ -104,12 +105,47 @@ public class UserFragment extends Fragment {
                         bio.setText(info.getBiography());
                         edit.putString("name", info.getUsername());
                         edit.putString("email", info.getEmail());
+                        imagePath = info.getImagePath();
+
+                        StorageReference mStorageRef = FirebaseStorage.getInstance().getReference();
+
+                        if(imagePath!=null){
+                            Log.d("PROVA","Image Path not null");
+                            mStorageRef.child(imagePath).getDownloadUrl()
+                                    .addOnSuccessListener(new OnSuccessListener<Uri>() {
+                                        @Override
+                                        public void onSuccess(Uri uri) {
+
+                                            Log.d("PROVA","Found Profile Picture");
+                                            Glide
+                                                    .with(profilePicture.getContext())
+                                                    .load(uri)
+                                                    .into(profilePicture);
+                                        }
+                                    }).addOnFailureListener(new OnFailureListener() {
+                                @Override
+                                public void onFailure(@NonNull Exception e) {
+
+                                    Glide
+                                            .with(profilePicture.getContext())
+                                            .load(R.drawable.profile_placeholder)
+                                            .into(profilePicture);
+                                }
+                            });
+                        }else{
+                            Glide
+                                    .with(profilePicture.getContext())
+                                    .load(R.drawable.profile_placeholder)
+                                    .into(profilePicture);
+                        }
+
                         if (!address.getText().toString().equals(getResources().getString(R.string.address_hint)))
                             edit.putString("address", info.getAddress());
                         if (!phoneNumber.getText().toString().equals(getResources().getString(R.string.phone_hint)))
                             edit.putString("phoneNumber", info.getNumberPhone());
                         if (!bio.getText().toString().equals(getResources().getString(R.string.bio_hint)))
                             edit.putString("bio", info.getBiography());
+                        edit.putString("Path", imagePath);
                         edit.apply();
                     }
                 }

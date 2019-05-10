@@ -77,6 +77,7 @@ public class Setup extends AppCompatActivity {
     private FirebaseAuth firebaseAuth;
     private SharedPreferences sharedPref;
     private SharedPreferences.Editor edit;
+    private String pathImage;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -304,14 +305,11 @@ public class Setup extends AppCompatActivity {
         errorAddress.setText("");
         errorBio.setText("");
 
-        final String PROFILE_IMAGE = "ProfileImage.jpg";
-        final File f = new File(storageDir, PROFILE_IMAGE);
+        String imagePath = sharedPref.getString("Path", "");
 
-        if(f.exists()){
-            profilePicture.setImageURI(Uri.fromFile(f));
-        } else{
+        if(imagePath.length()>0){
             StorageReference mStorageRef = FirebaseStorage.getInstance().getReference();
-            mStorageRef.child("images/users/" + firebaseAuth.getCurrentUser().getUid() + ".jpeg").getDownloadUrl()
+            mStorageRef.child(imagePath).getDownloadUrl()
                     .addOnSuccessListener(new OnSuccessListener<Uri>() {
                         @Override
                         public void onSuccess(Uri uri) {
@@ -627,10 +625,12 @@ public class Setup extends AppCompatActivity {
     public void savedProfile(View view) {
 
         File f = new File(storageDir, PLACEHOLDER_CAMERA);
+        FirebaseUser user = firebaseAuth.getCurrentUser();
 
         if(f.exists()){
             BitmapFactory.Options bmOptions = new BitmapFactory.Options();
             Bitmap bitmap = BitmapFactory.decodeFile(f.getAbsolutePath(),bmOptions);
+            pathImage = "images/users/"+user.getUid() + System.currentTimeMillis()+".jpeg";
             File profile = new File(storageDir, PROFILE_IMAGE);
             saveBitmap(bitmap, profile.getPath());
 
@@ -638,7 +638,8 @@ public class Setup extends AppCompatActivity {
             StorageReference storageReference;
             storage = FirebaseStorage.getInstance();
             storageReference = storage.getReference();
-            StorageReference ref = storageReference.child("images/users/" + firebaseAuth.getCurrentUser().getUid() + ".jpeg");
+
+            StorageReference ref = storageReference.child(pathImage);
             ref.putFile(Uri.fromFile(new File(storageDir, PROFILE_IMAGE)))
                     .addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
                         @Override
@@ -654,12 +655,12 @@ public class Setup extends AppCompatActivity {
                     });
         }
 
-        FirebaseUser user = firebaseAuth.getCurrentUser();
         DatabaseReference database = FirebaseDatabase.getInstance().getReference()
                 .child("endUsers/" + user.getUid());
         HashMap<String, Object> child = new HashMap<>();
         UserInfo info = new UserInfo(name.getText().toString(), email.getText().toString(), address.getText().toString(),
                 phoneNumber.getText().toString(), bio.getText().toString());
+        info.setImagePath(pathImage);
         child.put("info", info);
         database.updateChildren(child);
 
