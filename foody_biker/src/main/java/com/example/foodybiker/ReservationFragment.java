@@ -102,8 +102,10 @@ public class ReservationFragment extends Fragment {
                     public void onChildAdded(@NonNull DataSnapshot dataSnapshot, @Nullable String s) {
                         ReservationDBBiker reservationDB = dataSnapshot.getValue(ReservationDBBiker.class);
                         if (reservationDB.getStatus() == null || reservationDB.getStatus().equals("accepted")) {
+                            toAdd = true;
                             for (Reservation r : reservations) {
                                 if (r.getReservationID().equals(reservationDB.getReservationID())) {
+                                    Log.d("SWSW", ""+toAdd);
                                     toAdd = false;
                                 }
                             }
