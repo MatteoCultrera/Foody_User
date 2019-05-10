@@ -113,14 +113,24 @@ public class MainActivity extends AppCompatActivity {
             }
         });
 
-        addBadgeView();
+        if(notificationBadgeOne == null){
+            addBadgeView();
+        }
         SharedPreferences sharedPref = this.getPreferences(Context.MODE_PRIVATE);
-        if (!sharedPref.getBoolean("hasNotification",false)){
+        if (sharedPref.getBoolean("hasNotification",false)){
             setNotification(1);
         }
     }
 
     public void setNotification(int pos){
+        if(notificationBadgeOne == null){
+            SharedPreferences sharedPref = this.getPreferences(Context.MODE_PRIVATE);
+            SharedPreferences.Editor editor = sharedPref.edit();
+            editor.putBoolean("hasNotification", true);
+            editor.apply();
+            return;
+        }
+
         Menu menu = bottomBar.getMenu();
         if(menu.getItem(pos).isChecked())
             return;
@@ -141,6 +151,8 @@ public class MainActivity extends AppCompatActivity {
     }
 
     public void clearNotification(int pos){
+        if(notificationBadgeOne == null)
+            return;
         switch (pos){
             case 0:
                 notificationBadgeOne.setVisibility(View.GONE);
@@ -156,6 +168,12 @@ public class MainActivity extends AppCompatActivity {
                 notificationBadgeTwo.setVisibility(View.GONE);
                 notificationBadgeThree.setVisibility(View.GONE);
                 break;
+        }
+        if(notificationBadgeTwo.getVisibility() == View.GONE){
+            SharedPreferences prefs = this.getPreferences(Context.MODE_PRIVATE);
+            SharedPreferences.Editor editor = prefs.edit();
+            editor.putBoolean("hasNotification", false);
+            editor.apply();
         }
     }
 
@@ -194,8 +212,8 @@ public class MainActivity extends AppCompatActivity {
     }
 
     @Override
-    protected void onPause() {
-        super.onPause();
+    protected void onDestroy() {
+        super.onDestroy();
         if(notificationBadgeTwo.getVisibility() == View.VISIBLE){
             SharedPreferences sharedPref = this.getPreferences(Context.MODE_PRIVATE);
             SharedPreferences.Editor editor = sharedPref.edit();
