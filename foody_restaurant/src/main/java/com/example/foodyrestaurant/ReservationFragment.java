@@ -97,7 +97,7 @@ public class ReservationFragment extends Fragment {
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
                 for (DataSnapshot ds : dataSnapshot.getChildren()) {
                     ReservationDBRestaurant reservationDB = ds.getValue(ReservationDBRestaurant.class);
-                    if(!reservationDB.getStatus().equals("Done")) {
+                    if(!reservationDB.getStatus().toLowerCase().equals("done")) {
                         ArrayList<Dish> dishes = new ArrayList<>();
                         for (OrderItem o : reservationDB.getDishesOrdered()) {
                             Dish dish = new Dish();
@@ -107,9 +107,9 @@ public class ReservationFragment extends Fragment {
                             dishes.add(dish);
                         }
                         Reservation.prepStatus status;
-                        if (reservationDB.getStatus().equals("Pending")){
+                        if (reservationDB.getStatus().toLowerCase().equals("pending")){
                             status = Reservation.prepStatus.PENDING;
-                        } else if (reservationDB.getStatus().equals("Doing")){
+                        } else if (reservationDB.getStatus().toLowerCase().equals("doing")){
                             status = Reservation.prepStatus.DOING;
                         } else{
                             status = Reservation.prepStatus.DONE;
