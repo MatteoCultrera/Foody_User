@@ -671,6 +671,7 @@ public class Setup extends AppCompatActivity {
         edit.putString("bio", bio.getText().toString());
         edit.apply();
         Toast.makeText(getApplicationContext(), R.string.save, Toast.LENGTH_SHORT).show();
+        unchanged = true;
     }
 
     private void saveBitmap(Bitmap bitmap,String path){

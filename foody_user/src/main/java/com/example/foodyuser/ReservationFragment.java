@@ -155,7 +155,7 @@ public class ReservationFragment extends Fragment {
                                 if (reservationDBUser.getStatus().toLowerCase().equals("pending")) {
                                     pending2++;
                                 } else if (reservationDBUser.getStatus().toLowerCase().equals("doing")) {
-                                    if (reservationDBUser.getStatus().equals(reservations.get(index).getPreparationStatusString())) {
+                                    if(reservationDBUser.getStatus().equals(reservations.get(index).getPreparationStatusString())) {
                                         reservations.get(index).setPreparationStatus(Reservation.prepStatus.DOING);
                                         adapter.notifyItemChanged(index);
                                     }
