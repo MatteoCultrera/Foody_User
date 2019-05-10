@@ -10,6 +10,7 @@ public class RestaurantInfo {
     private ArrayList<String> daysTime;
     private int deliveryPrice;
     private ArrayList<Integer> cuisines;
+    private String imagePath;
 
     public RestaurantInfo(String username, String email, String address, String numberPhone,
                           ArrayList<String> daysTime, Integer deliveryCost, ArrayList<Integer> cuisineTypes) {
@@ -86,5 +87,13 @@ public class RestaurantInfo {
 
     public void setCuisineTypes(ArrayList<Integer> cuisineTypes) {
         this.cuisines = cuisineTypes;
+    }
+
+    public String getImagePath() {
+        return imagePath;
+    }
+
+    public void setImagePath(String imagePath) {
+        this.imagePath = imagePath;
     }
 }

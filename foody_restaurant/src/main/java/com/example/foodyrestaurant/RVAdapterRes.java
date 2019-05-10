@@ -148,6 +148,8 @@ public class RVAdapterRes extends RecyclerView.Adapter<RVAdapterRes.CardViewHold
                 ReservationDBUser reservation = new ReservationDBUser(reservationID,
                         firebaseUser.getUid(), dishes, true, null, reservations.get(i).getDeliveryTime(),
                         "Doing", reservations.get(i).getTotalPrice());
+                reservation.setRestaurantName(sharedPreferences.getString("name", null));
+                reservation.setRestaurantAddress(sharedPreferences.getString("address", null));
                 child.put(reservationID, reservation);
                 database.updateChildren(child).addOnFailureListener(new OnFailureListener() {
                     @Override
@@ -205,7 +207,10 @@ public class RVAdapterRes extends RecyclerView.Adapter<RVAdapterRes.CardViewHold
                 }
                 String reservationID = reservations.get(i).getUserUID() + reservations.get(i).getReservationID();
                 ReservationDBUser reservation = new ReservationDBUser(reservationID,
-                        firebaseUser.getUid(), dishes, false, null, null, "Done", reservations.get(i).getTotalPrice());
+                        firebaseUser.getUid(), dishes, false, null,
+                        reservations.get(i).getDeliveryTime(), "Done", reservations.get(i).getTotalPrice());
+                reservation.setRestaurantAddress(sharedPreferences.getString("address", null));
+                reservation.setRestaurantName(sharedPreferences.getString("name", null));
                 child.put(reservationID, reservation);
                 database.updateChildren(child).addOnFailureListener(new OnFailureListener() {
                     @Override
@@ -219,7 +224,8 @@ public class RVAdapterRes extends RecyclerView.Adapter<RVAdapterRes.CardViewHold
                 HashMap<String, Object> childRest = new HashMap<>();
                 ReservationDBRestaurant reservationRest = new ReservationDBRestaurant(reservationID,
                         "", dishes, false, null, reservations.get(i).getUserPhone(),
-                        reservations.get(i).getUserName(), null, null, "Done",
+                        reservations.get(i).getUserName(), reservations.get(i).getDeliveryTime(),
+                        reservations.get(i).getOrderTime(), "Done",
                         reservations.get(i).getUserAddress(), reservations.get(i).getTotalPrice());
                 childRest.put(reservationID, reservationRest);
                 databaseRest.updateChildren(childRest).addOnFailureListener(new OnFailureListener() {

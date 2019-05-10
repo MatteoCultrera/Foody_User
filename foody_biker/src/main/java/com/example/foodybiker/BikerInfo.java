@@ -9,6 +9,7 @@ public class BikerInfo {
     private String city;
     private String numberPhone;
     private ArrayList<String> daysTime;
+    private String path;
 
     BikerInfo () {}
 
@@ -73,5 +74,13 @@ public class BikerInfo {
 
     public void setDaysTime(ArrayList<String> daysTime) {
         this.daysTime = daysTime;
+    }
+
+    public String getPath() {
+        return path;
+    }
+
+    public void setPath(String path) {
+        this.path = path;
     }
 }

@@ -62,17 +62,19 @@ public class MenuFragment extends Fragment {
     public void onPause(){
         super.onPause();
         File file = new File(storageDir, JSON_PATH);
-        String json = jsonHandler.toJSON(cards);
-        jsonHandler.saveStringToFile(json, file);
+        if(cards!= null){
+            String json = jsonHandler.toJSON(cards);
+            jsonHandler.saveStringToFile(json, file);
 
-        DatabaseReference database = FirebaseDatabase.getInstance().getReference()
-                .child("restaurantsMenu").child(user.getUid()).child("Card");
-        HashMap<String, Object> child = new HashMap<>();
-        for (int i = 0; i < cards.size(); i++) {
-            if (cards.get(i).getDishes().size() != 0)
-                child.put(Integer.toString(i), cards.get(i));
+            DatabaseReference database = FirebaseDatabase.getInstance().getReference()
+                    .child("restaurantsMenu").child(user.getUid()).child("Card");
+            HashMap<String, Object> child = new HashMap<>();
+            for (int i = 0; i < cards.size(); i++) {
+                if (cards.get(i).getDishes().size() != 0)
+                    child.put(Integer.toString(i), cards.get(i));
+            }
+            database.updateChildren(child);
         }
-        database.updateChildren(child);
     }
 
     private void init(View view){

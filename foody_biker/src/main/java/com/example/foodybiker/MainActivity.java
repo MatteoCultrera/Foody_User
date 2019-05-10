@@ -1,5 +1,7 @@
 package com.example.foodybiker;
 
+import android.content.Context;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.design.internal.BottomNavigationItemView;
@@ -128,6 +130,10 @@ public class MainActivity extends AppCompatActivity {
 
         active = map;
         addBadgeView();
+        SharedPreferences sharedPref = this.getPreferences(Context.MODE_PRIVATE);
+        if (sharedPref.getBoolean("hasNotification",false)){
+            setNotification(1);
+        }
     }
 
     public void setNotification(int pos){
@@ -165,6 +171,12 @@ public class MainActivity extends AppCompatActivity {
                 notificationBadgeThree.setVisibility(View.GONE);
                 break;
         }
+        if(notificationBadgeTwo.getVisibility() == View.GONE){
+            SharedPreferences prefs = this.getPreferences(Context.MODE_PRIVATE);
+            SharedPreferences.Editor editor = prefs.edit();
+            editor.putBoolean("hasNotification", false);
+            editor.apply();
+        }
     }
 
     private void addBadgeView() {
@@ -183,5 +195,21 @@ public class MainActivity extends AppCompatActivity {
         itemViewThree.addView(notificationBadgeThree);
 
         clearNotification(4);
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        if(notificationBadgeTwo.getVisibility() == View.VISIBLE){
+            SharedPreferences sharedPref = this.getPreferences(Context.MODE_PRIVATE);
+            SharedPreferences.Editor editor = sharedPref.edit();
+            editor.putBoolean("hasNotification", true);
+            editor.apply();
+        }else{
+            SharedPreferences sharedPref = this.getPreferences(Context.MODE_PRIVATE);
+            SharedPreferences.Editor editor = sharedPref.edit();
+            editor.putBoolean("hasNotification", false);
+            editor.apply();
+        }
     }
 }

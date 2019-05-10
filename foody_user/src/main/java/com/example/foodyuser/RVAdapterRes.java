@@ -10,6 +10,8 @@ import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
+import com.google.firebase.storage.FirebaseStorage;
+
 import java.util.ArrayList;
 import java.util.List;
 
@@ -57,23 +59,26 @@ public class RVAdapterRes extends RecyclerView.Adapter<RVAdapterRes.CardViewHold
                 pvh.dishes.addView(dish);
             }
         }
+
+
+
         Resources resources = pvh.status.getContext().getResources();
         String status;
-        switch(currentRes.getPreparationStatusString()){
-            case("Pending"):
+        switch(currentRes.getPreparationStatusString().toLowerCase()){
+            case("pending"):
                 status = resources.getString(R.string.pending);
                 break;
-            case("Done"):
+            case("done"):
                 status = resources.getString(R.string.done);
                 break;
-            case("Doing"):
+            case("doing"):
                 status = resources.getString(R.string.doing);
                 break;
             default:
                 status = "";
                 break;
         }
-        pvh.status.setText(String.format(resources.getString(R.string.order_status), status));
+        pvh.status.setText(String.format("%s %s",resources.getString(R.string.order_status), status));
         pvh.total.setText(currentRes.getTotalCost());
         pvh.deliveryTime.setText(currentRes.getDeliveryTime());
     }

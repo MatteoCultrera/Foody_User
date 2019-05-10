@@ -18,6 +18,8 @@ import android.view.ViewGroup;
 import android.widget.TextView;
 
 import com.bumptech.glide.Glide;
+import com.bumptech.glide.load.engine.DiskCacheStrategy;
+import com.bumptech.glide.request.RequestOptions;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.firebase.auth.FirebaseAuth;
@@ -54,6 +56,7 @@ public class UserFragment extends Fragment {
     private SharedPreferences.Editor edit;
     private FirebaseAuth firebaseAuth;
     private MaterialButton logout;
+    private String imagePath;
 
     public UserFragment(){}
 
@@ -104,6 +107,8 @@ public class UserFragment extends Fragment {
                         phoneNumber.setText(info.getNumberPhone());
                         city.setText(info.getCity());
                         ArrayList<String> days = info.getDaysTime();
+                        imagePath = info.getPath();
+                        Log.d("PROVA",""+info.getPath());
                         monTime.setText(days.get(0));
                         tueTime.setText(days.get(1));
                         wedTime.setText(days.get(2));
@@ -140,6 +145,40 @@ public class UserFragment extends Fragment {
                         if (!info.getDaysTime().get(6).equals(getResources().getString(R.string.free))){
                             edit.putBoolean("sunState", true);
                         }
+
+                        StorageReference mStorageRef = FirebaseStorage.getInstance().getReference();
+
+                        if(imagePath!=null){
+                            Log.d("PROVA","Image Path not null");
+                            mStorageRef.child(imagePath).getDownloadUrl()
+                                    .addOnSuccessListener(new OnSuccessListener<Uri>() {
+                                        @Override
+                                        public void onSuccess(Uri uri) {
+
+                                            Log.d("PROVA","Found Profile Picture");
+                                            Glide
+                                                    .with(profilePicture.getContext())
+                                                    .load(uri)
+                                                    .into(profilePicture);
+                                        }
+                                    }).addOnFailureListener(new OnFailureListener() {
+                                @Override
+                                public void onFailure(@NonNull Exception e) {
+
+                                    Glide
+                                            .with(profilePicture.getContext())
+                                            .load(R.drawable.profile_placeholder)
+                                            .into(profilePicture);
+                                }
+                            });
+                        }else{
+                            Glide
+                                    .with(profilePicture.getContext())
+                                    .load(R.drawable.profile_placeholder)
+                                    .into(profilePicture);
+                        }
+
+
                         edit.putString("monTime", info.getDaysTime().get(0));
                         edit.putString("tueTime", info.getDaysTime().get(1));
                         edit.putString("wedTime", info.getDaysTime().get(2));
@@ -147,6 +186,7 @@ public class UserFragment extends Fragment {
                         edit.putString("friTime", info.getDaysTime().get(4));
                         edit.putString("satTime", info.getDaysTime().get(5));
                         edit.putString("sunTime", info.getDaysTime().get(6));
+                        edit.putString("Path", imagePath);
                         edit.apply();
                     }
                 }
@@ -170,33 +210,7 @@ public class UserFragment extends Fragment {
             });
         }
 
-        String PROFILE_IMAGE = "ProfileImage.jpg";
-        File f = new File(storageDir, PROFILE_IMAGE);
 
-        if(f.exists()){
-            profilePicture.setImageURI(Uri.fromFile(f));
-        } else {
-            StorageReference mStorageRef = FirebaseStorage.getInstance().getReference();
-            mStorageRef.child("images/bikers/" + firebaseAuth.getCurrentUser().getUid() + ".jpeg").getDownloadUrl()
-                    .addOnSuccessListener(new OnSuccessListener<Uri>() {
-                        @Override
-                        public void onSuccess(Uri uri) {
-                            Glide
-                                    .with(profilePicture.getContext())
-                                    .load(uri)
-                                    .into(profilePicture);
-                            //TODO: salvare l'uri qua nel path dell'immagine profilo
-                        }
-                    }).addOnFailureListener(new OnFailureListener() {
-                @Override
-                public void onFailure(@NonNull Exception e) {
-                    Glide
-                            .with(profilePicture.getContext())
-                            .load(R.drawable.profile_placeholder)
-                            .into(profilePicture);
-                }
-            });
-        }
 
         editMode.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -222,7 +236,7 @@ public class UserFragment extends Fragment {
     }
 
     @Override
-    public void onResume() {
+    public void onResume(){
         super.onResume();
         Context context = Objects.requireNonNull(getActivity()).getApplicationContext();
         sharedPref = context.getSharedPreferences("myPreference", MODE_PRIVATE);
