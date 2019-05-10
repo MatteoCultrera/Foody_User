@@ -35,13 +35,16 @@
             android:windowSoftInputMode="adjustResize"
             android:screenOrientation="portrait"/>
 
-        <activity android:name=".MenuEditItem"/>
+        <activity android:name=".MenuEditItem"
+            android:screenOrientation="portrait"/>
 
-        <activity android:name=".MenuEdit" />
+        <activity android:name=".MenuEdit"
+            android:screenOrientation="portrait"/>
 
         <activity
             android:name=".Setup"
-            android:windowSoftInputMode="adjustResize" />
+            android:windowSoftInputMode="adjustResize"
+            android:screenOrientation="portrait"/>
 
         <activity
             android:name=".MainActivity"

@@ -30,12 +30,14 @@
             android:screenOrientation="portrait"/>
 
         <activity android:name=".Setup"
-            android:windowSoftInputMode="adjustResize">
+            android:windowSoftInputMode="adjustResize"
+            android:screenOrientation="portrait">
         </activity>
 
         <activity
             android:name=".MainActivity"
-            android:hardwareAccelerated="true">
+            android:hardwareAccelerated="true"
+            android:screenOrientation="portrait">
         </activity>
 
         <activity
