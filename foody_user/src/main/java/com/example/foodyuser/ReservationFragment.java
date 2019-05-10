@@ -141,52 +141,53 @@ public class ReservationFragment extends Fragment {
                 database.addValueEventListener(new ValueEventListener() {
                     @Override
                     public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-                        int pending2=0;
-                        int doing2=0;
-                        int done2=0;
+                        int pending2 = 0;
+                        int doing2 = 0;
+                        int done2 = 0;
                         int index = 0;
+                        if (reservations != null) {
+                            for (DataSnapshot ds : dataSnapshot.getChildren()) {
+                                for (DataSnapshot ds2 : ds.getChildren()) {
 
-                        for(DataSnapshot ds : dataSnapshot.getChildren()) {
-                            for(DataSnapshot ds2 : ds.getChildren()) {
+                                    ReservationDBUser reservationDBUser = ds2.getValue(ReservationDBUser.class);
 
-                                ReservationDBUser reservationDBUser = ds2.getValue(ReservationDBUser.class);
-                                Log.d("SWSW", ds2.getKey());
-
-                                if (reservationDBUser.getStatus().toLowerCase().equals("pending")) {
-                                    pending2++;
-                                } else if (reservationDBUser.getStatus().toLowerCase().equals("doing")) {
-                                    if (reservationDBUser.getStatus().equals(reservations.get(index).getPreparationStatusString())) {
-                                        reservations.get(index).setPreparationStatus(Reservation.prepStatus.DOING);
-                                        adapter.notifyItemChanged(index);
-                                    }
-                                    doing2++;
-                                } else {
-                                    if (reservationDBUser.getStatus().equals(reservations.get(index).getPreparationStatusString()))
-                                        if (reservationDBUser.isAccepted()) {
-                                            reservations.get(index).setPreparationStatus(Reservation.prepStatus.DONE);
+                                    if (reservationDBUser.getStatus().toLowerCase().equals("pending")) {
+                                        pending2++;
+                                    } else if (reservationDBUser.getStatus().toLowerCase().equals("doing")) {
+                                        if (reservationDBUser.getStatus().equals(reservations.get(index).getPreparationStatusString())) {
+                                            reservations.get(index).setPreparationStatus(Reservation.prepStatus.DOING);
                                             adapter.notifyItemChanged(index);
-                                        } else {
-                                            reservations.get(index).setPreparationStatus(Reservation.prepStatus.REJECTED);
                                         }
-                                    done2++;
-                                }
+                                        doing2++;
+                                    } else {
+                                        if (reservationDBUser.getStatus().equals(reservations.get(index).getPreparationStatusString()))
+                                            if (reservationDBUser.isAccepted()) {
+                                                reservations.get(index).setPreparationStatus(Reservation.prepStatus.DONE);
+                                                adapter.notifyItemChanged(index);
+                                            } else {
+                                                reservations.get(index).setPreparationStatus(Reservation.prepStatus.REJECTED);
+                                            }
+                                        done2++;
+                                    }
 
-                                index++;
+                                    index++;
+                                }
+                            }
+
+                            if (pending != pending2 || doing != doing2 || done != done2) {
+                                sharedPreferences.edit().putInt("pending", pending2).apply();
+                                sharedPreferences.edit().putInt("doing", doing2).apply();
+                                sharedPreferences.edit().putInt("done", done2).apply();
+                                father.setNotification(1);
                             }
                         }
+                    }
 
-                        if(pending != pending2 || doing != doing2 || done != done2){
-                            sharedPreferences.edit().putInt("pending",pending2).apply();
-                            sharedPreferences.edit().putInt("doing",doing2).apply();
-                            sharedPreferences.edit().putInt("done",done2).apply();
-                            father.setNotification(1);
+                        @Override
+                        public void onCancelled (@NonNull DatabaseError databaseError){
+
                         }
-                    }
 
-                    @Override
-                    public void onCancelled(@NonNull DatabaseError databaseError) {
-
-                    }
                 });
                }
 
