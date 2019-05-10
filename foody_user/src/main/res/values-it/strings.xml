@@ -33,4 +33,5 @@
     <string name="your_reservation">I tuoi ordini</string>
     <string name="your_dishes">I tuoi piatti</string>
     <string name="delivery_time">Orario di consegna</string>
+    <string name="order_status">Stato ordine: </string>
 </resources>

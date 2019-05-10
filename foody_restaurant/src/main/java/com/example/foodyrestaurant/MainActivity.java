@@ -1,5 +1,7 @@
 package com.example.foodyrestaurant;
 
+import android.content.Context;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.design.internal.BottomNavigationItemView;
@@ -112,25 +114,29 @@ public class MainActivity extends AppCompatActivity {
         });
 
         addBadgeView();
+        SharedPreferences sharedPref = this.getPreferences(Context.MODE_PRIVATE);
+        if (!sharedPref.getBoolean("hasNotification",false)){
+            setNotification(1);
+        }
     }
 
-    public boolean setNotification(int pos){
+    public void setNotification(int pos){
         Menu menu = bottomBar.getMenu();
         if(menu.getItem(pos).isChecked())
-            return false;
+            return;
 
         switch (pos){
             case 0:
                 notificationBadgeOne.setVisibility(View.VISIBLE);
-                return true;
+                break;
             case 1:
                 notificationBadgeTwo.setVisibility(View.VISIBLE);
-                return true;
+                break;
             case 2:
                 notificationBadgeThree.setVisibility(View.VISIBLE);
-                return true;
+                break;
             default:
-                return false;
+                break;
         }
     }
 
@@ -183,6 +189,23 @@ public class MainActivity extends AppCompatActivity {
             fm.beginTransaction().detach(active).attach(active).commit();
         } catch (IllegalStateException e){
             e.getMessage();
+        }
+        init();
+    }
+
+    @Override
+    protected void onPause() {
+        super.onPause();
+        if(notificationBadgeTwo.getVisibility() == View.VISIBLE){
+            SharedPreferences sharedPref = this.getPreferences(Context.MODE_PRIVATE);
+            SharedPreferences.Editor editor = sharedPref.edit();
+            editor.putBoolean("hasNotification", true);
+            editor.apply();
+        }else{
+            SharedPreferences sharedPref = this.getPreferences(Context.MODE_PRIVATE);
+            SharedPreferences.Editor editor = sharedPref.edit();
+            editor.putBoolean("hasNotification", false);
+            editor.apply();
         }
     }
 }

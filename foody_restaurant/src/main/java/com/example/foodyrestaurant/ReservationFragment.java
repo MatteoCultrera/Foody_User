@@ -79,8 +79,8 @@ public class ReservationFragment extends Fragment {
         firebaseUser = firebaseAuth.getCurrentUser();
 
         sharedPreferences = view.getContext().getSharedPreferences("myPreference", MODE_PRIVATE);
-        int notificationFrame = sharedPreferences.getInt("Notification",4);
-        father.setNotification(notificationFrame);
+        /*int notificationFrame = sharedPreferences.getInt("Notification",4);
+        father.setNotification(notificationFrame);*/
 
         storageDir = Objects.requireNonNull(getActivity()).getExternalFilesDir(Environment.DIRECTORY_DOCUMENTS);
         final File file = new File(storageDir, JSON_PATH);
@@ -130,6 +130,7 @@ public class ReservationFragment extends Fragment {
                 restaurantReservations.addChildEventListener(new ChildEventListener() {
                     @Override
                     public void onChildAdded(@NonNull DataSnapshot dataSnapshot, @Nullable String s) {
+                        Log.d("SWSW", "Dentro la notification");
                         ReservationDBRestaurant reservationDB = dataSnapshot.getValue(ReservationDBRestaurant.class);
                         for (Reservation r : reservations){
                             String orderID = reservationDB.getReservationID().substring(28);
@@ -138,6 +139,7 @@ public class ReservationFragment extends Fragment {
                             }
                         }
                         if (toAdd) {
+                            Log.d("SWSW", "Devo aggiungere la reservation");
                             ArrayList<Dish> dishes = new ArrayList<>();
                             for(OrderItem o : reservationDB.getDishesOrdered()) {
                                 Dish dish = new Dish();
@@ -167,8 +169,9 @@ public class ReservationFragment extends Fragment {
                             adapter.notifyItemInserted(index);
                             adapter.notifyItemRangeChanged(index, reservations.size());
 
-                            if(father.setNotification(1))
-                                sharedPreferences.edit().putInt("Notification", 1).apply();
+                            Log.d("SWSW", "Sto per settare la notification");
+                            father.setNotification(1);
+                            Log.d("SWSW", "Ho settato la notification");
                         }
                     }
 
