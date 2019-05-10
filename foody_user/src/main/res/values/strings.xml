@@ -36,4 +36,8 @@
 
     <string name="order_file_name" translatable="false">ordersFileName</string>
     <string name="place_order">PLACE ORDER</string>
+
+    <string name="your_reservation">Your Reservations</string>
+    <string name="your_dishes">Your Dishes</string>
+    <string name="delivery_time">Delivery Time</string>
 </resources>

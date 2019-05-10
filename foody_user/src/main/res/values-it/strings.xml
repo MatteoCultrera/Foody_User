@@ -30,4 +30,7 @@
     <string name="delete_filter">Azzera filtri</string>
 
     <string name="place_order">CONFERMA ORDINE</string>
+    <string name="your_reservation">I tuoi ordini</string>
+    <string name="your_dishes">I tuoi piatti</string>
+    <string name="delivery_time">Orario di consegna</string>
 </resources>

@@ -66,6 +66,23 @@ public class Login extends AppCompatActivity {
             passwordL = findViewById(R.id.password_login_outer);
             login = findViewById(R.id.FAB_login);
             register = findViewById(R.id.register_button);
+            password.addTextChangedListener(new TextWatcher() {
+                @Override
+                public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+
+                }
+
+                @Override
+                public void onTextChanged(CharSequence s, int start, int before, int count) {
+                    if(password.getText().length() > 0)
+                        passwordL.setError(null);
+                }
+
+                @Override
+                public void afterTextChanged(Editable s) {
+
+                }
+            });
             login.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {

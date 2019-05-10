@@ -14,12 +14,12 @@
     <string name="cancel">Annulla</string>
     <string name="alert_dialog_image_title">Scegli un\'opzione</string>
 
-    <string name="error_name">Nome non valido</string>
+    <string name="error_name">Username non valido</string>
     <string name="error_number">Numero non valido</string>
     <string name="error_address">Indirizzo non valido</string>
     <string name="error_email">E-mail non valida</string>
     <string name="error_bio">Bio non valida</string>
-    <string name="error_password">Password non valida</string>
+    <string name="error_password">Password non valida: Almeno 8 caratteri, un maiuscolo e un numero</string>
     <string name="edit_profile">Modifica Profilo</string>
     <string name="alert_dialog_back_title">Attenzione!</string>
     <string name="accept">Confermo</string>

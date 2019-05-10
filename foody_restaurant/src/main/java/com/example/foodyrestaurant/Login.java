@@ -64,6 +64,23 @@ public class Login extends AppCompatActivity {
             });
             password = findViewById(R.id.password_login);
             passwordL = findViewById(R.id.password_login_outer);
+            password.addTextChangedListener(new TextWatcher() {
+                @Override
+                public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+
+                }
+
+                @Override
+                public void onTextChanged(CharSequence s, int start, int before, int count) {
+                    if(password.getText().length() > 0)
+                        passwordL.setError(null);
+                }
+
+                @Override
+                public void afterTextChanged(Editable s) {
+
+                }
+            });
             login = findViewById(R.id.FAB_login);
             register = findViewById(R.id.register_button);
             login.setOnClickListener(new View.OnClickListener() {

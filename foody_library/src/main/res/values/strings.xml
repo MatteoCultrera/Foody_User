@@ -19,13 +19,13 @@
     <string name="cancel">Cancel</string>
     <string name="alert_dialog_image_title">Choose one option</string>
 
-    <string name="error_name">Invalid Name</string>
+    <string name="error_name">Invalid Username</string>
     <string name="error_number">Invalid Number</string>
     <string name="error_address">Invalid Address</string>
     <string name="error_email">Invalid E-mail</string>
     <string name="error_bio">Invalid Bio</string>
     <string name="error_equals">Passwords must be equals</string>
-    <string name="error_password">Invalid Password</string>
+    <string name="error_password">Invalid Password: At least 8 chars, one upper and a number </string>
 
     <string name="error_dish_name_missing">Dish Name Missing</string>
     <string name="error_dish_name_duplicate">Dish Name Already Exists</string>
