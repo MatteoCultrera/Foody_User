@@ -54,6 +54,7 @@ public class RVAdapterRes extends RecyclerView.Adapter<RVAdapterRes.CardViewHold
     public CardViewHolder onCreateViewHolder(@NonNull ViewGroup viewGroup, int i) {
         View v = LayoutInflater.from(viewGroup.getContext()).inflate(R.layout.reservation_card_display, viewGroup, false);
         firebaseAuth = FirebaseAuth.getInstance();
+
         firebaseUser = firebaseAuth.getCurrentUser();
         sharedPreferences = viewGroup.getContext().getSharedPreferences("myPreference", MODE_PRIVATE);
         return new CardViewHolder(v);

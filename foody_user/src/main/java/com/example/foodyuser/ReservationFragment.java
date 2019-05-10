@@ -71,8 +71,10 @@ public class ReservationFragment extends Fragment {
     public void onPause(){
         super.onPause();
         File file = new File(storageDir, JSON_PATH);
-        String json = jsonHandler.resToJSON(reservations);
-        jsonHandler.saveStringToFile(json, file);
+        if (reservations != null) {
+            String json = jsonHandler.resToJSON(reservations);
+            jsonHandler.saveStringToFile(json, file);
+        }
     }
 
     private void init(View view){
