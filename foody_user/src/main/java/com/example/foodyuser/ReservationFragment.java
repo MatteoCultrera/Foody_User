@@ -138,19 +138,16 @@ public class ReservationFragment extends Fragment {
                 final RVAdapterRes adapter = new RVAdapterRes(reservations);
                 reservationRecycler.setAdapter(adapter);
 
-                database.addValueEventListener(new ValueEventListener() {
+                database.child(firebaseUser.getUid()).addValueEventListener(new ValueEventListener() {
                     @Override
                     public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
                         int pending2 = 0;
                         int doing2 = 0;
                         int done2 = 0;
                         int index = 0;
-                        if (reservations != null) {
+                        if (reservations != null && reservations.size() != 0) {
                             for (DataSnapshot ds : dataSnapshot.getChildren()) {
-                                for (DataSnapshot ds2 : ds.getChildren()) {
-
-                                    ReservationDBUser reservationDBUser = ds2.getValue(ReservationDBUser.class);
-
+                                    ReservationDBUser reservationDBUser = ds.getValue(ReservationDBUser.class);
                                     if (reservationDBUser.getStatus().toLowerCase().equals("pending")) {
                                         pending2++;
                                     } else if (reservationDBUser.getStatus().toLowerCase().equals("doing")) {
@@ -171,7 +168,6 @@ public class ReservationFragment extends Fragment {
                                     }
 
                                     index++;
-                                }
                             }
 
                             if (pending != pending2 || doing != doing2 || done != done2) {
