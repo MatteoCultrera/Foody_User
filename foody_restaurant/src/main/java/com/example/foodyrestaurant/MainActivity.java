@@ -114,23 +114,24 @@ public class MainActivity extends AppCompatActivity {
         addBadgeView();
     }
 
-    public void setNotification(int pos){
+    public boolean setNotification(int pos){
         Menu menu = bottomBar.getMenu();
         if(menu.getItem(pos).isChecked())
-            return;
+            return false;
 
         switch (pos){
             case 0:
                 notificationBadgeOne.setVisibility(View.VISIBLE);
-                break;
+                return true;
             case 1:
                 notificationBadgeTwo.setVisibility(View.VISIBLE);
-                break;
+                return true;
             case 2:
                 notificationBadgeThree.setVisibility(View.VISIBLE);
-                break;
+                return true;
+            default:
+                return false;
         }
-
     }
 
     public void clearNotification(int pos){
