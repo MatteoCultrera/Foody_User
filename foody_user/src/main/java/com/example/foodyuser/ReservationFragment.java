@@ -102,9 +102,7 @@ public class ReservationFragment extends Fragment {
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
                 reservations = new ArrayList<>();
-                int pending2=0;
-                int doing2=0;
-                int done2=0;
+
                 for (DataSnapshot ds : dataSnapshot.getChildren()) {
                     ReservationDBUser reservationDBUser = ds.getValue(ReservationDBUser.class);
                     ArrayList<Dish> dishes = new ArrayList<>();
@@ -118,13 +116,10 @@ public class ReservationFragment extends Fragment {
                     Reservation.prepStatus status;
                     String orderID = reservationDBUser.getReservationID().substring(28);
                     if (reservationDBUser.getStatus().toLowerCase().equals("pending")){
-                        pending2 ++;
                         status = Reservation.prepStatus.PENDING;
                     } else if (reservationDBUser.getStatus().toLowerCase().equals("doing")){
-                        doing2 ++;
                         status = Reservation.prepStatus.DOING;
                     } else{
-                        done2 ++;
                         status = Reservation.prepStatus.DONE;
                     }
                     Reservation reservation = new Reservation(orderID, dishes, status,
@@ -146,15 +141,42 @@ public class ReservationFragment extends Fragment {
                     }
                 });
 
-                if(pending != pending2 || doing != doing2 || done != done2){
-                    sharedPreferences.edit().putInt("pending",pending2).apply();
-                    sharedPreferences.edit().putInt("doing",doing2).apply();
-                    sharedPreferences.edit().putInt("done",done2).apply();
-                    father.setNotification(1);
-                }
-
-                RVAdapterRes adapter = new RVAdapterRes(reservations);
+                final RVAdapterRes adapter = new RVAdapterRes(reservations);
                 reservationRecycler.setAdapter(adapter);
+
+                database.addValueEventListener(new ValueEventListener() {
+                    @Override
+                    public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                        int pending2=0;
+                        int doing2=0;
+                        int done2=0;
+                        int index;
+
+                        for(DataSnapshot ds : dataSnapshot.getChildren()) {
+                            ReservationDBUser reservationDBUser = ds.getValue(ReservationDBUser.class);
+
+                            if (reservationDBUser.getStatus().toLowerCase().equals("pending")){
+                                pending2 ++;
+                            } else if (reservationDBUser.getStatus().toLowerCase().equals("doing")){
+                                doing2 ++;
+                            } else{
+                                done2 ++;
+                            }
+                        }
+
+                        if(pending != pending2 || doing != doing2 || done != done2){
+                            sharedPreferences.edit().putInt("pending",pending2).apply();
+                            sharedPreferences.edit().putInt("doing",doing2).apply();
+                            sharedPreferences.edit().putInt("done",done2).apply();
+                            father.setNotification(1);
+                        }
+                    }
+
+                    @Override
+                    public void onCancelled(@NonNull DatabaseError databaseError) {
+
+                    }
+                });
                }
 
             @Override
