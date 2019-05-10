@@ -121,7 +121,8 @@ public class MainActivity extends AppCompatActivity {
         });
 
         active = map;
-        addBadgeView();
+        if(notificationBadgeOne == null)
+            addBadgeView();
         SharedPreferences sharedPref = this.getPreferences(Context.MODE_PRIVATE);
         if (sharedPref.getBoolean("hasNotification",false)){
             setNotification(1);
