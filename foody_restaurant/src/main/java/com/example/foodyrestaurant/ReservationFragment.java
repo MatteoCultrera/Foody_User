@@ -69,8 +69,10 @@ public class ReservationFragment extends Fragment {
     public void onPause(){
         super.onPause();
         File file = new File(storageDir, JSON_PATH);
-        String json = jsonHandler.resToJSON(reservations);
-        jsonHandler.saveStringToFile(json, file);
+        if (reservations != null) {
+            String json = jsonHandler.resToJSON(reservations);
+            jsonHandler.saveStringToFile(json, file);
+        }
     }
 
     private void init(View view){
@@ -141,7 +143,6 @@ public class ReservationFragment extends Fragment {
                 restaurantReservations.addChildEventListener(new ChildEventListener() {
                     @Override
                     public void onChildAdded(@NonNull DataSnapshot dataSnapshot, @Nullable String s) {
-                        Log.d("SWSW", "Dentro la notification");
                         ReservationDBRestaurant reservationDB = dataSnapshot.getValue(ReservationDBRestaurant.class);
                         toAdd = true;
                         String orderID = null;
@@ -181,10 +182,7 @@ public class ReservationFragment extends Fragment {
                             reservations.add(index, reservation);
                             adapter.notifyItemInserted(index);
                             adapter.notifyItemRangeChanged(index, reservations.size());
-
-                            Log.d("SWSW", "Sto per settare la notification");
                             father.setNotification(1);
-                            Log.d("SWSW", "Ho settato la notification");
                         }
                     }
 

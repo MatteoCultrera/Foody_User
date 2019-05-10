@@ -20,23 +20,17 @@ public class MainActivity extends AppCompatActivity {
 
     private View notificationBadgeOne, notificationBadgeTwo, notificationBadgeThree;
     BottomNavigationView bottomBar;
-
-    private enum TabState {
-        MENU,
-        ORDERS,
-        USER,
-    }
-
     private Fragment menu;
     private Fragment reservations;
     private Fragment user;
     private final FragmentManager fm = getSupportFragmentManager();
     private Fragment active;
-    TabState stateApp;
+    private SharedPreferences sharedPref;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        sharedPref = this.getPreferences(Context.MODE_PRIVATE);
         setContentView(R.layout.bottom_bar);
         if (savedInstanceState != null) {
             String lastFragment = savedInstanceState.getString("lastFragment", null);
@@ -116,7 +110,6 @@ public class MainActivity extends AppCompatActivity {
         if(notificationBadgeOne == null){
             addBadgeView();
         }
-        SharedPreferences sharedPref = this.getPreferences(Context.MODE_PRIVATE);
         if (sharedPref.getBoolean("hasNotification",false)){
             setNotification(1);
         }
@@ -192,7 +185,9 @@ public class MainActivity extends AppCompatActivity {
         itemViewTwo.addView(notificationBadgeTwo);
         itemViewThree.addView(notificationBadgeThree);
 
-        clearNotification(4);
+        notificationBadgeOne.setVisibility(View.GONE);
+        notificationBadgeTwo.setVisibility(View.GONE);
+        notificationBadgeThree.setVisibility(View.GONE);
     }
 
     @Override
@@ -208,12 +203,11 @@ public class MainActivity extends AppCompatActivity {
         } catch (IllegalStateException e){
             e.getMessage();
         }
-        init();
     }
 
     @Override
-    protected void onDestroy() {
-        super.onDestroy();
+    protected void onPause() {
+        super.onPause();
         if(notificationBadgeTwo.getVisibility() == View.VISIBLE){
             SharedPreferences sharedPref = this.getPreferences(Context.MODE_PRIVATE);
             SharedPreferences.Editor editor = sharedPref.edit();

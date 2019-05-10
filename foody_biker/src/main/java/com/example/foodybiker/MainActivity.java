@@ -21,19 +21,11 @@ public class MainActivity extends AppCompatActivity {
     private View notificationBadgeOne, notificationBadgeTwo, notificationBadgeThree;
     BottomNavigationView bottomBar;
 
-
-    private enum TabState{
-        MAP,
-        ORDERS,
-        USER,
-    }
-
     private Fragment map;
     private Fragment reservations;
     private Fragment user;
     private final FragmentManager fm = getSupportFragmentManager();
     private Fragment active;
-    TabState stateApp;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -194,12 +186,14 @@ public class MainActivity extends AppCompatActivity {
         itemViewTwo.addView(notificationBadgeTwo);
         itemViewThree.addView(notificationBadgeThree);
 
-        clearNotification(4);
+        notificationBadgeOne.setVisibility(View.GONE);
+        notificationBadgeTwo.setVisibility(View.GONE);
+        notificationBadgeThree.setVisibility(View.GONE);
     }
 
     @Override
-    protected void onDestroy() {
-        super.onDestroy();
+    protected void onPause() {
+        super.onPause();
         if(notificationBadgeTwo.getVisibility() == View.VISIBLE){
             SharedPreferences sharedPref = this.getPreferences(Context.MODE_PRIVATE);
             SharedPreferences.Editor editor = sharedPref.edit();

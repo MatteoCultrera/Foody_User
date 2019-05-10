@@ -1,5 +1,7 @@
 package com.example.foodyuser;
 
+import android.content.Context;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.design.internal.BottomNavigationItemView;
@@ -9,7 +11,6 @@ import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v7.app.AppCompatActivity;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -21,18 +22,11 @@ public class MainActivity extends AppCompatActivity {
     private View notificationBadgeOne, notificationBadgeTwo, notificationBadgeThree;
     BottomNavigationView bottomBar;
 
-    private enum TabState {
-        MENU,
-        ORDERS,
-        USER,
-    }
-
     private Fragment discover;
     private Fragment reservations;
     private Fragment user;
     private final FragmentManager fm = getSupportFragmentManager();
     private Fragment active;
-    TabState stateApp;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -114,6 +108,10 @@ public class MainActivity extends AppCompatActivity {
             }
         });
         addBadgeView();
+        SharedPreferences sharedPref = this.getPreferences(Context.MODE_PRIVATE);
+        if (sharedPref.getBoolean("hasNotification",false)){
+            setNotification(1);
+        }
     }
 
     public void setNotification(int pos){
@@ -152,6 +150,12 @@ public class MainActivity extends AppCompatActivity {
                 notificationBadgeThree.setVisibility(View.GONE);
                 break;
         }
+        if(notificationBadgeTwo.getVisibility() == View.GONE){
+            SharedPreferences prefs = this.getPreferences(Context.MODE_PRIVATE);
+            SharedPreferences.Editor editor = prefs.edit();
+            editor.putBoolean("hasNotification", false);
+            editor.apply();
+        }
     }
 
     private void addBadgeView() {
@@ -169,7 +173,9 @@ public class MainActivity extends AppCompatActivity {
         itemViewTwo.addView(notificationBadgeTwo);
         itemViewThree.addView(notificationBadgeThree);
 
-        clearNotification(4);
+        notificationBadgeOne.setVisibility(View.GONE);
+        notificationBadgeTwo.setVisibility(View.GONE);
+        notificationBadgeThree.setVisibility(View.GONE);
     }
 
     @Override
@@ -184,6 +190,22 @@ public class MainActivity extends AppCompatActivity {
             fm.beginTransaction().detach(active).attach(active).commit();
         } catch (IllegalStateException e){
             e.getMessage();
+        }
+    }
+
+    @Override
+    protected void onPause() {
+        super.onPause();
+        if(notificationBadgeTwo.getVisibility() == View.VISIBLE){
+            SharedPreferences sharedPref = this.getPreferences(Context.MODE_PRIVATE);
+            SharedPreferences.Editor editor = sharedPref.edit();
+            editor.putBoolean("hasNotification", true);
+            editor.apply();
+        }else{
+            SharedPreferences sharedPref = this.getPreferences(Context.MODE_PRIVATE);
+            SharedPreferences.Editor editor = sharedPref.edit();
+            editor.putBoolean("hasNotification", false);
+            editor.apply();
         }
     }
 }
