@@ -107,9 +107,9 @@ public class ReservationFragment extends Fragment {
                     }
                     Reservation.prepStatus status;
                     String orderID = reservationDBUser.getReservationID().substring(28);
-                    if (reservationDBUser.getStatus().equals("Pending")){
+                    if (reservationDBUser.getStatus().toLowerCase().equals("pending")){
                         status = Reservation.prepStatus.PENDING;
-                    } else if (reservationDBUser.getStatus().equals("Doing")){
+                    } else if (reservationDBUser.getStatus().toLowerCase().equals("doing")){
                         status = Reservation.prepStatus.DOING;
                     } else{
                         status = Reservation.prepStatus.DONE;
@@ -158,7 +158,6 @@ public class ReservationFragment extends Fragment {
 
                     }
                 });*/
-
 
                 RVAdapterRes adapter = new RVAdapterRes(reservations);
                 reservationRecycler.setAdapter(adapter);

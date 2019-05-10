@@ -104,7 +104,7 @@ public class RestaurantShow extends AppCompatActivity {
         toolbar.setNavigationOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                backToRestList(v);
+                backToRestList();
             }
         });
 
@@ -121,9 +121,9 @@ public class RestaurantShow extends AppCompatActivity {
             finish();
     }
 
-    public void backToRestList(View view) {
+    public void backToRestList() {
         if (unchanged){
-            super.onBackPressed();
+            finish();
         }
         else {
             AlertDialog.Builder builder = new AlertDialog.Builder(this, R.style.AppCompatAlertDialogStyle);
@@ -149,6 +149,10 @@ public class RestaurantShow extends AppCompatActivity {
         }
     }
 
+    @Override
+    public void onBackPressed() {
+        backToRestList();
+    }
 
     public void updateFAB(){
         if(orders.size() == 0){

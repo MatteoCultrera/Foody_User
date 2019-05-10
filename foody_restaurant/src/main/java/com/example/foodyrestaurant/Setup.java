@@ -90,6 +90,7 @@ public class Setup extends AppCompatActivity {
     private SharedPreferences sharedPref;
     private SharedPreferences.Editor edit;
     private FirebaseAuth firebaseAuth;
+    private String pathImage;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -434,18 +435,33 @@ public class Setup extends AppCompatActivity {
         errorPhone.setText("");
         errorAddress.setText("");
 
-        File f = new File(storageDir, PROFILE_IMAGE);
+        String imagePath = sharedPref.getString("Path", "");
 
-        RequestOptions glideOptions = new RequestOptions()
-                .signature(new ObjectKey(f.getPath()+f.lastModified()));
 
-        if(f.exists()){
-            Glide
-                    .with(this)
-                    .load(f)
-                    .apply(glideOptions)
-                    .into(profilePicture);
+
+        if(imagePath.length()>0){
+            StorageReference mStorageRef = FirebaseStorage.getInstance().getReference();
+            mStorageRef.child(imagePath).getDownloadUrl()
+                    .addOnSuccessListener(new OnSuccessListener<Uri>() {
+                        @Override
+                        public void onSuccess(Uri uri) {
+                            Glide
+                                    .with(profilePicture.getContext())
+                                    .load(uri)
+                                    .into(profilePicture);
+                            //TODO: salvare l'uri qua nel path dell'immagine profilo
+                        }
+                    }).addOnFailureListener(new OnFailureListener() {
+                @Override
+                public void onFailure(@NonNull Exception e) {
+                    Glide
+                            .with(profilePicture.getContext())
+                            .load(R.drawable.profile_placeholder)
+                            .into(profilePicture);
+                }
+            });
         }
+
 
         name.setText(sharedPref.getString("name", getResources().getString(R.string.name_hint)));
         email.setText(sharedPref.getString("email", getResources().getString(R.string.email_hint)));
@@ -824,20 +840,20 @@ public class Setup extends AppCompatActivity {
     public void savedProfile(View view) {
 
         File f = new File(storageDir, PLACEHOLDER_CAMERA);
+        FirebaseUser user = firebaseAuth.getCurrentUser();
 
         if(f.exists()){
             BitmapFactory.Options bmOptions = new BitmapFactory.Options();
             Bitmap bitmap = BitmapFactory.decodeFile(f.getAbsolutePath(),bmOptions);
+            pathImage = "images/restaurants/"+user.getUid() + System.currentTimeMillis()+".jpeg";
             edit.putString("profileSignature", String.valueOf(System.currentTimeMillis()));
             File profile = new File(storageDir, PROFILE_IMAGE);
             saveBitmap(bitmap, profile.getPath());
-
             FirebaseStorage storage;
-            FirebaseUser user = firebaseAuth.getCurrentUser();
             StorageReference storageReference;
             storage = FirebaseStorage.getInstance();
             storageReference = storage.getReference();
-            StorageReference ref = storageReference.child("images/restaurants/"+ user.getUid() +"_profile.jpeg");
+            StorageReference ref = storageReference.child(pathImage);
             ref.putFile(Uri.fromFile(new File(storageDir, PROFILE_IMAGE)))
                     .addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
                         @Override
@@ -899,7 +915,6 @@ public class Setup extends AppCompatActivity {
         }
         edit.apply();
 
-        FirebaseUser user = firebaseAuth.getCurrentUser();
         ArrayList<String> days = new ArrayList<>();
         days.add(monday.getText().toString());
         days.add(tuesday.getText().toString());
@@ -910,6 +925,7 @@ public class Setup extends AppCompatActivity {
         days.add(sunday.getText().toString());
         RestaurantInfo restaurant = new RestaurantInfo(name.getText().toString(), email.getText().toString(),
                 address.getText().toString(), phoneNumber.getText().toString(), days, deliveryPrice, indexFoods);
+        restaurant.setImagePath(pathImage);
         DatabaseReference database = FirebaseDatabase.getInstance().getReference()
                 .child("restaurantsInfo/" + user.getUid());
         HashMap<String, Object> child = new HashMap<>();

@@ -33,6 +33,10 @@ import android.widget.TextView;
 import android.widget.TimePicker;
 import android.widget.Toast;
 
+import com.bumptech.glide.Glide;
+import com.bumptech.glide.load.engine.DiskCacheStrategy;
+import com.bumptech.glide.request.RequestOptions;
+import com.bumptech.glide.signature.ObjectKey;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.firebase.auth.FirebaseAuth;
@@ -84,6 +88,7 @@ public class Setup extends AppCompatActivity {
     private FirebaseAuth firebaseAuth;
     private SharedPreferences sharedPref;
     private SharedPreferences.Editor edit;
+    private String pathImage;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -391,10 +396,33 @@ public class Setup extends AppCompatActivity {
         errorAddress.setText("");
         errorCity.setText("");
 
-        File f = new File(storageDir, PROFILE_IMAGE);
 
-        if(f.exists())
-            profilePicture.setImageURI(Uri.fromFile(f));
+        String imagePath = sharedPref.getString("Path", "");
+
+
+
+        if(imagePath.length()>0){
+            StorageReference mStorageRef = FirebaseStorage.getInstance().getReference();
+            mStorageRef.child(imagePath).getDownloadUrl()
+                    .addOnSuccessListener(new OnSuccessListener<Uri>() {
+                        @Override
+                        public void onSuccess(Uri uri) {
+                            Glide
+                                    .with(profilePicture.getContext())
+                                    .load(uri)
+                                    .into(profilePicture);
+                            //TODO: salvare l'uri qua nel path dell'immagine profilo
+                        }
+                    }).addOnFailureListener(new OnFailureListener() {
+                @Override
+                public void onFailure(@NonNull Exception e) {
+                    Glide
+                            .with(profilePicture.getContext())
+                            .load(R.drawable.profile_placeholder)
+                            .into(profilePicture);
+                }
+            });
+        }
 
 
         name.setText(sharedPref.getString("name", ""));
@@ -726,10 +754,12 @@ public class Setup extends AppCompatActivity {
     public void savedProfile(View view) {
 
         File f = new File(storageDir, PLACEHOLDER_CAMERA);
+        FirebaseUser user = firebaseAuth.getCurrentUser();
 
         if(f.exists()){
             BitmapFactory.Options bmOptions = new BitmapFactory.Options();
             Bitmap bitmap = BitmapFactory.decodeFile(f.getAbsolutePath(),bmOptions);
+            pathImage = "images/bikers/"+user.getUid() + System.currentTimeMillis()+".jpeg";
             File profile = new File(storageDir, PROFILE_IMAGE);
             saveBitmap(bitmap, profile.getPath());
 
@@ -737,7 +767,8 @@ public class Setup extends AppCompatActivity {
             StorageReference storageReference;
             storage = FirebaseStorage.getInstance();
             storageReference = storage.getReference();
-            StorageReference ref = storageReference.child("images/bikers/" + firebaseAuth.getCurrentUser().getUid() + ".jpeg");
+
+            StorageReference ref = storageReference.child(pathImage);
             ref.putFile(Uri.fromFile(new File(storageDir, PROFILE_IMAGE)))
                     .addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
                         @Override
@@ -751,9 +782,9 @@ public class Setup extends AppCompatActivity {
                             Toast.makeText(getApplicationContext(), "Failed "+e.getMessage(), Toast.LENGTH_SHORT).show();
                         }
                     });
+
         }
 
-        FirebaseUser user = firebaseAuth.getCurrentUser();
         DatabaseReference database = FirebaseDatabase.getInstance().getReference()
                 .child("Bikers/" + user.getUid());
         HashMap<String, Object> child = new HashMap<>();
@@ -766,7 +797,8 @@ public class Setup extends AppCompatActivity {
         days.add(saturday.getText().toString());
         days.add(sunday.getText().toString());
         BikerInfo info = new BikerInfo(name.getText().toString(), email.getText().toString(), address.getText().toString(),
-                phoneNumber.getText().toString(), city.getText().toString(), days);
+               city.getText().toString(),  phoneNumber.getText().toString(), days);
+        info.setPath(pathImage);
         child.put("info", info);
         database.updateChildren(child);
 
@@ -791,6 +823,7 @@ public class Setup extends AppCompatActivity {
         edit.putBoolean("sunState", sunC.isChecked());
         edit.apply();
         Toast.makeText(getApplicationContext(), R.string.save, Toast.LENGTH_SHORT).show();
+        unchanged = true;
     }
 
     private void saveBitmap(Bitmap bitmap,String path){

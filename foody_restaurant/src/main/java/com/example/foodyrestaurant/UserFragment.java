@@ -56,6 +56,7 @@ public class UserFragment extends Fragment {
     private ImageView profilePicture;
     private SharedPreferences.Editor edit;
     private MaterialButton logout;
+    private String imagePath;
 
     public UserFragment() {}
 
@@ -137,6 +138,7 @@ public class UserFragment extends Fragment {
                         delivPrice.setText(text);
                         String[] foodCategories = getResources().getStringArray(R.array.foodcategory_array);
                         ArrayList<Integer> cuisine = info.getCuisineTypes();
+                        imagePath = info.getImagePath();
                         String cuisineText = "";
                         if (cuisine != null){
                             for(int i = 0; i < cuisine.size(); i++){
@@ -183,6 +185,36 @@ public class UserFragment extends Fragment {
                         if (!info.getDaysTime().get(6).equals(getResources().getString(R.string.Closed))){
                             edit.putBoolean("sunState", true);
                         }
+
+                        StorageReference mStorageRef = FirebaseStorage.getInstance().getReference();
+
+                        if(imagePath!=null){
+                            mStorageRef.child(imagePath).getDownloadUrl()
+                                    .addOnSuccessListener(new OnSuccessListener<Uri>() {
+                                        @Override
+                                        public void onSuccess(Uri uri) {
+                                            Glide
+                                                    .with(profilePicture.getContext())
+                                                    .load(uri)
+                                                    .into(profilePicture);
+                                        }
+                                    }).addOnFailureListener(new OnFailureListener() {
+                                @Override
+                                public void onFailure(@NonNull Exception e) {
+
+                                    Glide
+                                            .with(profilePicture.getContext())
+                                            .load(R.drawable.profile_placeholder)
+                                            .into(profilePicture);
+                                }
+                            });
+                        }else{
+                            Glide
+                                    .with(profilePicture.getContext())
+                                    .load(R.drawable.profile_placeholder)
+                                    .into(profilePicture);
+                        }
+
                         edit.putString("monTime", info.getDaysTime().get(0));
                         edit.putString("tueTime", info.getDaysTime().get(1));
                         edit.putString("wedTime", info.getDaysTime().get(2));
@@ -190,6 +222,7 @@ public class UserFragment extends Fragment {
                         edit.putString("friTime", info.getDaysTime().get(4));
                         edit.putString("satTime", info.getDaysTime().get(5));
                         edit.putString("sunTime", info.getDaysTime().get(6));
+                        edit.putString("Path", imagePath);
                         edit.apply();
                     }
                 }
