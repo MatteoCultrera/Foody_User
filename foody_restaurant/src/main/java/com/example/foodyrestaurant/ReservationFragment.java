@@ -148,9 +148,9 @@ public class ReservationFragment extends Fragment {
                                 dish.setPrice(o.getPrice());
                             }
                             Reservation.prepStatus status;
-                            if (reservationDB.getStatus().equals("pending")){
+                            if (reservationDB.getStatus().equals("Pending")){
                                 status = Reservation.prepStatus.PENDING;
-                            } else if (reservationDB.getStatus().equals("doing")){
+                            } else if (reservationDB.getStatus().equals("Doing")){
                                 status = Reservation.prepStatus.DOING;
                             } else{
                                 status = Reservation.prepStatus.DONE;
