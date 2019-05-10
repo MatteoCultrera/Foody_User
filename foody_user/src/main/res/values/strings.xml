@@ -36,4 +36,7 @@
 
     <string name="order_file_name" translatable="false">ordersFileName</string>
     <string name="place_order">PLACE ORDER</string>
+    <string name="your_dishes">Your dishes</string>
+    <string name="delivery_time">Delivery time</string>
+    <string name="order_status">Order status: %1$s</string>
 </resources>

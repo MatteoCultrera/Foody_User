@@ -119,7 +119,9 @@ public class ReservationFragment extends Fragment {
                             sharedPreferences.getString("email", ""), sharedPreferences.getString("address", ""));
                     reservation.setRestaurantID(reservationDBUser.getRestaurantID());
                     reservation.setDeliveryTime(reservationDBUser.getOrderTime());
-                    //TODO: Set restaurant name, address, photo, delivery price and delivery time
+                    reservation.setRestaurantName(reservationDBUser.getRestaurantName());
+                    reservation.setRestaurantAddress(reservationDBUser.getRestaurantAddress());
+                    reservation.setTotalCost(reservationDBUser.getTotalCost());
                     reservations.add(reservation);
                 }
 

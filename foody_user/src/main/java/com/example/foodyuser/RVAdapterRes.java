@@ -2,6 +2,7 @@ package com.example.foodyuser;
 
 import android.content.Context;
 import android.content.Intent;
+import android.content.res.Resources;
 import android.drm.DrmInfoStatus;
 import android.graphics.Paint;
 import android.net.Uri;
@@ -57,11 +58,10 @@ public class RVAdapterRes extends RecyclerView.Adapter<RVAdapterRes.CardViewHold
         Reservation currentRes = reservations.get(i);
         LayoutInflater inflater = LayoutInflater.from(pvh.restName.getContext());
 
-        pvh.restName.setText(currentRes.getRestaurantName()==null?"RossoPomodoro":currentRes.getRestaurantName());
-        pvh.restAddress.setText(currentRes.getRestaurantName()==null?"Via Borgosesia 52, Torino TO":currentRes.getRestaurantAddress());
+        pvh.restName.setText(currentRes.getRestaurantName());
+        pvh.restAddress.setText(currentRes.getRestaurantAddress());
 
         ArrayList<Dish> dishes = currentRes.getDishesOrdered();
-        float total = 0;
         pvh.dishes.removeAllViews();
         if(dishes!=null){
             for(Dish d: dishes){
@@ -72,16 +72,29 @@ public class RVAdapterRes extends RecyclerView.Adapter<RVAdapterRes.CardViewHold
 
                 name.setText(d.getQuantity()+" x "+d.getDishName());
                 float priceFloat = d.getPrice()*d.getQuantity();
-                total += priceFloat;
                 price.setText(String.format("%.2f €", priceFloat));
 
                 pvh.dishes.addView(dish);
             }
         }
-
-        //TODO add delivery price
-
-        pvh.total.setText(String.format("%.2f €", total));
+        Resources resources = pvh.status.getContext().getResources();
+        String status;
+        switch(currentRes.getPreparationStatusString()){
+            case("Pending"):
+                status = resources.getString(R.string.pending);
+                break;
+            case("Done"):
+                status = resources.getString(R.string.done);
+                break;
+            case("Doing"):
+                status = resources.getString(R.string.doing);
+                break;
+            default:
+                status = "";
+                break;
+        }
+        pvh.status.setText(String.format(resources.getString(R.string.order_status), status));
+        pvh.total.setText(currentRes.getTotalCost());
         pvh.deliveryTime.setText(currentRes.getDeliveryTime());
     }
 
@@ -94,7 +107,7 @@ public class RVAdapterRes extends RecyclerView.Adapter<RVAdapterRes.CardViewHold
     static class CardViewHolder extends RecyclerView.ViewHolder {
 
         ImageView profilePicture;
-        TextView restName, restAddress, total, deliveryTime;
+        TextView restName, restAddress, total, deliveryTime, status;
         LinearLayout dishes;
 
         CardViewHolder(View itemView) {
@@ -106,7 +119,7 @@ public class RVAdapterRes extends RecyclerView.Adapter<RVAdapterRes.CardViewHold
             total = itemView.findViewById(R.id.user_reservation_total);
             deliveryTime = itemView.findViewById(R.id.user_reservation_delivery_time);
             dishes = itemView.findViewById(R.id.user_reservation_dish_list);
-
+            status = itemView.findViewById(R.id.user_reservation_order_status_string);
         }
     }
 }

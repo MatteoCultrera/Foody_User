@@ -27,6 +27,7 @@ class Reservation {
     private String orderTime;
     private String userUID;
     private int toBePrepared;
+    private String totalCost;
 
     Reservation(String identifier, ArrayList<Dish> dishes, prepStatus preparationStatus, boolean accepted,
                        String orderTime, String userName, String userPhone, String resNote, String userLevel,
@@ -43,6 +44,14 @@ class Reservation {
         this.userEmail = userEmail;
         this.userAddress = userAddress;
         toBePrepared = dishes.size();
+    }
+
+    public String getTotalCost() {
+        return totalCost;
+    }
+
+    public void setTotalCost(String totalCost) {
+        this.totalCost = totalCost;
     }
 
     String getReservationID() {
