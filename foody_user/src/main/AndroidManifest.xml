@@ -22,7 +22,8 @@
         <activity
             android:name=".Login"
             android:theme="@style/SplashTheme"
-            android:windowSoftInputMode="adjustResize">
+            android:windowSoftInputMode="adjustResize"
+            android:screenOrientation="portrait">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
                 <category android:name="android.intent.category.LAUNCHER" />
@@ -30,7 +31,8 @@
         </activity>
 
         <activity android:name=".RegisterActivity"
-            android:windowSoftInputMode="adjustResize">
+            android:windowSoftInputMode="adjustResize"
+            android:screenOrientation="portrait">
         </activity>
 
         <activity android:name=".Order" />
@@ -40,7 +42,8 @@
             android:theme="@style/restaurantMenu" />
 
         <activity
-            android:name=".RestaurantsList" />
+            android:name=".RestaurantsList"
+            android:screenOrientation="portrait"/>
 
         <activity
             android:name=".Setup"
@@ -48,7 +51,8 @@
 
         <activity
             android:name=".MainActivity"
-            android:hardwareAccelerated="true">
+            android:hardwareAccelerated="true"
+            android:screenOrientation="portrait">
         </activity>
 
         <activity
