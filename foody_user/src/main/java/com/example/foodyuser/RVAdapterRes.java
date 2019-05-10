@@ -78,7 +78,7 @@ public class RVAdapterRes extends RecyclerView.Adapter<RVAdapterRes.CardViewHold
                 status = "";
                 break;
         }
-        pvh.status.setText(String.format("%s %s",resources.getString(R.string.order_status), status));
+        pvh.status.setText(String.format(resources.getString(R.string.order_status), status));
         pvh.total.setText(currentRes.getTotalCost());
         pvh.deliveryTime.setText(currentRes.getDeliveryTime());
     }
