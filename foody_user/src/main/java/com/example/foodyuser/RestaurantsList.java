@@ -22,14 +22,10 @@ import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.Query;
 import com.google.firebase.database.ValueEventListener;
-
-import java.lang.reflect.Array;
 import java.text.SimpleDateFormat;
-import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Calendar;
-import java.util.Date;
 import java.util.Locale;
 
 public class RestaurantsList extends AppCompatActivity {
@@ -40,7 +36,6 @@ public class RestaurantsList extends AppCompatActivity {
     private ArrayList<Restaurant> restName = new ArrayList<>();
     private ArrayList<Restaurant> restCuisine = new ArrayList<>();
     private RVAdapterRestaurants adapter;
-    private boolean add = true;
     private ImageButton back;
     private ImageButton filter;
     private AlertDialog foodChooseType;
@@ -49,8 +44,6 @@ public class RestaurantsList extends AppCompatActivity {
     private String[] foodCategories;
     private ArrayList<Integer> indexFoods;
     private ArrayList<Integer> copyIndexFoods;
-    private boolean unchanged, checkString = true;
-    private String dialogCode = "ok";
     private boolean clearFilter = false;
     private boolean firstTime = true;
 
@@ -247,7 +240,6 @@ public class RestaurantsList extends AppCompatActivity {
         builder.setPositiveButton(R.string.accept, new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialog, int which) {
-                unchanged = false;
                 if(clearFilter) {
                     selectedFoods.clear();
                     clearFilter = false;
@@ -255,7 +247,6 @@ public class RestaurantsList extends AppCompatActivity {
 
                 firstTime = true;
                 filterCuisine(selectedFoods);
-                dialogCode = "ok";
                 copyIndexFoods.clear();
                 copyIndexFoods.addAll(indexFoods);
             }
@@ -265,7 +256,6 @@ public class RestaurantsList extends AppCompatActivity {
             @Override
             public void onClick(DialogInterface dialog, int which) {
                 clearFilter = false;
-                dialogCode = "ok";
                 firstTime = true;
 
                 indexFoods.clear();
@@ -283,7 +273,6 @@ public class RestaurantsList extends AppCompatActivity {
 
         builder.setTitle(R.string.dialog_cuisine);
         foodChooseType = builder.create();
-        dialogCode = "foodDialog";
         foodChooseType.show();
 
         foodChooseType.getButton(DialogInterface.BUTTON_NEUTRAL).setOnClickListener(new View.OnClickListener() {
