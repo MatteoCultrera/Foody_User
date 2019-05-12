@@ -10,6 +10,7 @@ public class Restaurant {
     private ArrayList<String> cuisines;
     private ArrayList<Integer> cuisineTypes;
     private int deliveryPrice;
+    private ArrayList<String> daysTime;
     private float distance;
 
     public Restaurant() {}
@@ -19,6 +20,14 @@ public class Restaurant {
         this.cuisines = cuisines;
         this.deliveryPrice = deliveryPrice;
         this.distance = distance;
+    }
+
+    public ArrayList<String> getDaysTime() {
+        return daysTime;
+    }
+
+    public void setDaysTime(ArrayList<String> daysTime) {
+        this.daysTime = daysTime;
     }
 
     public String getAddress() {
