@@ -76,7 +76,7 @@ public class MapFragment extends Fragment {
         });
 
         //use mGoogleMaps to continue set thing on maps
-        
+
         // Perform any camera updates here
         return v;
     }
