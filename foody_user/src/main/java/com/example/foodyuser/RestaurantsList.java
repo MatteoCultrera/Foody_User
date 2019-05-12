@@ -23,8 +23,14 @@ import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.Query;
 import com.google.firebase.database.ValueEventListener;
 
+import java.lang.reflect.Array;
+import java.text.SimpleDateFormat;
+import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Calendar;
+import java.util.Date;
+import java.util.Locale;
 
 public class RestaurantsList extends AppCompatActivity {
 
@@ -63,27 +69,42 @@ public class RestaurantsList extends AppCompatActivity {
         back = findViewById(R.id.backButton);
         searchField = findViewById(R.id.search_field);
 
+        Calendar calendar = Calendar.getInstance(Locale.ITALY);
+        int dayOfWeek = calendar.get(Calendar.DAY_OF_WEEK) - 2;
+        if (dayOfWeek == -1)
+            dayOfWeek = 6;
+        final int day = dayOfWeek;
+        SimpleDateFormat sdf = new SimpleDateFormat("HH:mm", Locale.ITALY);
+        final String time = sdf.format(calendar.getTime());
+
         DatabaseReference database = FirebaseDatabase.getInstance().getReference();
         Query query = database.child("restaurantsInfo");
         query.addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
                 for (DataSnapshot ds : dataSnapshot.getChildren()) {
-                    Restaurant restaurant = new Restaurant();
                     for (DataSnapshot ds1 : ds.getChildren()) {
-                        restaurant = ds1.getValue(Restaurant.class);
-                        if (restaurant.getCuisineTypes() != null) {
-                            ArrayList<String> types = new ArrayList<>();
-                            for (Integer i : restaurant.getCuisineTypes()) {
-                                types.add(foodCategories[i]);
+                        Restaurant restaurant = ds1.getValue(Restaurant.class);
+                        if (restaurant.getDaysTime() != null) {
+                            String intervalTime = restaurant.getDaysTime().get(day).replace(" ", "");
+                            if (!intervalTime.startsWith("C")) {
+                                String[] splits = intervalTime.split("-");
+                                if (splits[0].compareTo(time) <= 0 && splits[1].compareTo(time) >= 0) {
+                                    if (restaurant.getCuisineTypes() != null) {
+                                        ArrayList<String> types = new ArrayList<>();
+                                        for (Integer i : restaurant.getCuisineTypes()) {
+                                            types.add(foodCategories[i]);
+                                        }
+                                        restaurant.setCuisines(types);
+                                    }
+                                    restaurants.add(restaurant);
+                                    restName.add(restaurant);
+                                    restCuisine.add(restaurant);
+                                }
+                                restaurant.setUid(ds.getKey());
                             }
-                            restaurant.setCuisines(types);
                         }
-                        restaurants.add(restaurant);
-                        restName.add(restaurant);
-                        restCuisine.add(restaurant);
                     }
-                    restaurant.setUid(ds.getKey());
                 }
                 adapter = new RVAdapterRestaurants(restaurants);
                 restaurantList.setAdapter(adapter);
