@@ -64,6 +64,7 @@ public class UserFragment extends Fragment {
     private MaterialButton logout;
     private String imagePath;
 
+
     public UserFragment() {}
 
     @Override
