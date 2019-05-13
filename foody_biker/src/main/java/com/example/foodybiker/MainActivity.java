@@ -95,6 +95,7 @@ public class MainActivity extends AppCompatActivity {
                     transaction.setCustomAnimations(R.anim.enter_from_left,R.anim.exit_to_right);
                     transaction.hide(active).show(map).commit();
                     active = map;
+                    //((MapFragment) map).startListen();
                     return true;
                 }else if(id == R.id.orders && active != reservations){
                     clearNotification(1);
@@ -108,6 +109,7 @@ public class MainActivity extends AppCompatActivity {
                         transaction.hide(active).show(reservations).commit();
                     }
                     active = reservations;
+                    //((MapFragment) map).stopListen();
                     return true;
                 }else if(id == R.id.prof && active != user){
                     clearNotification(2);
@@ -115,6 +117,7 @@ public class MainActivity extends AppCompatActivity {
                     transaction.setCustomAnimations(R.anim.enter_from_right,R.anim.exit_to_left);
                     transaction.hide(active).show(user).commit();
                     active = user;
+                    //((MapFragment) map).stopListen();
                     return true;
                 }
                 return false;
