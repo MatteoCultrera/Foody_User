@@ -1,6 +1,7 @@
 package com.example.foodybiker;
 
 import android.os.Bundle;
+import android.support.annotation.NonNull;
 import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -104,4 +105,5 @@ public class MapFragment extends Fragment {
         super.onLowMemory();
         mMapView.onLowMemory();
     }
+
 }
