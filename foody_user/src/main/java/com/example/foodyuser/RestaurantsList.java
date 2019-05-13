@@ -207,6 +207,7 @@ public class RestaurantsList extends AppCompatActivity {
 
         for(int i = 0; i < index; i++) {
             checkedFoods[indexFoods.get(i)] = true;
+
         }
     }
 
