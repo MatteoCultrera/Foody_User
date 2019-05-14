@@ -25,31 +25,34 @@ import com.google.android.gms.maps.model.BitmapDescriptorFactory;
 import com.google.android.gms.maps.model.CameraPosition;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.MarkerOptions;
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
+
+import java.util.HashMap;
 
 public class MapFragment extends Fragment {
 
-    MapView mMapView;
-    GoogleMap mGoogleMap;
+    private MapView mMapView;
+    private GoogleMap mGoogleMap;
+    private LocationManager manager;
+    private LocationListener listener;
+    private FirebaseAuth firebaseAuth;
 
-    LocationManager manager;
-    LocationListener listener;
-
-    public MapFragment() {
-        // Required empty public constructor
-    }
+    public MapFragment() {}
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-
+        firebaseAuth = FirebaseAuth.getInstance();
     }
 
     @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container,
-                             Bundle savedInstanceState) {
+    public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         // inflate and return the layout
-        View v = inflater.inflate(R.layout.fragment_map, container,false);
-        mMapView = (MapView) v.findViewById(R.id.map);
+        final View v = inflater.inflate(R.layout.fragment_map, container,false);
+        mMapView = v.findViewById(R.id.map);
         mMapView.onCreate(savedInstanceState);
 
         mMapView.onResume();// needed to get the map to display immediately
@@ -60,58 +63,41 @@ public class MapFragment extends Fragment {
             e.printStackTrace();
         }
 
-
-
         mMapView.getMapAsync(new OnMapReadyCallback() {
             @Override
             public void onMapReady(GoogleMap googleMap) {
-                // latitude and longitude
-                double latitude = 45.07049;
-                double longitude = 7.68682;
-
-                mGoogleMap = googleMap;
-
-                // create marker
-                MarkerOptions marker = new MarkerOptions().position(
-                        new LatLng(latitude, longitude)).title("Hello Turin");
-
-                // Changing marker icon
-                marker.icon(BitmapDescriptorFactory
-                        .defaultMarker(BitmapDescriptorFactory.HUE_ROSE));
-
-                // adding marker
-                mGoogleMap.addMarker(marker);
-                CameraPosition cameraPosition = new CameraPosition.Builder()
-                        .target(new LatLng(latitude, longitude)).zoom(12).build();
-                mGoogleMap.animateCamera(CameraUpdateFactory
-                        .newCameraPosition(cameraPosition));
-
                 String locationProvider = LocationManager.NETWORK_PROVIDER;
-                Location loc;
+                mGoogleMap = googleMap;
+                if(ActivityCompat.checkSelfPermission(v.getContext(),
+                            Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED) {
+                    if(ContextCompat.checkSelfPermission(getActivity(),
+                            Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED){
+                        Location loc = manager.getLastKnownLocation(locationProvider);
 
-                if(ContextCompat.checkSelfPermission(getActivity(),
-                        Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED){
-                    loc = manager.getLastKnownLocation(locationProvider);
+                        FirebaseUser user = firebaseAuth.getCurrentUser();
+                        DatabaseReference database = FirebaseDatabase.getInstance().getReference()
+                                .child("Bikers/" + user.getUid());
+                        HashMap<String, Object> child = new HashMap<>();
+                        child.put("location", loc);
+                        database.updateChildren(child);
 
-                    Log.d("POSITIONDD", "Found location at "+loc.getLatitude()+" "+loc.getLongitude());
-
-                    marker = new MarkerOptions().position(
-                            new LatLng(loc.getLatitude(), loc.getLongitude())).title("Position");
-
-                    // Changing marker icon
-                    marker.icon(BitmapDescriptorFactory
-                            .defaultMarker(BitmapDescriptorFactory.HUE_ROSE));
-
-                    // adding marker
-                    mGoogleMap.addMarker(marker);
-                }else{
-                    Log.d("POSITIONDD", "No permissions inside");
+                        MarkerOptions marker = new MarkerOptions().position(
+                                new LatLng(loc.getLatitude(), loc.getLongitude())).title("Position");
+                        marker.icon(BitmapDescriptorFactory
+                                .defaultMarker(BitmapDescriptorFactory.HUE_ROSE));
+                        mGoogleMap.addMarker(marker);
+                        CameraPosition cameraPosition = new CameraPosition.Builder()
+                                .target(new LatLng(loc.getLatitude(), loc.getLongitude())).zoom(12).build();
+                        mGoogleMap.animateCamera(CameraUpdateFactory
+                                .newCameraPosition(cameraPosition));
+                    }else{
+                        Log.d("SWSW", "No permissions inside");
+                    }
+                } else {
+                    requestPermissions(new String[]{Manifest.permission.ACCESS_FINE_LOCATION}, 200);
                 }
-
             }
         });
-
-
          manager = (LocationManager) getActivity().getSystemService(getActivity().getApplicationContext().LOCATION_SERVICE);
 
         // Define a listener that responds to location updates
@@ -138,33 +124,34 @@ public class MapFragment extends Fragment {
 
     @Override
     public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
-        if (requestCode == 1) {
+        if (requestCode == 200) {
             if(grantResults.length == 1 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+                String locationProvider = LocationManager.NETWORK_PROVIDER;
+                if(ContextCompat.checkSelfPermission(getActivity(),
+                        Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED){
+                    Location loc = manager.getLastKnownLocation(locationProvider);
 
-                        String locationProvider = LocationManager.NETWORK_PROVIDER;
-                        Location loc;
+                    FirebaseUser user = firebaseAuth.getCurrentUser();
+                    DatabaseReference database = FirebaseDatabase.getInstance().getReference()
+                            .child("Bikers/" + user.getUid());
+                    HashMap<String, Object> child = new HashMap<>();
+                    child.put("location", loc);
+                    database.updateChildren(child);
 
-                        if(ContextCompat.checkSelfPermission(getActivity(),
-                                Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED){
-                            loc = manager.getLastKnownLocation(locationProvider);
-
-                        Log.d("POSITIONDD", "Found location at "+loc.getLatitude()+" "+loc.getLongitude());
-
-                        MarkerOptions marker = new MarkerOptions().position(
-                                new LatLng(loc.getLatitude(), loc.getLongitude())).title("Position");
-
-                        // Changing marker icon
-                        marker.icon(BitmapDescriptorFactory
-                                .defaultMarker(BitmapDescriptorFactory.HUE_ROSE));
-
-                        // adding marker
-                        mGoogleMap.addMarker(marker);
-                        }else{
-                            Log.d("POSITIONDD", "No permissions inside");
-                        }
+                    MarkerOptions marker = new MarkerOptions().position(
+                            new LatLng(loc.getLatitude(), loc.getLongitude())).title("Position");
+                    marker.icon(BitmapDescriptorFactory
+                            .defaultMarker(BitmapDescriptorFactory.HUE_ROSE));
+                    mGoogleMap.addMarker(marker);
+                    CameraPosition cameraPosition = new CameraPosition.Builder()
+                            .target(new LatLng(loc.getLatitude(), loc.getLongitude())).zoom(12).build();
+                    mGoogleMap.animateCamera(CameraUpdateFactory
+                            .newCameraPosition(cameraPosition));
+                }else{
+                    Log.d("SWSW", "No permissions inside");
+                }
             } else {
-            // Permission was denied or request was cancelled
-                Log.d("POSITIONDD", "No permissions outside");
+                Log.d("SWSW", "No permissions outside");
             }
          }
 
