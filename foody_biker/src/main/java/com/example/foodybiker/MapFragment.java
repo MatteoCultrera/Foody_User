@@ -65,6 +65,7 @@ public class MapFragment extends Fragment {
         mMapView.getMapAsync(new OnMapReadyCallback() {
             @Override
             public void onMapReady(GoogleMap googleMap) {
+                Log.d("POSITIONDD", "Called on Map Ready");
                 // latitude and longitude
                 double latitude = 45.07049;
                 double longitude = 7.68682;
@@ -93,19 +94,27 @@ public class MapFragment extends Fragment {
                         Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED){
                     loc = manager.getLastKnownLocation(locationProvider);
 
-                    Log.d("POSITIONDD", "Found location at "+loc.getLatitude()+" "+loc.getLongitude());
+                    if(loc!=null){
+                        Log.d("POSITIONDD", "Found location at "+loc.getLatitude()+" "+loc.getLongitude());
 
-                    marker = new MarkerOptions().position(
-                            new LatLng(loc.getLatitude(), loc.getLongitude())).title("Position");
 
-                    // Changing marker icon
-                    marker.icon(BitmapDescriptorFactory
-                            .defaultMarker(BitmapDescriptorFactory.HUE_ROSE));
+                        marker = new MarkerOptions().position(
+                                new LatLng(loc.getLatitude(), loc.getLongitude())).title("Position");
 
-                    // adding marker
-                    mGoogleMap.addMarker(marker);
+                        // Changing marker icon
+                        marker.icon(BitmapDescriptorFactory
+                                .defaultMarker(BitmapDescriptorFactory.HUE_ROSE));
+
+                        // adding marker
+                        mGoogleMap.addMarker(marker);
+                    }
+                    else{
+                        Log.d("POSITIONDD", "loc is null");
+
+                    }
                 }else{
-                    Log.d("POSITIONDD", "No permissions inside");
+                    Log.d("POSITIONDD", "No permissions at begin, requesting now");
+                    requestPermissions(new String[]{ Manifest.permission.ACCESS_FINE_LOCATION}, 1);
                 }
 
             }
@@ -140,25 +149,33 @@ public class MapFragment extends Fragment {
     public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
         if (requestCode == 1) {
             if(grantResults.length == 1 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+                            String locationProvider = LocationManager.NETWORK_PROVIDER;
+                            Location loc;
 
-                        String locationProvider = LocationManager.NETWORK_PROVIDER;
-                        Location loc;
+                            if(ContextCompat.checkSelfPermission(getActivity(),
+                                    Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED){
 
-                        if(ContextCompat.checkSelfPermission(getActivity(),
-                                Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED){
-                            loc = manager.getLastKnownLocation(locationProvider);
+                                loc = manager.getLastKnownLocation(locationProvider);
 
-                        Log.d("POSITIONDD", "Found location at "+loc.getLatitude()+" "+loc.getLongitude());
 
-                        MarkerOptions marker = new MarkerOptions().position(
-                                new LatLng(loc.getLatitude(), loc.getLongitude())).title("Position");
+                                if(loc!=null){
+                                    Log.d("POSITIONDD", "Found location at "+loc.getLatitude()+" "+loc.getLongitude());
 
-                        // Changing marker icon
-                        marker.icon(BitmapDescriptorFactory
-                                .defaultMarker(BitmapDescriptorFactory.HUE_ROSE));
 
-                        // adding marker
-                        mGoogleMap.addMarker(marker);
+                                    MarkerOptions marker = new MarkerOptions().position(
+                                            new LatLng(loc.getLatitude(), loc.getLongitude())).title("Position");
+
+                                    // Changing marker icon
+                                    marker.icon(BitmapDescriptorFactory
+                                            .defaultMarker(BitmapDescriptorFactory.HUE_ROSE));
+
+                                    // adding marker
+                                    mGoogleMap.addMarker(marker);
+                                }
+                                else{
+                                    Log.d("POSITIONDD", "loc is null");
+
+                                }
                         }else{
                             Log.d("POSITIONDD", "No permissions inside");
                         }
