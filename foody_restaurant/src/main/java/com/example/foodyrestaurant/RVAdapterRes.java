@@ -1,5 +1,6 @@
 package com.example.foodyrestaurant;
 
+import android.animation.LayoutTransition;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
@@ -39,9 +40,11 @@ public class RVAdapterRes extends RecyclerView.Adapter<RVAdapterRes.CardViewHold
     private FirebaseAuth firebaseAuth;
     private FirebaseUser firebaseUser;
     private SharedPreferences sharedPreferences;
+    private ReservationFragment fatherClass;
 
-    RVAdapterRes(List<Reservation> reservations){
+    RVAdapterRes(List<Reservation> reservations, ReservationFragment fatherClass){
         this.reservations = reservations;
+        this.fatherClass = fatherClass;
     }
 
     @Override
@@ -61,7 +64,7 @@ public class RVAdapterRes extends RecyclerView.Adapter<RVAdapterRes.CardViewHold
     }
 
     @Override
-    public void onBindViewHolder(@NonNull final CardViewHolder pvh,final int i) {
+    public void onBindViewHolder(@NonNull final CardViewHolder pvh, int i) {
         final Context context = pvh.cv.getContext();
         LayoutInflater inflater = LayoutInflater.from(context);
         final int pos = pvh.getAdapterPosition();
@@ -72,6 +75,7 @@ public class RVAdapterRes extends RecyclerView.Adapter<RVAdapterRes.CardViewHold
         pvh.status.setText(reservations.get(i).getPreparationStatusString());
         pvh.time.setText(reservations.get(i).getOrderTime());
         pvh.userName.setText(reservations.get(i).getUserName());
+
 
         if(reservations.get(i).getResNote() == null) {
             pvh.notePlaceholder.setVisibility(View.GONE);
@@ -102,20 +106,20 @@ public class RVAdapterRes extends RecyclerView.Adapter<RVAdapterRes.CardViewHold
             foodTitle.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    if(reservations.get(i).isAccepted()) {
+                    if(reservations.get(pos).isAccepted()) {
                         if(dishes.get(toSet).isPrepared()) {
                             foodTitle.setPaintFlags(0);
-                            reservations.get(i).incrementToBePrepared();
+                            reservations.get(pos).incrementToBePrepared();
                             dishes.get(toSet).setPrepared(false);
-                            reservations.get(i).setPreparationStatus(Reservation.prepStatus.DOING);
-                            pvh.status.setText(reservations.get(i).getPreparationStatusString());
+                            reservations.get(pos).setPreparationStatus(Reservation.prepStatus.DOING);
+                            pvh.status.setText(reservations.get(pos).getPreparationStatusString());
                         } else {
                             foodTitle.setPaintFlags(Paint.STRIKE_THRU_TEXT_FLAG);
-                            reservations.get(i).incrementDishDone();
+                            reservations.get(pos).incrementDishDone();
                             dishes.get(toSet).setPrepared(true);
-                            if(reservations.get(i).getToBePrepared() == 0) {
-                                reservations.get(i).setPreparationStatus(Reservation.prepStatus.DONE);
-                                pvh.status.setText(reservations.get(i).getPreparationStatusString());
+                            if(reservations.get(pos).getToBePrepared() == 0) {
+                                reservations.get(pos).setPreparationStatus(Reservation.prepStatus.DONE);
+                                pvh.status.setText(reservations.get(pos).getPreparationStatusString());
                                 pvh.menuDishes.setVisibility(View.GONE);
                             }
                         }
@@ -128,13 +132,15 @@ public class RVAdapterRes extends RecyclerView.Adapter<RVAdapterRes.CardViewHold
         pvh.accept.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                /*
                 pvh.buttonLayout.setVisibility(View.GONE);
-                reservations.get(i).setAccepted(true);
-                reservations.get(i).setPreparationStatus(Reservation.prepStatus.DOING);
-                pvh.status.setText(reservations.get(i).getPreparationStatusString());
+                reservations.get(pos).setAccepted(true);
+                reservations.get(pos).setPreparationStatus(Reservation.prepStatus.DOING);
+                pvh.status.setText(reservations.get(pos).getPreparationStatusString());
+                */
 
                 DatabaseReference database = FirebaseDatabase.getInstance().getReference()
-                        .child("reservations").child("users").child(reservations.get(i).getUserUID());
+                        .child("reservations").child("users").child(reservations.get(pos).getUserUID());
                 HashMap<String, Object> child = new HashMap<>();
                 ArrayList<OrderItem> dishes = new ArrayList<>();
                 for(Dish d : reservations.get(pos).getDishesOrdered()){
@@ -144,10 +150,10 @@ public class RVAdapterRes extends RecyclerView.Adapter<RVAdapterRes.CardViewHold
                     order.setPrice(d.getPrice());
                     dishes.add(order);
                 }
-                String reservationID = reservations.get(i).getUserUID() + reservations.get(i).getReservationID();
+                String reservationID = reservations.get(pos).getUserUID() + reservations.get(pos).getReservationID();
                 ReservationDBUser reservation = new ReservationDBUser(reservationID,
-                        firebaseUser.getUid(), dishes, true, null, reservations.get(i).getDeliveryTime(),
-                        "Doing", reservations.get(i).getTotalPrice());
+                        firebaseUser.getUid(), dishes, true, null, reservations.get(pos).getDeliveryTime(),
+                        "Doing", reservations.get(pos).getTotalPrice());
                 reservation.setRestaurantName(sharedPreferences.getString("name", null));
                 reservation.setRestaurantAddress(sharedPreferences.getString("address", null));
                 child.put(reservationID, reservation);
@@ -162,9 +168,9 @@ public class RVAdapterRes extends RecyclerView.Adapter<RVAdapterRes.CardViewHold
                         .child("reservations").child("restaurant").child(firebaseUser.getUid());
                 HashMap<String, Object> childRest = new HashMap<>();
                 ReservationDBRestaurant reservationRest = new ReservationDBRestaurant(reservationID,
-                        "", dishes, true, null, reservations.get(i).getUserPhone(),
-                        reservations.get(i).getUserName(), reservations.get(i).getDeliveryTime(),
-                        reservations.get(i).getOrderTime(), "Doing", reservations.get(i).getUserAddress(), reservations.get(i).getTotalPrice());
+                        "", dishes, true, null, reservations.get(pos).getUserPhone(),
+                        reservations.get(pos).getUserName(), reservations.get(pos).getDeliveryTime(),
+                        reservations.get(pos).getOrderTime(), "Doing", reservations.get(pos).getUserAddress(), reservations.get(pos).getTotalPrice());
                 childRest.put(reservationID, reservationRest);
                 databaseRest.updateChildren(childRest).addOnFailureListener(new OnFailureListener() {
                     @Override
@@ -176,10 +182,10 @@ public class RVAdapterRes extends RecyclerView.Adapter<RVAdapterRes.CardViewHold
                 DatabaseReference databaseBiker = FirebaseDatabase.getInstance().getReference().child("reservations")
                         .child("Bikers").child("pYlVkIDv53f4RAxAJgCCwPPiuoz2");
                 HashMap<String, Object> childBiker = new HashMap<>();
-                ReservationDBBiker reservationBiker = new ReservationDBBiker(reservationID, reservations.get(i).getDeliveryTime(),
-                        reservations.get(i).getOrderTime(), sharedPreferences.getString("name", null),
-                        reservations.get(i).getUserName(), sharedPreferences.getString("address", null),
-                        reservations.get(i).getUserAddress());
+                ReservationDBBiker reservationBiker = new ReservationDBBiker(reservationID, reservations.get(pos).getDeliveryTime(),
+                        reservations.get(pos).getOrderTime(), sharedPreferences.getString("name", null),
+                        reservations.get(pos).getUserName(), sharedPreferences.getString("address", null),
+                        reservations.get(pos).getUserAddress());
                 childBiker.put(reservationID, reservationBiker);
                 databaseBiker.updateChildren(childBiker).addOnFailureListener(new OnFailureListener() {
                     @Override
@@ -188,6 +194,13 @@ public class RVAdapterRes extends RecyclerView.Adapter<RVAdapterRes.CardViewHold
                     }
                 });
 
+                Reservation toSwap = reservations.get(pos);
+                toSwap.setAccepted(true);
+                toSwap.setPreparationStatus(Reservation.prepStatus.DOING);
+                fatherClass.addInDoing(toSwap);
+                reservations.remove(pos);
+                notifyItemRemoved(pos);
+                notifyItemRangeChanged(pos, reservations.size());
             }
         });
 
@@ -195,20 +208,20 @@ public class RVAdapterRes extends RecyclerView.Adapter<RVAdapterRes.CardViewHold
             @Override
             public void onClick(View v) {
                 DatabaseReference database = FirebaseDatabase.getInstance().getReference()
-                        .child("reservations").child("users").child(reservations.get(i).getUserUID());
+                        .child("reservations").child("users").child(reservations.get(pos).getUserUID());
                 HashMap<String, Object> child = new HashMap<>();
                 ArrayList<OrderItem> dishes = new ArrayList<>();
-                for(Dish d : reservations.get(i).getDishesOrdered()){
+                for(Dish d : reservations.get(pos).getDishesOrdered()){
                     OrderItem order = new OrderItem();
                     order.setPieces(d.getQuantity());
                     order.setOrderName(d.getDishName());
                     order.setPrice(d.getPrice());
                     dishes.add(order);
                 }
-                String reservationID = reservations.get(i).getUserUID() + reservations.get(i).getReservationID();
+                String reservationID = reservations.get(pos).getUserUID() + reservations.get(pos).getReservationID();
                 ReservationDBUser reservation = new ReservationDBUser(reservationID,
                         firebaseUser.getUid(), dishes, false, null,
-                        reservations.get(i).getDeliveryTime(), "Done", reservations.get(i).getTotalPrice());
+                        reservations.get(pos).getDeliveryTime(), "Done", reservations.get(pos).getTotalPrice());
                 reservation.setRestaurantAddress(sharedPreferences.getString("address", null));
                 reservation.setRestaurantName(sharedPreferences.getString("name", null));
                 child.put(reservationID, reservation);
@@ -223,10 +236,10 @@ public class RVAdapterRes extends RecyclerView.Adapter<RVAdapterRes.CardViewHold
                         .child("reservations").child("restaurant").child(firebaseUser.getUid());
                 HashMap<String, Object> childRest = new HashMap<>();
                 ReservationDBRestaurant reservationRest = new ReservationDBRestaurant(reservationID,
-                        "", dishes, false, null, reservations.get(i).getUserPhone(),
-                        reservations.get(i).getUserName(), reservations.get(i).getDeliveryTime(),
-                        reservations.get(i).getOrderTime(), "Done",
-                        reservations.get(i).getUserAddress(), reservations.get(i).getTotalPrice());
+                        "", dishes, false, null, reservations.get(pos).getUserPhone(),
+                        reservations.get(pos).getUserName(), reservations.get(pos).getDeliveryTime(),
+                        reservations.get(pos).getOrderTime(), "Done",
+                        reservations.get(pos).getUserAddress(), reservations.get(pos).getTotalPrice());
                 childRest.put(reservationID, reservationRest);
                 databaseRest.updateChildren(childRest).addOnFailureListener(new OnFailureListener() {
                     @Override
@@ -235,10 +248,10 @@ public class RVAdapterRes extends RecyclerView.Adapter<RVAdapterRes.CardViewHold
                     }
                 });
 
-                reservations.get(i).setAccepted(false);
-                reservations.remove(i);
-                notifyItemRemoved(i);
-                notifyItemRangeChanged(i, reservations.size());
+                reservations.get(pos).setAccepted(false);
+                reservations.remove(pos);
+                notifyItemRemoved(pos);
+                notifyItemRangeChanged(pos, reservations.size());
             }
         });
 
@@ -246,7 +259,7 @@ public class RVAdapterRes extends RecyclerView.Adapter<RVAdapterRes.CardViewHold
             @Override
             public void onClick(View v) {
                 if(pvh.additionalLayout.getVisibility() == View.VISIBLE) {
-                    if(reservations.get(i).getPreparationStatus() == Reservation.prepStatus.DONE)
+                    if(reservations.get(pos).getPreparationStatus() == Reservation.prepStatus.DONE)
                         pvh.menuDishes.setVisibility(View.GONE);
                     pvh.additionalLayout.setVisibility(View.GONE);
                     pvh.plus.setImageResource(R.drawable.expand_white);
@@ -262,7 +275,7 @@ public class RVAdapterRes extends RecyclerView.Adapter<RVAdapterRes.CardViewHold
             @Override
             public void onClick(View v) {
                 Intent intent = new Intent(Intent.ACTION_DIAL);
-                intent.setData(Uri.parse("tel:"+reservations.get(i).getUserPhone()));
+                intent.setData(Uri.parse("tel:"+reservations.get(pos).getUserPhone()));
                 context.startActivity(intent);
             }
         });
@@ -291,6 +304,7 @@ public class RVAdapterRes extends RecyclerView.Adapter<RVAdapterRes.CardViewHold
         final AppCompatImageButton phone;
         final TextView notePlaceholder;
         final View separatorInfoNote;
+        final ConstraintLayout layoutCard;
 
         CardViewHolder(View itemView) {
             super(itemView);
@@ -310,6 +324,7 @@ public class RVAdapterRes extends RecyclerView.Adapter<RVAdapterRes.CardViewHold
             phone = itemView.findViewById(R.id.call_user);
             notePlaceholder = itemView.findViewById(R.id.note_placeholder);
             separatorInfoNote = itemView.findViewById(R.id.separator2);
+            layoutCard = itemView.findViewById(R.id.layout_card_reservation);
         }
     }
 }

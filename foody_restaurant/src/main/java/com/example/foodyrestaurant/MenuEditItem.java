@@ -93,7 +93,6 @@ public class MenuEditItem extends AppCompatActivity {
         if (dialogDism != null){
             dialogDism.dismiss();
         }
-
         fileTmp = new File(storageDir, JSON_COPY);
         String json = jsonHandler.toJSON(cards);
         jsonHandler.saveStringToFile(json, fileTmp);
@@ -219,11 +218,6 @@ public class MenuEditItem extends AppCompatActivity {
             for (int i = 0; i < cards.size(); i++) {
                 if (cards.get(i).getDishes().size() != 0)
                     child.put(Integer.toString(i), cards.get(i));
-                for(Dish d : cards.get(i).getDishes()){
-                    if (d.getImage() != null) {
-
-                    }
-                }
             }
             database.updateChildren(child);
             String json = jsonHandler.toJSON(cards);
@@ -520,26 +514,31 @@ public class MenuEditItem extends AppCompatActivity {
                     Bitmap bitmap = getBitmapFromFile();
 
                     if(bitmap != null){
-                        File placeholder = new File(storageDir, PLACEHOLDER_CAMERA);
-                        Uri imageURi = saveBitmap(bitmap, placeholder.getPath());
-                        FirebaseStorage storage;
-                        StorageReference storageReference;
-                        storage = FirebaseStorage.getInstance();
-                        storageReference = storage.getReference();
-                        StorageReference ref = storageReference.child("images/" + firebaseAuth.getCurrentUser().getUid() + "/"
-                                + imageFileName + ".jpeg");
-                        ref.putFile(imageURi)
-                                .addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
-                                    @Override
-                                    public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
-                                    }
-                                })
-                                .addOnFailureListener(new OnFailureListener() {
-                                    @Override
-                                    public void onFailure(@NonNull Exception e) {
-                                        Toast.makeText(getApplicationContext(), "Failed " + e.getMessage(), Toast.LENGTH_SHORT).show();
-                                    }
-                                });
+                        final Uri imageURi = saveBitmap(bitmap);
+                        new Thread(new Runnable() {
+                            @Override
+                            public void run() {
+                                FirebaseStorage storage;
+                                StorageReference storageReference;
+                                storage = FirebaseStorage.getInstance();
+                                storageReference = storage.getReference();
+                                StorageReference ref = storageReference.child("images/" + firebaseAuth.getCurrentUser().getUid() + "/"
+                                        + imageFileName + ".jpeg");
+                                ref.putFile(imageURi)
+                                        .addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
+                                            @Override
+                                            public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
+                                            }
+                                        })
+                                        .addOnFailureListener(new OnFailureListener() {
+                                            @Override
+                                            public void onFailure(@NonNull Exception e) {
+                                                Toast.makeText(getApplicationContext(), "Failed " + e.getMessage(), Toast.LENGTH_SHORT).show();
+                                            }
+                                        });
+                            }
+                        }).start();
+
                         if(dishes.get(posToChange).isEditImage()){
                             File toDelete = new File(dishes.get(posToChange).getImage().getPath());
                             if(toDelete.exists())
@@ -590,7 +589,7 @@ public class MenuEditItem extends AppCompatActivity {
 
     }
 
-    private Uri saveBitmap(Bitmap bitmap,String path){
+    private Uri saveBitmap(Bitmap bitmap){
         if(bitmap!=null){
             String timeStamp = new SimpleDateFormat("yyyyMMdd_HHmmss", Locale.ITALY).format(new Date());
             imageFileName = "JPEG_" + timeStamp + "_";
