@@ -53,7 +53,6 @@ public class MenuEdit extends AppCompatActivity {
     private AlertDialog dialogDism;
     private String dialogCode = "ok";
     private String writingCard = "";
-    private FirebaseAuth firebaseAuth;
     private FirebaseUser user;
 
     @Override
@@ -105,7 +104,7 @@ public class MenuEdit extends AppCompatActivity {
         LinearLayoutManager llm = new LinearLayoutManager(this);
         recyclerMenu.setLayoutManager(llm);
         mainFAB = findViewById(R.id.mainFAB);
-        firebaseAuth = FirebaseAuth.getInstance();
+        FirebaseAuth firebaseAuth = FirebaseAuth.getInstance();
         user = firebaseAuth.getCurrentUser();
 
         if(fileTmp.exists()){
@@ -129,14 +128,19 @@ public class MenuEdit extends AppCompatActivity {
                 if (unchanged){
                     Toast.makeText(getApplicationContext(), R.string.noSave, Toast.LENGTH_SHORT).show();
                 } else {
-                    DatabaseReference database = FirebaseDatabase.getInstance().getReference()
-                            .child("restaurantsMenu").child(user.getUid()).child("Card");
-                    HashMap<String, Object> child = new HashMap<>();
-                    for (int i = 0; i < cards.size(); i++) {
-                        if (cards.get(i).getDishes().size() != 0)
-                        child.put(Integer.toString(i), cards.get(i));
-                    }
-                    database.updateChildren(child);
+                    new Thread(new Runnable() {
+                        @Override
+                        public void run() {
+                            DatabaseReference database = FirebaseDatabase.getInstance().getReference()
+                                    .child("restaurantsMenu").child(user.getUid()).child("Card");
+                            HashMap<String, Object> child = new HashMap<>();
+                            for (int i = 0; i < cards.size(); i++) {
+                                if (cards.get(i).getDishes().size() != 0)
+                                    child.put(Integer.toString(i), cards.get(i));
+                            }
+                            database.updateChildren(child);
+                        }
+                    }).start();
 
                     String json = jsonHandler.toJSON(cards);
                     storageDir = getExternalFilesDir(Environment.DIRECTORY_DOCUMENTS);

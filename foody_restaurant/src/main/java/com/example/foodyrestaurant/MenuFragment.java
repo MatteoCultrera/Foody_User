@@ -23,6 +23,7 @@ import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.Query;
 import com.google.firebase.database.ValueEventListener;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
@@ -35,12 +36,9 @@ import java.util.Objects;
 public class MenuFragment extends Fragment {
 
     private RecyclerView menu;
-    private final String JSON_COPY = "menuCopy.json";
-    private final String JSON_PATH = "menu.json";
     private File storageDir;
     private final JsonHandler jsonHandler = new JsonHandler();
     private ArrayList<Card> cards;
-    private FirebaseAuth firebaseAuth;
     private FirebaseUser user;
 
     public MenuFragment() {}
@@ -61,6 +59,7 @@ public class MenuFragment extends Fragment {
     @Override
     public void onPause(){
         super.onPause();
+        final String JSON_PATH = "menu.json";
         File file = new File(storageDir, JSON_PATH);
         if(cards!= null){
             String json = jsonHandler.toJSON(cards);
@@ -81,29 +80,64 @@ public class MenuFragment extends Fragment {
         storageDir = Objects.requireNonNull(getActivity()).getExternalFilesDir(Environment.DIRECTORY_DOCUMENTS);
         LinearLayoutManager llm = new LinearLayoutManager(view.getContext());
         menu.setLayoutManager(llm);
-        firebaseAuth = FirebaseAuth.getInstance();
+        final FirebaseAuth firebaseAuth = FirebaseAuth.getInstance();
         user = firebaseAuth.getCurrentUser();
-        FloatingActionButton editMode = view.findViewById(R.id.edit_mode);
+        final FloatingActionButton editMode = view.findViewById(R.id.edit_mode);
         final ImageView profileImage = view.findViewById(R.id.mainImage);
         final ImageView profileShadow = view.findViewById(R.id.shadow);
-        StorageReference mStorageRef = FirebaseStorage.getInstance().getReference();
-        mStorageRef.child("images/restaurants/"+ user.getUid() +"_profile.jpeg").getDownloadUrl()
-                .addOnSuccessListener(new OnSuccessListener<Uri>() {
+
+        new Thread(new Runnable() {
+            @Override
+            public void run() {
+                final DatabaseReference databaseI = FirebaseDatabase.getInstance().getReference().child("restaurantsInfo");
+                Query query = databaseI.child(firebaseAuth.getCurrentUser().getUid()).child("info");
+                query.addListenerForSingleValueEvent(new ValueEventListener() {
                     @Override
-                    public void onSuccess(Uri uri) {
-                        Glide
-                                .with(profileImage.getContext())
-                                .load(uri)
-                                .into(profileImage);
-                        Glide
-                                .with(profileShadow.getContext())
-                                .load(R.drawable.shadow)
-                                .into(profileShadow);
+                    public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                        RestaurantInfo info = dataSnapshot.getValue(RestaurantInfo.class);
+                        StorageReference mStorageRef = FirebaseStorage.getInstance().getReference();
+                        if(info.getImagePath() != null) {
+                            mStorageRef.child(info.getImagePath()).getDownloadUrl()
+                                    .addOnSuccessListener(new OnSuccessListener<Uri>() {
+                                        @Override
+                                        public void onSuccess(Uri uri) {
+                                            Glide
+                                                    .with(profileImage.getContext())
+                                                    .load(uri)
+                                                    .into(profileImage);
+                                            Glide
+                                                    .with(profileShadow.getContext())
+                                                    .load(R.drawable.shadow)
+                                                    .into(profileShadow);
+                                        }
+                                    })
+                                    .addOnFailureListener(new OnFailureListener() {
+                                        @Override
+                                        public void onFailure(@NonNull Exception e) {
+                                            Glide
+                                                    .with(profileImage.getContext())
+                                                    .load(R.drawable.profile_placeholder)
+                                                    .into(profileImage);
+                                            Glide
+                                                    .with(profileShadow.getContext())
+                                                    .load(R.drawable.shadow)
+                                                    .into(profileShadow);
+                                        }
+                                    });
+                        }else{
+                            Glide
+                                    .with(profileImage.getContext())
+                                    .load(R.drawable.profile_placeholder)
+                                    .into(profileImage);
+                            Glide
+                                    .with(profileShadow.getContext())
+                                    .load(R.drawable.shadow)
+                                    .into(profileShadow);
+                        }
                     }
-                })
-                .addOnFailureListener(new OnFailureListener() {
+
                     @Override
-                    public void onFailure(@NonNull Exception e) {
+                    public void onCancelled(@NonNull DatabaseError databaseError) {
                         Glide
                                 .with(profileImage.getContext())
                                 .load(R.drawable.profile_placeholder)
@@ -115,39 +149,36 @@ public class MenuFragment extends Fragment {
                     }
                 });
 
-        DatabaseReference database = FirebaseDatabase.getInstance().getReference();
-        DatabaseReference ref = database.child("restaurantsMenu").child(user.getUid());
-        ref.addValueEventListener(new ValueEventListener() {
-            @Override
-            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-                cards = new ArrayList<>();
-                for (DataSnapshot ds : dataSnapshot.getChildren()) {
-                    for (DataSnapshot ds1 : ds.getChildren()) {
-                        Card card = ds1.getValue(Card.class);
-                        cards.add(card);
-                    }
-                }
-                    RVAdapter adapter = new RVAdapter(cards);
-                    menu.setAdapter(adapter);
-                }
 
-            @Override
-            public void onCancelled(@NonNull DatabaseError databaseError) {
-                Log.d("SWSW", databaseError.getMessage());
-            }
-        });
-        editMode.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                File jsonTemp = new File(storageDir,JSON_COPY);
-                if(jsonTemp.exists()) {
-                    if(!jsonTemp.delete()){
-                        System.out.println("Cannot delete the file.");
+                DatabaseReference database = FirebaseDatabase.getInstance().getReference();
+                DatabaseReference ref = database.child("restaurantsMenu").child(user.getUid());
+                ref.addValueEventListener(new ValueEventListener() {
+                    @Override
+                    public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                        cards = new ArrayList<>();
+                        for (DataSnapshot ds : dataSnapshot.getChildren()) {
+                            for (DataSnapshot ds1 : ds.getChildren()) {
+                                Card card = ds1.getValue(Card.class);
+                                cards.add(card);
+                            }
+                        }
+                        RVAdapter adapter = new RVAdapter(cards);
+                        menu.setAdapter(adapter);
                     }
-                }
-                Intent intent = new Intent(getActivity(), MenuEdit.class);
-                startActivity(intent);
+
+                    @Override
+                    public void onCancelled(@NonNull DatabaseError databaseError) {
+                        Log.d("SWSW", databaseError.getMessage());
+                    }
+                });
+                editMode.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        Intent intent = new Intent(getActivity(), MenuEdit.class);
+                        startActivity(intent);
+                    }
+                });
             }
-        });
+        }).start();
     }
 }
