@@ -42,7 +42,6 @@ public class ReservationFragment extends Fragment {
     private final JsonHandler jsonHandler = new JsonHandler();
     private ArrayList<Reservation> pending_reservations;
     private ArrayList<Reservation> doing_reservations;
-    private FirebaseAuth firebaseAuth;
     private FirebaseUser firebaseUser;
     private SharedPreferences sharedPreferences;
     private RVAdapterRes adapterPending, adapterDoing;
@@ -89,13 +88,9 @@ public class ReservationFragment extends Fragment {
     }
 
     private void init(View view){
-        firebaseAuth = FirebaseAuth.getInstance();
+        FirebaseAuth firebaseAuth = FirebaseAuth.getInstance();
         firebaseUser = firebaseAuth.getCurrentUser();
-
         sharedPreferences = view.getContext().getSharedPreferences("myPreference", MODE_PRIVATE);
-        /*int notificationFrame = sharedPreferences.getInt("Notification",4);
-        father.setNotification(notificationFrame);*/
-
         storageDir = Objects.requireNonNull(getActivity()).getExternalFilesDir(Environment.DIRECTORY_DOCUMENTS);
         final File filePending = new File(storageDir, JSON_PENDING);
         final File fileDoing = new File (storageDir, JSON_DOING);
