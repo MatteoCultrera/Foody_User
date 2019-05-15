@@ -40,9 +40,11 @@ public class RVAdapterRes extends RecyclerView.Adapter<RVAdapterRes.CardViewHold
     private FirebaseAuth firebaseAuth;
     private FirebaseUser firebaseUser;
     private SharedPreferences sharedPreferences;
+    private ReservationFragment fatherClass;
 
-    RVAdapterRes(List<Reservation> reservations){
+    RVAdapterRes(List<Reservation> reservations, ReservationFragment fatherClass){
         this.reservations = reservations;
+        this.fatherClass = fatherClass;
     }
 
     @Override
@@ -130,10 +132,12 @@ public class RVAdapterRes extends RecyclerView.Adapter<RVAdapterRes.CardViewHold
         pvh.accept.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                /*
                 pvh.buttonLayout.setVisibility(View.GONE);
                 reservations.get(pos).setAccepted(true);
                 reservations.get(pos).setPreparationStatus(Reservation.prepStatus.DOING);
                 pvh.status.setText(reservations.get(pos).getPreparationStatusString());
+                */
 
                 DatabaseReference database = FirebaseDatabase.getInstance().getReference()
                         .child("reservations").child("users").child(reservations.get(pos).getUserUID());
@@ -190,6 +194,13 @@ public class RVAdapterRes extends RecyclerView.Adapter<RVAdapterRes.CardViewHold
                     }
                 });
 
+                Reservation toSwap = reservations.get(pos);
+                toSwap.setAccepted(true);
+                toSwap.setPreparationStatus(Reservation.prepStatus.DOING);
+                fatherClass.addInDoing(toSwap);
+                reservations.remove(pos);
+                notifyItemRemoved(pos);
+                notifyItemRangeChanged(pos, reservations.size());
             }
         });
 
