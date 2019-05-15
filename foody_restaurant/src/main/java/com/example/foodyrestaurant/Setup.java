@@ -98,9 +98,9 @@ public class Setup extends AppCompatActivity {
         setContentView(R.layout.activity_setup);
         firebaseAuth = FirebaseAuth.getInstance();
         storageDir = getExternalFilesDir(Environment.DIRECTORY_PICTURES);
-
+        Bundle extras = getIntent().getExtras();
+        pathImage = extras.getString("imagePath", null);
         init();
-
         editImage.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -112,7 +112,6 @@ public class Setup extends AppCompatActivity {
     @Override
     public void onSaveInstanceState(Bundle outState) {
         super.onSaveInstanceState(outState);
-
         outState.putString("name", name.getText().toString());
         outState.putString("email", email.getText().toString());
         outState.putString("address", address.getText().toString());
@@ -166,21 +165,6 @@ public class Setup extends AppCompatActivity {
     @Override
     protected void onRestoreInstanceState(Bundle savedInstanceState) {
         super.onRestoreInstanceState(savedInstanceState);
-
-        File f = new File(storageDir, PLACEHOLDER_CAMERA);
-
-
-        RequestOptions glideOptions = new RequestOptions()
-                .signature(new ObjectKey(f.getPath()+f.lastModified()));
-
-        if(f.exists())
-
-            Glide
-                    .with(this)
-            .load(f)
-            .apply(glideOptions)
-            .into(profilePicture);
-
         name.setText(savedInstanceState.getString("name", ""));
         email.setText(savedInstanceState.getString("email", ""));
         address.setText(savedInstanceState.getString("address", ""));
@@ -435,13 +419,9 @@ public class Setup extends AppCompatActivity {
         errorPhone.setText("");
         errorAddress.setText("");
 
-        String imagePath = sharedPref.getString("Path", "");
-
-
-
-        if(imagePath.length()>0){
+        if(pathImage != null) {
             StorageReference mStorageRef = FirebaseStorage.getInstance().getReference();
-            mStorageRef.child(imagePath).getDownloadUrl()
+            mStorageRef.child(pathImage).getDownloadUrl()
                     .addOnSuccessListener(new OnSuccessListener<Uri>() {
                         @Override
                         public void onSuccess(Uri uri) {
@@ -449,19 +429,23 @@ public class Setup extends AppCompatActivity {
                                     .with(profilePicture.getContext())
                                     .load(uri)
                                     .into(profilePicture);
-                            //TODO: salvare l'uri qua nel path dell'immagine profilo
                         }
-                    }).addOnFailureListener(new OnFailureListener() {
-                @Override
-                public void onFailure(@NonNull Exception e) {
-                    Glide
-                            .with(profilePicture.getContext())
-                            .load(R.drawable.profile_placeholder)
-                            .into(profilePicture);
-                }
-            });
+                    })
+                    .addOnFailureListener(new OnFailureListener() {
+                        @Override
+                        public void onFailure(@NonNull Exception e) {
+                            Glide
+                                    .with(profilePicture.getContext())
+                                    .load(R.drawable.profile_placeholder)
+                                    .into(profilePicture);
+                        }
+                    });
+        }else{
+            Glide
+                    .with(profilePicture.getContext())
+                    .load(R.drawable.profile_placeholder)
+                    .into(profilePicture);
         }
-
 
         name.setText(sharedPref.getString("name", getResources().getString(R.string.name_hint)));
         email.setText(sharedPref.getString("email", getResources().getString(R.string.email_hint)));
