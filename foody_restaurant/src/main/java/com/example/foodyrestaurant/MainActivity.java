@@ -23,6 +23,8 @@ public class MainActivity extends AppCompatActivity {
     private Fragment menu;
     private Fragment reservations;
     private Fragment user;
+    private Fragment biker;
+    private Fragment history;
     private final FragmentManager fm = getSupportFragmentManager();
     private Fragment active;
     private SharedPreferences sharedPref;
@@ -50,7 +52,11 @@ public class MainActivity extends AppCompatActivity {
         reservations = new ReservationFragment();
         ((ReservationFragment) reservations).setFather(this);
         user = new UserFragment();
-        fm.beginTransaction().add(R.id.mainFrame, user, "3").commit();
+        biker = new BikerFragment();
+        history = new HistoryFragment();
+        fm.beginTransaction().add(R.id.mainFrame, history, "5").commit();
+        fm.beginTransaction().add(R.id.mainFrame, user, "4").commit();
+        fm.beginTransaction().add(R.id.mainFrame, biker, "3").commit();
         fm.beginTransaction().add(R.id.mainFrame, reservations, "2").commit();
         fm.beginTransaction().add(R.id.mainFrame, menu, "1").show(menu).commit();
         active = menu;
@@ -88,19 +94,45 @@ public class MainActivity extends AppCompatActivity {
                         FragmentTransaction transaction =fm.beginTransaction();
                         transaction.setCustomAnimations(R.anim.enter_from_right,R.anim.exit_to_left);
                         transaction.replace(R.id.mainFrame, reservations).commit();
-                    }else if(active == user) {
+                    }else{
                         FragmentTransaction transaction = fm.beginTransaction();
                         transaction.setCustomAnimations(R.anim.enter_from_left, R.anim.exit_to_right);
                         transaction.replace(R.id.mainFrame, reservations).commit();
                     }
                     active = reservations;
                     return true;
+                }else if(id == R.id.delivery_biker && active != biker){
+                    if(active == menu || active == reservations){
+                        FragmentTransaction transaction = fm.beginTransaction();
+                        transaction.setCustomAnimations(R.anim.enter_from_right, R.anim.exit_to_left);
+                        transaction.replace(R.id.mainFrame, biker).commit();
+                    }else{
+                        FragmentTransaction transaction = fm.beginTransaction();
+                        transaction.setCustomAnimations(R.anim.enter_from_left, R.anim.exit_to_right);
+                        transaction.replace(R.id.mainFrame, biker).commit();
+                    }
+                    active = biker;
+                    return true;
                 }else if(id == R.id.prof && active != user){
                     clearNotification(2);
-                    FragmentTransaction transaction = fm.beginTransaction();
-                    transaction.setCustomAnimations(R.anim.enter_from_right,R.anim.exit_to_left);
-                    transaction.replace(R.id.mainFrame, user).commit();
+
+                    if(active == history){
+                        FragmentTransaction transaction = fm.beginTransaction();
+                        transaction.setCustomAnimations(R.anim.enter_from_left,R.anim.exit_to_right);
+                        transaction.replace(R.id.mainFrame, user).commit();
+                    }else{
+                        FragmentTransaction transaction = fm.beginTransaction();
+                        transaction.setCustomAnimations(R.anim.enter_from_right,R.anim.exit_to_left);
+                        transaction.replace(R.id.mainFrame, user).commit();
+                    }
+
                     active = user;
+                    return true;
+                }else if(id == R.id.orders_done && active != history){
+                    FragmentTransaction transaction = fm.beginTransaction();
+                    transaction.setCustomAnimations(R.anim.enter_from_right, R.anim.exit_to_left);
+                    transaction.replace(R.id.mainFrame, history).commit();
+                    active = history;
                     return true;
                 }
                 return false;

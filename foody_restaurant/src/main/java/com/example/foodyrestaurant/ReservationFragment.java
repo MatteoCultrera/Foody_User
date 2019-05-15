@@ -12,6 +12,7 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.TextView;
 
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
@@ -32,16 +33,19 @@ import static android.content.Context.MODE_PRIVATE;
 
 public class ReservationFragment extends Fragment {
 
-    private RecyclerView reservation;
+    private RecyclerView pending_recycler, doing_recycler;
     private final String JSON_PATH = "reservations.json";
     private File storageDir;
     private final JsonHandler jsonHandler = new JsonHandler();
-    private ArrayList<Reservation> reservations;
+    private ArrayList<Reservation> pending_reservations;
+    private ArrayList<Reservation> doing_reservations;
     private FirebaseAuth firebaseAuth;
     private FirebaseUser firebaseUser;
     private SharedPreferences sharedPreferences;
     private RVAdapterRes adapter;
     private boolean toAdd;
+    private boolean pending;
+    private TextView stringUp, stringDown;
     MainActivity father;
 
     public ReservationFragment() {}
@@ -54,8 +58,8 @@ public class ReservationFragment extends Fragment {
     public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
 
         View view = inflater.inflate(R.layout.fragment_reservation, container, false);
-        reservation = view.findViewById(R.id.reservation_display);
-
+        pending_recycler = view.findViewById(R.id.pending_display);
+        doing_recycler = view.findViewById(R.id.doing_display);
         return view;
     }
 
@@ -69,8 +73,8 @@ public class ReservationFragment extends Fragment {
     public void onPause(){
         super.onPause();
         File file = new File(storageDir, JSON_PATH);
-        if (reservations != null) {
-            String json = jsonHandler.resToJSON(reservations);
+        if (pending_reservations != null) {
+            String json = jsonHandler.resToJSON(pending_reservations);
             jsonHandler.saveStringToFile(json, file);
         }
     }
@@ -86,9 +90,14 @@ public class ReservationFragment extends Fragment {
         storageDir = Objects.requireNonNull(getActivity()).getExternalFilesDir(Environment.DIRECTORY_DOCUMENTS);
         final File file = new File(storageDir, JSON_PATH);
         LinearLayoutManager llm = new LinearLayoutManager(view.getContext());
-        reservation.setLayoutManager(llm);
-        reservations = new ArrayList<>();
-        adapter = new RVAdapterRes(reservations);
+        pending_recycler.setLayoutManager(llm);
+        LinearLayoutManager llm2 = new LinearLayoutManager(view.getContext());
+        doing_recycler.setLayoutManager(llm2);
+
+        pending_reservations = new ArrayList<>();
+        adapter = new RVAdapterRes(pending_reservations);
+        stringUp = view.findViewById(R.id.string_up);
+        stringDown = view.findViewById(R.id.string_down);
 
         final DatabaseReference database = FirebaseDatabase.getInstance().getReference().child("reservations").child("restaurant");
         Query query = database.child(firebaseUser.getUid());
@@ -124,18 +133,18 @@ public class ReservationFragment extends Fragment {
                         reservation.setTotalPrice(reservationDB.getTotalCost());
                         reservation.setRestaurantAddress(sharedPreferences.getString("address", null));
                         reservation.setRestaurantName(sharedPreferences.getString("name", null));
-                        reservations.add(reservation);
+                        pending_reservations.add(reservation);
                     }
                 }
 
-                reservations.sort(new Comparator<Reservation>() {
+                pending_reservations.sort(new Comparator<Reservation>() {
                     @Override
                     public int compare(Reservation o1, Reservation o2) {
                         return o1.getOrderTime().compareTo(o2.getOrderTime());
                     }
                 });
 
-                reservation.setAdapter(adapter);
+                pending_recycler.setAdapter(adapter);
 
                 //Add the notification that advise the restaurant when a new reservation has been assigned to him
                 DatabaseReference restaurantReservations = FirebaseDatabase.getInstance().getReference().child("reservations")
@@ -146,8 +155,8 @@ public class ReservationFragment extends Fragment {
                         ReservationDBRestaurant reservationDB = dataSnapshot.getValue(ReservationDBRestaurant.class);
                         toAdd = true;
                         String orderID = null;
-                        if(reservations != null && reservations.size() != 0) {
-                            for (Reservation r : reservations) {
+                        if(pending_reservations != null && pending_reservations.size() != 0) {
+                            for (Reservation r : pending_reservations) {
                                 orderID = reservationDB.getReservationID().substring(28);
                                 if (r.getReservationID().equals(orderID)) {
                                     toAdd = false;
@@ -176,13 +185,13 @@ public class ReservationFragment extends Fragment {
                                         reservationDB.getUserAddress());
 
                                 int index;
-                                for (index = 0; index < reservations.size(); index++) {
-                                    if (reservation.getOrderTime().compareTo(reservations.get(index).getOrderTime()) > 0)
+                                for (index = 0; index < pending_reservations.size(); index++) {
+                                    if (reservation.getOrderTime().compareTo(pending_reservations.get(index).getOrderTime()) > 0)
                                         break;
                                 }
-                                reservations.add(index, reservation);
+                                pending_reservations.add(index, reservation);
                                 adapter.notifyItemInserted(index);
-                                adapter.notifyItemRangeChanged(index, reservations.size());
+                                adapter.notifyItemRangeChanged(index, pending_reservations.size());
                                 father.setNotification(1);
                             }
                         }
@@ -209,19 +218,37 @@ public class ReservationFragment extends Fragment {
                     }
                 });
 
+                pending = true;
+                setInterface();
+
             }
 
             @Override
             public void onCancelled(@NonNull DatabaseError databaseError) {
-                reservations = jsonHandler.getReservations(file);
-                reservations.sort(new Comparator<Reservation>() {
+                pending_reservations = jsonHandler.getReservations(file);
+                pending_reservations.sort(new Comparator<Reservation>() {
                     @Override
                     public int compare(Reservation o1, Reservation o2) {
                         return o1.getOrderTime().compareTo(o2.getOrderTime());
                     }
                 });
-                reservation.setAdapter(adapter);
+                pending_recycler.setAdapter(adapter);
             }
         });
     }
+
+    private void setInterface(){
+        if(pending){
+            stringUp.setText(getString(R.string.pending_orders));
+            stringDown.setText(getString(R.string.doing_orders));
+            pending_recycler.setVisibility(View.VISIBLE);
+            doing_recycler.setVisibility(View.GONE);
+        }else{
+            stringUp.setText(getString(R.string.doing_orders));
+            stringDown.setText(getString(R.string.pending_orders));
+            pending_recycler.setVisibility(View.GONE);
+            doing_recycler.setVisibility(View.VISIBLE);
+        }
+    }
+
 }
