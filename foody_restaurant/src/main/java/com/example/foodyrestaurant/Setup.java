@@ -92,6 +92,8 @@ public class Setup extends AppCompatActivity {
     private FirebaseAuth firebaseAuth;
     private String pathImage;
 
+    private ImageButton callActivityAddress;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -646,6 +648,15 @@ public class Setup extends AppCompatActivity {
             @Override
             public void onStopTrackingTouch(SeekBar seekBar) {
 
+            }
+        });
+
+        this.callActivityAddress = findViewById(R.id.callActivityAddress);
+        callActivityAddress.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(Setup.this, AddressActivity.class);
+                startActivity(intent);
             }
         });
 

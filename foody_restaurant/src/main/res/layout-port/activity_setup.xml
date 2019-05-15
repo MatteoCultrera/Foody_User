@@ -474,6 +474,7 @@
                     android:layout_height="wrap_content"
                     android:layout_marginStart="8dp"
                     android:layout_marginTop="11dp"
+                    android:layout_marginEnd="8dp"
                     android:background="@android:color/transparent"
                     android:fontFamily="@font/roboto_regular"
                     android:hint="@string/email_hint"
@@ -482,9 +483,17 @@
                     android:maxLines="1"
                     android:textColor="@color/primaryText"
                     android:textSize="15sp"
-                    app:layout_constraintEnd_toEndOf="parent"
-                    app:layout_constraintHorizontal_bias="0.0"
+                    app:layout_constraintEnd_toStartOf="@+id/callActivityAddress"
                     app:layout_constraintStart_toEndOf="@+id/imageView3"
+                    app:layout_constraintTop_toTopOf="parent" />
+
+                <ImageButton
+                    android:id="@+id/callActivityAddress"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:src="@drawable/phone_black"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintTop_toTopOf="parent" />
 
                 <View
