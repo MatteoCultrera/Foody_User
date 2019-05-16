@@ -12,14 +12,33 @@ public class Restaurant {
     private int deliveryPrice;
     private ArrayList<String> daysTime;
     private float distance;
+    private String imagePath;
+    private boolean open;
 
     public Restaurant() {}
 
-    public Restaurant(String name, ArrayList<String> cuisines, int deliveryPrice, float distance){
+    public Restaurant(String name, ArrayList<String> cuisines, int deliveryPrice, float distance, String imagePath){
         this.username = name;
         this.cuisines = cuisines;
         this.deliveryPrice = deliveryPrice;
         this.distance = distance;
+        this.imagePath = imagePath;
+    }
+
+    public boolean isOpen() {
+        return open;
+    }
+
+    public void setOpen(boolean open) {
+        this.open = open;
+    }
+
+    public String getImagePath() {
+        return imagePath;
+    }
+
+    public void setImagePath(String imagePath) {
+        this.imagePath = imagePath;
     }
 
     public ArrayList<String> getDaysTime() {

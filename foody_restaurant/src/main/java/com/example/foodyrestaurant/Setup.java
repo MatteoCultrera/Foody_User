@@ -9,6 +9,7 @@ import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Color;
+import android.location.Location;
 import android.net.Uri;
 import android.os.Environment;
 import android.provider.MediaStore;
@@ -982,8 +983,12 @@ public class Setup extends AppCompatActivity {
         database.updateChildren(child);
 
         if(pos.latitude != null && pos.longitude != null) {
-            //TODO: pusha sul server latitude e longitude, sono due double, solo se sono != null sono state risettate
-            //servono solo qua dentro
+            DatabaseReference databaseLoc = FirebaseDatabase.getInstance().getReference()
+                    .child("restaurantsInfo/" + user.getUid()).child("info");
+            HashMap<String, Object> childLoc = new HashMap<>();
+            childLoc.put("latitude", pos.latitude);
+            childLoc.put("longitude", pos.longitude);
+            databaseLoc.updateChildren(childLoc);
         }
 
         Toast.makeText(getApplicationContext(), R.string.save, Toast.LENGTH_SHORT).show();
