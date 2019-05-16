@@ -30,7 +30,6 @@
                 android:id="@+id/user_reservation_restaurant_image"
                 android:layout_width="0dp"
                 android:layout_height="120dp"
-                android:src="@drawable/user_static_background"
                 android:contentDescription="@null"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"

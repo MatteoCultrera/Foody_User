@@ -13,6 +13,7 @@ public class Restaurant {
     private ArrayList<String> daysTime;
     private float distance;
     private String imagePath;
+    private boolean open;
 
     public Restaurant() {}
 
@@ -22,6 +23,14 @@ public class Restaurant {
         this.deliveryPrice = deliveryPrice;
         this.distance = distance;
         this.imagePath = imagePath;
+    }
+
+    public boolean isOpen() {
+        return open;
+    }
+
+    public void setOpen(boolean open) {
+        this.open = open;
     }
 
     public String getImagePath() {
