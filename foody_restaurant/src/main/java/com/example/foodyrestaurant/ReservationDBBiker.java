@@ -9,10 +9,11 @@ public class ReservationDBBiker {
     private String userName;
     private String restaurantAddress;
     private String userAddress;
+    private String restaurantID;
 
     public ReservationDBBiker() {}
 
-    public ReservationDBBiker(String reservationID, String orderTime, String orderTimeBiker, String restaurantName, String userName, String restaurantAddress, String userAddress) {
+    public ReservationDBBiker(String reservationID, String orderTime, String orderTimeBiker, String restaurantName, String userName, String restaurantAddress, String userAddress, String restaurantID) {
         this.reservationID = reservationID;
         this.orderTime = orderTime;
         this.orderTimeBiker = orderTimeBiker;
@@ -20,6 +21,15 @@ public class ReservationDBBiker {
         this.userName = userName;
         this.restaurantAddress = restaurantAddress;
         this.userAddress = userAddress;
+        this.restaurantID = restaurantID;
+    }
+
+    public String getRestaurantID() {
+        return restaurantID;
+    }
+
+    public void setRestaurantID(String restaurantID) {
+        this.restaurantID = restaurantID;
     }
 
     public String getReservationID() {

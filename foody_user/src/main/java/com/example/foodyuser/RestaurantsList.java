@@ -109,6 +109,9 @@ public class RestaurantsList extends AppCompatActivity {
 
                                 }
                             }
+                            else{
+
+                            }
                         }
                     }
                 }

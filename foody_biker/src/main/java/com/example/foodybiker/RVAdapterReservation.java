@@ -79,10 +79,23 @@ public class RVAdapterReservation extends RecyclerView.Adapter<RVAdapterReservat
                     ReservationDBBiker reservation = new ReservationDBBiker(reservations.get(pos).getReservationID(),
                             reservations.get(pos).getUserDeliveryTime(), reservations.get(pos).getRestaurantPickupTime(),
                             reservations.get(pos).getRestaurantName(), reservations.get(pos).getUserName(),
-                            reservations.get(pos).getRestaurantAddress(), reservations.get(pos).getUserAddress());
+                            reservations.get(pos).getRestaurantAddress(), reservations.get(pos).getUserAddress(),
+                            reservations.get(pos).getRestaurantID());
                     reservation.setStatus("accepted");
                     child.put(reservations.get(pos).getReservationID(), reservation);
                     database.updateChildren(child).addOnFailureListener(new OnFailureListener() {
+                        @Override
+                        public void onFailure(@NonNull Exception e) {
+                            Toast.makeText(fatherFragment.getContext(), R.string.error_order, Toast.LENGTH_SHORT).show();
+                        }
+                    });
+
+                    DatabaseReference databaseRest = FirebaseDatabase.getInstance().getReference()
+                            .child("reservations").child("restaurant").child(reservations.get(pos).getRestaurantID())
+                            .child(reservations.get(pos).getReservationID());
+                    HashMap<String, Object> childRest = new HashMap<>();
+                    childRest.put("biker", true);
+                    databaseRest.updateChildren(childRest).addOnFailureListener(new OnFailureListener() {
                         @Override
                         public void onFailure(@NonNull Exception e) {
                             Toast.makeText(fatherFragment.getContext(), R.string.error_order, Toast.LENGTH_SHORT).show();
@@ -98,22 +111,13 @@ public class RVAdapterReservation extends RecyclerView.Adapter<RVAdapterReservat
             pvh.decline.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    DatabaseReference database = FirebaseDatabase.getInstance().getReference()
-                            .child("reservations").child("Bikers").child("YxbeTNGkOwXv18O7Atv27kIPYdK2");
-                    HashMap<String, Object> child = new HashMap<>();
+                    DatabaseReference databaseSelf = FirebaseDatabase.getInstance().getReference()
+                            .child("reservations").child("Bikers").child("pYlVkIDv53f4RAxAJgCCwPPiuoz2");
                     ReservationDBBiker reservation = new ReservationDBBiker(reservations.get(pos).getReservationID(),
                             reservations.get(pos).getUserDeliveryTime(), reservations.get(pos).getRestaurantPickupTime(),
                             reservations.get(pos).getRestaurantName(), reservations.get(pos).getUserName(),
-                            reservations.get(pos).getRestaurantAddress(), reservations.get(pos).getUserAddress());
-                    child.put(reservations.get(pos).getReservationID(), reservation);
-                    database.updateChildren(child).addOnFailureListener(new OnFailureListener() {
-                        @Override
-                        public void onFailure(@NonNull Exception e) {
-                            Toast.makeText(fatherFragment.getContext(), R.string.error_order, Toast.LENGTH_SHORT).show();
-                        }
-                    });
-                    DatabaseReference databaseSelf = FirebaseDatabase.getInstance().getReference()
-                            .child("reservations").child("Bikers").child("pYlVkIDv53f4RAxAJgCCwPPiuoz2");
+                            reservations.get(pos).getRestaurantAddress(), reservations.get(pos).getUserAddress(),
+                            reservations.get(pos).getRestaurantID());
                     HashMap<String, Object> childSelf = new HashMap<>();
                     reservation.setStatus("rejected");
                     childSelf.put(reservations.get(pos).getReservationID(), reservation);

@@ -87,7 +87,7 @@ public class ReservationFragment extends Fragment {
                     if (reservationDB.getStatus() == null || reservationDB.getStatus().equals("accepted")) {
                             Reservation reservation = new Reservation(reservationDB.getRestaurantName(), reservationDB.getRestaurantAddress(),
                                     reservationDB.getOrderTimeBiker(), reservationDB.getUserName(), reservationDB.getUserAddress(),
-                                    reservationDB.getOrderTime(), null);
+                                    reservationDB.getOrderTime(), reservationDB.getRestaurantID(),null);
                             reservation.setReservationID(ds.getKey());
                             reservations.add(reservation);
                     }
@@ -111,7 +111,7 @@ public class ReservationFragment extends Fragment {
                             if (toAdd) {
                                 Reservation reservation = new Reservation(reservationDB.getRestaurantName(), reservationDB.getRestaurantAddress(),
                                         reservationDB.getOrderTimeBiker(), reservationDB.getUserName(), reservationDB.getUserAddress(),
-                                        reservationDB.getOrderTime(), null);
+                                        reservationDB.getOrderTime(), reservationDB.getRestaurantID(), null);
 
                                 int index;
                                 for (index = 0; index < reservations.size(); index++) {

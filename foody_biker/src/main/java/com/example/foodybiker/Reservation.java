@@ -5,17 +5,34 @@ public class Reservation {
     private String restaurantName, restaurantAddress,
             restaurantPickupTime, userName,
             userAddress, userDeliveryTime,
-            notes, reservationID;
+            reservationID, restaurantID, notes;
 
 
-    public Reservation(String restaurantName, String restaurantAddress, String restaurantPickupTime, String userName, String userAddress, String userDeliveryTime, String notes) {
+    public Reservation(String restaurantName, String restaurantAddress, String restaurantPickupTime, String userName, String userAddress, String userDeliveryTime, String restaurantID, String notes) {
         this.restaurantName = restaurantName;
         this.restaurantAddress = restaurantAddress;
         this.restaurantPickupTime = restaurantPickupTime;
         this.userName = userName;
         this.userAddress = userAddress;
         this.userDeliveryTime = userDeliveryTime;
+        this.restaurantID = restaurantID;
         this.notes = notes;
+    }
+
+    public String getNotes() {
+        return notes;
+    }
+
+    public void setNotes(String notes) {
+        this.notes = notes;
+    }
+
+    public String getRestaurantID() {
+        return restaurantID;
+    }
+
+    public void setRestaurantID(String restaurantID) {
+        this.restaurantID = restaurantID;
     }
 
     public String getReservationID() {
@@ -72,13 +89,5 @@ public class Reservation {
 
     public void setUserDeliveryTime(String userDeliveryTime) {
         this.userDeliveryTime = userDeliveryTime;
-    }
-
-    public String getNotes() {
-        return notes;
-    }
-
-    public void setNotes(String notes) {
-        this.notes = notes;
     }
 }
