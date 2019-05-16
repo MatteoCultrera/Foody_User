@@ -111,12 +111,13 @@ public class RVAdapter extends RecyclerView.Adapter<RVAdapter.CardViewHolder>{
                             titleF.setTextColor(ContextCompat.getColor(enabler.getContext(), R.color.disabledText));
                             subtitleF.setTextColor(ContextCompat.getColor(enabler.getContext(), R.color.disabledText));
                             priceF.setTextColor(ContextCompat.getColor(enabler.getContext(), R.color.disabledText));
-
+                            image.setAlpha(0.3f);
                         } else {
                             dishes.get(index).setAvailable(true);
                             titleF.setTextColor(ContextCompat.getColor(enabler.getContext(), R.color.primaryText));
                             subtitleF.setTextColor(ContextCompat.getColor(enabler.getContext(), R.color.secondaryText));
                             priceF.setTextColor(ContextCompat.getColor(enabler.getContext(), R.color.primaryText));
+                            image.setAlpha(1f);
                         }
                     }
                 });
