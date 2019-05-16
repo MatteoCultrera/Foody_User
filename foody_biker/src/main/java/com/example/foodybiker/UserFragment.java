@@ -182,6 +182,7 @@ public class UserFragment extends Fragment {
                                 edit.putString("satTime", info.getDaysTime().get(5));
                                 edit.putString("sunTime", info.getDaysTime().get(6));
                                 edit.putString("Path", imagePath);
+
                                 edit.apply();
                             }
 

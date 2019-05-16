@@ -38,6 +38,7 @@ import com.bumptech.glide.Glide;
 import com.bumptech.glide.request.RequestOptions;
 import com.bumptech.glide.signature.ObjectKey;
 import com.google.android.gms.common.api.ApiException;
+import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.libraries.places.api.Places;
@@ -55,6 +56,7 @@ import com.yalantis.ucrop.UCropActivity;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.sql.Struct;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
@@ -110,6 +112,19 @@ public class Setup extends AppCompatActivity {
     private SharedPreferences.Editor edit;
     private FirebaseAuth firebaseAuth;
     private String pathImage;
+
+    class Position {
+        public String address;
+        public Double latitude, longitude;
+
+        public Position(String address) {
+            this.address = address;
+            this.latitude = null;
+            this.longitude = null;
+        }
+    }
+
+    private Position pos;
 
     private ImageButton callActivityAddress;
 
@@ -654,6 +669,9 @@ public class Setup extends AppCompatActivity {
             }
         });
 
+        if(pos == null)
+            pos = new Position(sharedPref.getString("address", ""));
+
         this.callActivityAddress = findViewById(R.id.callActivityAddress);
 
         if (!Places.isInitialized()) {
@@ -711,8 +729,10 @@ public class Setup extends AppCompatActivity {
                 case AUTOCOMPLETE_REQUEST_CODE:
                     Place place = Autocomplete.getPlaceFromIntent(data);
                     Log.d("PLACE", "Place: " + place.getAddress() + " LAT_LNG " + place.getLatLng());
+                    pos.address = place.getAddress();
+                    pos.latitude = place.getLatLng().latitude;
+                    pos.longitude = place.getLatLng().longitude;
                     address.setText(place.getAddress());
-                    edit.putString("address", place.getAddress());
                     break;
             }
         }
@@ -960,6 +980,11 @@ public class Setup extends AppCompatActivity {
         HashMap<String, Object> child = new HashMap<>();
         child.put("info", restaurant);
         database.updateChildren(child);
+
+        if(pos.latitude != null && pos.longitude != null) {
+            //TODO: pusha sul server latitude e longitude, sono due double, solo se sono != null sono state risettate
+            //servono solo qua dentro
+        }
 
         Toast.makeText(getApplicationContext(), R.string.save, Toast.LENGTH_SHORT).show();
         unchanged = true;
