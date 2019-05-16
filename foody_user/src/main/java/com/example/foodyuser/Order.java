@@ -155,7 +155,6 @@ public class Order extends AppCompatActivity {
         super.onPause();
         JsonHandler handler = new JsonHandler();
         if(orders!=null && orders.size() > 0){
-            Log.d("TRYUNODUE", "Orders Big");
             String jsonOrders = handler.ordersToJSON(orders);
             File directory = getExternalFilesDir(Environment.DIRECTORY_DOCUMENTS);
             File toSave = new File(directory, getString(R.string.order_file_name));

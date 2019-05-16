@@ -33,6 +33,8 @@
     <string name="your_order">Your Order</string>
     <string name="total">Total:</string>
     <string name="delete_filter">Delete filters</string>
+    <string name="price" translatable="false">%1$.2f €</string>
+    <string name="plate" translatable="false">%1$d x %2$s</string>
 
     <string name="order_file_name" translatable="false">ordersFileName</string>
     <string name="place_order">PLACE ORDER</string>

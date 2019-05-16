@@ -1,7 +1,6 @@
 package com.example.foodyuser;
 
 import android.content.res.Resources;
-import android.media.Image;
 import android.net.Uri;
 import android.support.annotation.NonNull;
 import android.support.v7.widget.RecyclerView;
@@ -15,7 +14,6 @@ import android.widget.TextView;
 import com.bumptech.glide.Glide;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
-import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
@@ -52,46 +50,51 @@ public class RVAdapterRes extends RecyclerView.Adapter<RVAdapterRes.CardViewHold
     public void onBindViewHolder(@NonNull final CardViewHolder pvh,final int i) {
         Reservation currentRes = reservations.get(i);
         LayoutInflater inflater = LayoutInflater.from(pvh.restName.getContext());
-
+        Resources resources = pvh.status.getContext().getResources();
         pvh.restName.setText(currentRes.getRestaurantName());
         pvh.restAddress.setText(currentRes.getRestaurantAddress());
 
-        final DatabaseReference database = FirebaseDatabase.getInstance().getReference().child("restaurantsInfo");
-        Query query = database.child(reservations.get(i).getRestaurantID()).child("info").child("imagePath");
-        query.addListenerForSingleValueEvent(new ValueEventListener() {
-             @Override
-             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-                imagePath = dataSnapshot.getValue(String.class);
-                 StorageReference mStorageRef = FirebaseStorage.getInstance().getReference();
-                 mStorageRef.child(imagePath).getDownloadUrl()
-                         .addOnSuccessListener(new OnSuccessListener<Uri>() {
-                             @Override
-                             public void onSuccess(Uri uri) {
-                                 Glide
-                                         .with(pvh.profilePicture.getContext())
-                                         .load(uri)
-                                         .into(pvh.profilePicture);
-                             }
-                         })
-                         .addOnFailureListener(new OnFailureListener() {
-                             @Override
-                             public void onFailure(@NonNull Exception e) {
-                                 Glide
-                                         .with(pvh.profilePicture.getContext())
-                                         .load(R.drawable.profile_placeholder)
-                                         .into(pvh.profilePicture);
-                             }
-                         });
-             }
+        new Thread(new Runnable() {
+            @Override
+            public void run() {
+                final DatabaseReference database = FirebaseDatabase.getInstance().getReference().child("restaurantsInfo");
+                Query query = database.child(reservations.get(i).getRestaurantID()).child("info").child("imagePath");
+                query.addListenerForSingleValueEvent(new ValueEventListener() {
+                    @Override
+                    public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                        imagePath = dataSnapshot.getValue(String.class);
+                        StorageReference mStorageRef = FirebaseStorage.getInstance().getReference();
+                        mStorageRef.child(imagePath).getDownloadUrl()
+                                .addOnSuccessListener(new OnSuccessListener<Uri>() {
+                                    @Override
+                                    public void onSuccess(Uri uri) {
+                                        Glide
+                                                .with(pvh.profilePicture.getContext())
+                                                .load(uri)
+                                                .into(pvh.profilePicture);
+                                    }
+                                })
+                                .addOnFailureListener(new OnFailureListener() {
+                                    @Override
+                                    public void onFailure(@NonNull Exception e) {
+                                        Glide
+                                                .with(pvh.profilePicture.getContext())
+                                                .load(R.drawable.profile_placeholder)
+                                                .into(pvh.profilePicture);
+                                    }
+                                });
+                    }
 
-             @Override
-             public void onCancelled(@NonNull DatabaseError databaseError) {
-                 Glide
-                         .with(pvh.profilePicture.getContext())
-                         .load(R.drawable.profile_placeholder)
-                         .into(pvh.profilePicture);
-             }
-         });
+                    @Override
+                    public void onCancelled(@NonNull DatabaseError databaseError) {
+                        Glide
+                                .with(pvh.profilePicture.getContext())
+                                .load(R.drawable.profile_placeholder)
+                                .into(pvh.profilePicture);
+                    }
+                });
+            }
+        }).start();
 
         ArrayList<Dish> dishes = currentRes.getDishesOrdered();
         pvh.dishes.removeAllViews();
@@ -102,17 +105,13 @@ public class RVAdapterRes extends RecyclerView.Adapter<RVAdapterRes.CardViewHold
                 TextView name = dish.findViewById(R.id.current_item_food_name);
                 TextView price = dish.findViewById(R.id.current_item_food_price);
 
-                name.setText(d.getQuantity()+" x "+d.getDishName());
+                name.setText(String.format(resources.getString(R.string.plate), d.getQuantity(), d.getDishName()));
                 float priceFloat = d.getPrice()*d.getQuantity();
-                price.setText(String.format("%.2f €", priceFloat));
+                price.setText(String.format(resources.getString(R.string.price), priceFloat));
 
                 pvh.dishes.addView(dish);
             }
         }
-
-
-
-        Resources resources = pvh.status.getContext().getResources();
         String status;
         switch(currentRes.getPreparationStatusString().toLowerCase()){
             case("pending"):
