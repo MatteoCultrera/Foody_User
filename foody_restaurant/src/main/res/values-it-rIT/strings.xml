@@ -67,4 +67,7 @@
 
     <string name="pending_orders">Ordini in Attesa</string>
     <string name="doing_orders">Ordini in Preparazione</string>
+
+    <string name="suggestion_checkout">Per archiviare quest\'ordine, conferma che il biker lo ha ritirato
+    nella pagina Consegne</string>
 </resources>
