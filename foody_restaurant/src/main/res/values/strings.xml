@@ -67,4 +67,7 @@
     <string name="pending_orders">Pending Orders</string>
     <string name="doing_orders">Doing Orders</string>
 
+    <string name="suggestion_checkout">To checkout this order, confirm that the biker took it
+    in the Deliveries Tab</string>
+
 </resources>
