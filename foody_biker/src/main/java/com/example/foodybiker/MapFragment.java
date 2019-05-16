@@ -84,10 +84,10 @@ public class MapFragment extends Fragment {
                         MarkerOptions marker = new MarkerOptions().position(
                                 new LatLng(loc.getLatitude(), loc.getLongitude())).title("Position");
                         marker.icon(BitmapDescriptorFactory
-                                .defaultMarker(BitmapDescriptorFactory.HUE_ROSE));
+                                .defaultMarker(BitmapDescriptorFactory.HUE_GREEN));
                         mGoogleMap.addMarker(marker);
                         CameraPosition cameraPosition = new CameraPosition.Builder()
-                                .target(new LatLng(loc.getLatitude(), loc.getLongitude())).zoom(12).build();
+                                .target(new LatLng(loc.getLatitude(), loc.getLongitude())).zoom(15).build();
                         mGoogleMap.animateCamera(CameraUpdateFactory
                                 .newCameraPosition(cameraPosition));
                     }else{
@@ -98,7 +98,8 @@ public class MapFragment extends Fragment {
                 }
             }
         });
-         manager = (LocationManager) getActivity().getSystemService(getActivity().getApplicationContext().LOCATION_SERVICE);
+
+        manager = (LocationManager) getActivity().getSystemService(getActivity().getApplicationContext().LOCATION_SERVICE);
 
         // Define a listener that responds to location updates
         listener = new LocationListener() {
@@ -177,8 +178,8 @@ public class MapFragment extends Fragment {
 
     public void startListen(){
         String locationProvider = LocationManager.NETWORK_PROVIDER;
-// Or, use GPS location data:
-// String locationProvider = LocationManager.GPS_PROVIDER;
+    // Or, use GPS location data:
+    // String locationProvider = LocationManager.GPS_PROVIDER;
         if(ContextCompat.checkSelfPermission(getActivity(),
                 Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED)
             manager.requestLocationUpdates(locationProvider, 0, 0, listener);
