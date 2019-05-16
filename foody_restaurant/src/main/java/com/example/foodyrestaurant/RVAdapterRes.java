@@ -180,6 +180,7 @@ public class RVAdapterRes extends RecyclerView.Adapter<RVAdapterRes.CardViewHold
                         "", dishes, true, null, reservations.get(pos).getUserPhone(),
                         reservations.get(pos).getUserName(), reservations.get(pos).getDeliveryTime(),
                         reservations.get(pos).getOrderTime(), "Doing", reservations.get(pos).getUserAddress(), reservations.get(pos).getTotalPrice());
+                reservationRest.setBiker(false);
                 childRest.put(reservationID, reservationRest);
                 databaseRest.updateChildren(childRest).addOnFailureListener(new OnFailureListener() {
                     @Override
@@ -189,12 +190,12 @@ public class RVAdapterRes extends RecyclerView.Adapter<RVAdapterRes.CardViewHold
                 });
 
                 DatabaseReference databaseBiker = FirebaseDatabase.getInstance().getReference().child("reservations")
-                        .child("Bikers").child("pYlVkIDv53f4RAxAJgCCwPPiuoz2");
+                        .child("Bikers").child("JcPKKG2OBEalSLMdHbXMEQtL4oF3");
                 HashMap<String, Object> childBiker = new HashMap<>();
                 ReservationDBBiker reservationBiker = new ReservationDBBiker(reservationID, reservations.get(pos).getDeliveryTime(),
                         reservations.get(pos).getOrderTime(), sharedPreferences.getString("name", null),
                         reservations.get(pos).getUserName(), sharedPreferences.getString("address", null),
-                        reservations.get(pos).getUserAddress());
+                        reservations.get(pos).getUserAddress(), firebaseUser.getUid());
                 childBiker.put(reservationID, reservationBiker);
                 databaseBiker.updateChildren(childBiker).addOnFailureListener(new OnFailureListener() {
                     @Override

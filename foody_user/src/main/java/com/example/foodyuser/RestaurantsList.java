@@ -22,10 +22,13 @@ import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.Query;
 import com.google.firebase.database.ValueEventListener;
+
+import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Calendar;
+import java.util.Date;
 import java.util.Locale;
 
 public class RestaurantsList extends AppCompatActivity {
@@ -82,19 +85,32 @@ public class RestaurantsList extends AppCompatActivity {
                             String intervalTime = restaurant.getDaysTime().get(day).replace(" ", "");
                             if (!intervalTime.startsWith("C")) {
                                 String[] splits = intervalTime.split("-");
-                                if (splits[0].compareTo(time) <= 0 && splits[1].compareTo(time) >= 0) {
-                                    if (restaurant.getCuisineTypes() != null) {
-                                        ArrayList<String> types = new ArrayList<>();
-                                        for (Integer i : restaurant.getCuisineTypes()) {
-                                            types.add(foodCategories[i]);
+                                SimpleDateFormat sdf2 = new SimpleDateFormat("HH:mm", Locale.ITALY);
+                                try{
+                                    Date date = sdf2.parse(splits[1]);
+                                    Calendar cal = Calendar.getInstance();
+                                    cal.setTime(date);
+                                    cal.add(Calendar.MINUTE, -30);
+                                    String newTime = sdf2.format(cal.getTime());
+                                    if (splits[0].compareTo(time) <= 0 && newTime.compareTo(time) >= 0) {
+                                        if (restaurant.getCuisineTypes() != null) {
+                                            ArrayList<String> types = new ArrayList<>();
+                                            for (Integer i : restaurant.getCuisineTypes()) {
+                                                types.add(foodCategories[i]);
+                                            }
+                                            restaurant.setCuisines(types);
                                         }
-                                        restaurant.setCuisines(types);
+                                        restaurants.add(restaurant);
+                                        restName.add(restaurant);
+                                        restCuisine.add(restaurant);
                                     }
-                                    restaurants.add(restaurant);
-                                    restName.add(restaurant);
-                                    restCuisine.add(restaurant);
+                                    restaurant.setUid(ds.getKey());
+                                } catch(ParseException e){
+
                                 }
-                                restaurant.setUid(ds.getKey());
+                            }
+                            else{
+
                             }
                         }
                     }
