@@ -54,7 +54,7 @@ public class RVAdapterRestaurants  extends RecyclerView.Adapter<RVAdapterRestaur
         cardViewHolder.restaurantDeliveryPrice.setText(restaurants.get(i).getDeliveryPriceString());
         cardViewHolder.restaurantDistance.setText(restaurants.get(i).getDistanceString());
         StorageReference mStorageRef = FirebaseStorage.getInstance().getReference();
-        mStorageRef.child("images/restaurants/"+restaurants.get(i).getUid()+"_profile.jpeg").getDownloadUrl()
+        mStorageRef.child(restaurants.get(i).getImagePath()).getDownloadUrl()
                 .addOnSuccessListener(new OnSuccessListener<Uri>() {
                     @Override
                     public void onSuccess(Uri uri) {

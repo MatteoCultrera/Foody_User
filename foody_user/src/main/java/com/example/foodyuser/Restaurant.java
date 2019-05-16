@@ -12,14 +12,24 @@ public class Restaurant {
     private int deliveryPrice;
     private ArrayList<String> daysTime;
     private float distance;
+    private String imagePath;
 
     public Restaurant() {}
 
-    public Restaurant(String name, ArrayList<String> cuisines, int deliveryPrice, float distance){
+    public Restaurant(String name, ArrayList<String> cuisines, int deliveryPrice, float distance, String imagePath){
         this.username = name;
         this.cuisines = cuisines;
         this.deliveryPrice = deliveryPrice;
         this.distance = distance;
+        this.imagePath = imagePath;
+    }
+
+    public String getImagePath() {
+        return imagePath;
+    }
+
+    public void setImagePath(String imagePath) {
+        this.imagePath = imagePath;
     }
 
     public ArrayList<String> getDaysTime() {
