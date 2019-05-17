@@ -292,9 +292,6 @@ public class ReservationFragment extends Fragment {
                     }
                 });
 
-                pending = true;
-                setInterface();
-
             }
 
             @Override
@@ -318,6 +315,9 @@ public class ReservationFragment extends Fragment {
 
             }
         });
+
+        pending = true;
+        setInterface();
     }
 
     public void addInDoing(Reservation toAdd){
