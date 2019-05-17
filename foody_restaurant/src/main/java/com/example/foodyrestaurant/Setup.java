@@ -82,8 +82,8 @@ public class Setup extends AppCompatActivity {
     private ImageView profilePicture;
     private ImageButton save;
     private FloatingActionButton editImage;
-    private EditText name, email, address, phoneNumber;
-    private TextView monday, thursday, wednesday, tuesday, friday, saturday, sunday;
+    private EditText name, email, phoneNumber;
+    private TextView monday, thursday, wednesday, tuesday, friday, saturday, sunday, address;
     private TextView delivPrice, foodType;
     private CheckBox monC, thuC, wedC, tueC, friC, satC, sunC;
     private TextView errorName;
@@ -673,24 +673,35 @@ public class Setup extends AppCompatActivity {
         if(pos == null)
             pos = new Position(sharedPref.getString("address", ""));
 
-        this.callActivityAddress = findViewById(R.id.callActivityAddress);
+        this.callActivityAddress = findViewById(R.id.searchAddress);
 
+        callActivityAddress.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                addressActivity();
+            }
+        });
+
+        address.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                addressActivity();
+            }
+        });
+
+        updateSave();
+    }
+
+    public void addressActivity() {
         if (!Places.isInitialized()) {
             Places.initialize(getApplicationContext(), BuildConfig.ApiKey);
         }
 
         final List<Place.Field> fields = Arrays.asList(Place.Field.ID, Place.Field.ADDRESS, Place.Field.LAT_LNG);
 
-        callActivityAddress.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Intent intent = new Autocomplete.IntentBuilder(AutocompleteActivityMode.FULLSCREEN, fields)
-                        .build(getApplicationContext());
-                startActivityForResult(intent, AUTOCOMPLETE_REQUEST_CODE);
-            }
-        });
-
-        updateSave();
+        Intent intent = new Autocomplete.IntentBuilder(AutocompleteActivityMode.FULLSCREEN, fields)
+                .build(getApplicationContext());
+        startActivityForResult(intent, AUTOCOMPLETE_REQUEST_CODE);
     }
 
     @Override
