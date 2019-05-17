@@ -176,6 +176,7 @@ public class UserFragment extends Fragment {
             @Override
             public void onClick(View v) {
                 firebaseAuth.signOut();
+                sharedPref.edit().clear().apply();
                 Intent intent = new Intent(getActivity(), Login.class);
                 startActivity(intent);
                 getActivity().onBackPressed();
