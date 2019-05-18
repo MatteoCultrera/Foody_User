@@ -49,7 +49,6 @@ import static android.content.Context.MODE_PRIVATE;
 
 public class UserFragment extends Fragment {
 
-    private FloatingActionButton editMode;
     private CircleImageView profilePicture;
     private TextView name;
     private TextView email;
@@ -63,7 +62,7 @@ public class UserFragment extends Fragment {
     private FirebaseAuth firebaseAuth;
     private MaterialButton logout;
     private String imagePath;
-
+    private UserInfo info;
 
     public UserFragment() {}
 
@@ -78,11 +77,12 @@ public class UserFragment extends Fragment {
     }
 
     private void init(View view){
+        FloatingActionButton editMode;
         sharedPref = view.getContext().getSharedPreferences("myPreference", MODE_PRIVATE);
         edit = sharedPref.edit();
         firebaseAuth = FirebaseAuth.getInstance();
         profilePicture = view.findViewById(R.id.profilePicture);
-        this.editMode = view.findViewById(R.id.edit_mode);
+        editMode = view.findViewById(R.id.edit_mode);
         this.name = view.findViewById(R.id.userName);
         this.email = view.findViewById(R.id.emailAddress);
         this.address = view.findViewById(R.id.address);
@@ -91,14 +91,15 @@ public class UserFragment extends Fragment {
         this.logout = view.findViewById(R.id.logout_button);
 
         //setup of the Shared Preferences to save value in (key, value) format
-        if (!email.getText().toString().equals("email")) {
-            final DatabaseReference database = FirebaseDatabase.getInstance().getReference().child("endUsers");
-            Query query = database.child(firebaseAuth.getCurrentUser().getUid());
-            query.addListenerForSingleValueEvent(new ValueEventListener() {
-                @Override
-                public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-                    for (DataSnapshot ds : dataSnapshot.getChildren()) {
-                        UserInfo info = ds.getValue(UserInfo.class);
+        new Thread(new Runnable() {
+            @Override
+            public void run() {
+                final DatabaseReference database = FirebaseDatabase.getInstance().getReference().child("endUsers");
+                Query query = database.child(firebaseAuth.getCurrentUser().getUid()).child("info");
+                query.addListenerForSingleValueEvent(new ValueEventListener() {
+                    @Override
+                    public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                        info = dataSnapshot.getValue(UserInfo.class);
                         name.setText(info.getUsername());
                         email.setText(info.getEmail());
                         address.setText(info.getAddress());
@@ -111,26 +112,22 @@ public class UserFragment extends Fragment {
                         StorageReference mStorageRef = FirebaseStorage.getInstance().getReference();
 
                         if(imagePath!=null){
-                            Log.d("PROVA","Image Path not null");
                             mStorageRef.child(imagePath).getDownloadUrl()
                                     .addOnSuccessListener(new OnSuccessListener<Uri>() {
                                         @Override
                                         public void onSuccess(Uri uri) {
-
-                                            Log.d("PROVA","Found Profile Picture");
-                                            Glide
-                                                    .with(profilePicture.getContext())
-                                                    .load(uri)
-                                                    .into(profilePicture);
+                                        Glide
+                                                .with(profilePicture.getContext())
+                                                .load(uri)
+                                                .into(profilePicture);
                                         }
                                     }).addOnFailureListener(new OnFailureListener() {
                                 @Override
                                 public void onFailure(@NonNull Exception e) {
-
-                                    Glide
-                                            .with(profilePicture.getContext())
-                                            .load(R.drawable.profile_placeholder)
-                                            .into(profilePicture);
+                                        Glide
+                                                .with(profilePicture.getContext())
+                                                .load(R.drawable.profile_placeholder)
+                                                .into(profilePicture);
                                 }
                             });
                         }else{
@@ -149,48 +146,18 @@ public class UserFragment extends Fragment {
                         edit.putString("Path", imagePath);
                         edit.apply();
                     }
-                }
 
-                @Override
-                public void onCancelled(@NonNull DatabaseError databaseError) {
-                    Log.d("SWSW", databaseError.getMessage());
-                    name.setText(sharedPref.getString("name", getResources().getString(R.string.name_hint)));
-                    email.setText(sharedPref.getString("email", getResources().getString(R.string.email_hint)));
-                    address.setText(sharedPref.getString("address", getResources().getString(R.string.address_hint)));
-                    phoneNumber.setText(sharedPref.getString("phoneNumber", getResources().getString(R.string.phone_hint)));
-                    bio.setText(sharedPref.getString("bio", getResources().getString(R.string.bio_hint)));
-                }
-            });
-        }
-
-
-        final String PROFILE_IMAGE = "ProfileImage.jpg";
-        final File f = new File(storageDir, PROFILE_IMAGE);
-
-        if(f.exists()){
-            profilePicture.setImageURI(Uri.fromFile(f));
-        } else{
-            StorageReference mStorageRef = FirebaseStorage.getInstance().getReference();
-            mStorageRef.child("images/users/" + firebaseAuth.getCurrentUser().getUid() + ".jpeg").getDownloadUrl()
-                    .addOnSuccessListener(new OnSuccessListener<Uri>() {
-                        @Override
-                        public void onSuccess(Uri uri) {
-                            Glide
-                                    .with(profilePicture.getContext())
-                                    .load(uri)
-                                    .into(profilePicture);
-                            //TODO: salvare l'uri qua nel path dell'immagine profilo
-                        }
-                    }).addOnFailureListener(new OnFailureListener() {
-                @Override
-                public void onFailure(@NonNull Exception e) {
-                    Glide
-                            .with(profilePicture.getContext())
-                            .load(R.drawable.profile_placeholder)
-                            .into(profilePicture);
-                }
-            });
-        }
+                    @Override
+                    public void onCancelled(@NonNull DatabaseError databaseError) {
+                        name.setText(sharedPref.getString("name", getResources().getString(R.string.name_hint)));
+                        email.setText(sharedPref.getString("email", getResources().getString(R.string.email_hint)));
+                        address.setText(sharedPref.getString("address", getResources().getString(R.string.address_hint)));
+                        phoneNumber.setText(sharedPref.getString("phoneNumber", getResources().getString(R.string.phone_hint)));
+                        bio.setText(sharedPref.getString("bio", getResources().getString(R.string.bio_hint)));
+                    }
+                });
+            }
+        }).start();
 
         editMode.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -200,6 +167,7 @@ public class UserFragment extends Fragment {
                 if(!pl.delete()){
                     System.out.println("Delete Failure");
                 }
+                intent.putExtra("imagePath", info.getImagePath());
                 startActivity(intent);
             }
         });
@@ -208,6 +176,7 @@ public class UserFragment extends Fragment {
             @Override
             public void onClick(View v) {
                 firebaseAuth.signOut();
+                sharedPref.edit().clear().apply();
                 Intent intent = new Intent(getActivity(), Login.class);
                 startActivity(intent);
                 getActivity().onBackPressed();

@@ -5,15 +5,18 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Color;
+import android.location.Location;
 import android.net.Uri;
 import android.os.Environment;
 import android.provider.MediaStore;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.design.widget.FloatingActionButton;
+import android.support.v4.content.ContextCompat;
 import android.support.v4.content.FileProvider;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
@@ -35,8 +38,13 @@ import android.widget.Toast;
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.request.RequestOptions;
 import com.bumptech.glide.signature.ObjectKey;
+import com.google.android.gms.common.api.ApiException;
+import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
+import com.google.android.libraries.places.api.Places;
+import com.google.android.libraries.places.api.model.PlaceLikelihood;
+import com.google.android.libraries.places.api.net.FindCurrentPlaceRequest;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.DatabaseReference;
@@ -49,19 +57,33 @@ import com.yalantis.ucrop.UCropActivity;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.sql.Struct;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Locale;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import com.google.android.gms.common.api.Status;
+import com.google.android.libraries.places.api.Places;
+import com.google.android.libraries.places.api.model.Place;
+import com.google.android.libraries.places.api.net.PlacesClient;
+import com.google.android.libraries.places.widget.Autocomplete;
+import com.google.android.libraries.places.widget.AutocompleteActivity;
+import com.google.android.libraries.places.widget.model.AutocompleteActivityMode;
+
+import static android.Manifest.permission.ACCESS_FINE_LOCATION;
+
 public class Setup extends AppCompatActivity {
 
+    private static final int AUTOCOMPLETE_REQUEST_CODE = 9;
     private ImageView profilePicture;
     private ImageButton save;
     private FloatingActionButton editImage;
-    private EditText name, email, address, phoneNumber;
-    private TextView monday, thursday, wednesday, tuesday, friday, saturday, sunday;
+    private EditText name, email, phoneNumber;
+    private TextView monday, thursday, wednesday, tuesday, friday, saturday, sunday, address;
     private TextView delivPrice, foodType;
     private CheckBox monC, thuC, wedC, tueC, friC, satC, sunC;
     private TextView errorName;
@@ -91,6 +113,21 @@ public class Setup extends AppCompatActivity {
     private SharedPreferences.Editor edit;
     private FirebaseAuth firebaseAuth;
     private String pathImage;
+
+    class Position {
+        public String address;
+        public Double latitude, longitude;
+
+        public Position(String address) {
+            this.address = address;
+            this.latitude = null;
+            this.longitude = null;
+        }
+    }
+
+    private Position pos;
+
+    private ImageButton callActivityAddress;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -633,15 +670,46 @@ public class Setup extends AppCompatActivity {
             }
         });
 
+        if(pos == null)
+            pos = new Position(sharedPref.getString("address", ""));
+
+        this.callActivityAddress = findViewById(R.id.searchAddress);
+
+        callActivityAddress.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                addressActivity();
+            }
+        });
+
+        address.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                addressActivity();
+            }
+        });
+
         updateSave();
+    }
+
+    public void addressActivity() {
+        if (!Places.isInitialized()) {
+            Places.initialize(getApplicationContext(), BuildConfig.ApiKey);
+        }
+
+        final List<Place.Field> fields = Arrays.asList(Place.Field.ID, Place.Field.ADDRESS, Place.Field.LAT_LNG);
+
+        Intent intent = new Autocomplete.IntentBuilder(AutocompleteActivityMode.FULLSCREEN, fields)
+                .build(getApplicationContext());
+        startActivityForResult(intent, AUTOCOMPLETE_REQUEST_CODE);
     }
 
     @Override
     protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
 
-        if(resultCode == RESULT_OK){
-            switch (requestCode){
+        if(resultCode == RESULT_OK) {
+            switch (requestCode) {
 
                 case REQUEST_CAPTURE_IMAGE:
                     File f = new File(placeholderPath);
@@ -649,25 +717,34 @@ public class Setup extends AppCompatActivity {
                     break;
 
                 case GALLERY_REQUEST_CODE:
-                    if(data !=null){
+                    if (data != null) {
                         Uri imageUri = data.getData();
 
-                        if(imageUri != null)
+                        if (imageUri != null)
                             startCrop(imageUri);
                     }
                     break;
 
-                case  UCrop.REQUEST_CROP:
+                case UCrop.REQUEST_CROP:
                     Bitmap bitmap = getBitmapFromFile();
 
-                    if(bitmap != null){
+                    if (bitmap != null) {
                         File placeholder = new File(storageDir, PLACEHOLDER_CAMERA);
                         saveBitmap(bitmap, placeholder.getPath());
                         RequestOptions glideOptions = new RequestOptions()
-                                .signature(new ObjectKey(placeholder.getPath()+placeholder.lastModified()));
+                                .signature(new ObjectKey(placeholder.getPath() + placeholder.lastModified()));
                         Glide.with(this).load(placeholder).apply(glideOptions).into(profilePicture);
                         unchanged = false;
                     }
+                    break;
+
+                case AUTOCOMPLETE_REQUEST_CODE:
+                    Place place = Autocomplete.getPlaceFromIntent(data);
+                    Log.d("PLACE", "Place: " + place.getAddress() + " LAT_LNG " + place.getLatLng());
+                    pos.address = place.getAddress();
+                    pos.latitude = place.getLatLng().latitude;
+                    pos.longitude = place.getLatLng().longitude;
+                    address.setText(place.getAddress());
                     break;
             }
         }
@@ -915,6 +992,15 @@ public class Setup extends AppCompatActivity {
         HashMap<String, Object> child = new HashMap<>();
         child.put("info", restaurant);
         database.updateChildren(child);
+
+        if(pos.latitude != null && pos.longitude != null) {
+            DatabaseReference databaseLoc = FirebaseDatabase.getInstance().getReference()
+                    .child("restaurantsInfo/" + user.getUid()).child("info");
+            HashMap<String, Object> childLoc = new HashMap<>();
+            childLoc.put("latitude", pos.latitude);
+            childLoc.put("longitude", pos.longitude);
+            databaseLoc.updateChildren(childLoc);
+        }
 
         Toast.makeText(getApplicationContext(), R.string.save, Toast.LENGTH_SHORT).show();
         unchanged = true;

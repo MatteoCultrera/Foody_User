@@ -53,17 +53,24 @@ public class RVAdapterRestaurants  extends RecyclerView.Adapter<RVAdapterRestaur
         cardViewHolder.restaurantDescription.setText(restaurants.get(i).getKitchensString());
         cardViewHolder.restaurantDeliveryPrice.setText(restaurants.get(i).getDeliveryPriceString());
         cardViewHolder.restaurantDistance.setText(restaurants.get(i).getDistanceString());
-        StorageReference mStorageRef = FirebaseStorage.getInstance().getReference();
-        mStorageRef.child("images/restaurants/"+restaurants.get(i).getUid()+"_profile.jpeg").getDownloadUrl()
-                .addOnSuccessListener(new OnSuccessListener<Uri>() {
-                    @Override
-                    public void onSuccess(Uri uri) {
-                        Glide
-                                .with(cardViewHolder.restaurantBackground.getContext())
-                                .load(uri)
-                                .into(cardViewHolder.restaurantBackground);
-                    }
-                });
+        if (restaurants.get(i).isOpen()) {
+            StorageReference mStorageRef = FirebaseStorage.getInstance().getReference();
+            mStorageRef.child(restaurants.get(i).getImagePath()).getDownloadUrl()
+                    .addOnSuccessListener(new OnSuccessListener<Uri>() {
+                        @Override
+                        public void onSuccess(Uri uri) {
+                            Glide
+                                    .with(cardViewHolder.restaurantBackground.getContext())
+                                    .load(uri)
+                                    .into(cardViewHolder.restaurantBackground);
+                        }
+                    });
+        }else{
+            Glide
+                    .with(cardViewHolder.restaurantBackground.getContext())
+                    .load(R.drawable.profile_placeholder)
+                    .into(cardViewHolder.restaurantBackground);
+        }
 
         cardViewHolder.card.setOnClickListener(new View.OnClickListener() {
             @Override

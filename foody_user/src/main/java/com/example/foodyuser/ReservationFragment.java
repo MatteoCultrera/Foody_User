@@ -63,6 +63,7 @@ public class ReservationFragment extends Fragment {
     public void onViewCreated(@NonNull View view, Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
         thisView = view;
+        init(view);
     }
 
     @Override
@@ -206,6 +207,5 @@ public class ReservationFragment extends Fragment {
     @Override
     public void onResume() {
         super.onResume();
-        init(thisView);
     }
 }

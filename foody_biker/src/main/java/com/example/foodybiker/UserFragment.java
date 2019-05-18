@@ -182,6 +182,7 @@ public class UserFragment extends Fragment {
                                 edit.putString("satTime", info.getDaysTime().get(5));
                                 edit.putString("sunTime", info.getDaysTime().get(6));
                                 edit.putString("Path", imagePath);
+
                                 edit.apply();
                             }
 
@@ -221,6 +222,7 @@ public class UserFragment extends Fragment {
             @Override
             public void onClick(View v) {
                 firebaseAuth.signOut();
+                sharedPref.edit().clear().apply();
                 Intent intent = new Intent(getActivity(), Login.class);
                 startActivity(intent);
                 getActivity().onBackPressed();

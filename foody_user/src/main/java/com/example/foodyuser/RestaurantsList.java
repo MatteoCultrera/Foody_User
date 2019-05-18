@@ -22,10 +22,14 @@ import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.Query;
 import com.google.firebase.database.ValueEventListener;
+
+import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Calendar;
+import java.util.Comparator;
+import java.util.Date;
 import java.util.Locale;
 
 public class RestaurantsList extends AppCompatActivity {
@@ -78,27 +82,55 @@ public class RestaurantsList extends AppCompatActivity {
                 for (DataSnapshot ds : dataSnapshot.getChildren()) {
                     for (DataSnapshot ds1 : ds.getChildren()) {
                         Restaurant restaurant = ds1.getValue(Restaurant.class);
+                        restaurant.setUid(ds.getKey());
                         if (restaurant.getDaysTime() != null) {
                             String intervalTime = restaurant.getDaysTime().get(day).replace(" ", "");
                             if (!intervalTime.startsWith("C")) {
                                 String[] splits = intervalTime.split("-");
-                                if (splits[0].compareTo(time) <= 0 && splits[1].compareTo(time) >= 0) {
-                                    if (restaurant.getCuisineTypes() != null) {
-                                        ArrayList<String> types = new ArrayList<>();
-                                        for (Integer i : restaurant.getCuisineTypes()) {
-                                            types.add(foodCategories[i]);
-                                        }
-                                        restaurant.setCuisines(types);
+                                SimpleDateFormat sdf2 = new SimpleDateFormat("HH:mm", Locale.ITALY);
+                                try{
+                                    Date date = sdf2.parse(splits[1]);
+                                    Calendar cal = Calendar.getInstance();
+                                    cal.setTime(date);
+                                    cal.add(Calendar.MINUTE, -30);
+                                    String newTime = sdf2.format(cal.getTime());
+                                    if (splits[0].compareTo(time) <= 0 && newTime.compareTo(time) >= 0) {
+                                        restaurant.setOpen(true);
+                                    }else{
+                                        restaurant.setOpen(false);
                                     }
-                                    restaurants.add(restaurant);
-                                    restName.add(restaurant);
-                                    restCuisine.add(restaurant);
+                                } catch(ParseException e){
+
                                 }
-                                restaurant.setUid(ds.getKey());
+                            }
+                            else{
+                                restaurant.setOpen(false);
                             }
                         }
+                        if (restaurant.getCuisineTypes() != null) {
+                            ArrayList<String> types = new ArrayList<>();
+                            for (Integer i : restaurant.getCuisineTypes()) {
+                                types.add(foodCategories[i]);
+                            }
+                            restaurant.setCuisines(types);
+                        }
+                        restaurants.add(restaurant);
+                        restName.add(restaurant);
+                        restCuisine.add(restaurant);
                     }
                 }
+
+                restaurants.sort(new Comparator<Restaurant>() {
+                    @Override
+                    public int compare(Restaurant r1, Restaurant r2) {
+                        if (r1.isOpen() && !r2.isOpen())
+                            return -1;
+                        if (!r1.isOpen() && r2.isOpen())
+                            return 1;
+                        return 0;
+                    }
+                 });
+
                 adapter = new RVAdapterRestaurants(restaurants);
                 restaurantList.setAdapter(adapter);
             }
