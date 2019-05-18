@@ -698,7 +698,6 @@ public class Setup extends AppCompatActivity {
         }
 
         final List<Place.Field> fields = Arrays.asList(Place.Field.ID, Place.Field.ADDRESS, Place.Field.LAT_LNG);
-
         Intent intent = new Autocomplete.IntentBuilder(AutocompleteActivityMode.FULLSCREEN, fields)
                 .build(getApplicationContext());
         startActivityForResult(intent, AUTOCOMPLETE_REQUEST_CODE);
