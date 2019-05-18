@@ -50,7 +50,7 @@
     <string name="profile">Profile</string>
     <string name="edit_menu">Edit Menu</string>
     <string name="orders">Kitchen</string>
-    <string name="biker_deliv">Deliveries</string>
+    <string name="biker_deliv">Delivery</string>
     <string name="history_orders">History</string>
     <string name="title_edit">Title</string>
     <string name="dish_edit">Dish Name</string>
@@ -62,7 +62,6 @@
     <string name="idRes" translatable="false">ID:</string>
     <string name="noSave">Your data has been already saved</string>
     <string name="delete">Delete</string>
-    <string name="choose_biker">Choose Biker</string>
 
     <string name="pending_orders">Pending Orders</string>
     <string name="doing_orders">Doing Orders</string>
@@ -70,4 +69,14 @@
     <string name="suggestion_checkout">To checkout this order, confirm that the biker took it
     in the Deliveries Tab</string>
 
+
+    <string name="biker_choose">Biker Choice</string>
+    <string name="biker_wait">Biker Waiting</string>
+
+    <string name="choose_biker">Choose Biker</string>
+
+    <string name="phone_number">PHONE NUMBER</string>
+    <string name="distance">DISTANCE</string>
+
+    <string name="choose">CHOOSE</string>
 </resources>

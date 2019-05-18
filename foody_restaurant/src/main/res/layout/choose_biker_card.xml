@@ -1,0 +1,186 @@
+<?xml version="1.0" encoding="utf-8"?>
+<android.support.constraint.ConstraintLayout 
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:background="#E4E4E4">
+
+    <android.support.v7.widget.CardView
+        android:id="@+id/choose_biker_cv"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_marginStart="16dp"
+        android:layout_marginEnd="16dp"
+        android:layout_marginBottom="6dp"
+        app:cardCornerRadius="16dp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.0"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent">
+
+        <android.support.constraint.ConstraintLayout
+            android:id="@+id/layout_card_reservation"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="10dp">
+            
+            <de.hdodenhof.circleimageview.CircleImageView
+                android:id="@+id/choose_biker_profile_image"
+                android:layout_width="70dp"
+                android:layout_height="70dp"
+                android:src="@drawable/profile_placeholder"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintTop_toTopOf="parent"
+                android:layout_marginTop="17dp"/>
+
+            <TextView
+                android:id="@+id/choose_biker_name"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/choose_biker_profile_image"
+                android:layout_marginTop="17dp"
+                android:text="Simona Currà"
+                android:textColor="@color/primaryText"
+                android:fontFamily="@font/roboto_regular"
+                android:textSize="20sp"
+                />
+
+            <TextView
+                android:id="@+id/choose_biker_level"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/choose_biker_name"
+                android:textSize="15sp"
+                android:text="Biker Beginner"
+                android:fontFamily="@font/roboto_regular"
+                android:textColor="@color/secondaryText"
+                />
+
+            <android.support.constraint.ConstraintLayout
+                android:id="@+id/choose_biker_phone_layout"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/choose_biker_level"
+                android:layout_marginTop="30dp">
+
+                <ImageView
+                    android:id="@+id/choose_biker_c"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:src="@drawable/phone_black"
+                    android:background="@android:color/transparent"
+                    android:tint="@color/secondaryText"
+                    app:layout_constraintTop_toTopOf="parent"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    android:layout_marginStart="21dp" />
+
+                <TextView
+                    android:id="@+id/choose_biker_d"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:text="@string/phone_number"
+                    android:textColor="@color/secondaryText"
+                    android:fontFamily="@font/roboto_regular"
+                    android:textSize="12sp"
+                    app:layout_constraintTop_toTopOf="parent"
+                    app:layout_constraintStart_toEndOf="@id/choose_biker_c"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    android:layout_marginStart="21dp"/>
+
+                <TextView
+                    android:id="@+id/choose_biker_phone_number"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:text="3312174516"
+                    android:fontFamily="@font/roboto_regular"
+                    android:textColor="@color/primaryText"
+                    android:textSize="16sp"
+                    app:layout_constraintTop_toBottomOf="@id/choose_biker_d"
+                    android:layout_marginTop="5dp"
+                    app:layout_constraintStart_toEndOf="@id/choose_biker_c"
+                    android:layout_marginStart="21dp"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    />
+            </android.support.constraint.ConstraintLayout>
+
+            <android.support.constraint.ConstraintLayout
+                android:id="@+id/choose_biker_distance_layout"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/choose_biker_phone_layout"
+                android:layout_marginTop="13dp">
+
+                <ImageView
+                    android:id="@+id/choose_biker_e"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:src="@drawable/address2_white"
+                    android:background="@android:color/transparent"
+                    android:tint="@color/secondaryText"
+                    app:layout_constraintTop_toTopOf="parent"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    android:layout_marginStart="21dp" />
+
+                <TextView
+                    android:id="@+id/choose_biker_f"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:text="@string/distance"
+                    android:textColor="@color/secondaryText"
+                    android:fontFamily="@font/roboto_regular"
+                    android:textSize="12sp"
+                    app:layout_constraintTop_toTopOf="parent"
+                    app:layout_constraintStart_toEndOf="@id/choose_biker_e"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    android:layout_marginStart="21dp"/>
+
+                <TextView
+                    android:id="@+id/choose_biker_distance"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:text="3,5 Km"
+                    android:fontFamily="@font/roboto_regular"
+                    android:textColor="@color/primaryText"
+                    android:textSize="16sp"
+                    app:layout_constraintTop_toBottomOf="@id/choose_biker_f"
+                    android:layout_marginTop="5dp"
+                    app:layout_constraintStart_toEndOf="@id/choose_biker_e"
+                    android:layout_marginStart="21dp"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    />
+            </android.support.constraint.ConstraintLayout>
+
+            <android.support.design.button.MaterialButton
+                android:id="@+id/choose_biker_button"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/choose"
+                app:cornerRadius="25dp"
+                android:paddingTop="13dp"
+                android:paddingBottom="13dp"
+                android:paddingStart="30dp"
+                android:paddingEnd="30dp"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/choose_biker_distance_layout"
+                android:layout_marginTop="15dp" />
+            
+        </android.support.constraint.ConstraintLayout>
+        
+        
+    </android.support.v7.widget.CardView>
+
+</android.support.constraint.ConstraintLayout>
