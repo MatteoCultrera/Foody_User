@@ -63,11 +63,22 @@
 
     <string name="noSave">I dati sono stati già salvati</string>
     <string name="delete">Cancella</string>
-    <string name="choose_biker">Scegli Biker</string>
 
     <string name="pending_orders">Ordini in Attesa</string>
     <string name="doing_orders">Ordini in Preparazione</string>
 
     <string name="suggestion_checkout">Per archiviare quest\'ordine, conferma che il biker lo ha ritirato
     nella pagina Consegne</string>
+
+
+    <string name="biker_choose">Scelta Ciclista</string>
+    <string name="biker_wait">Attesa Ciclista</string>
+
+
+    <string name="choose_biker">Scegli Biker</string>
+    <string name="phone_number">TELEFONO</string>
+    <string name="distance">DISTANZA</string>
+
+    <string name="choose">SCEGLI</string>
+
 </resources>
