@@ -33,6 +33,8 @@
     <string name="your_order">Your Order</string>
     <string name="total">Total:</string>
     <string name="delete_filter">Delete filters</string>
+
+
     <string name="price" translatable="false">%1$.2f €</string>
     <string name="plate" translatable="false">%1$d x %2$s</string>
 
@@ -43,4 +45,6 @@
     <string name="your_dishes">Your Dishes</string>
     <string name="delivery_time">Delivery Time</string>
     <string name="order_status">Order Status: %1$s</string>
+
+
 </resources>

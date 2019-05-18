@@ -2,7 +2,9 @@ package com.example.foodyrestaurant;
 
 
 import android.content.SharedPreferences;
+import android.net.Uri;
 import android.os.Bundle;
+import android.os.Environment;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
@@ -15,6 +17,9 @@ import android.view.ViewGroup;
 import android.widget.ImageButton;
 import android.widget.TextView;
 
+import com.bumptech.glide.Glide;
+import com.google.android.gms.tasks.OnFailureListener;
+import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.ChildEventListener;
@@ -24,9 +29,13 @@ import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.Query;
 import com.google.firebase.database.ValueEventListener;
+import com.google.firebase.storage.FileDownloadTask;
+import com.google.firebase.storage.FirebaseStorage;
+import com.google.firebase.storage.StorageReference;
 
 import org.jetbrains.annotations.NotNull;
 
+import java.io.File;
 import java.util.ArrayList;
 import java.util.Comparator;
 
@@ -45,6 +54,7 @@ public class BikerFragment extends Fragment {
     private FirebaseUser firebaseUser;
     private SharedPreferences sharedPreferences;
     private RVAdapterBiker adapterAccepted, adapterNotAccepted;
+    private boolean onChooseSide;
 
     public BikerFragment() {
         // Required empty public constructor
@@ -71,6 +81,7 @@ public class BikerFragment extends Fragment {
     }
 
     private void init(View view){
+
 
         LinearLayoutManager llm = new LinearLayoutManager(view.getContext());
         acceptedRecycler.setLayoutManager(llm);
@@ -148,6 +159,10 @@ public class BikerFragment extends Fragment {
                         return o1.getReservation().getOrderTime().compareTo(o2.getReservation().getOrderTime());
                     }
                 });
+
+                for(int i = 0; i < reservationAcceptedList.size(); i++){
+                    reservationAcceptedList.get(i).fetchBiker(i);
+                }
 
                 notAcceptedRecycler.setAdapter(adapterNotAccepted);
                 acceptedRecycler.setAdapter(adapterAccepted);
@@ -298,10 +313,45 @@ public class BikerFragment extends Fragment {
             }
         });
 
+        onChooseSide = true;
+        updateInterface();
 
+        switchButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                onChooseSide = !onChooseSide;
+                updateInterface();
+            }
+        });
 
+    }
 
+    private void updateInterface(){
+        if(onChooseSide){
+            stringUp.setText(getString(R.string.biker_choose));
+            stringDown.setText(getString(R.string.biker_wait));
+            notAcceptedRecycler.setVisibility(View.VISIBLE);
+            acceptedRecycler.setVisibility(View.GONE);
+        }else{
+            stringUp.setText(getString(R.string.biker_wait));
+            stringDown.setText(getString(R.string.biker_choose));
+            notAcceptedRecycler.setVisibility(View.GONE);
+            acceptedRecycler.setVisibility(View.VISIBLE);
+        }
 
+    }
+
+    @Override
+    public void onDestroy() {
+        super.onDestroy();
+        final File storageImage = getActivity().getExternalFilesDir(Environment.DIRECTORY_PICTURES);
+        for(int i = 0; i < reservationAcceptedList.size(); i++){
+            if(reservationAcceptedList.get(i).getBiker().getPath() != null){
+                File f = new File(storageImage, reservationAcceptedList.get(i).bikerID+".jpg");
+                if(f.exists())
+                    f.delete();
+            }
+        }
     }
 
     class ReservationBiker{
@@ -337,6 +387,89 @@ public class BikerFragment extends Fragment {
 
         public void setBiker(BikerInfo biker) {
             this.biker = biker;
+        }
+
+        public void fetchBiker(final int pos){
+            if(bikerID.length() == 0)
+                return;
+
+            final File storageImage = getActivity().getExternalFilesDir(Environment.DIRECTORY_PICTURES);
+
+            final DatabaseReference database = FirebaseDatabase.getInstance().getReference().child("Bikers");
+            Query query = database.child(bikerID).child("info");
+            query.addListenerForSingleValueEvent(new ValueEventListener() {
+                @Override
+                public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                    BikerInfo info = dataSnapshot.getValue(BikerInfo.class);
+                    String name = info.getUsername();
+                    String email = info.getEmail();
+                    String address = info.getAddress();
+                    String phoneNumber = info.getNumberPhone();
+                    String city = info.getCity();
+                    String imagePath = info.getPath();
+                    ArrayList<String> days = new ArrayList<>();
+                    days.add(0, info.getDaysTime().get(0));
+                    days.add(1, info.getDaysTime().get(1));
+                    days.add(2, info.getDaysTime().get(2));
+                    days.add(3, info.getDaysTime().get(3));
+                    days.add(4, info.getDaysTime().get(4));
+                    days.add(5, info.getDaysTime().get(5));
+                    days.add(6, info.getDaysTime().get(6));
+
+                    if(biker == null){
+                        biker = new BikerInfo(name, email, address, city, phoneNumber, days);
+                    }else{
+                        biker.setUsername(name);
+                        biker.setEmail(email);
+                        biker.setAddress(address);
+                        biker.setCity(city);
+                        biker.setNumberPhone(phoneNumber);
+                        biker.setDaysTime(days);
+                    }
+
+                    if(imagePath!=null){
+                        final File picture = new File(storageImage, bikerID+".jpg");
+
+                        if(!picture.exists()){
+                            StorageReference mStorageRef = FirebaseStorage.getInstance().getReference();
+                            mStorageRef
+                                    .child(imagePath)
+                                    .getFile(picture)
+                                    .addOnSuccessListener(
+                                            new OnSuccessListener<FileDownloadTask.TaskSnapshot>() {
+                                                @Override
+                                                public void onSuccess(FileDownloadTask.TaskSnapshot taskSnapshot){
+                                                    biker.setPath(picture.getPath());
+                                                }
+                                            })
+                                    .addOnFailureListener(
+                                            new OnFailureListener() {
+                                                @Override
+                                                public void onFailure(@NonNull Exception e) {
+                                                    if(picture.exists())
+                                                        picture.delete();
+                                                    biker.setPath(null);
+                                                }
+                                            }
+                                            );
+                        }
+                    }else{
+                        final File picture = new File(storageImage, bikerID+".jpg");
+                        if(picture.exists())
+                            picture.delete();
+                        biker.setPath(null);
+                    }
+
+                    adapterAccepted.notifyItemChanged(pos);
+
+                }
+
+                @Override
+                public void onCancelled(@NonNull DatabaseError databaseError) {
+                    biker = null;
+                    adapterAccepted.notifyItemChanged(pos);
+                }
+            });
         }
     }
 }
