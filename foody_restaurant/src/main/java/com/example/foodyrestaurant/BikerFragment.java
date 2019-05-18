@@ -338,5 +338,13 @@ public class BikerFragment extends Fragment {
         public void setBiker(BikerInfo biker) {
             this.biker = biker;
         }
+
+        public void fetchBiker(){
+            if(bikerID.length() == 0)
+                return;
+
+            final DatabaseReference database = FirebaseDatabase.getInstance().getReference().child("Bikers");
+            Query query = database.child(bikerID).child("info");
+        }
     }
 }
