@@ -107,6 +107,7 @@ public class DiscoverFragment extends Fragment {
                     //pos.address = place.getAddress();
                     //pos.latitude = place.getLatLng().latitude;
                     //pos.longitude = place.getLatLng().longitude;
+                    //TODO: here we can start the query to search restaurant
                     if(place.getAddress().equals(""))
                         setted = false;
                     address.setText(place.getAddress());
