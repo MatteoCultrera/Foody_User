@@ -89,6 +89,14 @@ public class RVAdapterBiker extends RecyclerView.Adapter<RVAdapterBiker.CardView
             pvh.dishesLayout.addView(dish);
         }
 
+        pvh.callBiker.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(pvh.bikerImage.getContext().getApplicationContext(), ChooseBikerActivity.class);
+                pvh.bikerImage.getContext().startActivity(intent);
+            }
+        });
+
 
     }
 

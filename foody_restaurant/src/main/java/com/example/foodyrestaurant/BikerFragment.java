@@ -401,30 +401,21 @@ public class BikerFragment extends Fragment {
                 @Override
                 public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
                     BikerInfo info = dataSnapshot.getValue(BikerInfo.class);
-                    String name = info.getUsername();
-                    String email = info.getEmail();
-                    String address = info.getAddress();
-                    String phoneNumber = info.getNumberPhone();
-                    String city = info.getCity();
+
                     String imagePath = info.getPath();
-                    ArrayList<String> days = new ArrayList<>();
-                    days.add(0, info.getDaysTime().get(0));
-                    days.add(1, info.getDaysTime().get(1));
-                    days.add(2, info.getDaysTime().get(2));
-                    days.add(3, info.getDaysTime().get(3));
-                    days.add(4, info.getDaysTime().get(4));
-                    days.add(5, info.getDaysTime().get(5));
-                    days.add(6, info.getDaysTime().get(6));
+
 
                     if(biker == null){
-                        biker = new BikerInfo(name, email, address, city, phoneNumber, days);
+                        biker = new BikerInfo(info.getUsername(),
+                                info.getEmail(), info.getAddress(),
+                                info.getCity(), info.getNumberPhone(), info.getDaysTime());
                     }else{
-                        biker.setUsername(name);
-                        biker.setEmail(email);
-                        biker.setAddress(address);
-                        biker.setCity(city);
-                        biker.setNumberPhone(phoneNumber);
-                        biker.setDaysTime(days);
+                        biker.setUsername(info.getUsername());
+                        biker.setEmail(info.getEmail());
+                        biker.setAddress(info.getAddress());
+                        biker.setCity(info.getCity());
+                        biker.setNumberPhone(info.getNumberPhone());
+                        biker.setDaysTime(info.getDaysTime());
                     }
 
                     if(imagePath!=null){

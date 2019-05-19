@@ -4,6 +4,7 @@ import android.support.annotation.NonNull;
 import android.support.constraint.ConstraintLayout;
 import android.support.design.button.MaterialButton;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -11,17 +12,23 @@ import android.widget.ImageButton;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
+import com.bumptech.glide.Glide;
+
+import java.util.ArrayList;
+
 import de.hdodenhof.circleimageview.CircleImageView;
 
 public class RVAdapterChooseBiker extends RecyclerView.Adapter<RVAdapterChooseBiker.CardViewHolder>{
 
-    RVAdapterChooseBiker(){
+    ArrayList<ChooseBikerActivity.BikerComplete> bikers;
 
+    RVAdapterChooseBiker(ArrayList<ChooseBikerActivity.BikerComplete> bikers){
+        this.bikers = bikers;
     }
 
     @Override
     public int getItemCount() {
-            return 0;
+            return bikers.size();
     }
 
     @NonNull
@@ -35,6 +42,25 @@ public class RVAdapterChooseBiker extends RecyclerView.Adapter<RVAdapterChooseBi
     @Override
     public void onBindViewHolder(@NonNull final RVAdapterChooseBiker.CardViewHolder pvh, int i) {
 
+        ChooseBikerActivity.BikerComplete currentBiker = bikers.get(i);
+
+        if(currentBiker.biker.getPath() == null){
+            pvh.profilePicture.setVisibility(View.GONE);
+        }else{
+            Glide
+                    .with(pvh.profilePicture.getContext())
+                    .load(currentBiker.biker.getPath())
+                    .into(pvh.profilePicture);
+        }
+
+        pvh.username.setText(currentBiker.biker.getUsername());
+        pvh.level.setText("Biker Beginner");
+        if(currentBiker.biker.getNumberPhone() != null)
+            pvh.phoneNumber.setText(currentBiker.biker.getNumberPhone());
+        else
+            pvh.callLayout.setVisibility(View.GONE);
+        pvh.distance.setText(currentBiker.getDistanceString());
+
     }
 
     @Override
@@ -45,9 +71,21 @@ public class RVAdapterChooseBiker extends RecyclerView.Adapter<RVAdapterChooseBi
 
     static class CardViewHolder extends RecyclerView.ViewHolder {
 
+        CircleImageView profilePicture;
+        TextView username, level, phoneNumber, distance;
+        ConstraintLayout callLayout, distanceLayout;
+        MaterialButton choose;
+
         CardViewHolder(View itemView) {
             super(itemView);
-
+            profilePicture = itemView.findViewById(R.id.choose_biker_profile_image);
+            username = itemView.findViewById(R.id.choose_biker_name);
+            level = itemView.findViewById(R.id.choose_biker_level);
+            phoneNumber = itemView.findViewById(R.id.choose_biker_phone_number);
+            distance = itemView.findViewById(R.id.choose_biker_distance);
+            callLayout = itemView.findViewById(R.id.choose_biker_phone_layout);
+            distanceLayout = itemView.findViewById(R.id.choose_biker_distance_layout);
+            choose = itemView.findViewById(R.id.choose_biker_button);
         }
     }
 }
