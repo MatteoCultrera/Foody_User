@@ -21,9 +21,11 @@ import de.hdodenhof.circleimageview.CircleImageView;
 public class RVAdapterChooseBiker extends RecyclerView.Adapter<RVAdapterChooseBiker.CardViewHolder>{
 
     ArrayList<ChooseBikerActivity.BikerComplete> bikers;
+    ChooseBikerActivity fatherClass;
 
-    RVAdapterChooseBiker(ArrayList<ChooseBikerActivity.BikerComplete> bikers){
+    RVAdapterChooseBiker(ArrayList<ChooseBikerActivity.BikerComplete> bikers, ChooseBikerActivity fatherClass){
         this.bikers = bikers;
+        this.fatherClass = fatherClass;
     }
 
     @Override
@@ -42,7 +44,7 @@ public class RVAdapterChooseBiker extends RecyclerView.Adapter<RVAdapterChooseBi
     @Override
     public void onBindViewHolder(@NonNull final RVAdapterChooseBiker.CardViewHolder pvh, int i) {
 
-        ChooseBikerActivity.BikerComplete currentBiker = bikers.get(i);
+        final ChooseBikerActivity.BikerComplete currentBiker = bikers.get(i);
 
         if(currentBiker.biker.getPath() == null){
             pvh.profilePicture.setVisibility(View.GONE);
@@ -60,6 +62,13 @@ public class RVAdapterChooseBiker extends RecyclerView.Adapter<RVAdapterChooseBi
         else
             pvh.callLayout.setVisibility(View.GONE);
         pvh.distance.setText(currentBiker.getDistanceString());
+
+        pvh.choose.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                fatherClass.bikerChosen(pvh.getAdapterPosition());
+            }
+        });
 
     }
 

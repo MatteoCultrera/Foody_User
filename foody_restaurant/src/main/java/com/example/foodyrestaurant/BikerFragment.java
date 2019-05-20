@@ -1,6 +1,7 @@
 package com.example.foodyrestaurant;
 
 
+import android.content.Intent;
 import android.content.SharedPreferences;
 import android.net.Uri;
 import android.os.Bundle;
@@ -39,11 +40,9 @@ import java.io.File;
 import java.util.ArrayList;
 import java.util.Comparator;
 
+import static android.app.Activity.RESULT_OK;
 import static android.content.Context.MODE_PRIVATE;
 
-/**
- * A simple {@link Fragment} subclass.
- */
 public class BikerFragment extends Fragment {
 
     private RecyclerView notAcceptedRecycler, acceptedRecycler;
@@ -55,6 +54,8 @@ public class BikerFragment extends Fragment {
     private SharedPreferences sharedPreferences;
     private RVAdapterBiker adapterAccepted, adapterNotAccepted;
     private boolean onChooseSide;
+    private final int CHOOSE_BIKER = 1;
+    private int currentPosition;
 
     public BikerFragment() {
         // Required empty public constructor
@@ -137,11 +138,13 @@ public class BikerFragment extends Fragment {
                     reservation.setTotalPrice(reservationDB.getTotalCost());
                     reservation.setRestaurantAddress(sharedPreferences.getString("address", null));
                     reservation.setRestaurantName(sharedPreferences.getString("name", null));
+
                     String biker = reservationDB.getBikerID();
+                    Log.d("BIKERFETCH","Called Init()");
                     if(!reservation.getPreparationStatusString().toLowerCase().equals("pending") && biker.equals(""))
-                        reservationList.add(new ReservationBiker(reservation));
+                        reservationList.add(new ReservationBiker(reservation, reservationDB.isWaitingBiker(), reservationDB.getReservationID()));
                     if(!reservation.getPreparationStatusString().toLowerCase().equals("pending") && !biker.equals("")){
-                        reservationAcceptedList.add(new ReservationBiker(reservation,biker));
+                        reservationAcceptedList.add(new ReservationBiker(reservation,biker, reservationDB.isWaitingBiker(), reservationDB.getReservationID()));
                     }
 
                 }
@@ -342,6 +345,27 @@ public class BikerFragment extends Fragment {
     }
 
     @Override
+    public void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+
+        switch(requestCode){
+            case CHOOSE_BIKER:
+                if(resultCode == RESULT_OK){
+                    Log.d("BIKERFETCH", "returned at pos "+currentPosition);
+                    String bikerId = data.getStringExtra("BikerID");
+                    reservationList.get(currentPosition).bikerID = bikerId;
+                    //TODO: gestire anche il caso dei biker che stanno accettando sul db
+                    //ora è solo in locale
+                    reservationList.get(currentPosition).waitingBiker = true;
+                    Log.d("BIKERFETCH", "order "+reservationList.get(currentPosition).getReservation().getReservationID() + " " + reservationList.get(currentPosition).isWaitingBiker());
+                    adapterNotAccepted.notifyItemChanged(currentPosition);
+                }
+                break;
+        }
+
+    }
+
+    @Override
     public void onDestroy() {
         super.onDestroy();
         final File storageImage = getActivity().getExternalFilesDir(Environment.DIRECTORY_PICTURES);
@@ -358,15 +382,21 @@ public class BikerFragment extends Fragment {
         private Reservation reservation;
         private BikerInfo biker;
         private String bikerID;
+        private boolean waitingBiker;
+        private String completeRes;
 
-        public ReservationBiker(Reservation reservation, String bikerID){
+        public ReservationBiker(Reservation reservation, String bikerID, boolean waitingBiker, String completeRes){
             this.reservation = reservation;
             this.bikerID = bikerID;
+            this.waitingBiker = waitingBiker;
+            this.completeRes = completeRes;
         }
 
-        public ReservationBiker(Reservation reservation){
+        public ReservationBiker(Reservation reservation, boolean waitingBiker, String completeRes){
             this.reservation = reservation;
             this.biker = null;
+            this.waitingBiker = waitingBiker;
+            this.completeRes = completeRes;
         }
 
         public boolean hasBiker(){
@@ -461,6 +491,22 @@ public class BikerFragment extends Fragment {
                     adapterAccepted.notifyItemChanged(pos);
                 }
             });
+        }
+
+        public boolean isWaitingBiker() {
+            return waitingBiker;
+        }
+
+        public void setWaitingBiker(boolean waitingBiker) {
+            this.waitingBiker = waitingBiker;
+        }
+
+        public String getCompleteRes() {
+            return completeRes;
+        }
+
+        public void setCompleteRes(String completeRes) {
+            this.completeRes = completeRes;
         }
     }
 }

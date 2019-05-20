@@ -180,24 +180,10 @@ public class RVAdapterRes extends RecyclerView.Adapter<RVAdapterRes.CardViewHold
                         "", dishes, true, null, reservations.get(pos).getUserPhone(),
                         reservations.get(pos).getUserName(), reservations.get(pos).getDeliveryTime(),
                         reservations.get(pos).getOrderTime(), "Doing", reservations.get(pos).getUserAddress(), reservations.get(pos).getTotalPrice());
+                reservationRest.setWaitingBiker(false);
                 reservationRest.setBiker(false);
                 childRest.put(reservationID, reservationRest);
                 databaseRest.updateChildren(childRest).addOnFailureListener(new OnFailureListener() {
-                    @Override
-                    public void onFailure(@NonNull Exception e) {
-                        Toast.makeText(context, R.string.error_order, Toast.LENGTH_SHORT).show();
-                    }
-                });
-
-                DatabaseReference databaseBiker = FirebaseDatabase.getInstance().getReference().child("reservations")
-                        .child("Bikers").child("JcPKKG2OBEalSLMdHbXMEQtL4oF3");
-                HashMap<String, Object> childBiker = new HashMap<>();
-                ReservationDBBiker reservationBiker = new ReservationDBBiker(reservationID, reservations.get(pos).getDeliveryTime(),
-                        reservations.get(pos).getOrderTime(), sharedPreferences.getString("name", null),
-                        reservations.get(pos).getUserName(), sharedPreferences.getString("address", null),
-                        reservations.get(pos).getUserAddress(), firebaseUser.getUid());
-                childBiker.put(reservationID, reservationBiker);
-                databaseBiker.updateChildren(childBiker).addOnFailureListener(new OnFailureListener() {
                     @Override
                     public void onFailure(@NonNull Exception e) {
                         Toast.makeText(context, R.string.error_order, Toast.LENGTH_SHORT).show();

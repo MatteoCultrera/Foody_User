@@ -9,6 +9,7 @@ import android.support.annotation.NonNull;
 import android.support.constraint.ConstraintLayout;
 import android.support.design.button.MaterialButton;
 import android.support.design.widget.FloatingActionButton;
+import android.support.v4.content.ContextCompat;
 import android.support.v7.widget.AppCompatImageButton;
 import android.support.v7.widget.CardView;
 import android.support.v7.widget.RecyclerView;
@@ -65,9 +66,9 @@ public class RVAdapterBiker extends RecyclerView.Adapter<RVAdapterBiker.CardView
     }
 
     @Override
-    public void onBindViewHolder(@NonNull final RVAdapterBiker.CardViewHolder pvh, int i) {
+    public void onBindViewHolder(@NonNull final RVAdapterBiker.CardViewHolder pvh, final int i) {
 
-        BikerFragment.ReservationBiker current = reservations.get(i);
+        final BikerFragment.ReservationBiker current = reservations.get(i);
         LayoutInflater inflater = LayoutInflater.from(pvh.idOrder.getContext());
 
         pvh.idOrder.setText(current.getReservation().getReservationID());
@@ -89,13 +90,26 @@ public class RVAdapterBiker extends RecyclerView.Adapter<RVAdapterBiker.CardView
             pvh.dishesLayout.addView(dish);
         }
 
-        pvh.callBiker.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Intent intent = new Intent(pvh.bikerImage.getContext().getApplicationContext(), ChooseBikerActivity.class);
-                pvh.bikerImage.getContext().startActivity(intent);
-            }
-        });
+        Log.d("BIKERFETCH", "waiting biker: "+current.isWaitingBiker()+"");
+
+        if(current.isWaitingBiker()){
+            pvh.callBiker.setClickable(false);
+            pvh.callBiker.setBackgroundTintList(ContextCompat.getColorStateList(pvh.callBiker.getContext(), R.color.colorPrimary));
+            pvh.callBiker.setText(pvh.callBiker.getContext().getString(R.string.waiting_biker));
+            pvh.callBiker.setOnClickListener(null);
+        }else{
+            pvh.callBiker.setClickable(true);
+            pvh.callBiker.setBackgroundTintList(ContextCompat.getColorStateList(pvh.callBiker.getContext(), R.color.colorAccent));
+            pvh.callBiker.setText(pvh.callBiker.getContext().getString(R.string.call_biker));
+            pvh.callBiker.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    Intent intent = new Intent(pvh.callBiker.getContext().getApplicationContext(), ChooseBikerActivity.class);
+                    intent.putExtra("ReservationID", current.getCompleteRes());
+                    pvh.callBiker.getContext().startActivity(intent);
+                }
+            });
+        }
 
 
     }

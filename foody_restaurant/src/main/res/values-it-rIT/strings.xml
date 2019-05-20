@@ -81,4 +81,9 @@
 
     <string name="choose">SCEGLI</string>
 
+
+    <string name="waiting_biker">ATTESA RISPOSTA</string>
+
+    <string name="call_biker">CHIAMA BIKER</string>
+
 </resources>
