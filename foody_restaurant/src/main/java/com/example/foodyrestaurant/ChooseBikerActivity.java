@@ -1,5 +1,6 @@
 package com.example.foodyrestaurant;
 
+import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Environment;
 import android.support.annotation.NonNull;
@@ -12,8 +13,10 @@ import android.view.View;
 import android.widget.Toast;
 
 import com.google.android.gms.maps.model.LatLng;
+import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
+import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.DataSnapshot;
@@ -29,6 +32,7 @@ import com.google.firebase.storage.StorageReference;
 import java.io.File;
 import java.util.ArrayList;
 import java.util.Comparator;
+import java.util.HashMap;
 
 public class ChooseBikerActivity extends AppCompatActivity {
 
@@ -46,7 +50,7 @@ public class ChooseBikerActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_choose_biker);
         storage = getExternalFilesDir(Environment.DIRECTORY_PICTURES);
-
+        preferences = getApplicationContext().getSharedPreferences("myPreference", MODE_PRIVATE);
         FirebaseAuth firebaseAuth = FirebaseAuth.getInstance();
         firebaseUser = firebaseAuth.getCurrentUser();
         final DatabaseReference database = FirebaseDatabase.getInstance().getReference().child("restaurantsInfo");
@@ -56,7 +60,6 @@ public class ChooseBikerActivity extends AppCompatActivity {
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
                 latitude = dataSnapshot.child("info").child("latitude").getValue(Double.class);
                 longitude = dataSnapshot.child("info").child("longitude").getValue(Double.class);
-                Log.d("BIKERFETCH",""+latitude+" "+longitude);
                 init();
             }
 
@@ -75,7 +78,7 @@ public class ChooseBikerActivity extends AppCompatActivity {
         recyclerView = findViewById(R.id.recycler_choose_biker);
         LinearLayoutManager llm = new LinearLayoutManager(this);
         recyclerView.setLayoutManager(llm);
-        chooseAdapter = new RVAdapterChooseBiker(bikers);
+        chooseAdapter = new RVAdapterChooseBiker(bikers, this);
 
         final DatabaseReference database = FirebaseDatabase.getInstance().getReference().child("Bikers");
         Query query = database;
@@ -87,6 +90,7 @@ public class ChooseBikerActivity extends AppCompatActivity {
                     Log.d("BIKERFETCH", ""+
                             biker.getUsername()+" "+biker.getAddress()+" "
                     +biker.getCity()+" "+biker.getNumberPhone());
+                    biker.setBikerID(d.getKey());
                     Double latitude, longitude;
 
                     try{
@@ -167,8 +171,16 @@ public class ChooseBikerActivity extends AppCompatActivity {
 
     }
 
+
+    @Override
+    public void onBackPressed() {
+        super.onBackPressed();
+        setResult(RESULT_CANCELED);
+        finish();
+    }
+
     public double haversineDistance(double initialLat, double initialLong,
-                                        double finalLat, double finalLong){
+                                    double finalLat, double finalLong){
         int R = 6371; // km (Earth radius)
         double dLat = toRadians(finalLat-initialLat);
         double dLon = toRadians(finalLong-initialLong);
@@ -183,6 +195,44 @@ public class ChooseBikerActivity extends AppCompatActivity {
 
     public double toRadians(double deg) {
         return deg * (Math.PI/180);
+    }
+
+    public void bikerChosen(final int pos){
+
+        final DatabaseReference database = FirebaseDatabase.getInstance().getReference().child("reservations").child("restaurant");
+        Query query = database.child(firebaseUser.getUid()).child(getIntent().getStringExtra("ReservationID"));
+        query.addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                ReservationDBRestaurant res = dataSnapshot.getValue(ReservationDBRestaurant.class);
+                res.setWaitingBiker(true);
+                ReservationDBBiker biker = new ReservationDBBiker(
+                        getIntent().getStringExtra("ReservationID"),
+                        res.getOrderTime(), res.getOrderTimeBiker(), preferences.getString("name",""),
+                        res.getNameUser(), preferences.getString("address",""), res.getUserAddress(), firebaseUser.getUid());
+
+                HashMap<String, Object> map = new HashMap<>();
+                map.put(getIntent().getStringExtra("ReservationID"),biker);
+                DatabaseReference reference = FirebaseDatabase.getInstance().getReference().child("reservations").child("Bikers")
+                        .child(bikers.get(pos).biker.getBikerID());
+                reference.updateChildren(map);
+
+                DatabaseReference db2 = database.child(firebaseUser.getUid()).child(getIntent().getStringExtra("ReservationID"));
+                db2.child("waitingBiker").setValue(true).addOnCompleteListener(new OnCompleteListener<Void>() {
+                    @Override
+                    public void onComplete(@NonNull Task<Void> task) {
+                        finish();
+                    }
+                });
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError databaseError) {
+
+            }
+        });
+
+
     }
 
     class BikerComplete{

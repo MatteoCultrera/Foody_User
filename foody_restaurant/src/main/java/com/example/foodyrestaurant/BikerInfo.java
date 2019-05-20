@@ -10,6 +10,7 @@ public class BikerInfo {
     private String numberPhone;
     private ArrayList<String> daysTime;
     private String path;
+    private String bikerID;
 
     BikerInfo() {}
 
@@ -82,5 +83,13 @@ public class BikerInfo {
 
     public void setPath(String path) {
         this.path = path;
+    }
+
+    public String getBikerID() {
+        return bikerID;
+    }
+
+    public void setBikerID(String bikerID) {
+        this.bikerID = bikerID;
     }
 }
