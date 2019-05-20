@@ -8,7 +8,6 @@ public class Reservation {
             reservationID, restaurantID, notes;
     private boolean accepted;
 
-
     public Reservation(String restaurantName, String restaurantAddress, String restaurantPickupTime, String userName, String userAddress, String userDeliveryTime, String restaurantID, String notes, boolean accepted) {
         this.restaurantName = restaurantName;
         this.restaurantAddress = restaurantAddress;
@@ -100,4 +99,6 @@ public class Reservation {
     public void setUserDeliveryTime(String userDeliveryTime) {
         this.userDeliveryTime = userDeliveryTime;
     }
+
+
 }
