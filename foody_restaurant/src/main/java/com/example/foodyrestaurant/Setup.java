@@ -78,7 +78,6 @@ import static android.Manifest.permission.ACCESS_FINE_LOCATION;
 
 public class Setup extends AppCompatActivity {
 
-    private static final int AUTOCOMPLETE_REQUEST_CODE = 9;
     private ImageView profilePicture;
     private ImageButton save;
     private FloatingActionButton editImage;
@@ -126,11 +125,12 @@ public class Setup extends AppCompatActivity {
     }
 
     private Position pos;
-
+    private static final int AUTOCOMPLETE_REQUEST_CODE = 9;
     private ImageButton callActivityAddress;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
+        setTheme(R.style.AppTheme);
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_setup);
         firebaseAuth = FirebaseAuth.getInstance();

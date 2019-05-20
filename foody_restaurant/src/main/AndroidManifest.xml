@@ -21,8 +21,8 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
+
         <activity android:name=".ChooseBikerActivity"></activity>
-        <activity android:name=".AddressActivity"></activity>
         <activity
             android:name=".Login"
             android:theme="@style/SplashTheme"

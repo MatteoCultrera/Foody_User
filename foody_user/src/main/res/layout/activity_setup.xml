@@ -342,17 +342,14 @@
             <android.support.constraint.ConstraintLayout
                 android:id="@+id/constraintLayout7"
                 android:layout_width="0dp"
-                android:layout_height="59dp"
+                android:layout_height="61dp"
                 android:layout_marginStart="16dp"
                 android:layout_marginTop="21dp"
                 android:layout_marginEnd="16dp"
-                android:layout_marginBottom="8dp"
-                app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintHorizontal_bias="0.0"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@+id/constraintLayout6"
-                app:layout_constraintVertical_bias="0.0">
+                app:layout_constraintTop_toBottomOf="@+id/constraintLayout6">
 
                 <ImageView
                     android:id="@+id/imageView4"
@@ -360,34 +357,49 @@
                     android:layout_height="30dp"
                     android:layout_marginTop="8dp"
                     android:layout_marginEnd="161dp"
-                    android:adjustViewBounds="true"
                     android:contentDescription="@null"
-                    android:padding="2dp"
                     android:scaleType="fitCenter"
+                    android:adjustViewBounds="true"
+                    android:padding="2dp"
                     android:src="@drawable/address2_black"
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintHorizontal_bias="0.0"
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintTop_toTopOf="parent" />
 
-                <EditText
+                <TextView
                     android:id="@+id/address"
                     style="@android:style/Widget.Material.EditText"
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
                     android:layout_marginStart="8dp"
                     android:layout_marginTop="11dp"
+                    android:layout_marginEnd="8dp"
                     android:background="@android:color/transparent"
                     android:fontFamily="@font/roboto_regular"
                     android:hint="@string/address_hint"
-                    android:inputType="textPostalAddress|textMultiLine|textCapSentences"
                     android:maxLength="254"
                     android:scrollHorizontally="false"
-                    android:textSize="15sp"
                     android:textColor="@color/primaryText"
-                    app:layout_constraintEnd_toEndOf="parent"
-                    app:layout_constraintHorizontal_bias="0.0"
+                    android:textSize="15sp"
+                    app:layout_constraintEnd_toStartOf="@+id/searchAddress"
                     app:layout_constraintStart_toEndOf="@+id/imageView4"
+                    app:layout_constraintTop_toTopOf="parent" />
+
+                <ImageButton
+                    android:id="@+id/searchAddress"
+                    android:layout_width="30dp"
+                    android:layout_height="30dp"
+                    android:layout_marginStart="161dp"
+                    android:layout_marginTop="8dp"
+                    android:layout_marginEnd="8dp"
+                    android:adjustViewBounds="true"
+                    android:background="@android:color/transparent"
+                    android:contentDescription="@null"
+                    android:src="@drawable/search_black"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintHorizontal_bias="1.0"
+                    app:layout_constraintStart_toStartOf="@+id/address_error_line"
                     app:layout_constraintTop_toTopOf="parent" />
 
                 <View
@@ -408,7 +420,6 @@
                     android:textColor="#C90006"
                     app:layout_constraintBottom_toBottomOf="parent"
                     app:layout_constraintStart_toStartOf="parent" />
-
 
             </android.support.constraint.ConstraintLayout>
 
