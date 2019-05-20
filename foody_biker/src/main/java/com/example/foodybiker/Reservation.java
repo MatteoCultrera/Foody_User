@@ -7,7 +7,6 @@ public class Reservation {
             userAddress, userDeliveryTime,
             reservationID, restaurantID, notes;
 
-
     public Reservation(String restaurantName, String restaurantAddress, String restaurantPickupTime, String userName, String userAddress, String userDeliveryTime, String restaurantID, String notes) {
         this.restaurantName = restaurantName;
         this.restaurantAddress = restaurantAddress;

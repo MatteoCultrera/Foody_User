@@ -19,24 +19,33 @@ import com.google.android.gms.location.LocationCallback;
 import com.google.android.gms.location.LocationRequest;
 import com.google.android.gms.location.LocationResult;
 import com.google.android.gms.location.LocationServices;
+import com.google.android.gms.maps.CameraUpdate;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.SupportMapFragment;
 import com.google.android.gms.maps.model.LatLng;
+import com.google.android.gms.maps.model.LatLngBounds;
+import com.google.android.gms.maps.model.MarkerOptions;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.Query;
+import com.google.firebase.database.ValueEventListener;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 
 public class MapFragment extends Fragment {
 
     private GoogleMap mGoogleMap;
     private FirebaseAuth firebaseAuth;
+    private FirebaseUser firebaseUser;
     private FusedLocationProviderClient mFusedLocationProviderClient;
     private boolean mLocationPermissionGranted;
     private static final int DEFAULT_ZOOM = 15;
@@ -45,6 +54,7 @@ public class MapFragment extends Fragment {
     SupportMapFragment mapFragment;
     private LocationCallback locationCallback;
     LocationRequest locationRequest;
+    private ArrayList<Reservation> reservations;
 
     public MapFragment() {}
 
@@ -63,11 +73,50 @@ public class MapFragment extends Fragment {
                 for (Location location : locationResult.getLocations()) {
                     Toast.makeText(mapFragment.getContext(), location.getLatitude() + " " + location.getLongitude(), Toast.LENGTH_SHORT).show();
                     FirebaseUser user = firebaseAuth.getCurrentUser();
-                    DatabaseReference database = FirebaseDatabase.getInstance().getReference()
+                    final DatabaseReference database = FirebaseDatabase.getInstance().getReference()
                             .child("Bikers/" + user.getUid());
                     HashMap<String, Object> child = new HashMap<>();
                     child.put("location", location);
                     database.updateChildren(child);
+
+                    Log.d("PROVA", reservations.size() + "");
+                    if(!reservations.isEmpty()) {
+                        for (int i = 0; i < reservations.size(); i++) {
+                            DatabaseReference databaseRest = FirebaseDatabase.getInstance().getReference().child("restaurantsInfo");
+                            Query queryLatLong;
+                            final String name = reservations.get(i).getRestaurantName();
+                            queryLatLong = databaseRest.child(reservations.get(i).getRestaurantID());
+                            //TODO: controllare se giusto
+                            queryLatLong.addListenerForSingleValueEvent(new ValueEventListener() {
+                                @Override
+                                public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                                    for (DataSnapshot ds : dataSnapshot.getChildren()) {
+                                        ReservationDBBiker reservationDB = ds.getValue(ReservationDBBiker.class);
+                                        Double lat = reservationDB.getLatitude();
+                                        Double lon = reservationDB.getLongitude();
+                                        LatLng latlon = new LatLng(lat, lon);
+
+                                        Log.d("PROVA", "lat " + latlon.latitude + " long " + latlon.longitude + " name " + name);
+                                        MarkerOptions mark = new MarkerOptions();
+                                        mark.position(latlon);
+                                        mGoogleMap.addMarker(mark).setTitle(name);
+                                        LatLngBounds.Builder builder = new LatLngBounds.Builder();
+                                        builder.include(latlon);
+                                        builder.include(new LatLng(mLastKnownLocation.getLatitude(), mLastKnownLocation.getLongitude()));
+                                        LatLngBounds bounds = builder.build();
+                                        CameraUpdate cu = CameraUpdateFactory.newLatLngBounds(bounds, 150);
+                                        mGoogleMap.moveCamera(cu);
+                                    }
+                                }
+
+                                @Override
+                                public void onCancelled(@NonNull DatabaseError databaseError) {
+                                    }
+                                });
+                            }
+                        } else {
+                            Log.d("PROVA", "empty");
+                        }
                 }
             };
         };
@@ -85,6 +134,8 @@ public class MapFragment extends Fragment {
         mLocationPermissionGranted = ContextCompat.checkSelfPermission(mapFragment.getContext(), android.Manifest.permission.ACCESS_FINE_LOCATION)
                 == PackageManager.PERMISSION_GRANTED;
 
+        initRestFromDB();
+
         mapFragment.getMapAsync(new OnMapReadyCallback() {
             @Override
             public void onMapReady(GoogleMap mMap) {
@@ -99,6 +150,35 @@ public class MapFragment extends Fragment {
         });
 
         return rootView;
+    }
+
+    private void initRestFromDB() {
+        firebaseAuth = FirebaseAuth.getInstance();
+        firebaseUser = firebaseAuth.getCurrentUser();
+        reservations = new ArrayList<>();
+        final DatabaseReference database = FirebaseDatabase.getInstance().getReference().child("reservations").child("Bikers");
+        Query query = database.child(firebaseUser.getUid());
+        query.addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot dataSnapshot){
+                for (DataSnapshot ds : dataSnapshot.getChildren()) {
+                    Log.d("PROVA", ds.getKey());
+                    ReservationDBBiker reservationDB = ds.getValue(ReservationDBBiker.class);
+                    if (reservationDB.getStatus() == null || reservationDB.getStatus().equals("accepted")) {
+                        Reservation reservation = new Reservation(reservationDB.getRestaurantName(), reservationDB.getRestaurantAddress(),
+                                reservationDB.getOrderTimeBiker(), reservationDB.getUserName(), reservationDB.getUserAddress(),
+                                reservationDB.getOrderTime(), reservationDB.getRestaurantID(),null);
+                        reservation.setReservationID(ds.getKey());
+                        reservations.add(reservation);
+                    }
+                }
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError databaseError) {
+            }
+        });
+
     }
 
     private void getLocationPermission(){
@@ -123,7 +203,7 @@ public class MapFragment extends Fragment {
 
     @Override
     public void onRequestPermissionsResult(int requestCode,
-                                           @NonNull String permissions[],
+                                           @NonNull String[] permissions,
                                            @NonNull int[] grantResults) {
         switch (requestCode) {
             case PERMISSIONS_REQUEST_ACCESS_FINE_LOCATION: {
@@ -156,10 +236,6 @@ public class MapFragment extends Fragment {
                 HashMap<String, Object> child = new HashMap<>();
                 child.put("location", loc);
                 database.updateChildren(child);
-                //mGoogleMap.addMarker(new MarkerOptions().position(new LatLng(mLastKnownLocation.getLatitude(),mLastKnownLocation.getLongitude())));
-                //mGoogleMap.moveCamera(CameraUpdateFactory.newLatLngZoom(
-                //        new LatLng(mLastKnownLocation.getLatitude(),
-                //                mLastKnownLocation.getLongitude()), DEFAULT_ZOOM));
             } else {
                 mGoogleMap.setMyLocationEnabled(false);
 
@@ -174,7 +250,6 @@ public class MapFragment extends Fragment {
 
     private void getDeviceLocation() {
         if (mGoogleMap == null) {
-            Log.d("PROVA", "inside mGoogleMap");
             return;
         }
         try {
@@ -185,7 +260,6 @@ public class MapFragment extends Fragment {
                     public void onComplete(@NonNull Task task) {
                         if (task.isSuccessful()) {
                             // Set the map's camera position to the current location of the device.
-
                             mLastKnownLocation = (Location) task.getResult();
                             if(mLastKnownLocation != null) {
                                 mGoogleMap.moveCamera(CameraUpdateFactory.newLatLngZoom(
@@ -200,8 +274,6 @@ public class MapFragment extends Fragment {
                             child.put("location", mLastKnownLocation);
                             database.updateChildren(child);
                         } else {
-                            Log.d("LOCATION", "Current location is null. Using defaults.");
-                            //Log.e("LOCATION", "Exception: %s", task.getException());
                             mGoogleMap.getUiSettings().setMyLocationButtonEnabled(false);
                         }
                     }
@@ -216,8 +288,9 @@ public class MapFragment extends Fragment {
         mLocationPermissionGranted = ContextCompat.checkSelfPermission(mapFragment.getContext(), android.Manifest.permission.ACCESS_FINE_LOCATION)
                 == PackageManager.PERMISSION_GRANTED;
         locationRequest.setPriority(LocationRequest.PRIORITY_BALANCED_POWER_ACCURACY);
-        locationRequest.setFastestInterval(10000);
-
+        //locationRequest.setSmallestDisplacement(20.0f);
+        locationRequest.setInterval(10000);
+        //TODO: think about polling or notification on changes
         mFusedLocationProviderClient.requestLocationUpdates(locationRequest, locationCallback, Looper.getMainLooper());
     }
 
