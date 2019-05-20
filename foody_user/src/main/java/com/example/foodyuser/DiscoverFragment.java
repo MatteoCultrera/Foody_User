@@ -102,9 +102,6 @@ public class DiscoverFragment extends Fragment {
             if (requestCode == AUTOCOMPLETE_REQUEST_CODE) {
                 Place place = Autocomplete.getPlaceFromIntent(data);
                 Log.d("PLACE", "Place: " + place.getAddress() + " LAT_LNG " + place.getLatLng());
-                //pos.address = place.getAddress();
-                //pos.latitude = place.getLatLng().latitude;
-                //pos.longitude = place.getLatLng().longitude;
                 //TODO: here we can start the query to search restaurant
                 if(place.getAddress().equals(""))
                     setted = false;

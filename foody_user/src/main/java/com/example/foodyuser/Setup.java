@@ -33,6 +33,10 @@ import android.widget.Toast;
 import com.bumptech.glide.Glide;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
+import com.google.android.libraries.places.api.Places;
+import com.google.android.libraries.places.api.model.Place;
+import com.google.android.libraries.places.widget.Autocomplete;
+import com.google.android.libraries.places.widget.model.AutocompleteActivityMode;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.DataSnapshot;
@@ -49,7 +53,9 @@ import com.yalantis.ucrop.UCropActivity;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.util.Arrays;
 import java.util.HashMap;
+import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -60,11 +66,11 @@ public class Setup extends AppCompatActivity {
     private CircleImageView profilePicture;
     private ImageButton save;
     private FloatingActionButton editImage;
-    private EditText name, email, address, phoneNumber, bio;
+    private EditText name, email, phoneNumber, bio;
     private TextView errorName;
     private TextView errorMail;
     private TextView errorPhone;
-    private TextView errorAddress;
+    private TextView errorAddress, address;
     private final int GALLERY_REQUEST_CODE = 1;
     private final int REQUEST_CAPTURE_IMAGE = 100;
     private final String PROFILE_IMAGE = "ProfileImage.jpg";
@@ -78,6 +84,21 @@ public class Setup extends AppCompatActivity {
     private SharedPreferences sharedPref;
     private SharedPreferences.Editor edit;
     private String pathImage;
+
+    class Position {
+        public String address;
+        public Double latitude, longitude;
+
+        public Position(String address) {
+            this.address = address;
+            this.latitude = null;
+            this.longitude = null;
+        }
+    }
+
+    private Position pos;
+    private static final int AUTOCOMPLETE_REQUEST_CODE = 9;
+    private ImageButton callActivityAddress;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -431,7 +452,38 @@ public class Setup extends AppCompatActivity {
             }
         });
 
+        if(pos == null)
+            pos = new Position(sharedPref.getString("address", ""));
+
+        this.callActivityAddress = findViewById(R.id.searchAddress);
+
+        callActivityAddress.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                addressActivity();
+            }
+        });
+
+        address.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                addressActivity();
+            }
+        });
+
+
         updateSave();
+    }
+
+    public void addressActivity() {
+        if (!Places.isInitialized()) {
+            Places.initialize(getApplicationContext(), BuildConfig.ApiKey);
+        }
+
+        final List<Place.Field> fields = Arrays.asList(Place.Field.ID, Place.Field.ADDRESS, Place.Field.LAT_LNG);
+        Intent intent = new Autocomplete.IntentBuilder(AutocompleteActivityMode.FULLSCREEN, fields)
+                .build(getApplicationContext());
+        startActivityForResult(intent, AUTOCOMPLETE_REQUEST_CODE);
     }
 
     @Override
@@ -464,6 +516,15 @@ public class Setup extends AppCompatActivity {
                         saveBitmap(bitmap, placeholder.getPath());
                         unchanged = false;
                     }
+                    break;
+
+                case AUTOCOMPLETE_REQUEST_CODE:
+                    Place place = Autocomplete.getPlaceFromIntent(data);
+                    Log.d("PLACE", "Place: " + place.getAddress() + " LAT_LNG " + place.getLatLng());
+                    pos.address = place.getAddress();
+                    pos.latitude = place.getLatLng().latitude;
+                    pos.longitude = place.getLatLng().longitude;
+                    address.setText(place.getAddress());
                     break;
             }
         }
@@ -660,12 +721,22 @@ public class Setup extends AppCompatActivity {
         child.put("info", info);
         database.updateChildren(child);
 
+        if(pos.latitude != null && pos.longitude != null) {
+            DatabaseReference databaseLoc = FirebaseDatabase.getInstance().getReference()
+                    .child("endUsers/" + user.getUid()).child("info");
+            HashMap<String, Object> childLoc = new HashMap<>();
+            childLoc.put("latitude", pos.latitude);
+            childLoc.put("longitude", pos.longitude);
+            databaseLoc.updateChildren(childLoc);
+        }
+
         edit.putString("name", name.getText().toString());
         edit.putString("email", email.getText().toString());
         edit.putString("address", address.getText().toString());
         edit.putString("phoneNumber", phoneNumber.getText().toString());
         edit.putString("bio", bio.getText().toString());
         edit.apply();
+
         Toast.makeText(getApplicationContext(), R.string.save, Toast.LENGTH_SHORT).show();
         unchanged = true;
     }
