@@ -378,6 +378,46 @@ public class BikerFragment extends Fragment {
         }
     }
 
+    public void bikerAccepted(String reservationID, String bikerID){
+
+        int i;
+        for(i = 0; i < reservationList.size(); i++){
+            if(reservationList.get(i).completeRes.equals(reservationID))
+                break;
+        }
+
+        ReservationBiker res = reservationList.get(i);
+
+        reservationList.remove(i);
+        adapterNotAccepted.notifyItemRemoved(i);
+        adapterNotAccepted.notifyItemRangeChanged(i, reservationList.size());
+
+        res.bikerID = bikerID;
+
+        res.fetchBiker(i);
+
+        int j;
+        for(j = 0; j < reservationAcceptedList.size(); j++){
+            if(reservationAcceptedList.get(i).reservation.getOrderTime().compareTo(res.reservation.getOrderTime()) > 0)
+                break;
+        }
+
+        reservationAcceptedList.add(i, res);
+        adapterAccepted.notifyItemInserted(i);
+        adapterAccepted.notifyItemRangeChanged(i, reservationAcceptedList.size());
+
+    }
+
+    public void bikerRefused(String reservationID){
+        int i;
+        for(i = 0; i < reservationList.size(); i++){
+            if(reservationList.get(i).completeRes.equals(reservationID))
+                break;
+        }
+        reservationList.get(i).waitingBiker = false;
+        adapterNotAccepted.notifyItemChanged(i);
+    }
+
     class ReservationBiker{
         private Reservation reservation;
         private BikerInfo biker;
@@ -480,8 +520,6 @@ public class BikerFragment extends Fragment {
                             picture.delete();
                         biker.setPath(null);
                     }
-
-                    adapterAccepted.notifyItemChanged(pos);
 
                 }
 
