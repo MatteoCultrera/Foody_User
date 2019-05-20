@@ -2,6 +2,7 @@ package com.example.foodybiker;
 
 import android.content.Context;
 import android.content.SharedPreferences;
+import android.content.pm.PackageManager;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.design.internal.BottomNavigationItemView;
@@ -27,6 +28,8 @@ public class MainActivity extends AppCompatActivity {
     private Fragment user;
     private final FragmentManager fm = getSupportFragmentManager();
     private Fragment active;
+
+    private static final int PERMISSIONS_REQUEST_ACCESS_FINE_LOCATION = 6;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -71,6 +74,21 @@ public class MainActivity extends AppCompatActivity {
     @Override
     protected void onResume() {
         super.onResume();
+    }
+
+    @Override
+    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults);
+
+        if(requestCode == PERMISSIONS_REQUEST_ACCESS_FINE_LOCATION) {
+                // If request is cancelled, the result arrays are empty.
+                if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+                    if(map.isVisible())
+                        ((MapFragment)map).permissionsGrantedVis();
+                    else
+                        ((MapFragment)map).permissionsGranted();
+                }
+        }
     }
 
     @Override
