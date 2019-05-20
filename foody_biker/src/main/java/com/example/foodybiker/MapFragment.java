@@ -141,9 +141,6 @@ public class MapFragment extends Fragment {
             public void onMapReady(GoogleMap mMap) {
                 mGoogleMap = mMap;
 
-                mMap.setMapType(GoogleMap.MAP_TYPE_NORMAL);
-                mMap.clear(); //clear old markers
-
                 getDeviceLocation();
                 updateLocationUI();
             }
@@ -167,7 +164,7 @@ public class MapFragment extends Fragment {
                     if (reservationDB.getStatus() == null || reservationDB.getStatus().equals("accepted")) {
                         Reservation reservation = new Reservation(reservationDB.getRestaurantName(), reservationDB.getRestaurantAddress(),
                                 reservationDB.getOrderTimeBiker(), reservationDB.getUserName(), reservationDB.getUserAddress(),
-                                reservationDB.getOrderTime(), reservationDB.getRestaurantID(),null);
+                                reservationDB.getOrderTime(), reservationDB.getRestaurantID(),null, true);
                         reservation.setReservationID(ds.getKey());
                         reservations.add(reservation);
                     }
@@ -288,7 +285,8 @@ public class MapFragment extends Fragment {
         mLocationPermissionGranted = ContextCompat.checkSelfPermission(mapFragment.getContext(), android.Manifest.permission.ACCESS_FINE_LOCATION)
                 == PackageManager.PERMISSION_GRANTED;
         locationRequest.setPriority(LocationRequest.PRIORITY_BALANCED_POWER_ACCURACY);
-        //locationRequest.setSmallestDisplacement(20.0f);
+        locationRequest.setSmallestDisplacement(30.0f);
+        locationRequest.setMaxWaitTime(60000);
         locationRequest.setInterval(10000);
         //TODO: think about polling or notification on changes
         mFusedLocationProviderClient.requestLocationUpdates(locationRequest, locationCallback, Looper.getMainLooper());

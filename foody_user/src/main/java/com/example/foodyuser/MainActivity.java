@@ -1,6 +1,5 @@
 package com.example.foodyuser;
 
-import android.content.Context;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
@@ -20,19 +19,20 @@ public class MainActivity extends AppCompatActivity {
 
 
     private View notificationBadgeOne, notificationBadgeTwo, notificationBadgeThree;
-    BottomNavigationView bottomBar;
-
+    private BottomNavigationView bottomBar;
     private Fragment discover;
     private Fragment reservations;
     private Fragment user;
     private final FragmentManager fm = getSupportFragmentManager();
     private Fragment active;
+    private SharedPreferences sharedPref;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         setTheme(R.style.AppTheme);
         super.onCreate(savedInstanceState);
         setContentView(R.layout.bottom_bar);
+        sharedPref = getSharedPreferences("myPreference", MODE_PRIVATE);
         if (savedInstanceState != null) {
             String lastFragment = savedInstanceState.getString("lastFragment", null);
             if (lastFragment != null) {
@@ -108,7 +108,6 @@ public class MainActivity extends AppCompatActivity {
             }
         });
         addBadgeView();
-        SharedPreferences sharedPref = this.getPreferences(Context.MODE_PRIVATE);
         if (sharedPref.getBoolean("hasNotification",false)){
             setNotification(1);
         }
@@ -151,10 +150,7 @@ public class MainActivity extends AppCompatActivity {
                 break;
         }
         if(notificationBadgeTwo.getVisibility() == View.GONE){
-            SharedPreferences prefs = this.getPreferences(Context.MODE_PRIVATE);
-            SharedPreferences.Editor editor = prefs.edit();
-            editor.putBoolean("hasNotification", false);
-            editor.apply();
+            sharedPref.edit().putBoolean("hasNotification", false).apply();
         }
     }
 
@@ -197,15 +193,9 @@ public class MainActivity extends AppCompatActivity {
     protected void onPause() {
         super.onPause();
         if(notificationBadgeTwo.getVisibility() == View.VISIBLE){
-            SharedPreferences sharedPref = this.getPreferences(Context.MODE_PRIVATE);
-            SharedPreferences.Editor editor = sharedPref.edit();
-            editor.putBoolean("hasNotification", true);
-            editor.apply();
+            sharedPref.edit().putBoolean("hasNotification", true).apply();
         }else{
-            SharedPreferences sharedPref = this.getPreferences(Context.MODE_PRIVATE);
-            SharedPreferences.Editor editor = sharedPref.edit();
-            editor.putBoolean("hasNotification", false);
-            editor.apply();
+            sharedPref.edit().putBoolean("hasNotification", false).apply();
         }
     }
 }

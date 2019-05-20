@@ -82,8 +82,6 @@ public class BikerFragment extends Fragment {
     }
 
     private void init(View view){
-
-
         LinearLayoutManager llm = new LinearLayoutManager(view.getContext());
         acceptedRecycler.setLayoutManager(llm);
         LinearLayoutManager llm2 = new LinearLayoutManager(view.getContext());
@@ -170,106 +168,27 @@ public class BikerFragment extends Fragment {
                 notAcceptedRecycler.setAdapter(adapterNotAccepted);
                 acceptedRecycler.setAdapter(adapterAccepted);
 
-                /*
-                //Add the notification that advise the restaurant when a new reservation has been assigned to him
+                //notification
                 DatabaseReference restaurantReservations = FirebaseDatabase.getInstance().getReference().child("reservations")
                         .child("restaurant").child(firebaseUser.getUid());
                 restaurantReservations.addChildEventListener(new ChildEventListener() {
                     @Override
                     public void onChildAdded(@NonNull DataSnapshot dataSnapshot, @Nullable String s) {
-                        ReservationDBRestaurant reservationDB = dataSnapshot.getValue(ReservationDBRestaurant.class);
-                        toAdd = true;
-                        String orderID = null;
-                        if(pending_reservations != null && pending_reservations.size() != 0) {
-                            for (Reservation r : pending_reservations) {
-                                orderID = reservationDB.getReservationID().substring(28);
-                                if (r.getReservationID().equals(orderID)) {
-                                    toAdd = false;
-                                    break;
-                                }
-                            }
-                            if (toAdd && !reservationDB.getStatus().equals("Done")) {
-                                ArrayList<Dish> dishes = new ArrayList<>();
-                                for (OrderItem o : reservationDB.getDishesOrdered()) {
-                                    Dish dish = new Dish();
-                                    dish.setQuantity(o.getPieces());
-                                    dish.setDishName(o.getOrderName());
-                                    dish.setPrice(o.getPrice());
-                                }
-                                Reservation.prepStatus status;
-                                if (reservationDB.getStatus().equals("Pending")) {
-                                    status = Reservation.prepStatus.PENDING;
-                                } else if (reservationDB.getStatus().equals("Doing")) {
-                                    status = Reservation.prepStatus.DOING;
-                                } else {
-                                    status = Reservation.prepStatus.DONE;
-                                }
-                                Reservation reservation = new Reservation(orderID, dishes,
-                                        status, reservationDB.isAccepted(), reservationDB.getOrderTime(), reservationDB.getNameUser(),
-                                        reservationDB.getNumberPhone(), reservationDB.getResNote(), null, sharedPreferences.getString("email", null),
-                                        reservationDB.getUserAddress());
 
-                                int index;
-                                if(reservation.getPreparationStatusString().toLowerCase().equals("pending")){
-                                    for (index = 0; index < pending_reservations.size(); index++) {
-                                        if (reservation.getOrderTime().compareTo(pending_reservations.get(index).getOrderTime()) > 0)
-                                            break;
-                                    }
-                                    pending_reservations.add(index, reservation);
-                                    adapterPending.notifyItemInserted(index);
-                                    adapterPending.notifyItemRangeChanged(index, pending_reservations.size());
-                                    father.setNotification(1);
-                                }
-                            }
-                        }
-                        if(doing_reservations != null && doing_reservations.size() != 0) {
-                            for (Reservation r : doing_reservations) {
-                                orderID = reservationDB.getReservationID().substring(28);
-                                if (r.getReservationID().equals(orderID)) {
-                                    toAdd = false;
-                                    break;
-                                }
-                            }
-                            if (toAdd && !reservationDB.getStatus().equals("Done")) {
-                                ArrayList<Dish> dishes = new ArrayList<>();
-                                for (OrderItem o : reservationDB.getDishesOrdered()) {
-                                    Dish dish = new Dish();
-                                    dish.setQuantity(o.getPieces());
-                                    dish.setDishName(o.getOrderName());
-                                    dish.setPrice(o.getPrice());
-                                }
-                                Reservation.prepStatus status;
-                                if (reservationDB.getStatus().equals("Pending")) {
-                                    status = Reservation.prepStatus.PENDING;
-                                } else if (reservationDB.getStatus().equals("Doing")) {
-                                    status = Reservation.prepStatus.DOING;
-                                } else {
-                                    status = Reservation.prepStatus.DONE;
-                                }
-                                Reservation reservation = new Reservation(orderID, dishes,
-                                        status, reservationDB.isAccepted(), reservationDB.getOrderTime(), reservationDB.getNameUser(),
-                                        reservationDB.getNumberPhone(), reservationDB.getResNote(), null, sharedPreferences.getString("email", null),
-                                        reservationDB.getUserAddress());
-
-                                int index;
-                                if(!reservation.getPreparationStatusString().toLowerCase().equals("pending")){
-                                    Log.d("POSITIONDD","Added to doing");
-                                    for(index = 0; index < pending_reservations.size(); index++){
-                                        if(reservation.getOrderTime().compareTo(doing_reservations.get(index).getOrderTime()) > 0)
-                                            break;
-                                    }
-                                    doing_reservations.add(index, reservation);
-                                    adapterDoing.notifyItemInserted(index);
-                                    adapterDoing.notifyItemRangeChanged(index, pending_reservations.size());
-                                    //father.setNotification(1);
-                                }
-                            }
-                        }
                     }
 
                     @Override
                     public void onChildChanged(@NonNull DataSnapshot dataSnapshot, @Nullable String s) {
+                        ReservationDBRestaurant reservationDB = dataSnapshot.getValue(ReservationDBRestaurant.class);
+                        String orderID = reservationDB.getReservationID().substring(28);
 
+                        if(reservationDB.isBiker() && reservationDB.getBikerID().compareTo("") != 0){
+                            bikerAccepted(orderID, reservationDB.getBikerID());
+                        } else{
+                            if (!reservationDB.isWaitingBiker() && reservationDB.getBikerID().compareTo("") == 0) {
+                                bikerRefused(orderID);
+                            }
+                        }
                     }
 
                     @Override
@@ -288,31 +207,12 @@ public class BikerFragment extends Fragment {
                     }
                 });
 
-                */
-
             }
 
 
             @Override
             public void onCancelled(@NonNull DatabaseError databaseError) {
-                /*
-                pending_reservations = jsonHandler.getReservations(filePending);
-                pending_reservations.sort(new Comparator<Reservation>() {
-                    @Override
-                    public int compare(Reservation o1, Reservation o2) {
-                        return o1.getOrderTime().compareTo(o2.getOrderTime());
-                    }
-                });
-                pending_recycler.setAdapter(adapterPending);
-                doing_reservations = jsonHandler.getReservations(fileDoing);
-                doing_reservations.sort(new Comparator<Reservation>() {
-                    @Override
-                    public int compare(Reservation o1, Reservation o2) {
-                        return o1.getOrderTime().compareTo(o2.getOrderTime());
-                    }
-                });
-                doing_recycler.setAdapter(adapterDoing);*/
-
+                //TODO: toast internet not available
             }
         });
 
@@ -382,10 +282,14 @@ public class BikerFragment extends Fragment {
 
         int i;
         for(i = 0; i < reservationList.size(); i++){
-            if(reservationList.get(i).completeRes.equals(reservationID))
+            if(reservationList.get(i).getReservation().getReservationID().equals(reservationID)) {
                 break;
+            }
         }
 
+        if (i == reservationList.size()){
+            return;
+        }
         ReservationBiker res = reservationList.get(i);
 
         reservationList.remove(i);
@@ -411,7 +315,7 @@ public class BikerFragment extends Fragment {
     public void bikerRefused(String reservationID){
         int i;
         for(i = 0; i < reservationList.size(); i++){
-            if(reservationList.get(i).completeRes.equals(reservationID))
+            if(reservationList.get(i).getReservation().getReservationID().equals(reservationID))
                 break;
         }
         reservationList.get(i).waitingBiker = false;

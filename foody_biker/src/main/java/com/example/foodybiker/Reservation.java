@@ -6,8 +6,9 @@ public class Reservation {
             restaurantPickupTime, userName,
             userAddress, userDeliveryTime,
             reservationID, restaurantID, notes;
+    private boolean accepted;
 
-    public Reservation(String restaurantName, String restaurantAddress, String restaurantPickupTime, String userName, String userAddress, String userDeliveryTime, String restaurantID, String notes) {
+    public Reservation(String restaurantName, String restaurantAddress, String restaurantPickupTime, String userName, String userAddress, String userDeliveryTime, String restaurantID, String notes, boolean accepted) {
         this.restaurantName = restaurantName;
         this.restaurantAddress = restaurantAddress;
         this.restaurantPickupTime = restaurantPickupTime;
@@ -16,6 +17,15 @@ public class Reservation {
         this.userDeliveryTime = userDeliveryTime;
         this.restaurantID = restaurantID;
         this.notes = notes;
+        this.accepted = accepted;
+    }
+
+    public boolean isAccepted() {
+        return accepted;
+    }
+
+    public void setAccepted(boolean accepted) {
+        this.accepted = accepted;
     }
 
     public String getNotes() {
@@ -89,4 +99,6 @@ public class Reservation {
     public void setUserDeliveryTime(String userDeliveryTime) {
         this.userDeliveryTime = userDeliveryTime;
     }
+
+
 }
