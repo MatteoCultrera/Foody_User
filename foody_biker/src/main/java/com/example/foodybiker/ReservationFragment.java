@@ -16,7 +16,9 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageButton;
 import android.widget.TextView;
+import android.widget.Toast;
 
+import com.google.android.gms.tasks.OnFailureListener;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.ChildEventListener;
@@ -29,6 +31,7 @@ import com.google.firebase.database.ValueEventListener;
 
 import java.util.ArrayList;
 import java.util.Comparator;
+import java.util.HashMap;
 
 public class ReservationFragment extends Fragment {
 
@@ -45,7 +48,7 @@ public class ReservationFragment extends Fragment {
     private boolean toAdd;
     private FirebaseUser firebaseUser;
     private FirebaseAuth firebaseAuth;
-    MainActivity father;
+    private MainActivity father;
 
     public ReservationFragment(){}
 
@@ -72,6 +75,7 @@ public class ReservationFragment extends Fragment {
 
 
     public void init(final View view){
+        final ReservationFragment ref = this;
         toAdd = true;
         firebaseAuth = FirebaseAuth.getInstance();
         firebaseUser = firebaseAuth.getCurrentUser();
@@ -84,15 +88,29 @@ public class ReservationFragment extends Fragment {
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
                 for (DataSnapshot ds : dataSnapshot.getChildren()) {
                     ReservationDBBiker reservationDB = ds.getValue(ReservationDBBiker.class);
-                    if (reservationDB.getStatus() == null || reservationDB.getStatus().equals("accepted")) {
-                            Reservation reservation = new Reservation(reservationDB.getRestaurantName(), reservationDB.getRestaurantAddress(),
-                                    reservationDB.getOrderTimeBiker(), reservationDB.getUserName(), reservationDB.getUserAddress(),
-                                    reservationDB.getOrderTime(), reservationDB.getRestaurantID(),null);
-                            reservation.setReservationID(ds.getKey());
-                            reservations.add(reservation);
+                    if (reservationDB.getStatus() == null) {
+                        Reservation reservation = new Reservation(reservationDB.getRestaurantName(), reservationDB.getRestaurantAddress(),
+                                reservationDB.getOrderTimeBiker(), reservationDB.getUserName(), reservationDB.getUserAddress(),
+                                reservationDB.getOrderTime(), reservationDB.getRestaurantID(),null, false);
+                        reservation.setReservationID(ds.getKey());
+                        reservations.add(reservation);
+                    } else if(reservationDB.getStatus().equals("accepted")){
+                        Reservation reservation = new Reservation(reservationDB.getRestaurantName(), reservationDB.getRestaurantAddress(),
+                                reservationDB.getOrderTimeBiker(), reservationDB.getUserName(), reservationDB.getUserAddress(),
+                                reservationDB.getOrderTime(), reservationDB.getRestaurantID(),null, true);
+                        reservation.setReservationID(ds.getKey());
+                        activeReservation = reservation;
                     }
                 }
                 orderList.setAdapter(adapter);
+                notes.setMovementMethod(new ScrollingMovementMethod());
+                LinearLayoutManager llm = new LinearLayoutManager(view.getContext());
+                orderList.setLayoutManager(llm);
+
+                adapter = new RVAdapterReservation(reservations, ref, activeReservation!=null);
+
+                setActiveReservation(activeReservation);
+                setInterface(activeReservation!=null);
 
                 //Add the notification that advise the biker when a new reservation has been assigned to him
                 DatabaseReference bikerReservations = FirebaseDatabase.getInstance().getReference().child("reservations")
@@ -101,7 +119,7 @@ public class ReservationFragment extends Fragment {
                     @Override
                     public void onChildAdded(@NonNull DataSnapshot dataSnapshot, @Nullable String s) {
                         ReservationDBBiker reservationDB = dataSnapshot.getValue(ReservationDBBiker.class);
-                        if (reservationDB.getStatus() == null || reservationDB.getStatus().equals("accepted")) {
+                        if (reservationDB.getStatus() == null) {
                             toAdd = true;
                             for (Reservation r : reservations) {
                                 if (r.getReservationID().equals(reservationDB.getReservationID())) {
@@ -111,7 +129,7 @@ public class ReservationFragment extends Fragment {
                             if (toAdd) {
                                 Reservation reservation = new Reservation(reservationDB.getRestaurantName(), reservationDB.getRestaurantAddress(),
                                         reservationDB.getOrderTimeBiker(), reservationDB.getUserName(), reservationDB.getUserAddress(),
-                                        reservationDB.getOrderTime(), reservationDB.getRestaurantID(), null);
+                                        reservationDB.getOrderTime(), reservationDB.getRestaurantID(), null, false);
 
                                 int index;
                                 for (index = 0; index < reservations.size(); index++) {
@@ -191,7 +209,17 @@ public class ReservationFragment extends Fragment {
                     orderDelivered.setText(getString(R.string.order_delivered));
                     canClick = true;
                 }else if(card.getVisibility() == View.VISIBLE){
-                    //TODO: notify server that order was delivered
+                    DatabaseReference databaseRest = FirebaseDatabase.getInstance().getReference()
+                            .child("reservations").child("Bikers").child(firebaseUser.getUid())
+                            .child(activeReservation.getReservationID());
+                    HashMap<String, Object> childRest = new HashMap<>();
+                    childRest.put("status", "delivered");
+                    databaseRest.updateChildren(childRest).addOnFailureListener(new OnFailureListener() {
+                        @Override
+                        public void onFailure(@NonNull Exception e) {
+                            Toast.makeText(father, R.string.error_order, Toast.LENGTH_SHORT).show();
+                        }
+                    });
                     setInterface(false);
                     canClick = false;
                     setActiveReservation(null);
@@ -214,15 +242,6 @@ public class ReservationFragment extends Fragment {
                 updateTitles();
             }
         });
-
-        notes.setMovementMethod(new ScrollingMovementMethod());
-        LinearLayoutManager llm = new LinearLayoutManager(view.getContext());
-        orderList.setLayoutManager(llm);
-
-        adapter = new RVAdapterReservation(reservations, this, activeReservation!=null);
-
-        setActiveReservation(activeReservation);
-        setInterface(activeReservation!=null);
     }
 
     public void updateTitles(){

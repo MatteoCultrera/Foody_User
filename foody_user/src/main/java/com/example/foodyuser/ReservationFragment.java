@@ -80,8 +80,6 @@ public class ReservationFragment extends Fragment {
         firebaseAuth = FirebaseAuth.getInstance();
         firebaseUser = firebaseAuth.getCurrentUser();
         storageDir = Objects.requireNonNull(getActivity()).getExternalFilesDir(Environment.DIRECTORY_DOCUMENTS);
-        final File file = new File(storageDir, JSON_PATH);
-
 
         LinearLayoutManager llm = new LinearLayoutManager(view.getContext());
         reservationRecycler.setLayoutManager(llm);
@@ -91,117 +89,157 @@ public class ReservationFragment extends Fragment {
         doing = sharedPreferences.getInt("doing",0);
         done = sharedPreferences.getInt("done",0);
 
-        final DatabaseReference database = FirebaseDatabase.getInstance().getReference().child("reservations").child("users");
-        Query query = database.child(firebaseUser.getUid());
-        query.addListenerForSingleValueEvent(new ValueEventListener() {
+        new Thread(new Runnable() {
             @Override
-            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-                reservations = new ArrayList<>();
-
-                for (DataSnapshot ds : dataSnapshot.getChildren()) {
-                    ReservationDBUser reservationDBUser = ds.getValue(ReservationDBUser.class);
-                    ArrayList<Dish> dishes = new ArrayList<>();
-                    for(OrderItem o : reservationDBUser.getDishesOrdered()){
-                        Dish dish = new Dish();
-                        dish.setQuantity(o.getPieces());
-                        dish.setDishName(o.getOrderName());
-                        dish.setPrice(o.getPrice());
-                        dishes.add(dish);
-                    }
-                    Reservation.prepStatus status;
-                    String orderID = reservationDBUser.getReservationID().substring(28);
-                    if (reservationDBUser.getStatus().toLowerCase().equals("pending")){
-                        status = Reservation.prepStatus.PENDING;
-                    } else if (reservationDBUser.getStatus().toLowerCase().equals("doing")){
-                        status = Reservation.prepStatus.DOING;
-                    } else{
-                        status = Reservation.prepStatus.DONE;
-                    }
-                    Reservation reservation = new Reservation(orderID, dishes, status,
-                            reservationDBUser.isAccepted(), reservationDBUser.getOrderTime(), sharedPreferences.getString("name", ""),
-                            sharedPreferences.getString("phoneNumber", ""), reservationDBUser.getResNote(), "",
-                            sharedPreferences.getString("email", ""), sharedPreferences.getString("address", ""));
-                    reservation.setRestaurantID(reservationDBUser.getRestaurantID());
-                    reservation.setDeliveryTime(reservationDBUser.getOrderTime());
-                    reservation.setRestaurantName(reservationDBUser.getRestaurantName());
-                    reservation.setRestaurantAddress(reservationDBUser.getRestaurantAddress());
-                    reservation.setTotalCost(reservationDBUser.getTotalCost());
-                    reservations.add(reservation);
-                }
-                reservations.sort(new Comparator<Reservation>() {
-                    @Override
-                    public int compare(Reservation o1, Reservation o2) {
-
-                        return o1.getOrderTime().compareTo(o2.getOrderTime());
-                    }
-                });
-
-                final RVAdapterRes adapter = new RVAdapterRes(reservations);
-                reservationRecycler.setAdapter(adapter);
-
-                database.child(firebaseUser.getUid()).addValueEventListener(new ValueEventListener() {
+            public void run() {
+                final DatabaseReference database = FirebaseDatabase.getInstance().getReference().child("reservations").child("users");
+                Query query = database.child(firebaseUser.getUid());
+                query.addListenerForSingleValueEvent(new ValueEventListener() {
                     @Override
                     public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-                        int pending2 = 0;
-                        int doing2 = 0;
-                        int done2 = 0;
-                        int index = 0;
-                        if (reservations != null && reservations.size() != 0) {
-                            for (DataSnapshot ds : dataSnapshot.getChildren()) {
-                                    ReservationDBUser reservationDBUser = ds.getValue(ReservationDBUser.class);
-                                    if (reservationDBUser.getStatus().toLowerCase().equals("pending")) {
-                                        pending2++;
-                                    } else if (reservationDBUser.getStatus().toLowerCase().equals("doing")) {
-                                        if (reservationDBUser.getStatus().equals(reservations.get(index).getPreparationStatusString())) {
+                        reservations = new ArrayList<>();
+
+                        for (DataSnapshot ds : dataSnapshot.getChildren()) {
+                            ReservationDBUser reservationDBUser = ds.getValue(ReservationDBUser.class);
+                            ArrayList<Dish> dishes = new ArrayList<>();
+                            for(OrderItem o : reservationDBUser.getDishesOrdered()){
+                                Dish dish = new Dish();
+                                dish.setQuantity(o.getPieces());
+                                dish.setDishName(o.getOrderName());
+                                dish.setPrice(o.getPrice());
+                                dishes.add(dish);
+                            }
+                            Reservation.prepStatus status;
+                            String orderID = reservationDBUser.getReservationID().substring(28);
+                            if (reservationDBUser.getStatus().toLowerCase().equals("pending")){
+                                status = Reservation.prepStatus.PENDING;
+                            } else if (reservationDBUser.getStatus().toLowerCase().equals("doing")){
+                                status = Reservation.prepStatus.DOING;
+                            } else{
+                                status = Reservation.prepStatus.DONE;
+                            }
+                            Reservation reservation = new Reservation(orderID, dishes, status,
+                                    reservationDBUser.isAccepted(), reservationDBUser.getOrderTime(), sharedPreferences.getString("name", ""),
+                                    sharedPreferences.getString("phoneNumber", ""), reservationDBUser.getResNote(), "",
+                                    sharedPreferences.getString("email", ""), sharedPreferences.getString("address", ""));
+                            reservation.setRestaurantID(reservationDBUser.getRestaurantID());
+                            reservation.setDeliveryTime(reservationDBUser.getOrderTime());
+                            reservation.setRestaurantName(reservationDBUser.getRestaurantName());
+                            reservation.setRestaurantAddress(reservationDBUser.getRestaurantAddress());
+                            reservation.setTotalCost(reservationDBUser.getTotalCost());
+                            reservations.add(reservation);
+                        }
+                        reservations.sort(new Comparator<Reservation>() {
+                            @Override
+                            public int compare(Reservation o1, Reservation o2) {
+
+                                return o1.getOrderTime().compareTo(o2.getOrderTime());
+                            }
+                        });
+
+                        final RVAdapterRes adapter = new RVAdapterRes(reservations);
+                        reservationRecycler.setAdapter(adapter);
+
+                        database.child(firebaseUser.getUid()).addValueEventListener(new ValueEventListener() {
+                            @Override
+                            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                                int pending2 = 0;
+                                int doing2 = 0;
+                                int done2 = 0;
+                                int index;
+                                if (reservations != null && reservations.size() != 0) {
+                                    for (DataSnapshot ds : dataSnapshot.getChildren()) {
+                                        index = 0;
+                                        int i;
+                                        ReservationDBUser reservationDBUser = ds.getValue(ReservationDBUser.class);
+                                        String orderID = reservationDBUser.getReservationID().substring(28);
+                                        for (i = 0; i < reservations.size(); i++){
+                                            if (reservations.get(i).getReservationID().compareTo(orderID) == 0){
+                                                index = i;
+                                                break;
+                                            }
+                                        }
+                                        if (i == reservations.size()){
+                                            for (index = 0; index < reservations.size(); index++){
+                                                if (reservationDBUser.getOrderTime().compareTo(reservations.get(index).getOrderTime()) > 0){
+                                                    break;
+                                                }
+                                            }
+                                            ArrayList<Dish> dishes = new ArrayList<>();
+                                            for(OrderItem o : reservationDBUser.getDishesOrdered()){
+                                                Dish dish = new Dish();
+                                                dish.setQuantity(o.getPieces());
+                                                dish.setDishName(o.getOrderName());
+                                                dish.setPrice(o.getPrice());
+                                                dishes.add(dish);
+                                            }
+                                            Reservation.prepStatus status;
+                                            if (reservationDBUser.getStatus().toLowerCase().equals("pending")){
+                                                status = Reservation.prepStatus.PENDING;
+                                            } else if (reservationDBUser.getStatus().toLowerCase().equals("doing")){
+                                                status = Reservation.prepStatus.DOING;
+                                            } else{
+                                                status = Reservation.prepStatus.DONE;
+                                            }
+                                            Reservation reservation = new Reservation(orderID, dishes, status,
+                                                    reservationDBUser.isAccepted(), reservationDBUser.getOrderTime(), sharedPreferences.getString("name", ""),
+                                                    sharedPreferences.getString("phoneNumber", ""), reservationDBUser.getResNote(), "",
+                                                    sharedPreferences.getString("email", ""), sharedPreferences.getString("address", ""));
+                                            reservation.setRestaurantID(reservationDBUser.getRestaurantID());
+                                            reservation.setDeliveryTime(reservationDBUser.getOrderTime());
+                                            reservation.setRestaurantName(reservationDBUser.getRestaurantName());
+                                            reservation.setRestaurantAddress(reservationDBUser.getRestaurantAddress());
+                                            reservation.setTotalCost(reservationDBUser.getTotalCost());
+                                            reservations.add(index,reservation);
+                                            adapter.notifyItemInserted(index);
+                                            adapter.notifyItemRangeChanged(index, reservations.size());
+                                            pending2++;
+                                        } else if (reservationDBUser.getStatus().toLowerCase().equals("doing")) {
                                             reservations.get(index).setPreparationStatus(Reservation.prepStatus.DOING);
                                             adapter.notifyItemChanged(index);
-                                        }
-                                        doing2++;
-                                    } else {
-                                        if (reservationDBUser.getStatus().equals(reservations.get(index).getPreparationStatusString()))
+                                            adapter.notifyItemRangeChanged(index, reservations.size());
+                                            doing2++;
+                                        } else if (reservationDBUser.getStatus().toLowerCase().equals("done")){
                                             if (reservationDBUser.isAccepted()) {
                                                 reservations.get(index).setPreparationStatus(Reservation.prepStatus.DONE);
                                                 adapter.notifyItemChanged(index);
+                                                adapter.notifyItemRangeChanged(index, reservations.size());
                                             } else {
                                                 reservations.get(index).setPreparationStatus(Reservation.prepStatus.REJECTED);
                                             }
-                                        done2++;
+                                            done2++;
+                                        } else {
+                                            pending2++;
+                                        }
                                     }
-
-                                    index++;
+                                    if (pending != pending2 || doing != doing2 || done != done2) {
+                                        pending = pending2;
+                                        doing = doing2;
+                                        done = done2;
+                                        sharedPreferences.edit().putInt("pending", pending2).apply();
+                                        sharedPreferences.edit().putInt("doing", doing2).apply();
+                                        sharedPreferences.edit().putInt("done", done2).apply();
+                                        sharedPreferences.edit().putBoolean("hasNotification", true).apply();
+                                        father.setNotification(1);
+                                    }
+                                }
                             }
 
-                            if (pending != pending2 || doing != doing2 || done != done2) {
-                                sharedPreferences.edit().putInt("pending", pending2).apply();
-                                sharedPreferences.edit().putInt("doing", doing2).apply();
-                                sharedPreferences.edit().putInt("done", done2).apply();
-                                father.setNotification(1);
+                            @Override
+                            public void onCancelled (@NonNull DatabaseError databaseError){
+                                //TODO: toast internet not available / internet error
                             }
-                        }
+
+                        });
                     }
 
-                        @Override
-                        public void onCancelled (@NonNull DatabaseError databaseError){
-
-                        }
-
-                });
-               }
-
-            @Override
-            public void onCancelled(@NonNull DatabaseError databaseError) {
-                reservations = jsonHandler.getReservations(file);
-                reservations.sort(new Comparator<Reservation>() {
                     @Override
-                    public int compare(Reservation o1, Reservation o2) {
-                        return o1.getOrderTime().compareTo(o2.getOrderTime());
+                    public void onCancelled(@NonNull DatabaseError databaseError) {
+                        //TODO: toast internet not available / internet error
                     }
                 });
-
-                RVAdapterRes adapter = new RVAdapterRes(reservations);
-                reservationRecycler.setAdapter(adapter);
             }
-        });
+        }).start();
     }
 
     @Override

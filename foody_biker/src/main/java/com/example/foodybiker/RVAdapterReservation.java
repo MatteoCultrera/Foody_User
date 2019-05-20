@@ -14,6 +14,8 @@ import android.widget.Toast;
 
 
 import com.google.android.gms.tasks.OnFailureListener;
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 
@@ -26,6 +28,8 @@ public class RVAdapterReservation extends RecyclerView.Adapter<RVAdapterReservat
     private List<Reservation> reservations;
     private ReservationFragment fatherFragment;
     private boolean orderActive;
+    private FirebaseAuth firebaseAuth;
+    private FirebaseUser firebaseUser;
 
     RVAdapterReservation(List<Reservation> reservations, ReservationFragment fatherFragment, boolean orderActive){
         this.reservations = reservations;
@@ -52,6 +56,8 @@ public class RVAdapterReservation extends RecyclerView.Adapter<RVAdapterReservat
 
     @Override
     public void onBindViewHolder(@NonNull CardViewHolder pvh, final int i) {
+        firebaseAuth = FirebaseAuth.getInstance();
+        firebaseUser = firebaseAuth.getCurrentUser();
         final Reservation currentRes = reservations.get(i);
         final int pos = i;
         pvh.restaurantName.setText(currentRes.getRestaurantName());
@@ -74,7 +80,7 @@ public class RVAdapterReservation extends RecyclerView.Adapter<RVAdapterReservat
                 @Override
                 public void onClick(View v) {
                     DatabaseReference database = FirebaseDatabase.getInstance().getReference()
-                            .child("reservations").child("Bikers").child("pYlVkIDv53f4RAxAJgCCwPPiuoz2");
+                            .child("reservations").child("Bikers").child(firebaseUser.getUid());
                     HashMap<String, Object> child = new HashMap<>();
                     ReservationDBBiker reservation = new ReservationDBBiker(reservations.get(pos).getReservationID(),
                             reservations.get(pos).getUserDeliveryTime(), reservations.get(pos).getRestaurantPickupTime(),
@@ -95,6 +101,7 @@ public class RVAdapterReservation extends RecyclerView.Adapter<RVAdapterReservat
                             .child(reservations.get(pos).getReservationID());
                     HashMap<String, Object> childRest = new HashMap<>();
                     childRest.put("biker", true);
+                    childRest.put("bikerID", firebaseUser.getUid());
                     databaseRest.updateChildren(childRest).addOnFailureListener(new OnFailureListener() {
                         @Override
                         public void onFailure(@NonNull Exception e) {
@@ -112,7 +119,7 @@ public class RVAdapterReservation extends RecyclerView.Adapter<RVAdapterReservat
                 @Override
                 public void onClick(View v) {
                     DatabaseReference databaseSelf = FirebaseDatabase.getInstance().getReference()
-                            .child("reservations").child("Bikers").child("pYlVkIDv53f4RAxAJgCCwPPiuoz2");
+                            .child("reservations").child("Bikers").child(firebaseUser.getUid());
                     ReservationDBBiker reservation = new ReservationDBBiker(reservations.get(pos).getReservationID(),
                             reservations.get(pos).getUserDeliveryTime(), reservations.get(pos).getRestaurantPickupTime(),
                             reservations.get(pos).getRestaurantName(), reservations.get(pos).getUserName(),
@@ -122,6 +129,18 @@ public class RVAdapterReservation extends RecyclerView.Adapter<RVAdapterReservat
                     reservation.setStatus("rejected");
                     childSelf.put(reservations.get(pos).getReservationID(), reservation);
                     databaseSelf.updateChildren(childSelf).addOnFailureListener(new OnFailureListener() {
+                        @Override
+                        public void onFailure(@NonNull Exception e) {
+                            Toast.makeText(fatherFragment.getContext(), R.string.error_order, Toast.LENGTH_SHORT).show();
+                        }
+                    });
+
+                    DatabaseReference databaseRest = FirebaseDatabase.getInstance().getReference()
+                            .child("reservations").child("restaurant").child(reservations.get(pos).getRestaurantID())
+                            .child(reservations.get(pos).getReservationID());
+                    HashMap<String, Object> childRest = new HashMap<>();
+                    childRest.put("waitingBiker", false);
+                    databaseRest.updateChildren(childRest).addOnFailureListener(new OnFailureListener() {
                         @Override
                         public void onFailure(@NonNull Exception e) {
                             Toast.makeText(fatherFragment.getContext(), R.string.error_order, Toast.LENGTH_SHORT).show();
