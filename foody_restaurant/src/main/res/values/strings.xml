@@ -79,4 +79,8 @@
     <string name="distance">DISTANCE</string>
 
     <string name="choose">CHOOSE</string>
+
+    <string name="waiting_biker">WAITING ACCEPT</string>
+    <string name="call_biker">CALL BIKER</string>
+    
 </resources>

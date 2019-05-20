@@ -17,6 +17,7 @@ public class ReservationDBRestaurant {
     private String orderTimeBiker;
     private String totalCost;
     private boolean biker;
+    private boolean waitingBiker;
 
     public ReservationDBRestaurant() {
     }
@@ -139,5 +140,13 @@ public class ReservationDBRestaurant {
 
     public void setStatus(String status) {
         this.status = status;
+    }
+
+    public boolean isWaitingBiker() {
+        return waitingBiker;
+    }
+
+    public void setWaitingBiker(boolean waitingBiker) {
+        this.waitingBiker = waitingBiker;
     }
 }
