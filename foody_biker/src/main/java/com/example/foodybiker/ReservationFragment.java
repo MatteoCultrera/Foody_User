@@ -102,17 +102,15 @@ public class ReservationFragment extends Fragment {
                         activeReservation = reservation;
                     }
                 }
+                adapter = new RVAdapterReservation(reservations, ref, activeReservation!=null);
+                setActiveReservation(activeReservation);
+                setInterface(activeReservation!=null);
                 orderList.setAdapter(adapter);
                 notes.setMovementMethod(new ScrollingMovementMethod());
                 LinearLayoutManager llm = new LinearLayoutManager(view.getContext());
                 orderList.setLayoutManager(llm);
 
-                adapter = new RVAdapterReservation(reservations, ref, activeReservation!=null);
-
-                setActiveReservation(activeReservation);
-                setInterface(activeReservation!=null);
-
-                //Add the notification that advise the biker when a new reservation has been assigned to him
+                //notification
                 DatabaseReference bikerReservations = FirebaseDatabase.getInstance().getReference().child("reservations")
                         .child("Bikers").child(firebaseUser.getUid());
                 bikerReservations.addChildEventListener(new ChildEventListener() {
@@ -127,6 +125,7 @@ public class ReservationFragment extends Fragment {
                                 }
                             }
                             if (toAdd) {
+                                Log.d("SWSW", "notifacation");
                                 Reservation reservation = new Reservation(reservationDB.getRestaurantName(), reservationDB.getRestaurantAddress(),
                                         reservationDB.getOrderTimeBiker(), reservationDB.getUserName(), reservationDB.getUserAddress(),
                                         reservationDB.getOrderTime(), reservationDB.getRestaurantID(), null, false);
