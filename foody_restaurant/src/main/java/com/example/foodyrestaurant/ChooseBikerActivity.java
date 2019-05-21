@@ -30,9 +30,14 @@ import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
 
 import java.io.File;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.Comparator;
+import java.util.Date;
 import java.util.HashMap;
+import java.util.Locale;
 
 public class ChooseBikerActivity extends AppCompatActivity {
 
@@ -73,6 +78,13 @@ public class ChooseBikerActivity extends AppCompatActivity {
     }
 
     private void init(){
+        Calendar calendar = Calendar.getInstance(Locale.ITALY);
+        int dayOfWeek = calendar.get(Calendar.DAY_OF_WEEK) - 2;
+        if (dayOfWeek == -1)
+            dayOfWeek = 6;
+        final int day = dayOfWeek;
+        SimpleDateFormat sdf = new SimpleDateFormat("HH:mm", Locale.ITALY);
+        final String time = sdf.format(calendar.getTime());
 
         bikers = new ArrayList<>();
         recyclerView = findViewById(R.id.recycler_choose_biker);
@@ -93,6 +105,28 @@ public class ChooseBikerActivity extends AppCompatActivity {
                         }
                     }
                     final BikerInfo biker = d.child("info").getValue(BikerInfo.class);
+                    if(biker.getDaysTime() != null){
+                        String intervalTime = biker.getDaysTime().get(day).replace(" ", "");
+                        if (!intervalTime.startsWith("L") && !intervalTime.startsWith("F")) {
+                            String[] splits = intervalTime.split("-");
+                            SimpleDateFormat sdf2 = new SimpleDateFormat("HH:mm", Locale.ITALY);
+                            try{
+                                Date date = sdf2.parse(splits[1]);
+                                Calendar cal = Calendar.getInstance();
+                                cal.setTime(date);
+                                cal.add(Calendar.MINUTE, -30);
+                                String newTime = sdf2.format(cal.getTime());
+                                if (splits[0].compareTo(time) > 0 && newTime.compareTo(time) < 0) {
+                                    continue;
+                                }
+                            } catch(ParseException e){
+                                e.getMessage();
+                            }
+                        }
+                        else{
+                            continue;
+                        }
+                    }
                     biker.setBikerID(d.getKey());
                     Double latitude, longitude;
 
