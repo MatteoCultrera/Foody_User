@@ -24,6 +24,7 @@ import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.SupportMapFragment;
+import com.google.android.gms.maps.model.BitmapDescriptorFactory;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.LatLngBounds;
 import com.google.android.gms.maps.model.MarkerOptions;
@@ -40,6 +41,7 @@ import com.google.firebase.database.ValueEventListener;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.Locale;
 
 public class MapFragment extends Fragment {
 
@@ -63,6 +65,7 @@ public class MapFragment extends Fragment {
         super.onCreate(savedInstanceState);
         firebaseAuth = FirebaseAuth.getInstance();
         locationRequest = new LocationRequest();;
+        final LatLngBounds.Builder builder = new LatLngBounds.Builder();
 
         locationCallback = new LocationCallback() {
             @Override
@@ -70,7 +73,7 @@ public class MapFragment extends Fragment {
                 if (locationResult == null) {
                     return;
                 }
-                for (Location location : locationResult.getLocations()) {
+                for (final Location location : locationResult.getLocations()) {
                     Toast.makeText(mapFragment.getContext(), location.getLatitude() + " " + location.getLongitude(), Toast.LENGTH_SHORT).show();
                     FirebaseUser user = firebaseAuth.getCurrentUser();
                     final DatabaseReference database = FirebaseDatabase.getInstance().getReference()
@@ -78,6 +81,8 @@ public class MapFragment extends Fragment {
                     HashMap<String, Object> child = new HashMap<>();
                     child.put("location", location);
                     database.updateChildren(child);
+
+
 
                     Log.d("PROVA", reservations.size() + "");
                     if(!reservations.isEmpty()) {
@@ -97,15 +102,19 @@ public class MapFragment extends Fragment {
                                         LatLng latlon = new LatLng(lat, lon);
 
                                         Log.d("PROVA", "lat " + latlon.latitude + " long " + latlon.longitude + " name " + name);
+                                        Double distance = haversineDistance(location.getLatitude(), location.getLongitude(), lat, lon);
                                         MarkerOptions mark = new MarkerOptions();
                                         mark.position(latlon);
-                                        mGoogleMap.addMarker(mark).setTitle(name);
-                                        LatLngBounds.Builder builder = new LatLngBounds.Builder();
+                                        mark.title(name);
+                                        mark.snippet(String.format(Locale.getDefault(), "distance %.2f km", distance.floatValue()));
+                                        mark.icon(BitmapDescriptorFactory.fromResource(R.drawable.rest_icon));
+                                        mGoogleMap.addMarker(mark);
+
                                         builder.include(latlon);
                                         builder.include(new LatLng(mLastKnownLocation.getLatitude(), mLastKnownLocation.getLongitude()));
                                         LatLngBounds bounds = builder.build();
                                         CameraUpdate cu = CameraUpdateFactory.newLatLngBounds(bounds, 150);
-                                        mGoogleMap.moveCamera(cu);
+                                        mGoogleMap.animateCamera(cu);
                                     }
                                 }
 
@@ -121,6 +130,25 @@ public class MapFragment extends Fragment {
             };
         };
     }
+
+    public double haversineDistance(double initialLat, double initialLong,
+                                    double finalLat, double finalLong){
+        int R = 6371; // km (Earth radius)
+        double dLat = toRadians(finalLat-initialLat);
+        double dLon = toRadians(finalLong-initialLong);
+        initialLat = toRadians(initialLat);
+        finalLat = toRadians(finalLat);
+
+        double a = Math.sin(dLat/2) * Math.sin(dLat/2) +
+                Math.sin(dLon/2) * Math.sin(dLon/2) * Math.cos(initialLat) * Math.cos(finalLat);
+        double c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1-a));
+        return R * c;
+    }
+
+    public double toRadians(double deg) {
+        return deg * (Math.PI/180);
+    }
+
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
