@@ -33,15 +33,19 @@ import java.io.File;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Calendar;
 import java.util.Comparator;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Locale;
+import java.util.Map;
 
 public class ChooseBikerActivity extends AppCompatActivity {
 
     private ArrayList<BikerComplete> bikers;
+    private List<String> bikersTried;
     private FirebaseUser firebaseUser;
     private File storage;
     private SharedPreferences preferences;
@@ -86,125 +90,135 @@ public class ChooseBikerActivity extends AppCompatActivity {
         SimpleDateFormat sdf = new SimpleDateFormat("HH:mm", Locale.ITALY);
         final String time = sdf.format(calendar.getTime());
 
+
         bikers = new ArrayList<>();
         recyclerView = findViewById(R.id.recycler_choose_biker);
         LinearLayoutManager llm = new LinearLayoutManager(this);
         recyclerView.setLayoutManager(llm);
         chooseAdapter = new RVAdapterChooseBiker(bikers, this);
 
-        final DatabaseReference database = FirebaseDatabase.getInstance().getReference().child("Bikers");
-        Query query = database;
-        query.addListenerForSingleValueEvent(new ValueEventListener() {
+        final DatabaseReference databaseReference = FirebaseDatabase.getInstance().getReference().child("reservations")
+                .child("restaurant").child(firebaseUser.getUid()).child(getIntent().getStringExtra("ReservationID"));
+        databaseReference.addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-                for (DataSnapshot d : dataSnapshot.getChildren()){
-                    if(d.child("status").exists()) {
-                        String status = d.child("status").getValue(String.class);
-                        if (status.compareTo("busy") == 0){
-                            continue;
-                        }
-                    }
-                    final BikerInfo biker = d.child("info").getValue(BikerInfo.class);
-                    if(biker.getDaysTime() != null){
-                        String intervalTime = biker.getDaysTime().get(day).replace(" ", "");
-                        if (!intervalTime.startsWith("L") && !intervalTime.startsWith("F")) {
-                            String[] splits = intervalTime.split("-");
-                            SimpleDateFormat sdf2 = new SimpleDateFormat("HH:mm", Locale.ITALY);
-                            try{
-                                Date date = sdf2.parse(splits[1]);
-                                Calendar cal = Calendar.getInstance();
-                                cal.setTime(date);
-                                cal.add(Calendar.MINUTE, -30);
-                                String newTime = sdf2.format(cal.getTime());
-                                if (splits[0].compareTo(time) > 0 && newTime.compareTo(time) < 0) {
+                /*if (dataSnapshot.child("attemptedBiker").exists()) {
+                    String attemptedBikers = dataSnapshot.child("attemptedBiker").getValue(String.class);
+                    bikersTried = Arrays.asList(attemptedBikers.split(","));
+                }*/
+
+                final DatabaseReference database = FirebaseDatabase.getInstance().getReference().child("Bikers");
+                Query query = database;
+                query.addListenerForSingleValueEvent(new ValueEventListener() {
+                    @Override
+                    public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                        for (DataSnapshot d : dataSnapshot.getChildren()){
+                            if(bikersTried != null) {
+                                if (bikersTried.contains(d.getKey())) {
                                     continue;
                                 }
-                            } catch(ParseException e){
-                                e.getMessage();
                             }
+                            if(d.child("status").exists()) {
+                                String status = d.child("status").getValue(String.class);
+                                if (status.compareTo("busy") == 0){
+                                    continue;
+                                }
+                            }
+                            final BikerInfo biker = d.child("info").getValue(BikerInfo.class);
+                            /*if(biker.getDaysTime() != null) {
+                                String intervalTime = biker.getDaysTime().get(day).replace(" ", "");
+                                if (!intervalTime.startsWith("L") && !intervalTime.startsWith("F")) {
+                                    String[] splits = intervalTime.split("-");
+                                    if (splits[0].compareTo(time) > 0 || splits[1].compareTo(time) < 0) {
+                                        continue;
+                                    }
+                                }
+                            }*/
+                            biker.setBikerID(d.getKey());
+                            Double latitude, longitude;
+
+                            try{
+                                latitude = d.child("location").child("latitude").getValue(Double.class);
+                                longitude = d.child("location").child("longitude").getValue(Double.class);
+                            }catch (NullPointerException e){
+                                continue;
+                            }
+
+                            if(latitude == null || longitude == null)
+                                continue;
+
+                            final LatLng position = new LatLng(latitude,longitude);
+
+                            if(biker.getPath()!=null){
+                                final File f = new File(storage, d.getKey()+".jpg");
+                                if(f.exists()){
+                                    biker.setPath(f.getPath());
+                                    bikers.add(new BikerComplete(biker, position, false));
+                                }else{
+                                    StorageReference mStorageRef = FirebaseStorage.getInstance().getReference();
+                                    mStorageRef
+                                            .child(biker.getPath())
+                                            .getFile(f)
+                                            .addOnSuccessListener(
+                                                    new OnSuccessListener<FileDownloadTask.TaskSnapshot>() {
+                                                        @Override
+                                                        public void onSuccess(FileDownloadTask.TaskSnapshot taskSnapshot){
+                                                            biker.setPath(f.getPath());
+                                                            bikers.add(new BikerComplete(biker, position, true));
+                                                        }
+                                                    })
+                                            .addOnFailureListener(
+                                                    new OnFailureListener() {
+                                                        @Override
+                                                        public void onFailure(@NonNull Exception e) {
+                                                            if(f.exists())
+                                                                f.delete();
+                                                            biker.setPath(null);
+                                                            bikers.add(new BikerComplete(biker, position, false));
+                                                        }
+                                                    }
+                                            );
+
+                                }
+                            }else{
+                                biker.setPath(null);
+                                bikers.add(new BikerComplete(biker, position, false));
+                            }
+
                         }
-                        else{
-                            continue;
+
+                        for(BikerComplete b : bikers){
+                            b.distance = haversineDistance(latitude, longitude, b.position.latitude, b.position.longitude);
                         }
-                    }
-                    biker.setBikerID(d.getKey());
-                    Double latitude, longitude;
 
-                    try{
-                        latitude = d.child("location").child("latitude").getValue(Double.class);
-                        longitude = d.child("location").child("longitude").getValue(Double.class);
-                    }catch (NullPointerException e){
-                        continue;
-                    }
+                        bikers.sort(new Comparator<BikerComplete>() {
+                            @Override
+                            public int compare(BikerComplete o1, BikerComplete o2) {
+                                if(o1.distance < o2.distance)
+                                    return -1;
+                                if(o1.distance > o2.distance)
+                                    return 1;
+                                return 0;
+                            }
+                        });
 
-                    if(latitude == null || longitude == null)
-                        continue;
+                        recyclerView.setAdapter(chooseAdapter);
 
-                    final LatLng position = new LatLng(latitude,longitude);
-
-                    if(biker.getPath()!=null){
-                        final File f = new File(storage, d.getKey()+".jpg");
-                        if(f.exists()){
-                            biker.setPath(f.getPath());
-                            bikers.add(new BikerComplete(biker, position, false));
-                        }else{
-                            StorageReference mStorageRef = FirebaseStorage.getInstance().getReference();
-                            mStorageRef
-                                    .child(biker.getPath())
-                                    .getFile(f)
-                                    .addOnSuccessListener(
-                                            new OnSuccessListener<FileDownloadTask.TaskSnapshot>() {
-                                                @Override
-                                                public void onSuccess(FileDownloadTask.TaskSnapshot taskSnapshot){
-                                                    biker.setPath(f.getPath());
-                                                    bikers.add(new BikerComplete(biker, position, true));
-                                                }
-                                            })
-                                    .addOnFailureListener(
-                                            new OnFailureListener() {
-                                                @Override
-                                                public void onFailure(@NonNull Exception e) {
-                                                    if(f.exists())
-                                                        f.delete();
-                                                    biker.setPath(null);
-                                                    bikers.add(new BikerComplete(biker, position, false));
-                                                }
-                                            }
-                                    );
-
-                        }
-                    }else{
-                        biker.setPath(null);
-                        bikers.add(new BikerComplete(biker, position, false));
                     }
 
-                }
-
-                for(BikerComplete b : bikers){
-                    b.distance = haversineDistance(latitude, longitude, b.position.latitude, b.position.longitude);
-                }
-
-                bikers.sort(new Comparator<BikerComplete>() {
                     @Override
-                    public int compare(BikerComplete o1, BikerComplete o2) {
-                        if(o1.distance < o2.distance)
-                            return -1;
-                        if(o1.distance > o2.distance)
-                            return 1;
-                        return 0;
+                    public void onCancelled(@NonNull DatabaseError databaseError) {
+                        Toast.makeText(getApplicationContext(), "Cannot Fetch Biker",Toast.LENGTH_SHORT);
                     }
                 });
-
-                recyclerView.setAdapter(chooseAdapter);
 
             }
 
             @Override
             public void onCancelled(@NonNull DatabaseError databaseError) {
-                Toast.makeText(getApplicationContext(), "Cannot Fetch Biker",Toast.LENGTH_SHORT);
+
             }
         });
-
     }
 
 
@@ -260,6 +274,21 @@ public class ChooseBikerActivity extends AppCompatActivity {
                         finish();
                     }
                 });
+
+                if(dataSnapshot.child("attemptedBiker").exists()){
+                    String attemptedBikers = dataSnapshot.child("attemptedBiker").getValue(String.class);
+                    attemptedBikers.concat("," + bikers.get(pos).biker.getBikerID());
+                    HashMap<String, Object> child = new HashMap<>();
+                    child.put("attemptedBiker", attemptedBikers);
+                    database.child(firebaseUser.getUid()).child(getIntent().getStringExtra("ReservationID"))
+                            .updateChildren(child);
+                } else{
+                    HashMap<String, Object> child = new HashMap<>();
+                    child.put("attemptedBiker", bikers.get(pos).biker.getBikerID());
+                    database.child(firebaseUser.getUid()).child(getIntent().getStringExtra("ReservationID"))
+                            .updateChildren(child);
+                }
+
             }
 
             @Override
@@ -267,8 +296,6 @@ public class ChooseBikerActivity extends AppCompatActivity {
 
             }
         });
-
-
     }
 
     class BikerComplete{

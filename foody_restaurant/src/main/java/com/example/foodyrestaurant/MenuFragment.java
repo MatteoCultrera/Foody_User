@@ -181,4 +181,9 @@ public class MenuFragment extends Fragment {
             }
         }).start();
     }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+    }
 }

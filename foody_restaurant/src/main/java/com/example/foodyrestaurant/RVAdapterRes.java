@@ -134,8 +134,6 @@ public class RVAdapterRes extends RecyclerView.Adapter<RVAdapterRes.CardViewHold
                 }
             });
             pvh.menuDishes.addView(dish);
-
-            Log.d("POSITIONDD",""+reservations.get(i).getOrderTime()+" "+dishes.get(toSet).isPrepared());
         }
 
         pvh.accept.setOnClickListener(new View.OnClickListener() {
