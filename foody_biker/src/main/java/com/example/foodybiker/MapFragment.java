@@ -89,10 +89,15 @@ public class MapFragment extends Fragment {
                     child.put("location", location);
                     database.updateChildren(child);
 
-                    if(activeReservation == null)
+                    if(activeReservation == null) {
+                        mGoogleMap.clear();
                         fetchRestaurant(location);
-                    else {
-                        fetchUserAndRestaurant(location);
+                    } else {
+                        if(activeReservation.isAccepted()) {
+                            mGoogleMap.clear();
+                            fetchUserAndRestaurant(location);
+                        } else
+                            mGoogleMap.clear();
                     }
                 }
             };
