@@ -418,13 +418,11 @@ public class Setup extends AppCompatActivity {
         errorCity.setText("");
 
 
-        String imagePath = sharedPref.getString("Path", "");
+        pathImage = sharedPref.getString("Path", "");
 
-
-
-        if(imagePath.length()>0){
+        if(pathImage.length()>0){
             StorageReference mStorageRef = FirebaseStorage.getInstance().getReference();
-            mStorageRef.child(imagePath).getDownloadUrl()
+            mStorageRef.child(pathImage).getDownloadUrl()
                     .addOnSuccessListener(new OnSuccessListener<Uri>() {
                         @Override
                         public void onSuccess(Uri uri) {
@@ -432,7 +430,6 @@ public class Setup extends AppCompatActivity {
                                     .with(profilePicture.getContext())
                                     .load(uri)
                                     .into(profilePicture);
-                            //TODO: salvare l'uri qua nel path dell'immagine profilo
                         }
                     }).addOnFailureListener(new OnFailureListener() {
                 @Override

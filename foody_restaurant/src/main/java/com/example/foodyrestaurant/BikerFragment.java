@@ -179,7 +179,7 @@ public class BikerFragment extends Fragment {
 
                     @Override
                     public void onChildChanged(@NonNull DataSnapshot dataSnapshot, @Nullable String s) {
-                        ReservationDBRestaurant reservationDB = dataSnapshot.getValue(ReservationDBRestaurant.class);
+                        /*ReservationDBRestaurant reservationDB = dataSnapshot.getValue(ReservationDBRestaurant.class);
                         String orderID = reservationDB.getReservationID().substring(28);
 
                         if(reservationDB.isBiker() && reservationDB.getBikerID().compareTo("") != 0){
@@ -188,7 +188,7 @@ public class BikerFragment extends Fragment {
                             if (!reservationDB.isWaitingBiker() && reservationDB.getBikerID().compareTo("") == 0) {
                                 bikerRefused(orderID);
                             }
-                        }
+                        }*/
                     }
 
                     @Override
