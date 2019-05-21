@@ -1,6 +1,7 @@
 package com.example.foodybiker;
 
 import android.animation.LayoutTransition;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
@@ -33,6 +34,8 @@ import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.HashMap;
 
+import static android.content.Context.MODE_PRIVATE;
+
 public class ReservationFragment extends Fragment {
 
     TextView restaurantName, restaurantAddress, userName,
@@ -40,15 +43,17 @@ public class ReservationFragment extends Fragment {
     ConstraintLayout orderDeliveredLayout, mainLayout, noteLayout;
     boolean canClick;
     CardView card;
-    ArrayList<Reservation> reservations;
-    Reservation activeReservation;
-    RecyclerView orderList;
-    ImageButton switchButton;
-    RVAdapterReservation adapter;
+    private ArrayList<Reservation> reservations;
+    private Reservation activeReservation;
+    private RecyclerView orderList;
+    private ImageButton switchButton;
+    private RVAdapterReservation adapter;
     private boolean toAdd;
     private FirebaseUser firebaseUser;
     private FirebaseAuth firebaseAuth;
     private MainActivity father;
+    private SharedPreferences sharedPreferences;
+    private int pending;
 
     public ReservationFragment(){}
 
@@ -73,10 +78,11 @@ public class ReservationFragment extends Fragment {
         super.onResume();
     }
 
-
     public void init(final View view){
         final ReservationFragment ref = this;
         toAdd = true;
+        sharedPreferences = view.getContext().getSharedPreferences("myPreference", MODE_PRIVATE);
+        pending = sharedPreferences.getInt("pending", 0);
         firebaseAuth = FirebaseAuth.getInstance();
         firebaseUser = firebaseAuth.getCurrentUser();
         activeReservation = null;
@@ -105,6 +111,13 @@ public class ReservationFragment extends Fragment {
                 adapter = new RVAdapterReservation(reservations, ref, activeReservation!=null);
                 setActiveReservation(activeReservation);
                 setInterface(activeReservation!=null);
+
+                if(reservations.size() != pending){
+                    sharedPreferences.edit().putInt("pending", reservations.size()).apply();
+                    sharedPreferences.edit().putBoolean("hasNotification", true).apply();
+                    father.setNotification(1);
+                }
+
                 orderList.setAdapter(adapter);
                 notes.setMovementMethod(new ScrollingMovementMethod());
                 LinearLayoutManager llm = new LinearLayoutManager(view.getContext());
@@ -125,7 +138,6 @@ public class ReservationFragment extends Fragment {
                                 }
                             }
                             if (toAdd) {
-                                Log.d("SWSW", "notifacation");
                                 Reservation reservation = new Reservation(reservationDB.getRestaurantName(), reservationDB.getRestaurantAddress(),
                                         reservationDB.getOrderTimeBiker(), reservationDB.getUserName(), reservationDB.getUserAddress(),
                                         reservationDB.getOrderTime(), reservationDB.getRestaurantID(), null, false);
@@ -138,8 +150,11 @@ public class ReservationFragment extends Fragment {
                                 reservations.add(index, reservation);
                                 adapter.notifyItemInserted(index);
                                 adapter.notifyItemRangeChanged(index, reservations.size());
-
-                                father.setNotification(1);
+                                if(reservations.size() != pending){
+                                    sharedPreferences.edit().putInt("pending", reservations.size()).apply();
+                                    sharedPreferences.edit().putBoolean("hasNotification", true).apply();
+                                    father.setNotification(1);
+                                }
                             }
                         }
                     }
