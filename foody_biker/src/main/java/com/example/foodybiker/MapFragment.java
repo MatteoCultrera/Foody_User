@@ -128,7 +128,7 @@ public class MapFragment extends Fragment {
                             mGoogleMap.addMarker(mark);
 
                             builder.include(latlon);
-                            builder.include(new LatLng(mLastKnownLocation.getLatitude(), mLastKnownLocation.getLongitude()));
+                            builder.include(new LatLng(loc.getLatitude(), loc.getLongitude()));
                             LatLngBounds bounds = builder.build();
                             CameraUpdate cu = CameraUpdateFactory.newLatLngBounds(bounds, 150);
                             mGoogleMap.animateCamera(cu);
@@ -149,17 +149,50 @@ public class MapFragment extends Fragment {
         final Location loc = location;
         Log.d("PROVA", activeReservation + "");
 
-        String address = activeReservation.getUserAddress();
+        mGoogleMap.clear();
+
+        String addressUser = activeReservation.getUserAddress();
         List<Address> lista = new ArrayList<>();
         Geocoder geocoder = new Geocoder(getContext(), Locale.getDefault());
         try {
-            lista = geocoder.getFromLocationName(address, 1);
+            lista = geocoder.getFromLocationName(addressUser, 1);
         } catch (IOException e) {
             e.printStackTrace();
         }
 
-        LatLng latLng = new LatLng(lista.get(0).getLatitude(), lista.get(0).getLongitude());
-        Log.d("PROVA", "latlon " + latLng.latitude + " " + latLng.longitude);
+        LatLng latLngUser = new LatLng(lista.get(0).getLatitude(), lista.get(0).getLongitude());
+        Log.d("PROVA", "latlon " + latLngUser.latitude + " " + latLngUser.longitude);
+        String addressRest = activeReservation.getRestaurantAddress();
+        try {
+            lista = geocoder.getFromLocationName(addressRest, 1);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+
+        LatLng latLngRestaurant = new LatLng(lista.get(0).getLatitude(), lista.get(0).getLongitude());
+        Log.d("PROVA", "latlon " + latLngRestaurant.latitude + " " + latLngRestaurant.longitude);
+        MarkerOptions mark = new MarkerOptions();
+        mark.position(latLngRestaurant);
+        mark.title(activeReservation.getRestaurantName());
+        Double distance = haversineDistance(loc.getLatitude(), loc.getLongitude(), latLngRestaurant.latitude, latLngRestaurant.longitude);
+        mark.snippet(String.format(Locale.getDefault(), "distance %.2f km from you", distance.floatValue()));
+        mark.icon(BitmapDescriptorFactory.fromResource(R.drawable.rest_icon));
+        mGoogleMap.addMarker(mark);
+
+        mark.position(latLngUser);
+        mark.title(activeReservation.getUserName());
+        distance = haversineDistance(latLngRestaurant.latitude, latLngRestaurant.longitude, latLngUser.latitude, latLngUser.longitude);
+        mark.snippet(String.format(Locale.getDefault(), "distant %.2f from " + activeReservation.getRestaurantName(), distance.floatValue()));
+        mark.icon(BitmapDescriptorFactory.defaultMarker());
+        mGoogleMap.addMarker(mark);
+
+        builder = new LatLngBounds.Builder();
+        builder.include(new LatLng(loc.getLatitude(), loc.getLongitude()));
+        builder.include(latLngRestaurant);
+        builder.include(latLngUser);
+        LatLngBounds bounds = builder.build();
+        CameraUpdate cu = CameraUpdateFactory.newLatLngBounds(bounds, 150);
+        mGoogleMap.animateCamera(cu);
     }
 
     public double haversineDistance(double initialLat, double initialLong,
