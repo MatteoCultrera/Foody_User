@@ -55,6 +55,8 @@ public class ReservationFragment extends Fragment {
     private SharedPreferences sharedPreferences;
     private int pending;
 
+    Fragment map;
+
     public ReservationFragment(){}
 
     public void setFather(MainActivity father){
@@ -234,6 +236,10 @@ public class ReservationFragment extends Fragment {
                             Toast.makeText(father, R.string.error_order, Toast.LENGTH_SHORT).show();
                         }
                     });
+                    //TODO
+
+                    ((MapFragment)map).switchLayout = true;
+
                     setInterface(false);
                     canClick = false;
                     setActiveReservation(null);

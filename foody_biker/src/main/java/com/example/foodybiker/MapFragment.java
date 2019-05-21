@@ -64,6 +64,7 @@ public class MapFragment extends Fragment {
     private ArrayList<Reservation> reservations;
     Reservation activeReservation;
     private LatLngBounds.Builder builder;
+    boolean switchLayout = false;
 
     public MapFragment() {}
 
@@ -89,15 +90,16 @@ public class MapFragment extends Fragment {
                     child.put("location", location);
                     database.updateChildren(child);
 
-                    if(activeReservation == null) {
-                        mGoogleMap.clear();
+                    if(!switchLayout) {
+                        Log.d("PROVA", "activeReservation == null");
                         fetchRestaurant(location);
                     } else {
                         if(activeReservation.isAccepted()) {
-                            mGoogleMap.clear();
+                            Log.d("PROVA", "activeReservation accepted");
                             fetchUserAndRestaurant(location);
-                        } else
-                            mGoogleMap.clear();
+                        } else {
+                            Log.d("PROVA", "nient'altro");
+                        }
                     }
                 }
             };
