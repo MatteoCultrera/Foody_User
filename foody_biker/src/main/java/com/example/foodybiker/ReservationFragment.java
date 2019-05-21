@@ -134,9 +134,13 @@ public class ReservationFragment extends Fragment {
                         ReservationDBBiker reservationDB = dataSnapshot.getValue(ReservationDBBiker.class);
                         if (reservationDB.getStatus() == null) {
                             toAdd = true;
-                            for (Reservation r : reservations) {
-                                if (r.getReservationID().equals(reservationDB.getReservationID())) {
-                                    toAdd = false;
+                            if(reservations != null) {
+                                if (reservations.size() != 0) {
+                                    for (Reservation r : reservations) {
+                                        if (r.getReservationID().equals(reservationDB.getReservationID())) {
+                                            toAdd = false;
+                                        }
+                                    }
                                 }
                             }
                             if (toAdd) {
@@ -225,6 +229,17 @@ public class ReservationFragment extends Fragment {
                     orderDelivered.setText(getString(R.string.order_delivered));
                     canClick = true;
                 }else if(card.getVisibility() == View.VISIBLE){
+                    DatabaseReference databaseB = FirebaseDatabase.getInstance().getReference()
+                            .child("Bikers").child(firebaseUser.getUid());
+                    HashMap<String, Object> childB = new HashMap<>();
+                    childB.put("status", "free");
+                    databaseB.updateChildren(childB).addOnFailureListener(new OnFailureListener() {
+                        @Override
+                        public void onFailure(@NonNull Exception e) {
+                            Toast.makeText(father, R.string.error_order, Toast.LENGTH_SHORT).show();
+                        }
+                    });
+
                     DatabaseReference databaseRest = FirebaseDatabase.getInstance().getReference()
                             .child("reservations").child("Bikers").child(firebaseUser.getUid())
                             .child(activeReservation.getReservationID());

@@ -79,6 +79,17 @@ public class RVAdapterReservation extends RecyclerView.Adapter<RVAdapterReservat
             pvh.accept.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
+                    DatabaseReference databaseB = FirebaseDatabase.getInstance().getReference()
+                            .child("Bikers").child(firebaseUser.getUid());
+                    HashMap<String, Object> childB = new HashMap<>();
+                    childB.put("status", "busy");
+                    databaseB.updateChildren(childB).addOnFailureListener(new OnFailureListener() {
+                        @Override
+                        public void onFailure(@NonNull Exception e) {
+                            Toast.makeText(fatherFragment.getContext(), R.string.error_order, Toast.LENGTH_SHORT).show();
+                        }
+                    });
+
                     DatabaseReference database = FirebaseDatabase.getInstance().getReference()
                             .child("reservations").child("Bikers").child(firebaseUser.getUid());
                     HashMap<String, Object> child = new HashMap<>();
