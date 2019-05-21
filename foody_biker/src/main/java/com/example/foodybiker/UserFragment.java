@@ -153,10 +153,12 @@ public class UserFragment extends Fragment {
                                             .addOnSuccessListener(new OnSuccessListener<Uri>() {
                                                 @Override
                                                 public void onSuccess(Uri uri) {
-                                                    Glide
-                                                            .with(profilePicture.getContext())
-                                                            .load(uri)
-                                                            .into(profilePicture);
+                                                    if(profilePicture.getContext() != null) {
+                                                        Glide
+                                                                .with(profilePicture.getContext())
+                                                                .load(uri)
+                                                                .into(profilePicture);
+                                                    }
                                                 }
                                             }).addOnFailureListener(new OnFailureListener() {
                                         @Override
