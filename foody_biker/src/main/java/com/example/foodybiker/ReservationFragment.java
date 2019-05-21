@@ -133,11 +133,9 @@ public class ReservationFragment extends Fragment {
                         if (reservationDB.getStatus() == null) {
                             toAdd = true;
                             if(reservations != null) {
-                                if (reservations.size() != 0) {
-                                    for (Reservation r : reservations) {
-                                        if (r.getReservationID().equals(reservationDB.getReservationID())) {
-                                            toAdd = false;
-                                        }
+                                for (Reservation r : reservations) {
+                                    if (r.getReservationID().equals(reservationDB.getReservationID())) {
+                                        toAdd = false;
                                     }
                                 }
                             }
