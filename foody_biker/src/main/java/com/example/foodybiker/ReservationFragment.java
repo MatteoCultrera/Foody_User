@@ -132,9 +132,13 @@ public class ReservationFragment extends Fragment {
                         ReservationDBBiker reservationDB = dataSnapshot.getValue(ReservationDBBiker.class);
                         if (reservationDB.getStatus() == null) {
                             toAdd = true;
-                            for (Reservation r : reservations) {
-                                if (r.getReservationID().equals(reservationDB.getReservationID())) {
-                                    toAdd = false;
+                            if(reservations != null) {
+                                if (reservations.size() != 0) {
+                                    for (Reservation r : reservations) {
+                                        if (r.getReservationID().equals(reservationDB.getReservationID())) {
+                                            toAdd = false;
+                                        }
+                                    }
                                 }
                             }
                             if (toAdd) {
