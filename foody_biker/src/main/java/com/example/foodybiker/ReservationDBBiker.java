@@ -25,8 +25,6 @@ public class ReservationDBBiker {
         this.restaurantAddress = restaurantAddress;
         this.userAddress = userAddress;
         this.restaurantID = restaurantID;
-        latitude = 0.0;
-        longitude = 0.0;
     }
 
     public String getRestaurantID() {
