@@ -67,6 +67,7 @@ public class MapFragment extends Fragment {
     private LatLngBounds.Builder builderUserRest;
     private MainActivity father;
     private Location currLoc;
+    Geocoder geocoder;
 
     public void setFather(MainActivity father){
         this.father = father;
@@ -96,7 +97,7 @@ public class MapFragment extends Fragment {
             for (int i = 0; i < reservations.size(); i++) {
                 String addressRest = reservations.get(i).getRestaurantAddress();
                 List<Address> lista = new ArrayList<>();
-                Geocoder geocoder = new Geocoder(getContext(), Locale.getDefault());
+
                 try {
                     lista = geocoder.getFromLocationName(addressRest, 1);
                 } catch (IOException e) {
@@ -138,6 +139,10 @@ public class MapFragment extends Fragment {
         fetchRestaurant(currLoc);
     }
 
+    public void clearMap() {
+        mGoogleMap.clear();
+    }
+
     public void newReservationToDisplay(Reservation res) {
         reservations.add(res);
         fetchRestaurant(currLoc);
@@ -151,7 +156,6 @@ public class MapFragment extends Fragment {
         mGoogleMap.clear();
 
         String addressUser = activeReservation.getUserAddress();
-        Geocoder geocoder = new Geocoder(getContext(), Locale.getDefault());
         try {
             lista = geocoder.getFromLocationName(addressUser, 1);
         } catch (IOException e) {
@@ -220,6 +224,8 @@ public class MapFragment extends Fragment {
 
         mLocationPermissionGranted = ContextCompat.checkSelfPermission(mapFragment.getContext(), android.Manifest.permission.ACCESS_FINE_LOCATION)
                 == PackageManager.PERMISSION_GRANTED;
+
+        geocoder = new Geocoder(mapFragment.getContext(), Locale.getDefault());
 
         activeReservation = null;
         initRestFromDB();
