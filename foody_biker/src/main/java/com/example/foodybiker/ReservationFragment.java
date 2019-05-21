@@ -11,7 +11,6 @@ import android.support.v7.widget.CardView;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.text.method.ScrollingMovementMethod;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -31,7 +30,6 @@ import com.google.firebase.database.Query;
 import com.google.firebase.database.ValueEventListener;
 
 import java.util.ArrayList;
-import java.util.Comparator;
 import java.util.HashMap;
 
 import static android.content.Context.MODE_PRIVATE;
@@ -54,8 +52,6 @@ public class ReservationFragment extends Fragment {
     private MainActivity father;
     private SharedPreferences sharedPreferences;
     private int pending;
-
-    Fragment map;
 
     public ReservationFragment(){}
 
@@ -161,6 +157,8 @@ public class ReservationFragment extends Fragment {
                                     sharedPreferences.edit().putBoolean("hasNotification", true).apply();
                                     father.setNotification(1);
                                 }
+
+                                father.newReservation(reservation);
                             }
                         }
                     }
@@ -251,9 +249,8 @@ public class ReservationFragment extends Fragment {
                             Toast.makeText(father, R.string.error_order, Toast.LENGTH_SHORT).show();
                         }
                     });
-                    //TODO
 
-                    ((MapFragment)map).switchLayout = true;
+                    father.noActiveReservation(activeReservation);
 
                     setInterface(false);
                     canClick = false;
@@ -339,6 +336,7 @@ public class ReservationFragment extends Fragment {
                 notes.setText(activeReservation.getNotes());
             }
 
+            father.thereisActive(activeReservation);
         }
     }
 

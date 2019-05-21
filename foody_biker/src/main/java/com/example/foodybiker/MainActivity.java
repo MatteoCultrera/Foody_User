@@ -1,6 +1,5 @@
 package com.example.foodybiker;
 
-import android.content.Context;
 import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.os.Bundle;
@@ -12,7 +11,6 @@ import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v7.app.AppCompatActivity;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -52,6 +50,7 @@ public class MainActivity extends AppCompatActivity {
             return;
         }
         map = new MapFragment();
+        ((MapFragment) map).setFather(this);
         reservations = new ReservationFragment();
         ((ReservationFragment) reservations).setFather(this);
         user = new UserFragment();
@@ -83,13 +82,12 @@ public class MainActivity extends AppCompatActivity {
         super.onRequestPermissionsResult(requestCode, permissions, grantResults);
 
         if(requestCode == PERMISSIONS_REQUEST_ACCESS_FINE_LOCATION) {
-                // If request is cancelled, the result arrays are empty.
-                if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
-                    if(map.isVisible())
-                        ((MapFragment)map).permissionsGrantedVis();
-                    else
-                        ((MapFragment)map).permissionsGranted();
-                }
+            if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+                if(map.isVisible())
+                    ((MapFragment)map).permissionsGrantedVis();
+                else
+                    ((MapFragment)map).permissionsGranted();
+            }
         }
     }
 
@@ -115,7 +113,6 @@ public class MainActivity extends AppCompatActivity {
                     transaction.setCustomAnimations(R.anim.enter_from_left,R.anim.exit_to_right);
                     transaction.hide(active).show(map).commit();
                     active = map;
-                    //((MapFragment) map).startListen();
                     return true;
                 }else if(id == R.id.orders && active != reservations){
                     clearNotification(1);
@@ -129,7 +126,6 @@ public class MainActivity extends AppCompatActivity {
                         transaction.hide(active).show(reservations).commit();
                     }
                     active = reservations;
-                    //((MapFragment) map).stopListen();
                     return true;
                 }else if(id == R.id.prof && active != user){
                     clearNotification(2);
@@ -137,7 +133,6 @@ public class MainActivity extends AppCompatActivity {
                     transaction.setCustomAnimations(R.anim.enter_from_right,R.anim.exit_to_left);
                     transaction.hide(active).show(user).commit();
                     active = user;
-                    //((MapFragment) map).stopListen();
                     return true;
                 }
                 return false;
@@ -210,6 +205,18 @@ public class MainActivity extends AppCompatActivity {
         notificationBadgeOne.setVisibility(View.GONE);
         notificationBadgeTwo.setVisibility(View.GONE);
         notificationBadgeThree.setVisibility(View.GONE);
+    }
+
+    public void thereisActive(Reservation res) {
+        ((MapFragment) map).thereIsAnActiveRes(res);
+    }
+
+    public void noActiveReservation(Reservation res) {
+        ((MapFragment) map).noActive(res);
+    }
+
+    public void newReservation(Reservation res) {
+        ((MapFragment) map).newReservationToDisplay(res);
     }
 
     @Override
