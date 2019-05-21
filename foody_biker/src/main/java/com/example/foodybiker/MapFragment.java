@@ -139,6 +139,10 @@ public class MapFragment extends Fragment {
         fetchRestaurant(currLoc);
     }
 
+    public void clearMap() {
+        mGoogleMap.clear();
+    }
+
     public void newReservationToDisplay(Reservation res) {
         reservations.add(res);
         fetchRestaurant(currLoc);

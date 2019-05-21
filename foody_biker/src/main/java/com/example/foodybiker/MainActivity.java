@@ -11,6 +11,7 @@ import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v7.app.AppCompatActivity;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -217,6 +218,11 @@ public class MainActivity extends AppCompatActivity {
 
     public void newReservation(Reservation res) {
         ((MapFragment) map).newReservationToDisplay(res);
+    }
+
+    public void nothingActive() {
+        Log.d("PROVA", "nothingActive()");
+        ((MapFragment) map).clearMap();
     }
 
     @Override

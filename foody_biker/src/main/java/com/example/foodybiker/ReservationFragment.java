@@ -292,6 +292,8 @@ public class ReservationFragment extends Fragment {
             }
             secondaryText.setText(  reservations.size()+" "+getString(R.string.pending_orders));
         }
+        if(reservations.size() == 0)
+            father.nothingActive();
     }
 
     public void setInterface(Boolean deliveringOrder){
