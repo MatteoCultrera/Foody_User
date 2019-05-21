@@ -7,6 +7,7 @@ import android.location.Location;
 import android.os.Bundle;
 import android.os.Looper;
 import android.support.annotation.NonNull;
+import android.support.annotation.Nullable;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.Fragment;
 import android.support.v4.content.ContextCompat;
@@ -32,7 +33,6 @@ import com.google.android.gms.maps.model.LatLngBounds;
 import com.google.android.gms.maps.model.MarkerOptions;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
-import com.google.android.libraries.places.api.model.Place;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.DataSnapshot;
@@ -62,8 +62,15 @@ public class MapFragment extends Fragment {
     private LocationCallback locationCallback;
     LocationRequest locationRequest;
     private ArrayList<Reservation> reservations;
-    Reservation activeReservation;
+    Reservation activeReservation = null;
     private LatLngBounds.Builder builder;
+    private LatLngBounds.Builder builderUserRest;
+    private MainActivity father;
+    private Location currLoc;
+
+    public void setFather(MainActivity father){
+        this.father = father;
+    }
 
     public MapFragment() {}
 
@@ -71,116 +78,100 @@ public class MapFragment extends Fragment {
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         firebaseAuth = FirebaseAuth.getInstance();
-        locationRequest = new LocationRequest();;
+        locationRequest = new LocationRequest();
         builder = new LatLngBounds.Builder();
-
-        locationCallback = new LocationCallback() {
-            @Override
-            public void onLocationResult(LocationResult locationResult) {
-                if (locationResult == null) {
-                    return;
-                }
-                for (final Location location : locationResult.getLocations()) {
-                    Toast.makeText(mapFragment.getContext(), location.getLatitude() + " " + location.getLongitude(), Toast.LENGTH_SHORT).show();
-                    FirebaseUser user = firebaseAuth.getCurrentUser();
-                    final DatabaseReference database = FirebaseDatabase.getInstance().getReference()
-                            .child("Bikers/" + user.getUid());
-                    HashMap<String, Object> child = new HashMap<>();
-                    child.put("location", location);
-                    database.updateChildren(child);
-
-                    if(activeReservation == null) {
-                        mGoogleMap.clear();
-                        fetchRestaurant(location);
-                    } else {
-                        if(activeReservation.isAccepted()) {
-                            mGoogleMap.clear();
-                            fetchUserAndRestaurant(location);
-                        } else
-                            mGoogleMap.clear();
-                    }
-                }
-            };
-        };
+        builderUserRest = new LatLngBounds.Builder();
     }
 
     public void fetchRestaurant(Location location) {
-        final Location loc = location;
+        mGoogleMap.clear();
+
+        activeReservation = null;
+
+        builder = new LatLngBounds.Builder();
+        builder.include(new LatLng(location.getLatitude(), location.getLongitude()));
+
         Log.d("PROVA", reservations.size() + "");
         if(!reservations.isEmpty()) {
             for (int i = 0; i < reservations.size(); i++) {
-                DatabaseReference databaseRest = FirebaseDatabase.getInstance().getReference().child("restaurantsInfo");
-                Query queryLatLong;
-                final String name = reservations.get(i).getRestaurantName();
-                queryLatLong = databaseRest.child(reservations.get(i).getRestaurantID());
-                //TODO: controllare se giusto
-                queryLatLong.addListenerForSingleValueEvent(new ValueEventListener() {
-                    @Override
-                    public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-                        for (DataSnapshot ds : dataSnapshot.getChildren()) {
-                            ReservationDBBiker reservationDB = ds.getValue(ReservationDBBiker.class);
-                            Double lat = reservationDB.getLatitude();
-                            Double lon = reservationDB.getLongitude();
-                            LatLng latlon = new LatLng(lat, lon);
+                String addressRest = reservations.get(i).getRestaurantAddress();
+                List<Address> lista = new ArrayList<>();
+                Geocoder geocoder = new Geocoder(getContext(), Locale.getDefault());
+                try {
+                    lista = geocoder.getFromLocationName(addressRest, 1);
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
 
-                            Log.d("PROVA", "lat " + latlon.latitude + " long " + latlon.longitude + " name " + name);
-                            Double distance = haversineDistance(loc.getLatitude(), loc.getLongitude(), lat, lon);
-                            MarkerOptions mark = new MarkerOptions();
-                            mark.position(latlon);
-                            mark.title(name);
-                            mark.snippet(String.format(Locale.getDefault(), "distance %.2f km", distance.floatValue()));
-                            mark.icon(BitmapDescriptorFactory.fromResource(R.drawable.rest_icon));
-                            mGoogleMap.addMarker(mark);
+                LatLng latlngRest = new LatLng(lista.get(0).getLatitude(), lista.get(0).getLongitude());
+                Log.d("PROVA", "latlon " + latlngRest.latitude + " " + latlngRest.longitude);
 
-                            builder.include(latlon);
-                            builder.include(new LatLng(loc.getLatitude(), loc.getLongitude()));
-                            LatLngBounds bounds = builder.build();
-                            CameraUpdate cu = CameraUpdateFactory.newLatLngBounds(bounds, 150);
-                            mGoogleMap.animateCamera(cu);
-                        }
-                    }
+                MarkerOptions mark = new MarkerOptions();
+                mark.position(latlngRest);
+                mark.title(reservations.get(i).getRestaurantName());
+                Double distance = haversineDistance(location.getLatitude(), location.getLongitude(), latlngRest.latitude, latlngRest.longitude);
+                mark.snippet(String.format(Locale.getDefault(), "distant %.2f km from you", distance.floatValue()));
+                mark.icon(BitmapDescriptorFactory.fromResource(R.drawable.rest_icon));
+                mGoogleMap.addMarker(mark);
 
-                    @Override
-                    public void onCancelled(@NonNull DatabaseError databaseError) {
-                    }
-                });
+                builder.include(latlngRest);
             }
-        } else {
-            Log.d("PROVA", "empty");
+            LatLngBounds bounds = builder.build();
+            CameraUpdate cu = CameraUpdateFactory.newLatLngBounds(bounds, 150);
+            mGoogleMap.animateCamera(cu);
         }
+    }
+
+    public void thereIsAnActiveRes(Reservation res) {
+        activeReservation = res;
+        if(!reservations.isEmpty())
+            fetchUserAndRestaurant(currLoc);
+    }
+
+    public void noActive(Reservation res) {
+        for(int i = 0; i < reservations.size(); i++) {
+            if(reservations.get(i).getReservationID().equals(res.getReservationID())) {
+                activeReservation = null;
+                reservations.remove(i);
+            }
+        }
+        fetchRestaurant(currLoc);
+    }
+
+    public void newReservationToDisplay(Reservation res) {
+        reservations.add(res);
+        fetchRestaurant(currLoc);
     }
 
     public void fetchUserAndRestaurant(Location location) {
         final Location loc = location;
         Log.d("PROVA", activeReservation + "");
+        List<Address> lista = new ArrayList<>();
 
         mGoogleMap.clear();
 
         String addressUser = activeReservation.getUserAddress();
-        List<Address> lista = new ArrayList<>();
         Geocoder geocoder = new Geocoder(getContext(), Locale.getDefault());
         try {
             lista = geocoder.getFromLocationName(addressUser, 1);
         } catch (IOException e) {
             e.printStackTrace();
         }
-
         LatLng latLngUser = new LatLng(lista.get(0).getLatitude(), lista.get(0).getLongitude());
-        Log.d("PROVA", "latlon " + latLngUser.latitude + " " + latLngUser.longitude);
+
         String addressRest = activeReservation.getRestaurantAddress();
         try {
             lista = geocoder.getFromLocationName(addressRest, 1);
         } catch (IOException e) {
             e.printStackTrace();
         }
-
         LatLng latLngRestaurant = new LatLng(lista.get(0).getLatitude(), lista.get(0).getLongitude());
-        Log.d("PROVA", "latlon " + latLngRestaurant.latitude + " " + latLngRestaurant.longitude);
+
         MarkerOptions mark = new MarkerOptions();
         mark.position(latLngRestaurant);
         mark.title(activeReservation.getRestaurantName());
         Double distance = haversineDistance(loc.getLatitude(), loc.getLongitude(), latLngRestaurant.latitude, latLngRestaurant.longitude);
-        mark.snippet(String.format(Locale.getDefault(), "distance %.2f km from you", distance.floatValue()));
+        mark.snippet(String.format(Locale.getDefault(), "distant %.2f km from you", distance.floatValue()));
         mark.icon(BitmapDescriptorFactory.fromResource(R.drawable.rest_icon));
         mGoogleMap.addMarker(mark);
 
@@ -191,11 +182,11 @@ public class MapFragment extends Fragment {
         mark.icon(BitmapDescriptorFactory.defaultMarker());
         mGoogleMap.addMarker(mark);
 
-        builder = new LatLngBounds.Builder();
-        builder.include(new LatLng(loc.getLatitude(), loc.getLongitude()));
-        builder.include(latLngRestaurant);
-        builder.include(latLngUser);
-        LatLngBounds bounds = builder.build();
+        builderUserRest = new LatLngBounds.Builder();
+        builderUserRest.include(new LatLng(loc.getLatitude(), loc.getLongitude()));
+        builderUserRest.include(latLngRestaurant);
+        builderUserRest.include(latLngUser);
+        LatLngBounds bounds = builderUserRest.build();
         CameraUpdate cu = CameraUpdateFactory.newLatLngBounds(bounds, 150);
         mGoogleMap.animateCamera(cu);
     }
@@ -218,7 +209,6 @@ public class MapFragment extends Fragment {
         return deg * (Math.PI/180);
     }
 
-
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
@@ -231,6 +221,7 @@ public class MapFragment extends Fragment {
         mLocationPermissionGranted = ContextCompat.checkSelfPermission(mapFragment.getContext(), android.Manifest.permission.ACCESS_FINE_LOCATION)
                 == PackageManager.PERMISSION_GRANTED;
 
+        activeReservation = null;
         initRestFromDB();
 
         mapFragment.getMapAsync(new OnMapReadyCallback() {
@@ -240,16 +231,46 @@ public class MapFragment extends Fragment {
 
                 getDeviceLocation();
                 updateLocationUI();
+
+                mGoogleMap.animateCamera(CameraUpdateFactory.zoomBy(DEFAULT_ZOOM));
             }
         });
 
         return rootView;
     }
 
+    @Override
+    public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
+        super.onViewCreated(view, savedInstanceState);
+        locationCallback = new LocationCallback() {
+            @Override
+            public void onLocationResult(LocationResult locationResult) {
+                if (locationResult == null) {
+                    return;
+                }
+                for (final Location location : locationResult.getLocations()) {
+                    currLoc = location;
+                    Toast.makeText(mapFragment.getContext(), location.getLatitude() + " " + location.getLongitude(), Toast.LENGTH_SHORT).show();
+                    FirebaseUser user = firebaseAuth.getCurrentUser();
+                    final DatabaseReference database = FirebaseDatabase.getInstance().getReference()
+                            .child("Bikers/" + user.getUid());
+                    HashMap<String, Object> child = new HashMap<>();
+                    child.put("location", location);
+                    database.updateChildren(child);
+
+                    if(activeReservation == null) {
+                        fetchRestaurant(location);
+                    } else {
+                        fetchUserAndRestaurant(location);
+                    }
+                }
+            }
+        };
+    }
+
     private void initRestFromDB() {
         firebaseAuth = FirebaseAuth.getInstance();
         firebaseUser = firebaseAuth.getCurrentUser();
-        activeReservation = null;
         reservations = new ArrayList<>();
         final DatabaseReference database = FirebaseDatabase.getInstance().getReference().child("reservations").child("Bikers");
         Query query = database.child(firebaseUser.getUid());
@@ -259,18 +280,12 @@ public class MapFragment extends Fragment {
                 for (DataSnapshot ds : dataSnapshot.getChildren()) {
                     Log.d("PROVA", ds.getKey());
                     ReservationDBBiker reservationDB = ds.getValue(ReservationDBBiker.class);
-                    if (reservationDB.getStatus() == null) {
+                    if (reservationDB.getStatus() == null || reservationDB.getStatus().equals("accepted")) {
                         Reservation reservation = new Reservation(reservationDB.getRestaurantName(), reservationDB.getRestaurantAddress(),
                                 reservationDB.getOrderTimeBiker(), reservationDB.getUserName(), reservationDB.getUserAddress(),
                                 reservationDB.getOrderTime(), reservationDB.getRestaurantID(),null, false);
                         reservation.setReservationID(ds.getKey());
                         reservations.add(reservation);
-                    } else if(reservationDB.getStatus().equals("accepted")){
-                        Reservation reservation = new Reservation(reservationDB.getRestaurantName(), reservationDB.getRestaurantAddress(),
-                                reservationDB.getOrderTimeBiker(), reservationDB.getUserName(), reservationDB.getUserAddress(),
-                                reservationDB.getOrderTime(), reservationDB.getRestaurantID(),null, true);
-                        reservation.setReservationID(ds.getKey());
-                        activeReservation = reservation;
                     }
                 }
             }
@@ -308,7 +323,6 @@ public class MapFragment extends Fragment {
                                            @NonNull int[] grantResults) {
         switch (requestCode) {
             case PERMISSIONS_REQUEST_ACCESS_FINE_LOCATION: {
-                // If request is cancelled, the result arrays are empty.
                 if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
                     mLocationPermissionGranted = true;
                 }
@@ -330,7 +344,7 @@ public class MapFragment extends Fragment {
 
                 Location loc = mLastKnownLocation;
                 if(mFusedLocationProviderClient.getLastLocation().isComplete())
-                    loc = (Location) mFusedLocationProviderClient.getLastLocation().getResult();
+                    loc = mFusedLocationProviderClient.getLastLocation().getResult();
                 FirebaseUser user = firebaseAuth.getCurrentUser();
                 DatabaseReference database = FirebaseDatabase.getInstance().getReference()
                         .child("Bikers/" + user.getUid());
@@ -363,7 +377,7 @@ public class MapFragment extends Fragment {
                             // Set the map's camera position to the current location of the device.
                             mLastKnownLocation = (Location) task.getResult();
                             if(mLastKnownLocation != null) {
-                                mGoogleMap.moveCamera(CameraUpdateFactory.newLatLngZoom(
+                                mGoogleMap.animateCamera(CameraUpdateFactory.newLatLngZoom(
                                         new LatLng(mLastKnownLocation.getLatitude(),
                                                 mLastKnownLocation.getLongitude()), DEFAULT_ZOOM));
                             }
