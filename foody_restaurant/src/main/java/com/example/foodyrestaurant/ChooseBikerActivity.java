@@ -86,10 +86,13 @@ public class ChooseBikerActivity extends AppCompatActivity {
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
                 for (DataSnapshot d : dataSnapshot.getChildren()){
+                    if(d.child("status").exists()) {
+                        String status = d.child("status").getValue(String.class);
+                        if (status.compareTo("busy") == 0){
+                            continue;
+                        }
+                    }
                     final BikerInfo biker = d.child("info").getValue(BikerInfo.class);
-                    Log.d("BIKERFETCH", ""+
-                            biker.getUsername()+" "+biker.getAddress()+" "
-                    +biker.getCity()+" "+biker.getNumberPhone());
                     biker.setBikerID(d.getKey());
                     Double latitude, longitude;
 
@@ -97,7 +100,6 @@ public class ChooseBikerActivity extends AppCompatActivity {
                         latitude = d.child("location").child("latitude").getValue(Double.class);
                         longitude = d.child("location").child("longitude").getValue(Double.class);
                     }catch (NullPointerException e){
-                        Log.d("BIKERFETCH", "Position not fetched");
                         continue;
                     }
 
