@@ -45,7 +45,7 @@
             android:id="@+id/discover_search_address"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:drawableLeft="@drawable/address2_white"
+            android:drawableStart="@drawable/address2_white"
             android:drawablePadding="8dp"
             android:drawableTint="#B7C1C7"
             android:fontFamily="@font/roboto_regular"
@@ -55,7 +55,7 @@
             android:paddingTop="10dp"
             android:paddingBottom="10dp"
             android:paddingEnd="10dp"
-            android:text="Click To Insert Address  "
+            android:text="@string/click_address"
             android:textColor="#B7C1C7"
             android:textSize="18sp"
             app:layout_constraintBottom_toBottomOf="parent"
@@ -83,8 +83,5 @@
             android:orientation="vertical"
             app:layout_constraintGuide_percent=".82"/>
     </android.support.constraint.ConstraintLayout>
-
-
-
 
 </android.support.constraint.ConstraintLayout>

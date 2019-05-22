@@ -93,4 +93,7 @@
     <string name="done">Done</string>
     <string name="doing">Doing</string>
     <string name="rejected">Rejected</string>
+
+    <string name="address_not_selected">Select a delivery address</string>
+    <string name="click_address">Click to insert address</string>
 </resources>

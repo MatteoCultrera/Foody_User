@@ -93,4 +93,7 @@
     <string name="done">Completato</string>
     <string name="doing">In corso</string>
     <string name="rejected">Rejected</string>
+
+    <string name="address_not_selected">Selezionare un indirizzo di consengna</string>
+    <string name="click_address">Clicca per inserire l\'indirizzo</string>
 </resources>

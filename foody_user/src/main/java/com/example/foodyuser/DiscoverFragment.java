@@ -66,7 +66,7 @@ public class DiscoverFragment extends Fragment {
             @Override
             public void onClick(View v) {
                 if(!setted)
-                    Toast.makeText(address.getContext(), "Prima seleziona l'indirizzo", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(address.getContext(), R.string.address_not_selected, Toast.LENGTH_SHORT).show();
                 else {
                     Intent intent = new Intent(getActivity(), RestaurantsList.class);
                     startActivity(intent);
