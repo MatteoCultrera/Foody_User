@@ -1,5 +1,6 @@
 package com.example.foodyrestaurant;
 
+import android.net.Uri;
 import android.support.annotation.NonNull;
 import android.support.constraint.ConstraintLayout;
 import android.support.design.button.MaterialButton;
@@ -13,6 +14,9 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import com.bumptech.glide.Glide;
+import com.google.android.gms.tasks.OnSuccessListener;
+import com.google.firebase.storage.FirebaseStorage;
+import com.google.firebase.storage.StorageReference;
 
 import java.util.ArrayList;
 
@@ -49,10 +53,22 @@ public class RVAdapterChooseBiker extends RecyclerView.Adapter<RVAdapterChooseBi
         if(currentBiker.biker.getPath() == null){
             pvh.profilePicture.setVisibility(View.GONE);
         }else{
-            Glide
-                    .with(pvh.profilePicture.getContext())
-                    .load(currentBiker.biker.getPath())
-                    .into(pvh.profilePicture);
+            if(currentBiker.biker.getPath().length() == 0){
+                pvh.profilePicture.setVisibility(View.GONE);
+            }else{
+                StorageReference mStorageRef = FirebaseStorage.getInstance().getReference();
+                mStorageRef.child(currentBiker.biker.getPath())
+                        .getDownloadUrl().addOnSuccessListener(new OnSuccessListener<Uri>() {
+                    @Override
+                    public void onSuccess(Uri uri) {
+                        Glide
+                                .with(pvh.profilePicture.getContext())
+                                .load(uri)
+                                .into(pvh.profilePicture);
+                    }
+                });
+
+            }
         }
 
         pvh.username.setText(currentBiker.biker.getUsername());
@@ -66,7 +82,7 @@ public class RVAdapterChooseBiker extends RecyclerView.Adapter<RVAdapterChooseBi
         pvh.choose.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                currentBiker.imageAdded = false;
+
                 fatherClass.bikerChosen(pvh.getAdapterPosition());
             }
         });

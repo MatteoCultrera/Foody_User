@@ -86,4 +86,7 @@
 
     <string name="call_biker">CHIAMA BIKER</string>
 
+
+    <string name="order_delivered">ORDINE CONSEGNATO</string>
+
 </resources>
