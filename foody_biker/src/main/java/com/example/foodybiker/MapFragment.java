@@ -432,13 +432,13 @@ public class MapFragment extends Fragment {
     @Override
     public void onResume() {
         super.onResume();
-        startLocationUpdates();
+        //startLocationUpdates();
     }
 
     @Override
     public void onPause() {
         super.onPause();
-        stopLocationUpdates();
+        //stopLocationUpdates();
     }
 
 }
