@@ -3,6 +3,9 @@ package com.example.foodyuser;
 import android.app.AlertDialog;
 import android.content.Context;
 import android.content.DialogInterface;
+import android.content.SharedPreferences;
+import android.location.Address;
+import android.location.Geocoder;
 import android.support.annotation.NonNull;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
@@ -15,7 +18,9 @@ import android.view.View;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.EditText;
 import android.widget.ImageButton;
+import android.widget.TextView;
 
+import com.google.android.gms.maps.model.LatLng;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
@@ -23,6 +28,7 @@ import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.Query;
 import com.google.firebase.database.ValueEventListener;
 
+import java.io.IOException;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -30,6 +36,7 @@ import java.util.Arrays;
 import java.util.Calendar;
 import java.util.Comparator;
 import java.util.Date;
+import java.util.List;
 import java.util.Locale;
 
 public class RestaurantsList extends AppCompatActivity {
@@ -50,21 +57,33 @@ public class RestaurantsList extends AppCompatActivity {
     private ArrayList<Integer> copyIndexFoods;
     private boolean clearFilter = false;
     private boolean firstTime = true;
+    private SharedPreferences sharedPref;
+    private SharedPreferences.Editor edit;
+
+    private String delivAddress;
+    private Geocoder geocoder;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_restaurants_list);
+
         init();
     }
 
-    private void init(){
+    private void init() {
+        Context context = getApplicationContext();
+        sharedPref = context.getSharedPreferences("myPreference", MODE_PRIVATE);
+        edit = sharedPref.edit();
+        geocoder = new Geocoder(this, Locale.getDefault());
         restaurantList = findViewById(R.id.restaurants_list);
         LinearLayoutManager llm = new LinearLayoutManager(this);
         restaurantList.setLayoutManager(llm);
         filter = findViewById(R.id.filterButton);
         back = findViewById(R.id.backButton);
         searchField = findViewById(R.id.search_field);
+        delivAddress = sharedPref.getString("delivery_address", "default");
+        Log.d("DISTANCE", "Delivery address " + delivAddress);
 
         Calendar calendar = Calendar.getInstance(Locale.ITALY);
         int dayOfWeek = calendar.get(Calendar.DAY_OF_WEEK) - 2;
@@ -100,7 +119,7 @@ public class RestaurantsList extends AppCompatActivity {
                                         restaurant.setOpen(false);
                                     }
                                 } catch(ParseException e){
-
+                                    e.printStackTrace();
                                 }
                             }
                             else{
@@ -114,6 +133,17 @@ public class RestaurantsList extends AppCompatActivity {
                             }
                             restaurant.setCuisines(types);
                         }
+
+                        if(ds1.child("address").exists()) {
+                            Log.d("DISTANCE", "Del " + delivAddress);
+                            Log.d("DISTANCE", "Rest " + restaurant.getAddress());
+
+                            Double distance = calculateDistance(delivAddress, restaurant.getAddress());
+                            Log.d("DISTANCE", "double" + distance);
+                            restaurant.setDistance(distance.floatValue());
+                            Log.d("DISTANCE", "float" + distance.floatValue());
+                        }
+
                         restaurants.add(restaurant);
                         restName.add(restaurant);
                         restCuisine.add(restaurant);
@@ -175,6 +205,46 @@ public class RestaurantsList extends AppCompatActivity {
                 back();
             }
         });
+    }
+
+    public double calculateDistance(String delivAddress, String restAddress) {
+        List<Address> lista = new ArrayList<>();
+
+        Log.d("DISTANCE", "inside distance " + delivAddress + ", " + restAddress);
+
+        try {
+            lista = geocoder.getFromLocationName(delivAddress, 1);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        LatLng delivPlace = new LatLng(lista.get(0).getLatitude(), lista.get(0).getLongitude());
+
+        try {
+            lista = geocoder.getFromLocationName(restAddress, 1);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        LatLng restPlace = new LatLng(lista.get(0).getLatitude(), lista.get(0).getLongitude());
+
+        return haversineDistance(delivPlace.latitude, delivPlace.longitude, restPlace.latitude, restPlace.longitude);
+    }
+
+    public double haversineDistance(double initialLat, double initialLong,
+                                    double finalLat, double finalLong){
+        int R = 6371; // km (Earth radius)
+        double dLat = toRadians(finalLat-initialLat);
+        double dLon = toRadians(finalLong-initialLong);
+        initialLat = toRadians(initialLat);
+        finalLat = toRadians(finalLat);
+
+        double a = Math.sin(dLat/2) * Math.sin(dLat/2) +
+                Math.sin(dLon/2) * Math.sin(dLon/2) * Math.cos(initialLat) * Math.cos(finalLat);
+        double c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1-a));
+        return R * c;
+    }
+
+    public double toRadians(double deg) {
+        return deg * (Math.PI/180);
     }
 
     private void back() {

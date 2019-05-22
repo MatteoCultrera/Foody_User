@@ -1,6 +1,8 @@
 package com.example.foodyuser;
 
+import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.graphics.Bitmap;
 import android.location.SettingInjectorService;
 import android.net.Uri;
@@ -34,6 +36,7 @@ import java.util.Arrays;
 import java.util.List;
 
 import static android.app.Activity.RESULT_OK;
+import static android.content.Context.MODE_PRIVATE;
 
 public class DiscoverFragment extends Fragment {
 
@@ -42,6 +45,8 @@ public class DiscoverFragment extends Fragment {
     private ImageButton searchButton;
     private TextView address;
     private boolean setted = false;
+    private SharedPreferences sharedPref;
+    private SharedPreferences.Editor edit;
 
     public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
 
@@ -55,10 +60,11 @@ public class DiscoverFragment extends Fragment {
         super.onViewCreated(view, savedInstanceState);
 
         init(view);
-
     }
 
     private void init(View view){
+        sharedPref = view.getContext().getSharedPreferences("myPreference", MODE_PRIVATE);
+        edit = sharedPref.edit();
         searchButton = view.findViewById(R.id.discover_search_button);
         address = view.findViewById(R.id.discover_search_address);
 
@@ -108,6 +114,8 @@ public class DiscoverFragment extends Fragment {
                 address.setTextColor(getContext().getColor(R.color.primaryText));
                 setted = true;
                 searchButton.setEnabled(true);
+                edit.putString("delivery_address", place.getAddress());
+                edit.apply();
             }
         }
     }

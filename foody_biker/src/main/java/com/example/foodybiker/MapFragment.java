@@ -67,7 +67,7 @@ public class MapFragment extends Fragment {
     private LatLngBounds.Builder builderUserRest;
     private MainActivity father;
     private Location currLoc;
-    Geocoder geocoder;
+    private Geocoder geocoder;
 
     public void setFather(MainActivity father){
         this.father = father;
