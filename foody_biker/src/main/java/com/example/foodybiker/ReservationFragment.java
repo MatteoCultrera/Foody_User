@@ -63,18 +63,15 @@ public class ReservationFragment extends Fragment {
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
+        Log.d("SWSW", "oncreate");
         return inflater.inflate(R.layout.fragment_reservation, container, false);
     }
 
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
+        Log.d("SWSW", "onview");
         super.onViewCreated(view, savedInstanceState);
         init(view);
-    }
-
-    @Override
-    public void onResume() {
-        super.onResume();
     }
 
     public void init(final View view){
@@ -142,6 +139,7 @@ public class ReservationFragment extends Fragment {
                                 Reservation reservation = new Reservation(reservationDB.getRestaurantName(), reservationDB.getRestaurantAddress(),
                                         reservationDB.getOrderTimeBiker(), reservationDB.getUserName(), reservationDB.getUserAddress(),
                                         reservationDB.getOrderTime(), reservationDB.getRestaurantID(), null, false);
+                                reservation.setReservationID(dataSnapshot.getKey());
 
                                 int index;
                                 for (index = 0; index < reservations.size(); index++) {
