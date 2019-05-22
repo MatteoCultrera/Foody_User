@@ -256,7 +256,7 @@ public class MapFragment extends Fragment {
                 }
                 for (final Location location : locationResult.getLocations()) {
                     currLoc = location;
-                    Toast.makeText(mapFragment.getContext(), location.getLatitude() + " " + location.getLongitude(), Toast.LENGTH_SHORT).show();
+                    Toast.makeText(father.getApplicationContext(), location.getLatitude() + " " + location.getLongitude(), Toast.LENGTH_SHORT).show();
                     FirebaseUser user = firebaseAuth.getCurrentUser();
                     final DatabaseReference database = FirebaseDatabase.getInstance().getReference()
                             .child("Bikers/" + user.getUid());
