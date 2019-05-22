@@ -83,7 +83,6 @@ public class RestaurantsList extends AppCompatActivity {
         back = findViewById(R.id.backButton);
         searchField = findViewById(R.id.search_field);
         delivAddress = sharedPref.getString("delivery_address", "default");
-        Log.d("DISTANCE", "Delivery address " + delivAddress);
 
         Calendar calendar = Calendar.getInstance(Locale.ITALY);
         int dayOfWeek = calendar.get(Calendar.DAY_OF_WEEK) - 2;
@@ -135,13 +134,8 @@ public class RestaurantsList extends AppCompatActivity {
                         }
 
                         if(ds1.child("address").exists()) {
-                            Log.d("DISTANCE", "Del " + delivAddress);
-                            Log.d("DISTANCE", "Rest " + restaurant.getAddress());
-
                             Double distance = calculateDistance(delivAddress, restaurant.getAddress());
-                            Log.d("DISTANCE", "double" + distance);
                             restaurant.setDistance(distance.floatValue());
-                            Log.d("DISTANCE", "float" + distance.floatValue());
                         }
 
                         restaurants.add(restaurant);
@@ -209,8 +203,6 @@ public class RestaurantsList extends AppCompatActivity {
 
     public double calculateDistance(String delivAddress, String restAddress) {
         List<Address> lista = new ArrayList<>();
-
-        Log.d("DISTANCE", "inside distance " + delivAddress + ", " + restAddress);
 
         try {
             lista = geocoder.getFromLocationName(delivAddress, 1);
