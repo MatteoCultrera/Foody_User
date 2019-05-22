@@ -82,7 +82,7 @@ public class RestaurantsList extends AppCompatActivity {
         filter = findViewById(R.id.filterButton);
         back = findViewById(R.id.backButton);
         searchField = findViewById(R.id.search_field);
-        delivAddress = sharedPref.getString("delivery_address", "default");
+        delivAddress = sharedPref.getString("delivery_address", "");
 
         Calendar calendar = Calendar.getInstance(Locale.ITALY);
         int dayOfWeek = calendar.get(Calendar.DAY_OF_WEEK) - 2;
