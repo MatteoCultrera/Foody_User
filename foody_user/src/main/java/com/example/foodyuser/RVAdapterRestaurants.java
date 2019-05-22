@@ -50,46 +50,55 @@ public class RVAdapterRestaurants  extends RecyclerView.Adapter<RVAdapterRestaur
     public void onBindViewHolder(@NonNull final CardViewHolder cardViewHolder, final int i) {
 
         cardViewHolder.restaurantName.setText(restaurants.get(i).getUsername());
-        cardViewHolder.restaurantDescription.setText(restaurants.get(i).getKitchensString());
         cardViewHolder.restaurantDeliveryPrice.setText(restaurants.get(i).getDeliveryPriceString());
         cardViewHolder.restaurantDistance.setText(restaurants.get(i).getDistanceString());
+        StorageReference mStorageRef = FirebaseStorage.getInstance().getReference();
+        if (restaurants.get(i).getImagePath()!=null){
+            if(restaurants.get(i).getImagePath().length() > 0)
+                mStorageRef.child(restaurants.get(i).getImagePath()).getDownloadUrl()
+                        .addOnSuccessListener(new OnSuccessListener<Uri>() {
+                            @Override
+                            public void onSuccess(Uri uri) {
+                                Glide
+                                        .with(cardViewHolder.restaurantBackground.getContext())
+                                        .load(uri)
+                                        .into(cardViewHolder.restaurantBackground);
+                            }
+                        });
+        }
         if (restaurants.get(i).isOpen()) {
-            StorageReference mStorageRef = FirebaseStorage.getInstance().getReference();
-            mStorageRef.child(restaurants.get(i).getImagePath()).getDownloadUrl()
-                    .addOnSuccessListener(new OnSuccessListener<Uri>() {
-                        @Override
-                        public void onSuccess(Uri uri) {
-                            Glide
-                                    .with(cardViewHolder.restaurantBackground.getContext())
-                                    .load(uri)
-                                    .into(cardViewHolder.restaurantBackground);
-                        }
-                    });
+            cardViewHolder.restaurantDescription.setText(restaurants.get(i).getKitchensString());
+            Glide
+                    .with(cardViewHolder.restaurantBackground.getContext())
+                    .load(R.drawable.shadow_restaurants)
+                    .into(cardViewHolder.restaurantShadow);
+            cardViewHolder.card.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    Intent intent = new Intent(v.getContext(), RestaurantShow.class);
+                    intent.putExtra("restaurant_id", restaurants.get(i).getUid());
+                    intent.putExtra("restaurant_name", restaurants.get(i).getUsername());
+                    intent.putExtra("restaurant_address", restaurants.get(i).getAddress());
+
+                    File storage = cardViewHolder.card.getContext().getExternalFilesDir(Environment.DIRECTORY_DOCUMENTS);
+                    String filename = cardViewHolder.card.getContext().getString(R.string.order_file_name);
+                    File f = new File(storage, filename);
+                    if (f.exists())
+                        f.delete();
+
+                    //Start the Intent
+                    cardViewHolder.card.getContext().startActivity(intent);
+                }
+            });
         }else{
             Glide
                     .with(cardViewHolder.restaurantBackground.getContext())
-                    .load(R.drawable.profile_placeholder)
-                    .into(cardViewHolder.restaurantBackground);
+                    .load(R.drawable.background_closed)
+                    .into(cardViewHolder.restaurantShadow);
+            cardViewHolder.restaurantDescription.setText("CLOSED");
+            cardViewHolder.card.setOnClickListener(null);
         }
 
-        cardViewHolder.card.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Intent intent = new Intent(v.getContext(), RestaurantShow.class);
-                intent.putExtra("restaurant_id", restaurants.get(i).getUid());
-                intent.putExtra("restaurant_name", restaurants.get(i).getUsername());
-                intent.putExtra("restaurant_address", restaurants.get(i).getAddress());
-
-                File storage = cardViewHolder.card.getContext().getExternalFilesDir(Environment.DIRECTORY_DOCUMENTS);
-                String filename = cardViewHolder.card.getContext().getString(R.string.order_file_name);
-                File f = new File(storage, filename);
-                if (f.exists())
-                    f.delete();
-
-                //Start the Intent
-                cardViewHolder.card.getContext().startActivity(intent);
-            }
-        });
 
     }
 
