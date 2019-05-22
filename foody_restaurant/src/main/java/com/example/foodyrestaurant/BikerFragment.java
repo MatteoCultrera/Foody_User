@@ -46,6 +46,7 @@ import static android.content.Context.MODE_PRIVATE;
 public class BikerFragment extends Fragment {
 
     private RecyclerView notAcceptedRecycler, acceptedRecycler;
+    private MainActivity father;
     private TextView stringUp, stringDown;
     private ImageButton switchButton;
     private ArrayList<ReservationBiker> reservationList;
@@ -55,12 +56,16 @@ public class BikerFragment extends Fragment {
     private RVAdapterBiker adapterAccepted, adapterNotAccepted;
     private boolean onChooseSide;
     private final int CHOOSE_BIKER = 1;
+    private int numberAccepted, numberWaiting;
     private int currentPosition;
 
     public BikerFragment() {
         // Required empty public constructor
     }
 
+    public void setFather(MainActivity father){
+        this.father = father;
+    }
 
     @Override
     public View onCreateView(@NotNull LayoutInflater inflater, ViewGroup container,
@@ -88,6 +93,8 @@ public class BikerFragment extends Fragment {
         notAcceptedRecycler.setLayoutManager(llm2);
 
         sharedPreferences = view.getContext().getSharedPreferences("myPreference", MODE_PRIVATE);
+        numberAccepted = sharedPreferences.getInt("bikerAccepted", 0);
+        numberWaiting = sharedPreferences.getInt("bikerWaiting", 0);
 
         reservationList = new ArrayList<>();
         reservationAcceptedList = new ArrayList<>();
@@ -164,6 +171,19 @@ public class BikerFragment extends Fragment {
                     reservationAcceptedList.get(i).fetchBiker(i);
                 }
 
+                if(reservationList.size() != numberWaiting){
+                    father.setNotification(false);
+                    sharedPreferences.edit().putBoolean("bikerNotification", true).apply();
+                    sharedPreferences.edit().putInt("bikerWaiting", reservationList.size()).apply();
+                    sharedPreferences.edit().putInt("bikerAccepted", reservationAcceptedList.size()).apply();
+                }
+                if (reservationAcceptedList.size() != numberAccepted){
+                    father.setNotification(false);
+                    sharedPreferences.edit().putBoolean("bikerNotification", true).apply();
+                    sharedPreferences.edit().putInt("bikerWaiting", reservationList.size()).apply();
+                    sharedPreferences.edit().putInt("bikerAccepted", reservationAcceptedList.size()).apply();
+                }
+
                 notAcceptedRecycler.setAdapter(adapterNotAccepted);
                 acceptedRecycler.setAdapter(adapterAccepted);
 
@@ -178,16 +198,34 @@ public class BikerFragment extends Fragment {
 
                     @Override
                     public void onChildChanged(@NonNull DataSnapshot dataSnapshot, @Nullable String s) {
-                        /*ReservationDBRestaurant reservationDB = dataSnapshot.getValue(ReservationDBRestaurant.class);
+                        ReservationDBRestaurant reservationDB = dataSnapshot.getValue(ReservationDBRestaurant.class);
                         String orderID = reservationDB.getReservationID().substring(28);
 
+                        if(!dataSnapshot.child("attemptedBiker").exists()) {
+                            if (reservationDB.isAccepted() && !reservationDB.isWaitingBiker() && !reservationDB.isBiker()){
+                                father.setNotification(false);
+                                sharedPreferences.edit().putBoolean("bikerNotification", true).apply();
+                                sharedPreferences.edit().putInt("bikerWaiting", reservationList.size()).apply();
+                                sharedPreferences.edit().putInt("bikerAccepted", reservationAcceptedList.size()).apply();
+                            }
+                        }
                         if(reservationDB.isBiker() && reservationDB.getBikerID().compareTo("") != 0){
                             bikerAccepted(orderID, reservationDB.getBikerID());
+                            father.setNotification(false);
+                            sharedPreferences.edit().putBoolean("bikerNotification", true).apply();
+                            sharedPreferences.edit().putInt("bikerWaiting", reservationList.size()).apply();
+                            sharedPreferences.edit().putInt("bikerAccepted", reservationAcceptedList.size()).apply();
                         } else{
-                            if (!reservationDB.isWaitingBiker() && reservationDB.getBikerID().compareTo("") == 0) {
-                                bikerRefused(orderID);
+                            if(dataSnapshot.child("attemptedBiker").exists()) {
+                                if (!reservationDB.isWaitingBiker() && reservationDB.getBikerID().compareTo("") == 0) {
+                                    bikerRefused(orderID);
+                                    father.setNotification(false);
+                                    sharedPreferences.edit().putBoolean("bikerNotification", true).apply();
+                                    sharedPreferences.edit().putInt("bikerWaiting", reservationList.size()).apply();
+                                    sharedPreferences.edit().putInt("bikerAccepted", reservationAcceptedList.size()).apply();
+                                }
                             }
-                        }*/
+                        }
                     }
 
                     @Override
