@@ -286,12 +286,20 @@ public class MapFragment extends Fragment {
                 for (DataSnapshot ds : dataSnapshot.getChildren()) {
                     Log.d("PROVA", ds.getKey());
                     ReservationDBBiker reservationDB = ds.getValue(ReservationDBBiker.class);
-                    if (reservationDB.getStatus() == null || reservationDB.getStatus().equals("accepted")) {
+                    if (reservationDB.getStatus() == null) {
                         Reservation reservation = new Reservation(reservationDB.getRestaurantName(), reservationDB.getRestaurantAddress(),
                                 reservationDB.getOrderTimeBiker(), reservationDB.getUserName(), reservationDB.getUserAddress(),
                                 reservationDB.getOrderTime(), reservationDB.getRestaurantID(),null, false);
                         reservation.setReservationID(ds.getKey());
                         reservations.add(reservation);
+                        Log.d("PROVA", "status null + " + reservation.getReservationID());
+                    } else if (reservationDB.getStatus().equals("accepted")) {
+                        Reservation reservation = new Reservation(reservationDB.getRestaurantName(), reservationDB.getRestaurantAddress(),
+                                reservationDB.getOrderTimeBiker(), reservationDB.getUserName(), reservationDB.getUserAddress(),
+                                reservationDB.getOrderTime(), reservationDB.getRestaurantID(),null, true);
+                        reservation.setReservationID(ds.getKey());
+                        activeReservation = reservation;
+                        Log.d("PROVA", "activer reservation + " + activeReservation.getReservationID());
                     }
                 }
             }
