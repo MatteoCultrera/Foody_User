@@ -33,7 +33,7 @@ public class MainActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         setTheme(R.style.AppTheme);
         super.onCreate(savedInstanceState);
-        sharedPref = this.getPreferences(Context.MODE_PRIVATE);
+        sharedPref = getSharedPreferences("myPreference", MODE_PRIVATE);
         setContentView(R.layout.bottom_bar);
         if (savedInstanceState != null) {
             String lastFragment = savedInstanceState.getString("lastFragment", null);
@@ -54,6 +54,7 @@ public class MainActivity extends AppCompatActivity {
         ((ReservationFragment) reservations).setFather(this);
         user = new UserFragment();
         biker = new BikerFragment();
+        ((BikerFragment) biker).setFather(this);
         history = new HistoryFragment();
         fm.beginTransaction().add(R.id.mainFrame, history, "5").commit();
         fm.beginTransaction().add(R.id.mainFrame, user, "4").commit();
@@ -145,6 +146,9 @@ public class MainActivity extends AppCompatActivity {
         if (sharedPref.getBoolean("kitchenNotification",false)){
             setNotification(true);
         }
+        if (sharedPref.getBoolean("bikerNotification", false)){
+            setNotification(false);
+        }
     }
 
     public void setNotification(boolean isKitchen){
@@ -156,20 +160,21 @@ public class MainActivity extends AppCompatActivity {
         }else{
             if(active!=biker)
                 notificationBadgeDeliv.setVisibility(View.VISIBLE);
-
-
         }
     }
 
     public void clearNotification(boolean isKitchen){
         if(isKitchen){
-            if(notificationBadgeKitchen.getVisibility() == View.VISIBLE)
+            if(notificationBadgeKitchen.getVisibility() == View.VISIBLE) {
                 notificationBadgeKitchen.setVisibility(View.GONE);
+                sharedPref.edit().putBoolean("kitchenNotification", false).apply();
+            }
         }else{
-            if(notificationBadgeDeliv.getVisibility() == View.VISIBLE)
+            if(notificationBadgeDeliv.getVisibility() == View.VISIBLE) {
                 notificationBadgeDeliv.setVisibility(View.GONE);
+                sharedPref.edit().putBoolean("bikerNotification", false).apply();
+            }
         }
-
     }
 
     private void addBadgeView() {
@@ -207,15 +212,15 @@ public class MainActivity extends AppCompatActivity {
     protected void onPause() {
         super.onPause();
         if(notificationBadgeKitchen.getVisibility() == View.VISIBLE){
-            SharedPreferences sharedPref = this.getPreferences(Context.MODE_PRIVATE);
-            SharedPreferences.Editor editor = sharedPref.edit();
-            editor.putBoolean("kitchenNotification", true);
-            editor.apply();
+            sharedPref.edit().putBoolean("kitchenNotification", true).apply();
         }else{
-            SharedPreferences sharedPref = this.getPreferences(Context.MODE_PRIVATE);
-            SharedPreferences.Editor editor = sharedPref.edit();
-            editor.putBoolean("kitchenNotification", false);
-            editor.apply();
+            sharedPref.edit().putBoolean("kitchenNotification", false).apply();
+        }
+
+        if(notificationBadgeDeliv.getVisibility() == View.VISIBLE){
+            sharedPref.edit().putBoolean("bikerNotification", true).apply();
+        }else{
+            sharedPref.edit().putBoolean("bikerNotification", false).apply();
         }
     }
 }

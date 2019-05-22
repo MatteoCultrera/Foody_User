@@ -50,8 +50,9 @@ public class ReservationFragment extends Fragment {
     private boolean pending;
     private ImageButton switchInterface;
     private TextView stringUp, stringDown;
-    MainActivity father;
+    private MainActivity father;
     private ImageView notification;
+    private int pendingNumber, doingNumber;
 
     public ReservationFragment() {}
 
@@ -99,6 +100,8 @@ public class ReservationFragment extends Fragment {
         FirebaseAuth firebaseAuth = FirebaseAuth.getInstance();
         firebaseUser = firebaseAuth.getCurrentUser();
         sharedPreferences = view.getContext().getSharedPreferences("myPreference", MODE_PRIVATE);
+        pendingNumber = sharedPreferences.getInt("kitchenPending", 0);
+        doingNumber = sharedPreferences.getInt("kitchenDoing", 0);
         storageDir = Objects.requireNonNull(getActivity()).getExternalFilesDir(Environment.DIRECTORY_DOCUMENTS);
         final File filePending = new File(storageDir, JSON_PENDING);
         final File fileDoing = new File (storageDir, JSON_DOING);
@@ -186,9 +189,22 @@ public class ReservationFragment extends Fragment {
                     }
                 });
 
+                if(pending_reservations.size() != pendingNumber){
+                    father.setNotification(true);
+                    sharedPreferences.edit().putBoolean("kitchenNotification", true).apply();
+                    sharedPreferences.edit().putInt("kitchenPending", pending_reservations.size()).apply();
+                    sharedPreferences.edit().putInt("kitchenDoing", doing_reservations.size()).apply();
+                }
+                if(doing_reservations.size() != doingNumber){
+                    father.setNotification(true);
+                    sharedPreferences.edit().putBoolean("kitchenNotification", true).apply();
+                    sharedPreferences.edit().putInt("kitchenPending", pending_reservations.size()).apply();
+                    sharedPreferences.edit().putInt("kitchenDoing", doing_reservations.size()).apply();
+                }
+
                 doing_recycler.setAdapter(adapterDoing);
 
-                //Add the notification that advise the restaurant when a new reservation has been assigned to him
+                //notification
                 DatabaseReference restaurantReservations = FirebaseDatabase.getInstance().getReference().child("reservations")
                         .child("restaurant").child(firebaseUser.getUid());
                 restaurantReservations.addChildEventListener(new ChildEventListener() {
@@ -235,11 +251,14 @@ public class ReservationFragment extends Fragment {
                                     pending_reservations.add(index, reservation);
                                     adapterPending.notifyItemInserted(index);
                                     adapterPending.notifyItemRangeChanged(index, pending_reservations.size());
-
+                                    father.setNotification(true);
+                                    sharedPreferences.edit().putBoolean("kitchenNotification", true).apply();
+                                    sharedPreferences.edit().putInt("kitchenPending", pending_reservations.size()).apply();
+                                    sharedPreferences.edit().putInt("kitchenDoing", doing_reservations.size()).apply();
                                 }
                             }
                         }
-                        if(doing_reservations != null && doing_reservations.size() != 0) {
+                        if (doing_reservations != null && doing_reservations.size() != 0) {
                             for (Reservation r : doing_reservations) {
                                 orderID = reservationDB.getReservationID().substring(28);
                                 if (r.getReservationID().equals(orderID)) {
@@ -269,16 +288,18 @@ public class ReservationFragment extends Fragment {
                                         reservationDB.getUserAddress());
 
                                 int index;
-                                if(!reservation.getPreparationStatusString().toLowerCase().equals("pending")){
-                                    Log.d("POSITIONDD","Added to doing");
-                                    for(index = 0; index < pending_reservations.size(); index++){
-                                        if(reservation.getOrderTime().compareTo(doing_reservations.get(index).getOrderTime()) > 0)
+                                if (!reservation.getPreparationStatusString().toLowerCase().equals("pending")) {
+                                    for (index = 0; index < pending_reservations.size(); index++) {
+                                        if (reservation.getOrderTime().compareTo(doing_reservations.get(index).getOrderTime()) > 0)
                                             break;
                                     }
                                     doing_reservations.add(index, reservation);
                                     adapterDoing.notifyItemInserted(index);
                                     adapterDoing.notifyItemRangeChanged(index, pending_reservations.size());
-                                    //father.setNotification(1);
+                                    father.setNotification(true);
+                                    sharedPreferences.edit().putBoolean("kitchenNotification", true).apply();
+                                    sharedPreferences.edit().putInt("kitchenPending", pending_reservations.size()).apply();
+                                    sharedPreferences.edit().putInt("kitchenDoing", doing_reservations.size()).apply();
                                 }
                             }
                         }
