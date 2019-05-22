@@ -14,6 +14,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageButton;
 import android.widget.ImageSwitcher;
+import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.google.firebase.auth.FirebaseAuth;
@@ -50,6 +51,7 @@ public class ReservationFragment extends Fragment {
     private ImageButton switchInterface;
     private TextView stringUp, stringDown;
     MainActivity father;
+    private ImageView notification;
 
     public ReservationFragment() {}
 
@@ -85,9 +87,15 @@ public class ReservationFragment extends Fragment {
             String json = jsonHandler.resToJSON(doing_reservations);
             jsonHandler.saveStringToFile(json, fileDoing);
         }
+        if(notification.getVisibility() == View.VISIBLE){
+            sharedPreferences.edit().putBoolean("notificationKitchen",true).apply();
+        }else{
+            sharedPreferences.edit().putBoolean("notificationKitchen",false).apply();
+        }
     }
 
     private void init(View view){
+        notification = view.findViewById(R.id.notification_reservation);
         FirebaseAuth firebaseAuth = FirebaseAuth.getInstance();
         firebaseUser = firebaseAuth.getCurrentUser();
         sharedPreferences = view.getContext().getSharedPreferences("myPreference", MODE_PRIVATE);
@@ -106,11 +114,16 @@ public class ReservationFragment extends Fragment {
         stringUp = view.findViewById(R.id.string_up);
         stringDown = view.findViewById(R.id.string_down);
         switchInterface = view.findViewById(R.id.switch_button);
+        if(sharedPreferences.getBoolean("notificationKitchen", false))
+            addNotification();
+        else
+            notification.setVisibility(View.GONE);
 
         switchInterface.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 pending = !pending;
+                notification.setVisibility(View.GONE);
                 setInterface();
             }
         });
@@ -222,7 +235,7 @@ public class ReservationFragment extends Fragment {
                                     pending_reservations.add(index, reservation);
                                     adapterPending.notifyItemInserted(index);
                                     adapterPending.notifyItemRangeChanged(index, pending_reservations.size());
-                                    father.setNotification(1);
+
                                 }
                             }
                         }
@@ -320,6 +333,12 @@ public class ReservationFragment extends Fragment {
         setInterface();
     }
 
+    public void addNotification(){
+        if(doing_recycler.getVisibility() == View.VISIBLE){
+            notification.setVisibility(View.VISIBLE);
+        }
+    }
+
     public void addInDoing(Reservation toAdd){
         int index;
 
@@ -346,5 +365,6 @@ public class ReservationFragment extends Fragment {
             doing_recycler.setVisibility(View.VISIBLE);
         }
     }
+
 
 }
