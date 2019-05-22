@@ -138,7 +138,6 @@ public class BikerFragment extends Fragment {
                     reservation.setRestaurantName(sharedPreferences.getString("name", null));
 
                     String biker = reservationDB.getBikerID();
-                    Log.d("BIKERFETCH","Called Init()");
                     if(!reservation.getPreparationStatusString().toLowerCase().equals("pending") && biker.equals(""))
                         reservationList.add(new ReservationBiker(reservation, reservationDB.isWaitingBiker(), reservationDB.getReservationID()));
                     if(!reservation.getPreparationStatusString().toLowerCase().equals("pending") && !biker.equals("")){
@@ -270,10 +269,12 @@ public class BikerFragment extends Fragment {
         super.onDestroy();
         final File storageImage = getActivity().getExternalFilesDir(Environment.DIRECTORY_PICTURES);
         for(int i = 0; i < reservationAcceptedList.size(); i++){
-            if(reservationAcceptedList.get(i).getBiker().getPath() != null){
-                File f = new File(storageImage, reservationAcceptedList.get(i).bikerID+".jpg");
-                if(f.exists())
-                    f.delete();
+            if(reservationAcceptedList.get(i).getBiker() != null){
+                if(reservationAcceptedList.get(i).getBiker().getPath() != null){
+                    File f = new File(storageImage, reservationAcceptedList.get(i).bikerID+".jpg");
+                    if(f.exists())
+                        f.delete();
+                }
             }
         }
     }
@@ -290,7 +291,11 @@ public class BikerFragment extends Fragment {
         if (i == reservationList.size()){
             return;
         }
+
         ReservationBiker res = reservationList.get(i);
+
+        if(res == null)
+            return;
 
         reservationList.remove(i);
         adapterNotAccepted.notifyItemRemoved(i);
