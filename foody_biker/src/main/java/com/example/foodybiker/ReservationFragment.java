@@ -143,7 +143,7 @@ public class ReservationFragment extends Fragment {
 
                                 int index;
                                 for (index = 0; index < reservations.size(); index++) {
-                                    if (reservation.getUserDeliveryTime().compareTo(reservations.get(index).getUserDeliveryTime()) > 0)
+                                    if (reservation.getUserDeliveryTime().compareTo(reservations.get(index).getUserDeliveryTime()) < 0)
                                         break;
                                 }
                                 reservations.add(index, reservation);
@@ -154,7 +154,7 @@ public class ReservationFragment extends Fragment {
                                     sharedPreferences.edit().putBoolean("hasNotification", true).apply();
                                     father.setNotification(1);
                                 }
-
+                                updateTitles();
                                 father.newReservation(reservation);
                             }
                         }
