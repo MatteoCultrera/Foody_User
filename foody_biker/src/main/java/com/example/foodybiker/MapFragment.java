@@ -140,7 +140,7 @@ public class MapFragment extends Fragment {
     }
 
     public void clearMap() {
-        mGoogleMap.clear();
+//        mGoogleMap.clear();
     }
 
     public void newReservationToDisplay(Reservation res) {
