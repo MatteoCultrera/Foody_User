@@ -149,6 +149,7 @@ public class UserFragment extends Fragment {
                                 StorageReference mStorageRef = FirebaseStorage.getInstance().getReference();
 
                                 if(imagePath!=null){
+                                    if(imagePath.length()!=0){
                                     mStorageRef.child(imagePath).getDownloadUrl()
                                             .addOnSuccessListener(new OnSuccessListener<Uri>() {
                                                 @Override
@@ -170,6 +171,12 @@ public class UserFragment extends Fragment {
                                                     .into(profilePicture);
                                         }
                                     });
+                                    }else{
+                                        Glide
+                                                .with(profilePicture.getContext())
+                                                .load(R.drawable.profile_placeholder)
+                                                .into(profilePicture);
+                                    }
                                 }else{
                                     Glide
                                             .with(profilePicture.getContext())

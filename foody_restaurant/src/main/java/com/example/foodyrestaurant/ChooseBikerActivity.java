@@ -97,7 +97,7 @@ public class ChooseBikerActivity extends AppCompatActivity {
         query.addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-                for (DataSnapshot d : dataSnapshot.getChildren()){
+                for (final DataSnapshot d : dataSnapshot.getChildren()){
                     if(d.child("status").exists()) {
                         String status = d.child("status").getValue(String.class);
                         if (status.compareTo("busy") == 0){
@@ -142,40 +142,48 @@ public class ChooseBikerActivity extends AppCompatActivity {
 
                     final LatLng position = new LatLng(latitude,longitude);
 
-                    if(biker.getPath()!=null){
-                        final File f = new File(storage, d.getKey()+".jpg");
-                        if(f.exists()){
-                            biker.setPath(f.getPath());
-                            bikers.add(new BikerComplete(biker, position, false));
-                        }else{
-                            StorageReference mStorageRef = FirebaseStorage.getInstance().getReference();
-                            mStorageRef
-                                    .child(biker.getPath())
-                                    .getFile(f)
-                                    .addOnSuccessListener(
-                                            new OnSuccessListener<FileDownloadTask.TaskSnapshot>() {
-                                                @Override
-                                                public void onSuccess(FileDownloadTask.TaskSnapshot taskSnapshot){
-                                                    biker.setPath(f.getPath());
-                                                    bikers.add(new BikerComplete(biker, position, true));
-                                                }
-                                            })
-                                    .addOnFailureListener(
-                                            new OnFailureListener() {
-                                                @Override
-                                                public void onFailure(@NonNull Exception e) {
-                                                    if(f.exists())
-                                                        f.delete();
-                                                    biker.setPath(null);
-                                                    bikers.add(new BikerComplete(biker, position, false));
-                                                }
-                                            }
-                                    );
+                    Log.d("TESTPROVA",""+biker.getPath()+" "+biker.getUsername());
 
+                    if(biker.getPath()!=null){
+                        if(biker.getPath().length() != 0){
+                            Log.d("TESTPROVA","entered with "+biker.getPath()+"-"+biker.getUsername()+" "+biker.getPath().length());
+                            final File f = new File(storage, d.getKey()+".jpg");
+                            if(f.exists()){
+                                biker.setPath(f.getPath());
+                                bikers.add(new BikerComplete(biker, position, false, d.getKey()));
+                            }else{
+                                StorageReference mStorageRef = FirebaseStorage.getInstance().getReference();
+                                mStorageRef
+                                        .child(biker.getPath())
+                                        .getFile(f)
+                                        .addOnSuccessListener(
+                                                new OnSuccessListener<FileDownloadTask.TaskSnapshot>() {
+                                                    @Override
+                                                    public void onSuccess(FileDownloadTask.TaskSnapshot taskSnapshot){
+                                                        biker.setPath(f.getPath());
+                                                        bikers.add(new BikerComplete(biker, position, true, d.getKey()));
+                                                    }
+                                                })
+                                        .addOnFailureListener(
+                                                new OnFailureListener() {
+                                                    @Override
+                                                    public void onFailure(@NonNull Exception e) {
+                                                        if(f.exists())
+                                                            f.delete();
+                                                        biker.setPath(null);
+                                                        bikers.add(new BikerComplete(biker, position, false, d.getKey()));
+                                                    }
+                                                }
+                                        );
+
+                            }
+                        }else{
+                            biker.setPath(null);
+                            bikers.add(new BikerComplete(biker, position, false, d.getKey()));
                         }
                     }else{
                         biker.setPath(null);
-                        bikers.add(new BikerComplete(biker, position, false));
+                        bikers.add(new BikerComplete(biker, position, false, d.getKey()));
                     }
 
                 }
@@ -257,6 +265,11 @@ public class ChooseBikerActivity extends AppCompatActivity {
                 db2.child("waitingBiker").setValue(true).addOnCompleteListener(new OnCompleteListener<Void>() {
                     @Override
                     public void onComplete(@NonNull Task<Void> task) {
+                        for(int i = 0; i < bikers.size(); i++){
+                            File f = new File(storage, bikers.get(i).key+".jpg");
+                            if(f.exists() && bikers.get(i).imageAdded == true)
+                                f.delete();
+                        }
                         finish();
                     }
                 });
@@ -276,9 +289,11 @@ public class ChooseBikerActivity extends AppCompatActivity {
         LatLng position;
         boolean imageAdded;
         double distance;
+        String key;
 
-        public BikerComplete(BikerInfo biker, LatLng position, boolean imageAdded){
+        public BikerComplete(BikerInfo biker, LatLng position, boolean imageAdded, String key){
             this.biker = biker; this.position = position; this.imageAdded = imageAdded;
+            this.key = key;
         }
 
         public String getDistanceString(){
