@@ -102,10 +102,10 @@ public class ChooseBikerActivity extends AppCompatActivity {
         databaseReference.addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-                /*if (dataSnapshot.child("attemptedBiker").exists()) {
+                if (dataSnapshot.child("attemptedBiker").exists()) {
                     String attemptedBikers = dataSnapshot.child("attemptedBiker").getValue(String.class);
                     bikersTried = Arrays.asList(attemptedBikers.split(","));
-                }*/
+                }
 
                 final DatabaseReference database = FirebaseDatabase.getInstance().getReference().child("Bikers");
                 Query query = database;
@@ -125,7 +125,7 @@ public class ChooseBikerActivity extends AppCompatActivity {
                                 }
                             }
                             final BikerInfo biker = d.child("info").getValue(BikerInfo.class);
-                            /*if(biker.getDaysTime() != null) {
+                            if(biker.getDaysTime() != null) {
                                 String intervalTime = biker.getDaysTime().get(day).replace(" ", "");
                                 if (!intervalTime.startsWith("L") && !intervalTime.startsWith("F")) {
                                     String[] splits = intervalTime.split("-");
@@ -133,7 +133,7 @@ public class ChooseBikerActivity extends AppCompatActivity {
                                         continue;
                                     }
                                 }
-                            }*/
+                            }
                             biker.setBikerID(d.getKey());
                             Double latitude, longitude;
 
@@ -149,7 +149,7 @@ public class ChooseBikerActivity extends AppCompatActivity {
 
                             final LatLng position = new LatLng(latitude,longitude);
 
-                            if(biker.getPath()!=null){
+                            if(biker.getPath()!=null && !biker.getPath().equals("")){
                                 final File f = new File(storage, d.getKey()+".jpg");
                                 if(f.exists()){
                                     biker.setPath(f.getPath());
