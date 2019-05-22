@@ -16,6 +16,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
+import android.widget.ImageButton;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -38,8 +39,7 @@ public class DiscoverFragment extends Fragment {
 
     private static final int AUTOCOMPLETE_REQUEST_CODE = 9;
 
-    private MaterialButton searchButton;
-    private ConstraintLayout topbar;
+    private ImageButton searchButton;
     private TextView address;
     private boolean setted = false;
 
@@ -59,15 +59,14 @@ public class DiscoverFragment extends Fragment {
     }
 
     private void init(View view){
-        searchButton = view.findViewById(R.id.main_button);
-        topbar = view.findViewById(R.id.top_bar);
-        address = view.findViewById(R.id.address_field);
+        searchButton = view.findViewById(R.id.discover_search_button);
+        address = view.findViewById(R.id.discover_search_address);
 
         searchButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 if(!setted)
-                    Toast.makeText(topbar.getContext(), "Prima seleziona l'indirizzo", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(address.getContext(), "Prima seleziona l'indirizzo", Toast.LENGTH_SHORT).show();
                 else {
                     Intent intent = new Intent(getActivity(), RestaurantsList.class);
                     startActivity(intent);
@@ -75,7 +74,7 @@ public class DiscoverFragment extends Fragment {
             }
         });
 
-        topbar.setOnClickListener(new View.OnClickListener() {
+        address.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 addressActivity();
@@ -85,12 +84,12 @@ public class DiscoverFragment extends Fragment {
 
     public void addressActivity() {
         if (!Places.isInitialized()) {
-            Places.initialize(topbar.getContext(), BuildConfig.ApiKey);
+            Places.initialize(address.getContext(), BuildConfig.ApiKey);
         }
 
         final List<Place.Field> fields = Arrays.asList(Place.Field.ID, Place.Field.ADDRESS, Place.Field.LAT_LNG);
         Intent intent = new Autocomplete.IntentBuilder(AutocompleteActivityMode.FULLSCREEN, fields)
-                .build(topbar.getContext());
+                .build(address.getContext());
         startActivityForResult(intent, AUTOCOMPLETE_REQUEST_CODE);
     }
 
@@ -106,6 +105,7 @@ public class DiscoverFragment extends Fragment {
                 if(place.getAddress().equals(""))
                     setted = false;
                 address.setText(place.getAddress());
+                address.setTextColor(getContext().getColor(R.color.primaryText));
                 setted = true;
                 searchButton.setEnabled(true);
             }
