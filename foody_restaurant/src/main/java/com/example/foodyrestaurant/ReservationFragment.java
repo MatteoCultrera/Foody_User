@@ -258,50 +258,48 @@ public class ReservationFragment extends Fragment {
                                 }
                             }
                         }
-                        if (toAdd) {
-                            if (doing_reservations != null && doing_reservations.size() != 0) {
-                                for (Reservation r : doing_reservations) {
-                                    orderID = reservationDB.getReservationID().substring(28);
-                                    if (r.getReservationID().equals(orderID)) {
-                                        toAdd = false;
-                                        break;
-                                    }
+                        if (doing_reservations != null && doing_reservations.size() != 0) {
+                            for (Reservation r : doing_reservations) {
+                                orderID = reservationDB.getReservationID().substring(28);
+                                if (r.getReservationID().equals(orderID)) {
+                                    toAdd = false;
+                                    break;
                                 }
-                                if (toAdd && !reservationDB.getStatus().equals("Done")) {
-                                    ArrayList<Dish> dishes = new ArrayList<>();
-                                    for (OrderItem o : reservationDB.getDishesOrdered()) {
-                                        Dish dish = new Dish();
-                                        dish.setQuantity(o.getPieces());
-                                        dish.setDishName(o.getOrderName());
-                                        dish.setPrice(o.getPrice());
-                                    }
-                                    Reservation.prepStatus status;
-                                    if (reservationDB.getStatus().equals("Pending")) {
-                                        status = Reservation.prepStatus.PENDING;
-                                    } else if (reservationDB.getStatus().equals("Doing")) {
-                                        status = Reservation.prepStatus.DOING;
-                                    } else {
-                                        status = Reservation.prepStatus.DONE;
-                                    }
-                                    Reservation reservation = new Reservation(orderID, dishes,
-                                            status, reservationDB.isAccepted(), reservationDB.getOrderTime(), reservationDB.getNameUser(),
-                                            reservationDB.getNumberPhone(), reservationDB.getResNote(), null, sharedPreferences.getString("email", null),
-                                            reservationDB.getUserAddress());
+                            }
+                            if (toAdd && !reservationDB.getStatus().equals("Done")) {
+                                ArrayList<Dish> dishes = new ArrayList<>();
+                                for (OrderItem o : reservationDB.getDishesOrdered()) {
+                                    Dish dish = new Dish();
+                                    dish.setQuantity(o.getPieces());
+                                    dish.setDishName(o.getOrderName());
+                                    dish.setPrice(o.getPrice());
+                                }
+                                Reservation.prepStatus status;
+                                if (reservationDB.getStatus().equals("Pending")) {
+                                    status = Reservation.prepStatus.PENDING;
+                                } else if (reservationDB.getStatus().equals("Doing")) {
+                                    status = Reservation.prepStatus.DOING;
+                                } else {
+                                    status = Reservation.prepStatus.DONE;
+                                }
+                                Reservation reservation = new Reservation(orderID, dishes,
+                                        status, reservationDB.isAccepted(), reservationDB.getOrderTime(), reservationDB.getNameUser(),
+                                        reservationDB.getNumberPhone(), reservationDB.getResNote(), null, sharedPreferences.getString("email", null),
+                                        reservationDB.getUserAddress());
 
-                                    int index;
-                                    if (!reservation.getPreparationStatusString().toLowerCase().equals("pending")) {
-                                        for (index = 0; index < pending_reservations.size(); index++) {
-                                            if (reservation.getOrderTime().compareTo(doing_reservations.get(index).getOrderTime()) > 0)
-                                                break;
-                                        }
-                                        doing_reservations.add(index, reservation);
-                                        adapterDoing.notifyItemInserted(index);
-                                        adapterDoing.notifyItemRangeChanged(index, pending_reservations.size());
-                                        father.setNotification(true);
-                                        sharedPreferences.edit().putBoolean("kitchenNotification", true).apply();
-                                        sharedPreferences.edit().putInt("kitchenPending", pending_reservations.size()).apply();
-                                        sharedPreferences.edit().putInt("kitchenDoing", doing_reservations.size()).apply();
+                                int index;
+                                if (!reservation.getPreparationStatusString().toLowerCase().equals("pending")) {
+                                    for (index = 0; index < pending_reservations.size(); index++) {
+                                        if (reservation.getOrderTime().compareTo(doing_reservations.get(index).getOrderTime()) > 0)
+                                            break;
                                     }
+                                    doing_reservations.add(index, reservation);
+                                    adapterDoing.notifyItemInserted(index);
+                                    adapterDoing.notifyItemRangeChanged(index, pending_reservations.size());
+                                    father.setNotification(true);
+                                    sharedPreferences.edit().putBoolean("kitchenNotification", true).apply();
+                                    sharedPreferences.edit().putInt("kitchenPending", pending_reservations.size()).apply();
+                                    sharedPreferences.edit().putInt("kitchenDoing", doing_reservations.size()).apply();
                                 }
                             }
                         }
