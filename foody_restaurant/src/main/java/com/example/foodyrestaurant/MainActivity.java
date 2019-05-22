@@ -18,7 +18,7 @@ import android.view.View;
 
 public class MainActivity extends AppCompatActivity {
 
-    private View notificationBadgeOne, notificationBadgeTwo, notificationBadgeThree;
+    private View notificationBadgeKitchen, notificationBadgeDeliv;
     BottomNavigationView bottomBar;
     private Fragment menu;
     private Fragment reservations;
@@ -83,14 +83,13 @@ public class MainActivity extends AppCompatActivity {
             public boolean onNavigationItemSelected(@NonNull MenuItem menuItem) {
                 int id = menuItem.getItemId();
                 if(id == R.id.menu && active != menu){
-                    clearNotification(0);
                     FragmentTransaction transaction = fm.beginTransaction();
                     transaction.setCustomAnimations(R.anim.enter_from_left,R.anim.exit_to_right);
                     transaction.replace(R.id.mainFrame, menu).commit();
                     active = menu;
                     return true;
                 }else if(id == R.id.orders && active != reservations){
-                    clearNotification(1);
+                    clearNotification(true);
                     if(active == menu){
                         FragmentTransaction transaction =fm.beginTransaction();
                         transaction.setCustomAnimations(R.anim.enter_from_right,R.anim.exit_to_left);
@@ -103,6 +102,7 @@ public class MainActivity extends AppCompatActivity {
                     active = reservations;
                     return true;
                 }else if(id == R.id.delivery_biker && active != biker){
+                    clearNotification(false);
                     if(active == menu || active == reservations){
                         FragmentTransaction transaction = fm.beginTransaction();
                         transaction.setCustomAnimations(R.anim.enter_from_right, R.anim.exit_to_left);
@@ -115,7 +115,6 @@ public class MainActivity extends AppCompatActivity {
                     active = biker;
                     return true;
                 }else if(id == R.id.prof && active != user){
-                    clearNotification(2);
 
                     if(active == history){
                         FragmentTransaction transaction = fm.beginTransaction();
@@ -140,87 +139,53 @@ public class MainActivity extends AppCompatActivity {
             }
         });
 
-        if(notificationBadgeOne == null){
+        if(notificationBadgeKitchen == null){
             addBadgeView();
         }
-        if (sharedPref.getBoolean("hasNotification",false)){
-            setNotification(1);
+        if (sharedPref.getBoolean("kitchenNotification",false)){
+            setNotification(true);
         }
     }
 
-    public void setNotification(int pos){
-        if(notificationBadgeOne == null){
-            SharedPreferences sharedPref = this.getPreferences(Context.MODE_PRIVATE);
-            SharedPreferences.Editor editor = sharedPref.edit();
-            editor.putBoolean("hasNotification", true);
-            editor.apply();
-            return;
-        }
+    public void setNotification(boolean isKitchen){
+        if(isKitchen){
+            if(active!=reservations)
+                notificationBadgeKitchen.setVisibility(View.VISIBLE);
+            else
+                ((ReservationFragment) reservations).addNotification();
+        }else{
+            if(active!=biker)
+                notificationBadgeDeliv.setVisibility(View.VISIBLE);
 
-        Menu menu = bottomBar.getMenu();
-        if(menu.getItem(pos).isChecked())
-            return;
 
-        switch (pos){
-            case 0:
-                notificationBadgeOne.setVisibility(View.VISIBLE);
-                break;
-            case 1:
-                notificationBadgeTwo.setVisibility(View.VISIBLE);
-                break;
-            case 2:
-                notificationBadgeThree.setVisibility(View.VISIBLE);
-                break;
-            default:
-                break;
         }
     }
 
-    public void clearNotification(int pos){
-        if(notificationBadgeOne == null)
-            return;
-        switch (pos){
-            case 0:
-                notificationBadgeOne.setVisibility(View.GONE);
-                break;
-            case 1:
-                notificationBadgeTwo.setVisibility(View.GONE);
-                break;
-            case 2:
-                notificationBadgeThree.setVisibility(View.GONE);
-                break;
-            default:
-                notificationBadgeOne.setVisibility(View.GONE);
-                notificationBadgeTwo.setVisibility(View.GONE);
-                notificationBadgeThree.setVisibility(View.GONE);
-                break;
+    public void clearNotification(boolean isKitchen){
+        if(isKitchen){
+            if(notificationBadgeKitchen.getVisibility() == View.VISIBLE)
+                notificationBadgeKitchen.setVisibility(View.GONE);
+        }else{
+            if(notificationBadgeDeliv.getVisibility() == View.VISIBLE)
+                notificationBadgeDeliv.setVisibility(View.GONE);
         }
-        if(notificationBadgeTwo.getVisibility() == View.GONE){
-            SharedPreferences prefs = this.getPreferences(Context.MODE_PRIVATE);
-            SharedPreferences.Editor editor = prefs.edit();
-            editor.putBoolean("hasNotification", false);
-            editor.apply();
-        }
+
     }
 
     private void addBadgeView() {
 
         BottomNavigationMenuView menuView = (BottomNavigationMenuView) bottomBar.getChildAt(0);
-        BottomNavigationItemView itemViewOne = (BottomNavigationItemView) menuView.getChildAt(0);
-        BottomNavigationItemView itemViewTwo = (BottomNavigationItemView) menuView.getChildAt(1);
-        BottomNavigationItemView itemViewThree = (BottomNavigationItemView) menuView.getChildAt(2);
+        BottomNavigationItemView itemViewKitchen = (BottomNavigationItemView) menuView.getChildAt(1);
+        BottomNavigationItemView itemViewDeliv = (BottomNavigationItemView) menuView.getChildAt(2);
 
-        notificationBadgeOne = LayoutInflater.from(this).inflate(R.layout.view_notification_badge, menuView, false);
-        notificationBadgeTwo = LayoutInflater.from(this).inflate(R.layout.view_notification_badge, menuView, false);
-        notificationBadgeThree = LayoutInflater.from(this).inflate(R.layout.view_notification_badge, menuView, false);
+        notificationBadgeKitchen = LayoutInflater.from(this).inflate(R.layout.view_notification_badge, menuView, false);
+        notificationBadgeDeliv = LayoutInflater.from(this).inflate(R.layout.view_notification_badge, menuView, false);
 
-        itemViewOne.addView(notificationBadgeOne);
-        itemViewTwo.addView(notificationBadgeTwo);
-        itemViewThree.addView(notificationBadgeThree);
+        itemViewKitchen.addView(notificationBadgeKitchen);
+        itemViewDeliv.addView(notificationBadgeDeliv);
 
-        notificationBadgeOne.setVisibility(View.GONE);
-        notificationBadgeTwo.setVisibility(View.GONE);
-        notificationBadgeThree.setVisibility(View.GONE);
+        notificationBadgeKitchen.setVisibility(View.GONE);
+        notificationBadgeDeliv.setVisibility(View.GONE);
     }
 
     @Override
@@ -241,15 +206,15 @@ public class MainActivity extends AppCompatActivity {
     @Override
     protected void onPause() {
         super.onPause();
-        if(notificationBadgeTwo.getVisibility() == View.VISIBLE){
+        if(notificationBadgeKitchen.getVisibility() == View.VISIBLE){
             SharedPreferences sharedPref = this.getPreferences(Context.MODE_PRIVATE);
             SharedPreferences.Editor editor = sharedPref.edit();
-            editor.putBoolean("hasNotification", true);
+            editor.putBoolean("kitchenNotification", true);
             editor.apply();
         }else{
             SharedPreferences sharedPref = this.getPreferences(Context.MODE_PRIVATE);
             SharedPreferences.Editor editor = sharedPref.edit();
-            editor.putBoolean("hasNotification", false);
+            editor.putBoolean("kitchenNotification", false);
             editor.apply();
         }
     }

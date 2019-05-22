@@ -21,6 +21,16 @@
             android:elevation="16dp"
             >
 
+            <ImageView
+                android:id="@+id/notification_reservation"
+                android:layout_width="20dp"
+                android:layout_height="20dp"
+                android:background="@drawable/notification_up"
+                app:layout_constraintStart_toEndOf="@id/switch_button"
+                app:layout_constraintEnd_toEndOf="@id/switch_button"
+                app:layout_constraintTop_toTopOf="@id/switch_button"
+                app:layout_constraintBottom_toTopOf="@id/switch_button"/>
+
             <ImageButton
                 android:id="@+id/switch_button"
                 android:layout_width="wrap_content"
