@@ -143,11 +143,12 @@ public class ReservationFragment extends Fragment {
                         database.child(firebaseUser.getUid()).addValueEventListener(new ValueEventListener() {
                             @Override
                             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                                Log.d("SWSW", "new order");
                                 int pending2 = 0;
                                 int doing2 = 0;
                                 int done2 = 0;
                                 int index;
-                                if (reservations != null && reservations.size() != 0) {
+                                if (reservations != null) {
                                     for (DataSnapshot ds : dataSnapshot.getChildren()) {
                                         index = 0;
                                         int i;
@@ -159,6 +160,7 @@ public class ReservationFragment extends Fragment {
                                                 break;
                                             }
                                         }
+                                        Log.d("SWSW", ""+i);
                                         if (i == reservations.size()){
                                             for (index = 0; index < reservations.size(); index++){
                                                 if (reservationDBUser.getOrderTime().compareTo(reservations.get(index).getOrderTime()) > 0){

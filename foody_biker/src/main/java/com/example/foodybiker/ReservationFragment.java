@@ -11,6 +11,7 @@ import android.support.v7.widget.CardView;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.text.method.ScrollingMovementMethod;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -131,11 +132,9 @@ public class ReservationFragment extends Fragment {
                         if (reservationDB.getStatus() == null) {
                             toAdd = true;
                             if(reservations != null) {
-                                if (reservations.size() != 0) {
-                                    for (Reservation r : reservations) {
-                                        if (r.getReservationID().equals(reservationDB.getReservationID())) {
-                                            toAdd = false;
-                                        }
+                                for (Reservation r : reservations) {
+                                    if (r.getReservationID().equals(reservationDB.getReservationID())) {
+                                        toAdd = false;
                                     }
                                 }
                             }
