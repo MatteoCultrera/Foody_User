@@ -2,14 +2,12 @@ package com.example.foodyuser;
 
 import android.content.SharedPreferences;
 import android.os.Environment;
-import android.provider.ContactsContract;
 import android.support.annotation.NonNull;
 import android.support.design.button.MaterialButton;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
-import android.util.Log;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.TextView;
@@ -18,14 +16,10 @@ import android.widget.Toast;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
-import com.google.firebase.database.DataSnapshot;
-import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
-import com.google.firebase.database.ValueEventListener;
 
 import java.io.File;
-import java.lang.reflect.Array;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
@@ -42,7 +36,9 @@ public class Order extends AppCompatActivity {
     private MaterialButton placeOrder;
     private FirebaseAuth firebaseAuth;
     private FirebaseUser firebaseUser;
-    private SharedPreferences sharedPreferences;
+    private SharedPreferences sharedPref;
+    private SharedPreferences.Editor edit;
+    private String delivAddress;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -53,7 +49,8 @@ public class Order extends AppCompatActivity {
     }
 
     public void init(){
-        sharedPreferences = this.getSharedPreferences("myPreference", MODE_PRIVATE);
+        sharedPref = this.getSharedPreferences("myPreference", MODE_PRIVATE);
+        delivAddress = sharedPref.getString("delivery_address", "");
         firebaseAuth = FirebaseAuth.getInstance();
         firebaseUser = firebaseAuth.getCurrentUser();
         backButton = findViewById(R.id.backButton);
@@ -99,9 +96,9 @@ public class Order extends AppCompatActivity {
                         .child("reservations").child("restaurant").child(restID);
                 HashMap<String, Object> childRest = new HashMap<>();
                 ReservationDBRestaurant reservationRest = new ReservationDBRestaurant(identifier, "", copyOrders, false,
-                        null,sharedPreferences.getString("phoneNumber", null),
-                        sharedPreferences.getString("name", null), deliveryTime, bikerTime, "Pending",
-                        sharedPreferences.getString("address", null), total.getText().toString());
+                        null, sharedPref.getString("phoneNumber", null),
+                        sharedPref.getString("name", null), deliveryTime, bikerTime, "Pending",
+                        delivAddress, total.getText().toString());
                 childRest.put(identifier, reservationRest);
                 databaseRest.updateChildren(childRest).addOnFailureListener(new OnFailureListener() {
                     @Override
@@ -131,7 +128,6 @@ public class Order extends AppCompatActivity {
         ordersList.setAdapter(adapter);
 
         updatePrice();
-
     }
 
     public void removeItem(int index){
