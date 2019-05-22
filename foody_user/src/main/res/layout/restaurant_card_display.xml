@@ -18,20 +18,22 @@
         app:layout_constraintHorizontal_bias="0.0"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        android:clickable="true">
+        android:clickable="true"
+        android:focusable="true">
 
         <android.support.constraint.ConstraintLayout
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             >
 
-
             <ImageView
                 android:id="@+id/restaurant_background"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 android:scaleType="centerCrop"
-                android:transitionName="@string/transition_restaurant_card_image"/>
+                android:transitionName="@string/transition_restaurant_card_image"
+                android:contentDescription="@null"
+                />
 
             <ImageView
                 android:id="@+id/restaurant_shadow"
@@ -41,6 +43,7 @@
                 android:src="@drawable/shadow_restaurants"
                 android:scaleType="fitXY"
                 android:transitionName="@string/transition_restaurant_card_shadow"
+                android:contentDescription="@null"
                 />
 
             <TextView
@@ -56,6 +59,7 @@
                 app:layout_constraintTop_toTopOf="parent"
                 android:layout_marginTop="5dp"
                 android:transitionName="@string/transition_restaurant_card_name"/>
+
             <TextView
                 android:id="@+id/restaurant_description"
                 android:layout_width="wrap_content"
@@ -78,7 +82,9 @@
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
                 android:layout_marginBottom="8.5dp"
-                android:layout_marginStart="14dp"/>
+                android:layout_marginStart="14dp"
+                android:contentDescription="@null"
+                />
 
             <TextView
                 android:id="@+id/restaurant_delivery_price"
@@ -88,7 +94,7 @@
                 android:elevation="2dp"
                 android:fontFamily="@font/roboto_regular"
                 android:textColor="@color/whiteText"
-                android:textSize="10sp"
+                android:textSize="12sp"
                 app:layout_constraintBottom_toBottomOf="@+id/bike"
                 app:layout_constraintStart_toEndOf="@+id/bike"
                 app:layout_constraintTop_toTopOf="@+id/bike" />
@@ -104,6 +110,7 @@
                 app:layout_constraintEnd_toEndOf="parent"
                 android:layout_marginBottom="8.5dp"
                 android:layout_marginEnd="14dp"
+                android:contentDescription="@null"
                 />
 
             <TextView
@@ -114,10 +121,10 @@
                 android:elevation="2dp"
                 android:fontFamily="@font/roboto_regular"
                 android:textColor="@color/whiteText"
-                android:textSize="10sp"
+                android:textSize="12sp"
                 app:layout_constraintBottom_toBottomOf="@+id/distance_image"
                 app:layout_constraintEnd_toStartOf="@+id/distance_image"
-                app:layout_constraintTop_toTopOf="@+id/distance_image" />
+                app:layout_constraintTop_toTopOf="@+id/distance_image"/>
 
         </android.support.constraint.ConstraintLayout>
 
