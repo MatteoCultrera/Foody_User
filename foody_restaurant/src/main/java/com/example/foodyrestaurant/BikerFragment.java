@@ -348,6 +348,10 @@ public class BikerFragment extends Fragment {
             this.completeRes = completeRes;
         }
 
+        public String getBikerID(){
+            return bikerID;
+        }
+
         public boolean hasBiker(){
            return this.biker != null;
         }
@@ -371,8 +375,6 @@ public class BikerFragment extends Fragment {
         public void fetchBiker(final int pos){
             if(bikerID.length() == 0)
                 return;
-
-            final File storageImage = getActivity().getExternalFilesDir(Environment.DIRECTORY_PICTURES);
 
             final DatabaseReference database = FirebaseDatabase.getInstance().getReference().child("Bikers");
             Query query = database.child(bikerID).child("info");
@@ -398,35 +400,12 @@ public class BikerFragment extends Fragment {
                     }
 
                     if(imagePath!=null){
-                        final File picture = new File(storageImage, bikerID+".jpg");
-
-                        if(!picture.exists()){
-                            StorageReference mStorageRef = FirebaseStorage.getInstance().getReference();
-                            mStorageRef
-                                    .child(imagePath)
-                                    .getFile(picture)
-                                    .addOnSuccessListener(
-                                            new OnSuccessListener<FileDownloadTask.TaskSnapshot>() {
-                                                @Override
-                                                public void onSuccess(FileDownloadTask.TaskSnapshot taskSnapshot){
-                                                    biker.setPath(picture.getPath());
-                                                }
-                                            })
-                                    .addOnFailureListener(
-                                            new OnFailureListener() {
-                                                @Override
-                                                public void onFailure(@NonNull Exception e) {
-                                                    if(picture.exists())
-                                                        picture.delete();
-                                                    biker.setPath(null);
-                                                }
-                                            }
-                                            );
+                        if(imagePath.length() > 0){
+                            biker.setPath(imagePath);
+                        }else{
+                         biker.setPath(null);
                         }
                     }else{
-                        final File picture = new File(storageImage, bikerID+".jpg");
-                        if(picture.exists())
-                            picture.delete();
                         biker.setPath(null);
                     }
 

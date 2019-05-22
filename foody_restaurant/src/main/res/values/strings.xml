@@ -82,5 +82,7 @@
 
     <string name="waiting_biker">WAITING ACCEPT</string>
     <string name="call_biker">CALL BIKER</string>
+
+    <string name="order_delivered">ORDER DELIVERED</string>
     
 </resources>

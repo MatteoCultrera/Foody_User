@@ -5,6 +5,7 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.graphics.Paint;
 import android.net.Uri;
+import android.os.Environment;
 import android.support.annotation.NonNull;
 import android.support.constraint.ConstraintLayout;
 import android.support.design.button.MaterialButton;
@@ -22,12 +23,17 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.bumptech.glide.Glide;
 import com.google.android.gms.tasks.OnFailureListener;
+import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.storage.FirebaseStorage;
+import com.google.firebase.storage.StorageReference;
 
+import java.io.File;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -44,6 +50,7 @@ public class RVAdapterBiker extends RecyclerView.Adapter<RVAdapterBiker.CardView
     private FirebaseUser firebaseUser;
     private SharedPreferences sharedPreferences;
     private BikerFragment fatherClass;
+    private File storageDir;
 
     RVAdapterBiker(List<BikerFragment.ReservationBiker> reservations, BikerFragment fatherClass){
         this.reservations = reservations;
@@ -59,6 +66,7 @@ public class RVAdapterBiker extends RecyclerView.Adapter<RVAdapterBiker.CardView
     @Override
     public RVAdapterBiker.CardViewHolder onCreateViewHolder(@NonNull ViewGroup viewGroup, int i) {
         View v = LayoutInflater.from(viewGroup.getContext()).inflate(R.layout.biker_card_display, viewGroup, false);
+        storageDir = v.getContext().getExternalFilesDir(Environment.DIRECTORY_PICTURES);
         firebaseAuth = FirebaseAuth.getInstance();
         firebaseUser = firebaseAuth.getCurrentUser();
         sharedPreferences = viewGroup.getContext().getSharedPreferences("myPreference", MODE_PRIVATE);
@@ -76,10 +84,66 @@ public class RVAdapterBiker extends RecyclerView.Adapter<RVAdapterBiker.CardView
         pvh.status.setText(current.getReservation().getPreparationStatusString());
         if(current.hasBiker()){
             pvh.bikerInfoLayout.setVisibility(View.VISIBLE);
-            pvh.callBiker.setVisibility(View.GONE);
+            pvh.callBiker.setVisibility(View.VISIBLE);
+            pvh.callBiker.setBackgroundTintList(ContextCompat.getColorStateList(pvh.callBiker.getContext(), R.color.colorAccent));
+            pvh.callBiker.setEnabled(true);
+            pvh.callBiker.setText(pvh.callBiker.getContext().getString(R.string.order_delivered));
+            pvh.callBiker.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+
+                }
+            });
+
+            if(current.getBiker().getPath() != null){
+                if(current.getBiker().getPath().length() !=0){
+                    StorageReference mStorageRef = FirebaseStorage.getInstance().getReference();
+                    mStorageRef.child(current.getBiker().getPath())
+                            .getDownloadUrl().addOnSuccessListener(new OnSuccessListener<Uri>() {
+                        @Override
+                        public void onSuccess(Uri uri) {
+                            Glide
+                                    .with(pvh.idOrder.getContext())
+                                    .load(uri)
+                                    .into(pvh.bikerImage);
+                        }
+                    });
+                }else{
+                    pvh.bikerImage.setVisibility(View.GONE);
+                }
+            }else{
+                pvh.bikerImage.setVisibility(View.GONE);
+            }
+
+            pvh.bikerName.setText(current.getBiker().getUsername());
+            pvh.bikerLevel.setText("Biker Beginner");
+
+
         }else{
             pvh.bikerInfoLayout.setVisibility(View.GONE);
             pvh.callBiker.setVisibility(View.VISIBLE);
+            if(current.isWaitingBiker()){
+                pvh.callBiker.setClickable(false);
+                pvh.callBiker.setEnabled(false);
+                pvh.callBiker.setTextColor(pvh.callBiker.getContext().getResources().getColor(R.color.whiteText,pvh.callBiker.getContext().getTheme()));
+                pvh.callBiker.setIconTint(ContextCompat.getColorStateList(pvh.callBiker.getContext(), R.color.whiteText));
+                pvh.callBiker.setBackgroundTintList(ContextCompat.getColorStateList(pvh.callBiker.getContext(), R.color.colorPrimary));
+                pvh.callBiker.setText(pvh.callBiker.getContext().getString(R.string.waiting_biker));
+                pvh.callBiker.setOnClickListener(null);
+            }else{
+                pvh.callBiker.setClickable(true);
+                pvh.callBiker.setEnabled(true);
+                pvh.callBiker.setBackgroundTintList(ContextCompat.getColorStateList(pvh.callBiker.getContext(), R.color.colorAccent));
+                pvh.callBiker.setText(pvh.callBiker.getContext().getString(R.string.call_biker));
+                pvh.callBiker.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        Intent intent = new Intent(pvh.callBiker.getContext().getApplicationContext(), ChooseBikerActivity.class);
+                        intent.putExtra("ReservationID", current.getCompleteRes());
+                        pvh.callBiker.getContext().startActivity(intent);
+                    }
+                });
+            }
         }
 
         pvh.dishesLayout.removeAllViews();
@@ -91,25 +155,6 @@ public class RVAdapterBiker extends RecyclerView.Adapter<RVAdapterBiker.CardView
         }
 
         Log.d("BIKERFETCH", "waiting biker: "+current.isWaitingBiker()+"");
-
-        if(current.isWaitingBiker()){
-            pvh.callBiker.setClickable(false);
-            pvh.callBiker.setBackgroundTintList(ContextCompat.getColorStateList(pvh.callBiker.getContext(), R.color.colorPrimary));
-            pvh.callBiker.setText(pvh.callBiker.getContext().getString(R.string.waiting_biker));
-            pvh.callBiker.setOnClickListener(null);
-        }else{
-            pvh.callBiker.setClickable(true);
-            pvh.callBiker.setBackgroundTintList(ContextCompat.getColorStateList(pvh.callBiker.getContext(), R.color.colorAccent));
-            pvh.callBiker.setText(pvh.callBiker.getContext().getString(R.string.call_biker));
-            pvh.callBiker.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    Intent intent = new Intent(pvh.callBiker.getContext().getApplicationContext(), ChooseBikerActivity.class);
-                    intent.putExtra("ReservationID", current.getCompleteRes());
-                    pvh.callBiker.getContext().startActivity(intent);
-                }
-            });
-        }
 
 
     }
