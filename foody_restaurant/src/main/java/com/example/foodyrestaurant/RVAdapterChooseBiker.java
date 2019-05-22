@@ -66,6 +66,7 @@ public class RVAdapterChooseBiker extends RecyclerView.Adapter<RVAdapterChooseBi
         pvh.choose.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                currentBiker.imageAdded = false;
                 fatherClass.bikerChosen(pvh.getAdapterPosition());
             }
         });
