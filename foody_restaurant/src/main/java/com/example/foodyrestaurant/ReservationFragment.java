@@ -343,6 +343,53 @@ public class ReservationFragment extends Fragment {
         }
     }
 
+    public void addPendingOrder(DataSnapshot ds) {
+
+        Log.d("PROVA","addPendingOrder()");
+
+        ReservationDBRestaurant reservationDB = ds.getValue(ReservationDBRestaurant.class);
+
+        ArrayList<Dish> dishes = new ArrayList<>();
+        for (OrderItem o : reservationDB.getDishesOrdered()) {
+            Dish dish = new Dish();
+            dish.setQuantity(o.getPieces());
+            dish.setDishName(o.getOrderName());
+            dish.setPrice(o.getPrice());
+            dishes.add(dish);
+            Log.d("PROVA",""+dish.getDishName()+" "+dishes.size());
+        }
+        Reservation.prepStatus status;
+        if (reservationDB.getStatus().equals("Pending")) {
+            status = Reservation.prepStatus.PENDING;
+        } else if (reservationDB.getStatus().equals("Doing")) {
+            status = Reservation.prepStatus.DOING;
+        } else {
+            status = Reservation.prepStatus.DONE;
+        }
+
+        String orderID = reservationDB.getReservationID().substring(28);
+        Reservation reservation = new Reservation(orderID, dishes, status,
+                reservationDB.isAccepted(), reservationDB.getOrderTimeBiker(), reservationDB.getNameUser(),
+                reservationDB.getNumberPhone(), reservationDB.getResNote(), "",
+                sharedPreferences.getString("email", ""), reservationDB.getUserAddress());
+        reservation.setUserUID(reservationDB.getReservationID().substring(0, 28));
+        reservation.setDeliveryTime(reservationDB.getOrderTime());
+        reservation.setTotalPrice(reservationDB.getTotalCost());
+        reservation.setRestaurantAddress(sharedPreferences.getString("address", null));
+        reservation.setRestaurantName(sharedPreferences.getString("name", null));
+
+        int i;
+        for (i = 0; i < pending_reservations.size(); i++) {
+            if (reservation.getOrderTime().compareTo(pending_reservations.get(i).getOrderTime()) > 0)
+                break;
+        }
+
+        pending_reservations.add(i, reservation);
+        adapterPending.notifyItemInserted(i);
+        adapterPending.notifyItemRangeChanged(i, pending_reservations.size());
+
+    }
+
     public void clearNotification(){
         notification.setVisibility(View.GONE);
     }
