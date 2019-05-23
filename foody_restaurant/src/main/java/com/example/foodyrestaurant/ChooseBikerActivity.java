@@ -65,9 +65,10 @@ public class ChooseBikerActivity extends AppCompatActivity {
         query.addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-                //TODO: we cannot use anymore the latitude and the longitude
-                latitude = dataSnapshot.child("info").child("latitude").getValue(Double.class);
-                longitude = dataSnapshot.child("info").child("longitude").getValue(Double.class);
+                if(dataSnapshot.child("info").child("latitude").exists())
+                    latitude = dataSnapshot.child("info").child("latitude").getValue(Double.class);
+                if(dataSnapshot.child("info").child("longitude").exists())
+                    longitude = dataSnapshot.child("info").child("longitude").getValue(Double.class);
                 init();
             }
 
