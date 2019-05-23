@@ -32,6 +32,7 @@ import com.google.firebase.database.ValueEventListener;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.Locale;
 
 import static android.content.Context.MODE_PRIVATE;
 
@@ -262,7 +263,9 @@ public class ReservationFragment extends Fragment {
 
     public void updateTitles(){
         if(card.getVisibility() == View.GONE){
-            primaryText.setText(reservations.size()+" "+getString(R.string.pending_orders));
+            primaryText.setText(String.format(Locale.getDefault(), "%d %s", reservations.size(),
+                    getActivity().getString(R.string.pending_orders)));
+            //primaryText.setText(reservations.size()+" "+getString(R.string.pending_orders));
             if(activeReservation == null){
                 secondaryText.setText(getString(R.string.no_order_deliver));
             }else {

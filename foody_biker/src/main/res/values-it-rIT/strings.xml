@@ -22,7 +22,9 @@
     <string name="pickup_from">Ritira Da</string>
     <string name="deliver_to">Consegna A</string>
 
-
     <string name="call_restaurant">CHIAMA RISTORANTE</string>
     <string name="call_user">CHIAMA UTENTE</string>
+
+    <string name="pick_time_text">Ritira alle</string>
+    <string name="delivery_time_text">Consegna alle</string>
 </resources>

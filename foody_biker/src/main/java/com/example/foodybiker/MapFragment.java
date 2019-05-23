@@ -137,7 +137,8 @@ public class MapFragment extends Fragment {
     }
 
     public void clearMap() {
-        mGoogleMap.clear();
+        if(mGoogleMap != null)
+            mGoogleMap.clear();
     }
 
     public void newReservationToDisplay(Reservation res) {
@@ -170,15 +171,13 @@ public class MapFragment extends Fragment {
         MarkerOptions mark = new MarkerOptions();
         mark.position(latLngRestaurant);
         mark.title(activeReservation.getRestaurantName());
-        Double distance = haversineDistance(loc.getLatitude(), loc.getLongitude(), latLngRestaurant.latitude, latLngRestaurant.longitude);
-        mark.snippet(String.format(Locale.getDefault(), "distant %.2f km from you", distance.floatValue()));
+        mark.snippet(String.format(Locale.getDefault(), "%s %s", getActivity().getString(R.string.pick_time_text), activeReservation.getRestaurantPickupTime()));
         mark.icon(BitmapDescriptorFactory.fromResource(R.drawable.rest_icon));
         mGoogleMap.addMarker(mark);
 
         mark.position(latLngUser);
         mark.title(activeReservation.getUserName());
-        distance = haversineDistance(latLngRestaurant.latitude, latLngRestaurant.longitude, latLngUser.latitude, latLngUser.longitude);
-        mark.snippet(String.format(Locale.getDefault(), "distant %.2f from " + activeReservation.getRestaurantName(), distance.floatValue()));
+        mark.snippet(String.format(Locale.getDefault(), "%s %s", getActivity().getString(R.string.delivery_time_text), activeReservation.getUserDeliveryTime()));
         mark.icon(BitmapDescriptorFactory.defaultMarker());
         mGoogleMap.addMarker(mark);
 
@@ -252,7 +251,7 @@ public class MapFragment extends Fragment {
                 }
                 for (final Location location : locationResult.getLocations()) {
                     currLoc = location;
-                    Toast.makeText(father.getApplicationContext(), location.getLatitude() + " " + location.getLongitude(), Toast.LENGTH_SHORT).show();
+                    //Toast.makeText(father.getApplicationContext(), location.getLatitude() + " " + location.getLongitude(), Toast.LENGTH_SHORT).show();
                     FirebaseUser user = firebaseAuth.getCurrentUser();
                     final DatabaseReference database = FirebaseDatabase.getInstance().getReference()
                             .child("Bikers/" + user.getUid());
