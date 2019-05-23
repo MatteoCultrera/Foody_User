@@ -11,7 +11,6 @@ import android.support.annotation.Nullable;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.Fragment;
 import android.support.v4.content.ContextCompat;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -92,7 +91,6 @@ public class MapFragment extends Fragment {
         builder = new LatLngBounds.Builder();
         builder.include(new LatLng(location.getLatitude(), location.getLongitude()));
 
-        Log.d("PROVA", reservations.size() + "");
         if(!reservations.isEmpty()) {
             for (int i = 0; i < reservations.size(); i++) {
                 String addressRest = reservations.get(i).getRestaurantAddress();
@@ -105,7 +103,6 @@ public class MapFragment extends Fragment {
                 }
 
                 LatLng latlngRest = new LatLng(lista.get(0).getLatitude(), lista.get(0).getLongitude());
-                Log.d("PROVA", "latlon " + latlngRest.latitude + " " + latlngRest.longitude);
 
                 MarkerOptions mark = new MarkerOptions();
                 mark.position(latlngRest);
@@ -150,7 +147,6 @@ public class MapFragment extends Fragment {
 
     public void fetchUserAndRestaurant(Location location) {
         final Location loc = location;
-        Log.d("PROVA", activeReservation + "");
         List<Address> lista = new ArrayList<>();
 
         mGoogleMap.clear();
@@ -284,7 +280,6 @@ public class MapFragment extends Fragment {
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot){
                 for (DataSnapshot ds : dataSnapshot.getChildren()) {
-                    Log.d("PROVA", ds.getKey());
                     ReservationDBBiker reservationDB = ds.getValue(ReservationDBBiker.class);
                     if (reservationDB.getStatus() == null) {
                         Reservation reservation = new Reservation(reservationDB.getRestaurantName(), reservationDB.getRestaurantAddress(),
@@ -292,14 +287,12 @@ public class MapFragment extends Fragment {
                                 reservationDB.getOrderTime(), reservationDB.getRestaurantID(),null, false);
                         reservation.setReservationID(ds.getKey());
                         reservations.add(reservation);
-                        Log.d("PROVA", "status null + " + reservation.getReservationID());
                     } else if (reservationDB.getStatus().equals("accepted")) {
                         Reservation reservation = new Reservation(reservationDB.getRestaurantName(), reservationDB.getRestaurantAddress(),
                                 reservationDB.getOrderTimeBiker(), reservationDB.getUserName(), reservationDB.getUserAddress(),
                                 reservationDB.getOrderTime(), reservationDB.getRestaurantID(),null, true);
                         reservation.setReservationID(ds.getKey());
                         activeReservation = reservation;
-                        Log.d("PROVA", "activer reservation + " + activeReservation.getReservationID());
                     }
                 }
             }
@@ -373,7 +366,7 @@ public class MapFragment extends Fragment {
                 getLocationPermission();
             }
         } catch (SecurityException e)  {
-            Log.e("Exception: %s", e.getMessage());
+            e.printStackTrace();
         }
     }
 
@@ -409,7 +402,7 @@ public class MapFragment extends Fragment {
                 });
             }
         } catch(SecurityException e)  {
-            Log.e("Exception: %s", e.getMessage());
+            e.printStackTrace();
         }
     }
 
