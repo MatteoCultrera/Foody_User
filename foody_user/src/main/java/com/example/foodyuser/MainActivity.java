@@ -3,6 +3,7 @@ package com.example.foodyuser;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
+import android.support.annotation.Nullable;
 import android.support.design.internal.BottomNavigationItemView;
 import android.support.design.internal.BottomNavigationMenuView;
 import android.support.design.widget.BottomNavigationView;
@@ -14,6 +15,14 @@ import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.database.ChildEventListener;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -111,6 +120,8 @@ public class MainActivity extends AppCompatActivity {
         if (sharedPref.getBoolean("hasNotification",false)){
             setNotification(1);
         }
+
+        notification();
     }
 
     public void setNotification(int pos){
@@ -197,5 +208,47 @@ public class MainActivity extends AppCompatActivity {
         }else{
             sharedPref.edit().putBoolean("hasNotification", false).apply();
         }
+    }
+
+    public void notification(){
+        FirebaseAuth firebaseAuth = FirebaseAuth.getInstance();
+        FirebaseUser firebaseUser = firebaseAuth.getCurrentUser();
+        DatabaseReference restaurantBikers = FirebaseDatabase.getInstance().getReference().child("reservations")
+                .child("users").child(firebaseUser.getUid());
+        restaurantBikers.addChildEventListener(new ChildEventListener() {
+            @Override
+            public void onChildAdded(@NonNull DataSnapshot dataSnapshot, @Nullable String s) {
+            }
+
+            @Override
+            public void onChildChanged(@NonNull DataSnapshot dataSnapshot, @Nullable String s) {
+                //order has been accepted
+                if(dataSnapshot.child("accepted").getValue(boolean.class) &&
+                        dataSnapshot.child("status").getValue(String.class).compareTo("Doing") == 0) {
+                        setNotification(1);
+                }
+                //order has been rejected
+                if(!dataSnapshot.child("accepted").getValue(boolean.class) &&
+                        dataSnapshot.child("status").getValue(String.class).compareTo("Done") == 0) {
+                        setNotification(1);
+                }
+            }
+
+            @Override
+            public void onChildRemoved(@NonNull DataSnapshot dataSnapshot) {
+
+            }
+
+            @Override
+            public void onChildMoved(@NonNull DataSnapshot dataSnapshot, @Nullable String s) {
+
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError databaseError) {
+
+            }
+        });
+
     }
 }

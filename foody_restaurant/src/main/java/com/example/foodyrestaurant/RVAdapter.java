@@ -32,9 +32,11 @@ import java.util.Locale;
 public class RVAdapter extends RecyclerView.Adapter<RVAdapter.CardViewHolder>{
 
     private final List<Card> cards;
+    private MenuFragment father;
 
-    RVAdapter(List<Card> cards){
+    RVAdapter(List<Card> cards, MenuFragment father){
         this.cards = cards;
+        this.father = father;
     }
 
     @Override
@@ -112,12 +114,14 @@ public class RVAdapter extends RecyclerView.Adapter<RVAdapter.CardViewHolder>{
                             subtitleF.setTextColor(ContextCompat.getColor(enabler.getContext(), R.color.disabledText));
                             priceF.setTextColor(ContextCompat.getColor(enabler.getContext(), R.color.disabledText));
                             image.setAlpha(0.3f);
+                            father.updateMenuDB();
                         } else {
                             dishes.get(index).setAvailable(true);
                             titleF.setTextColor(ContextCompat.getColor(enabler.getContext(), R.color.primaryText));
                             subtitleF.setTextColor(ContextCompat.getColor(enabler.getContext(), R.color.secondaryText));
                             priceF.setTextColor(ContextCompat.getColor(enabler.getContext(), R.color.primaryText));
                             image.setAlpha(1f);
+                            father.updateMenuDB();
                         }
                     }
                 });
