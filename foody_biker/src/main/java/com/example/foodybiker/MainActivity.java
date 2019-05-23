@@ -233,6 +233,7 @@ public class MainActivity extends AppCompatActivity {
 
     public void nothingActive() {
         Log.d("PROVA", "nothingActive()");
+        ((MapFragment) map).reservations.clear();
         ((MapFragment) map).clearMap();
     }
 

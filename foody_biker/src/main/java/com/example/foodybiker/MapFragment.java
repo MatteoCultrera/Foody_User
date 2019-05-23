@@ -61,7 +61,7 @@ public class MapFragment extends Fragment {
     SupportMapFragment mapFragment;
     private LocationCallback locationCallback;
     LocationRequest locationRequest;
-    private ArrayList<Reservation> reservations;
+    ArrayList<Reservation> reservations;
     Reservation activeReservation = null;
     private LatLngBounds.Builder builder;
     private LatLngBounds.Builder builderUserRest;
@@ -140,7 +140,7 @@ public class MapFragment extends Fragment {
     }
 
     public void clearMap() {
-//        mGoogleMap.clear();
+        mGoogleMap.clear();
     }
 
     public void newReservationToDisplay(Reservation res) {
