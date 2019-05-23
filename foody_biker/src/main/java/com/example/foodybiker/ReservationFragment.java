@@ -63,13 +63,11 @@ public class ReservationFragment extends Fragment {
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
-        Log.d("SWSW", "oncreate");
         return inflater.inflate(R.layout.fragment_reservation, container, false);
     }
 
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
-        Log.d("SWSW", "onview");
         super.onViewCreated(view, savedInstanceState);
         init(view);
     }
@@ -150,6 +148,7 @@ public class ReservationFragment extends Fragment {
                                 adapter.notifyItemInserted(index);
                                 adapter.notifyItemRangeChanged(index, reservations.size());
                                 if(reservations.size() != pending){
+                                    Log.d("SWSW", "notifica");
                                     sharedPreferences.edit().putInt("pending", reservations.size()).apply();
                                     sharedPreferences.edit().putBoolean("hasNotification", true).apply();
                                     father.setNotification(1);
