@@ -137,7 +137,8 @@ public class MapFragment extends Fragment {
     }
 
     public void clearMap() {
-        mGoogleMap.clear();
+        if(mGoogleMap != null)
+            mGoogleMap.clear();
     }
 
     public void newReservationToDisplay(Reservation res) {
