@@ -62,7 +62,6 @@ public class ReservationFragment extends Fragment {
 
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-
         View view = inflater.inflate(R.layout.fragment_reservation, container, false);
         pending_recycler = view.findViewById(R.id.pending_display);
         doing_recycler = view.findViewById(R.id.doing_display);
@@ -189,18 +188,6 @@ public class ReservationFragment extends Fragment {
                     }
                 });
 
-                if(pending_reservations.size() != pendingNumber){
-                    father.setNotification(true);
-                    sharedPreferences.edit().putBoolean("kitchenNotification", true).apply();
-                    sharedPreferences.edit().putInt("kitchenPending", pending_reservations.size()).apply();
-                    sharedPreferences.edit().putInt("kitchenDoing", doing_reservations.size()).apply();
-                }
-                if(doing_reservations.size() != doingNumber){
-                    father.setNotification(true);
-                    sharedPreferences.edit().putBoolean("kitchenNotification", true).apply();
-                    sharedPreferences.edit().putInt("kitchenPending", pending_reservations.size()).apply();
-                    sharedPreferences.edit().putInt("kitchenDoing", doing_reservations.size()).apply();
-                }
 
                 doing_recycler.setAdapter(adapterDoing);
 
@@ -251,10 +238,6 @@ public class ReservationFragment extends Fragment {
                                     pending_reservations.add(index, reservation);
                                     adapterPending.notifyItemInserted(index);
                                     adapterPending.notifyItemRangeChanged(index, pending_reservations.size());
-                                    father.setNotification(true);
-                                    sharedPreferences.edit().putBoolean("kitchenNotification", true).apply();
-                                    sharedPreferences.edit().putInt("kitchenPending", pending_reservations.size()).apply();
-                                    sharedPreferences.edit().putInt("kitchenDoing", doing_reservations.size()).apply();
                                 }
                             }
                         }
@@ -296,10 +279,6 @@ public class ReservationFragment extends Fragment {
                                     doing_reservations.add(index, reservation);
                                     adapterDoing.notifyItemInserted(index);
                                     adapterDoing.notifyItemRangeChanged(index, pending_reservations.size());
-                                    father.setNotification(true);
-                                    sharedPreferences.edit().putBoolean("kitchenNotification", true).apply();
-                                    sharedPreferences.edit().putInt("kitchenPending", pending_reservations.size()).apply();
-                                    sharedPreferences.edit().putInt("kitchenDoing", doing_reservations.size()).apply();
                                 }
                             }
                         }
