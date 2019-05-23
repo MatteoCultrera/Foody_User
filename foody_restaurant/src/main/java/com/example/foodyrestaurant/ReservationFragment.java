@@ -354,10 +354,18 @@ public class ReservationFragment extends Fragment {
         setInterface();
     }
 
+    public boolean hasNotification(){
+        return notification.getVisibility() == View.VISIBLE;
+    }
+
     public void addNotification(){
         if(doing_recycler.getVisibility() == View.VISIBLE){
             notification.setVisibility(View.VISIBLE);
         }
+    }
+
+    public void clearNotification(){
+        notification.setVisibility(View.GONE);
     }
 
     public void addInDoing(Reservation toAdd){

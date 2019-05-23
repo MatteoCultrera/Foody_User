@@ -2,7 +2,9 @@ package com.example.foodyuser;
 
 import android.animation.Animator;
 import android.app.Activity;
+import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.net.Uri;
 import android.os.Environment;
 import android.support.annotation.NonNull;
@@ -85,6 +87,8 @@ public class RVAdapterRestaurants  extends RecyclerView.Adapter<RVAdapterRestaur
                     File f = new File(storage, filename);
                     if (f.exists())
                         f.delete();
+                    SharedPreferences shared = cardViewHolder.restaurantBackground.getContext().getSharedPreferences("myPreference", Context.MODE_PRIVATE);
+                    shared.edit().remove("notes").apply();
 
                     //Start the Intent
                     cardViewHolder.card.getContext().startActivity(intent);
