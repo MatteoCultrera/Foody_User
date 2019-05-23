@@ -371,6 +371,7 @@ public class BikerFragment extends Fragment {
             this.completeRes = completeRes;
         }
 
+
         public String getBikerID(){
             return bikerID;
         }

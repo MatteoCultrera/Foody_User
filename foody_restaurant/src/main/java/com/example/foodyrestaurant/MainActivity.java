@@ -93,6 +93,11 @@ public class MainActivity extends AppCompatActivity {
         bottomBar.setOnNavigationItemSelectedListener(new BottomNavigationView.OnNavigationItemSelectedListener() {
             @Override
             public boolean onNavigationItemSelected(@NonNull MenuItem menuItem) {
+                if(active == reservations && menuItem.getItemId() != R.id.orders
+                && ((ReservationFragment) reservations).hasNotification()){
+                    ((ReservationFragment) reservations).clearNotification();
+                    notificationBadgeKitchen.setVisibility(View.VISIBLE);
+                }
                 int id = menuItem.getItemId();
                 if(id == R.id.menu && active != menu){
                     FragmentTransaction transaction = fm.beginTransaction();

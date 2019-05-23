@@ -35,4 +35,6 @@
     <string name="delivery_time">Orario di consegna</string>
     <string name="order_status">Stato ordine: %1$s</string>
 
+    <string name="insert_note">Inserisci Note</string>
+
 </resources>

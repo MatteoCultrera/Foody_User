@@ -2,4 +2,5 @@
 <resources>
     <dimen name="short36">36dp</dimen>
     <dimen name="short10">10dp</dimen>
+    <dimen name="short16">16dp</dimen>
 </resources>
