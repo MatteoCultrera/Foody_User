@@ -4,6 +4,7 @@ import android.content.Context;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
+import android.support.annotation.Nullable;
 import android.support.design.internal.BottomNavigationItemView;
 import android.support.design.internal.BottomNavigationMenuView;
 import android.support.design.widget.BottomNavigationView;
@@ -15,6 +16,16 @@ import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.database.ChildEventListener;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
+
+import java.util.ArrayList;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -149,6 +160,8 @@ public class MainActivity extends AppCompatActivity {
         if (sharedPref.getBoolean("bikerNotification", false)){
             setNotification(false);
         }
+
+        notification();
     }
 
     public void setNotification(boolean isKitchen){
@@ -167,12 +180,10 @@ public class MainActivity extends AppCompatActivity {
         if(isKitchen){
             if(notificationBadgeKitchen.getVisibility() == View.VISIBLE) {
                 notificationBadgeKitchen.setVisibility(View.GONE);
-                sharedPref.edit().putBoolean("kitchenNotification", false).apply();
             }
         }else{
             if(notificationBadgeDeliv.getVisibility() == View.VISIBLE) {
                 notificationBadgeDeliv.setVisibility(View.GONE);
-                sharedPref.edit().putBoolean("bikerNotification", false).apply();
             }
         }
     }
@@ -223,4 +234,96 @@ public class MainActivity extends AppCompatActivity {
             sharedPref.edit().putBoolean("bikerNotification", false).apply();
         }
     }
+
+    public void notification(){
+        FirebaseAuth firebaseAuth = FirebaseAuth.getInstance();
+        FirebaseUser firebaseUser = firebaseAuth.getCurrentUser();
+        DatabaseReference restaurantReservations = FirebaseDatabase.getInstance().getReference().child("reservations")
+                .child("restaurant").child(firebaseUser.getUid());
+        restaurantReservations.addChildEventListener(new ChildEventListener() {
+            @Override
+            public void onChildAdded(@NonNull DataSnapshot dataSnapshot, @Nullable String s) {
+                if(!dataSnapshot.child("accepted").getValue(boolean.class)) {
+                    setNotification(true);
+                }
+            }
+
+            @Override
+            public void onChildChanged(@NonNull DataSnapshot dataSnapshot, @Nullable String s) {
+
+            }
+
+            @Override
+            public void onChildRemoved(@NonNull DataSnapshot dataSnapshot) {
+
+            }
+
+            @Override
+            public void onChildMoved(@NonNull DataSnapshot dataSnapshot, @Nullable String s) {
+
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError databaseError) {
+
+            }
+        });
+
+        DatabaseReference restaurantBikers = FirebaseDatabase.getInstance().getReference().child("reservations")
+                .child("restaurant").child(firebaseUser.getUid());
+        restaurantBikers.addChildEventListener(new ChildEventListener() {
+            @Override
+            public void onChildAdded(@NonNull DataSnapshot dataSnapshot, @Nullable String s) {
+                //new order without biker assigned
+                if(dataSnapshot.child("accepted").getValue(boolean.class)) {
+                    if(!dataSnapshot.child("biker").getValue(boolean.class)) {
+                        setNotification(false);
+                    }
+                }
+            }
+
+            @Override
+            public void onChildChanged(@NonNull DataSnapshot dataSnapshot, @Nullable String s) {
+                //new order without biker assigned
+                if(dataSnapshot.child("accepted").getValue(boolean.class)) {
+                    if(!dataSnapshot.child("biker").getValue(boolean.class)) {
+                        setNotification(false);
+                    }
+                }
+                //biker has accepted my order
+                if(dataSnapshot.child("biker").getValue(boolean.class)) {
+                    String bikerID = dataSnapshot.child("bikerID").getValue(String.class);
+                    if(!bikerID.equals("")) {
+                        setNotification(false);
+                    }
+                }
+                //biker has rejected my order
+
+                if(!dataSnapshot.child("biker").getValue(boolean.class)) {
+                    if(dataSnapshot.child("waitingBiker").exists()) {
+                        if(dataSnapshot.child("waitingBiker").getValue(boolean.class)) {
+                            setNotification(false);
+                        }
+                    }
+                }
+            }
+
+            @Override
+            public void onChildRemoved(@NonNull DataSnapshot dataSnapshot) {
+
+            }
+
+            @Override
+            public void onChildMoved(@NonNull DataSnapshot dataSnapshot, @Nullable String s) {
+
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError databaseError) {
+
+            }
+        });
+
+    }
+
 }
