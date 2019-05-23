@@ -11,7 +11,6 @@ import android.support.annotation.Nullable;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.Fragment;
 import android.support.v4.content.ContextCompat;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -61,7 +60,7 @@ public class MapFragment extends Fragment {
     SupportMapFragment mapFragment;
     private LocationCallback locationCallback;
     LocationRequest locationRequest;
-    private ArrayList<Reservation> reservations;
+    ArrayList<Reservation> reservations;
     Reservation activeReservation = null;
     private LatLngBounds.Builder builder;
     private LatLngBounds.Builder builderUserRest;
@@ -92,7 +91,6 @@ public class MapFragment extends Fragment {
         builder = new LatLngBounds.Builder();
         builder.include(new LatLng(location.getLatitude(), location.getLongitude()));
 
-        Log.d("PROVA", reservations.size() + "");
         if(!reservations.isEmpty()) {
             for (int i = 0; i < reservations.size(); i++) {
                 String addressRest = reservations.get(i).getRestaurantAddress();
@@ -105,7 +103,6 @@ public class MapFragment extends Fragment {
                 }
 
                 LatLng latlngRest = new LatLng(lista.get(0).getLatitude(), lista.get(0).getLongitude());
-                Log.d("PROVA", "latlon " + latlngRest.latitude + " " + latlngRest.longitude);
 
                 MarkerOptions mark = new MarkerOptions();
                 mark.position(latlngRest);
@@ -140,7 +137,8 @@ public class MapFragment extends Fragment {
     }
 
     public void clearMap() {
-//        mGoogleMap.clear();
+        if(mGoogleMap != null)
+            mGoogleMap.clear();
     }
 
     public void newReservationToDisplay(Reservation res) {
@@ -150,7 +148,6 @@ public class MapFragment extends Fragment {
 
     public void fetchUserAndRestaurant(Location location) {
         final Location loc = location;
-        Log.d("PROVA", activeReservation + "");
         List<Address> lista = new ArrayList<>();
 
         mGoogleMap.clear();
@@ -174,15 +171,13 @@ public class MapFragment extends Fragment {
         MarkerOptions mark = new MarkerOptions();
         mark.position(latLngRestaurant);
         mark.title(activeReservation.getRestaurantName());
-        Double distance = haversineDistance(loc.getLatitude(), loc.getLongitude(), latLngRestaurant.latitude, latLngRestaurant.longitude);
-        mark.snippet(String.format(Locale.getDefault(), "distant %.2f km from you", distance.floatValue()));
+        mark.snippet(String.format(Locale.getDefault(), "%s %s", getActivity().getString(R.string.pick_time_text), activeReservation.getRestaurantPickupTime()));
         mark.icon(BitmapDescriptorFactory.fromResource(R.drawable.rest_icon));
         mGoogleMap.addMarker(mark);
 
         mark.position(latLngUser);
         mark.title(activeReservation.getUserName());
-        distance = haversineDistance(latLngRestaurant.latitude, latLngRestaurant.longitude, latLngUser.latitude, latLngUser.longitude);
-        mark.snippet(String.format(Locale.getDefault(), "distant %.2f from " + activeReservation.getRestaurantName(), distance.floatValue()));
+        mark.snippet(String.format(Locale.getDefault(), "%s %s", getActivity().getString(R.string.delivery_time_text), activeReservation.getUserDeliveryTime()));
         mark.icon(BitmapDescriptorFactory.defaultMarker());
         mGoogleMap.addMarker(mark);
 
@@ -256,7 +251,7 @@ public class MapFragment extends Fragment {
                 }
                 for (final Location location : locationResult.getLocations()) {
                     currLoc = location;
-                    Toast.makeText(father.getApplicationContext(), location.getLatitude() + " " + location.getLongitude(), Toast.LENGTH_SHORT).show();
+                    //Toast.makeText(father.getApplicationContext(), location.getLatitude() + " " + location.getLongitude(), Toast.LENGTH_SHORT).show();
                     FirebaseUser user = firebaseAuth.getCurrentUser();
                     final DatabaseReference database = FirebaseDatabase.getInstance().getReference()
                             .child("Bikers/" + user.getUid());
@@ -284,7 +279,6 @@ public class MapFragment extends Fragment {
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot){
                 for (DataSnapshot ds : dataSnapshot.getChildren()) {
-                    Log.d("PROVA", ds.getKey());
                     ReservationDBBiker reservationDB = ds.getValue(ReservationDBBiker.class);
                     if (reservationDB.getStatus() == null) {
                         Reservation reservation = new Reservation(reservationDB.getRestaurantName(), reservationDB.getRestaurantAddress(),
@@ -292,14 +286,12 @@ public class MapFragment extends Fragment {
                                 reservationDB.getOrderTime(), reservationDB.getRestaurantID(),null, false);
                         reservation.setReservationID(ds.getKey());
                         reservations.add(reservation);
-                        Log.d("PROVA", "status null + " + reservation.getReservationID());
                     } else if (reservationDB.getStatus().equals("accepted")) {
                         Reservation reservation = new Reservation(reservationDB.getRestaurantName(), reservationDB.getRestaurantAddress(),
                                 reservationDB.getOrderTimeBiker(), reservationDB.getUserName(), reservationDB.getUserAddress(),
                                 reservationDB.getOrderTime(), reservationDB.getRestaurantID(),null, true);
                         reservation.setReservationID(ds.getKey());
                         activeReservation = reservation;
-                        Log.d("PROVA", "activer reservation + " + activeReservation.getReservationID());
                     }
                 }
             }
@@ -373,7 +365,7 @@ public class MapFragment extends Fragment {
                 getLocationPermission();
             }
         } catch (SecurityException e)  {
-            Log.e("Exception: %s", e.getMessage());
+            e.printStackTrace();
         }
     }
 
@@ -409,7 +401,7 @@ public class MapFragment extends Fragment {
                 });
             }
         } catch(SecurityException e)  {
-            Log.e("Exception: %s", e.getMessage());
+            e.printStackTrace();
         }
     }
 
@@ -432,13 +424,13 @@ public class MapFragment extends Fragment {
     @Override
     public void onResume() {
         super.onResume();
-        //startLocationUpdates();
+        startLocationUpdates();
     }
 
     @Override
     public void onPause() {
         super.onPause();
-        //stopLocationUpdates();
+        stopLocationUpdates();
     }
 
 }

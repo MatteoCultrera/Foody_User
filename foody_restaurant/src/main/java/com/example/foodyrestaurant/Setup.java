@@ -998,6 +998,13 @@ public class Setup extends AppCompatActivity {
             childLoc.put("latitude", pos.latitude);
             childLoc.put("longitude", pos.longitude);
             databaseLoc.updateChildren(childLoc);
+        } else {
+            DatabaseReference databaseLoc = FirebaseDatabase.getInstance().getReference()
+                    .child("restaurantsInfo/" + user.getUid()).child("info");
+            HashMap<String, Object> childLoc = new HashMap<>();
+            childLoc.put("latitude", sharedPref.getFloat("latitude", (float) 0.0));
+            childLoc.put("longitude", sharedPref.getFloat("longitude", (float) 0.0));
+            databaseLoc.updateChildren(childLoc);
         }
 
         Toast.makeText(getApplicationContext(), R.string.save, Toast.LENGTH_SHORT).show();

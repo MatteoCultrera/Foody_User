@@ -1,15 +1,27 @@
 package com.example.foodyuser;
 
+import android.animation.LayoutTransition;
+import android.app.AlertDialog;
+import android.content.DialogInterface;
 import android.content.SharedPreferences;
 import android.os.Environment;
 import android.support.annotation.NonNull;
+import android.support.constraint.ConstraintLayout;
 import android.support.design.button.MaterialButton;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.text.Editable;
+import android.text.InputType;
+import android.text.TextWatcher;
+import android.util.Log;
 import android.view.View;
+import android.view.WindowManager;
+import android.widget.EditText;
+import android.widget.ImageButton;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -25,6 +37,7 @@ import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.HashMap;
 import java.util.Locale;
+import java.util.Objects;
 
 public class Order extends AppCompatActivity {
 
@@ -36,9 +49,14 @@ public class Order extends AppCompatActivity {
     private MaterialButton placeOrder;
     private FirebaseAuth firebaseAuth;
     private FirebaseUser firebaseUser;
+    private ConstraintLayout mainLayout, notesLayout;
+    private TextView time, noteTitle, notes, editButton, deleteButton;
+    private ImageButton pickTime;
+    private EditText input;
     private SharedPreferences sharedPref;
     private SharedPreferences.Editor edit;
     private String delivAddress;
+    private boolean hasNote;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -55,6 +73,16 @@ public class Order extends AppCompatActivity {
         firebaseUser = firebaseAuth.getCurrentUser();
         backButton = findViewById(R.id.backButton);
         placeOrder = findViewById(R.id.place_order);
+        time = findViewById(R.id.delivery_time);
+        mainLayout = findViewById(R.id.price_layout);
+        mainLayout.getLayoutTransition().enableTransitionType(LayoutTransition.CHANGING);
+        notesLayout = findViewById(R.id.notesLayout);
+        notesLayout.getLayoutTransition().enableTransitionType(LayoutTransition.CHANGING);
+        noteTitle = findViewById(R.id.noteTitle);
+        notes = findViewById(R.id.notes);
+        editButton = findViewById(R.id.edit_button);
+        deleteButton = findViewById(R.id.delete_button);
+        pickTime = findViewById(R.id.chooseTime);
         JsonHandler handler =  new JsonHandler();
         final File directory = getExternalFilesDir(Environment.DIRECTORY_DOCUMENTS);
         File orderFile = new File(directory, getString(R.string.order_file_name));
@@ -79,7 +107,12 @@ public class Order extends AppCompatActivity {
                 calendar2.add(Calendar.MINUTE, 20);
                 String deliveryTime = new SimpleDateFormat("HH:mm", Locale.UK).format(calendar.getTime());
                 String bikerTime = new SimpleDateFormat("HH:mm", Locale.UK).format(calendar2.getTime());
-                final ReservationDBUser reservation = new ReservationDBUser(identifier, restID, copyOrders, false, null,
+                String notes;
+                if(sharedPref.contains("notes"))
+                    notes = sharedPref.getString("notes","");
+                else
+                    notes = null;
+                final ReservationDBUser reservation = new ReservationDBUser(identifier, restID, copyOrders, false, notes,
                         deliveryTime, "Pending", total.getText().toString());
                 reservation.setRestaurantName(restName);
                 reservation.setRestaurantAddress(restAddress);
@@ -96,7 +129,7 @@ public class Order extends AppCompatActivity {
                         .child("reservations").child("restaurant").child(restID);
                 HashMap<String, Object> childRest = new HashMap<>();
                 ReservationDBRestaurant reservationRest = new ReservationDBRestaurant(identifier, "", copyOrders, false,
-                        null, sharedPref.getString("phoneNumber", null),
+                        notes, sharedPref.getString("phoneNumber", null),
                         sharedPref.getString("name", null), deliveryTime, bikerTime, "Pending",
                         delivAddress, total.getText().toString());
                 childRest.put(identifier, reservationRest);
@@ -108,11 +141,12 @@ public class Order extends AppCompatActivity {
                 });
 
                 orders.clear();
+                sharedPref.edit().remove("notes").apply();
                 closeActivity();
             }
         });
 
-        total = findViewById(R.id.total_price);
+        total = findViewById(R.id.total);
         ordersList = findViewById(R.id.order_list);
         LinearLayoutManager llm = new LinearLayoutManager(this);
         ordersList.setLayoutManager(llm);
@@ -127,7 +161,129 @@ public class Order extends AppCompatActivity {
         adapter = new RVAdapterOrder(orders, this);
         ordersList.setAdapter(adapter);
 
+        if(sharedPref.contains("notes")){
+            hasNote = true;
+            addNote(sharedPref.getString("notes",""));
+        }else{
+            hasNote = false;
+            deleteNote();
+        }
+
+
+        deleteButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                deleteNote();
+            }
+        });
+
+        editButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                plusPressed(sharedPref.getString("notes",""));
+            }
+        });
+
+        if(hasNote){
+            editButton.setText("Edit Note");
+        }
+
         updatePrice();
+    }
+
+    private void plusPressed(String starting){
+        input = new EditText(editButton.getContext());
+        input.setText(starting);
+        final LinearLayout container = new LinearLayout(editButton.getContext());
+        container.setOrientation(LinearLayout.VERTICAL);
+        LinearLayout.LayoutParams lp = new LinearLayout.LayoutParams(
+                LinearLayout.LayoutParams.MATCH_PARENT,
+                LinearLayout.LayoutParams.MATCH_PARENT);
+        lp.setMargins(getResources().getDimensionPixelSize(R.dimen.short16), 0, getResources().getDimensionPixelSize(R.dimen.short16), 0);
+        final AlertDialog.Builder builder = new AlertDialog.Builder(editButton.getContext(), R.style.AppCompatAlertDialogStyle);
+        builder.setNegativeButton(getResources().getString(R.string.cancel), new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                dialog.dismiss();
+            }
+        });
+        builder.setPositiveButton(getResources().getString(R.string.accept), new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialogInterface, int i) {
+               addNote(input.getText().toString());
+            }
+        });
+        builder.setTitle(getResources().getString(R.string.insert_note));
+        input.setLayoutParams(lp);
+        builder.setCancelable(false);
+        input.setInputType(InputType.TYPE_TEXT_FLAG_MULTI_LINE);
+        input.setSingleLine(false);
+        input.setLines(1);
+        input.setMaxLines(3);
+        container.addView(input, lp);
+        builder.setView(container);
+        final AlertDialog dialogDism = builder.create();
+        Objects.requireNonNull(dialogDism.getWindow()).setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_VISIBLE);
+        dialogDism.show();
+        dialogDism.getButton(AlertDialog.BUTTON_POSITIVE).setEnabled(false);
+        dialogDism.getButton(AlertDialog.BUTTON_POSITIVE).setTextColor(getColor(R.color.secondaryText));
+        WindowManager.LayoutParams layouts= new WindowManager.LayoutParams();
+        layouts.width = WindowManager.LayoutParams.MATCH_PARENT;
+        layouts.height = WindowManager.LayoutParams.WRAP_CONTENT;
+        layouts.dimAmount = 0.7f;
+        dialogDism.getWindow().setAttributes(layouts);
+        dialogDism.getWindow().addFlags(WindowManager.LayoutParams.FLAG_DIM_BEHIND);
+        dialogDism.getButton(AlertDialog.BUTTON_NEGATIVE).setTextColor(getColor(R.color.colorAccent));
+        if(starting.length() == 0){
+            dialogDism.getButton(AlertDialog.BUTTON_POSITIVE).setTextColor(getColor(R.color.colorPrimaryDark));
+            dialogDism.getButton(AlertDialog.BUTTON_POSITIVE).setEnabled(false);
+        }else{
+            dialogDism.getButton(AlertDialog.BUTTON_POSITIVE).setTextColor(getColor(R.color.colorAccent));
+            dialogDism.getButton(AlertDialog.BUTTON_POSITIVE).setEnabled(true);
+        }
+
+        input.addTextChangedListener(new TextWatcher() {
+            @Override
+            public void beforeTextChanged(CharSequence charSequence, int i, int i1, int i2) {
+            }
+
+            @Override
+            public void onTextChanged(CharSequence charSequence, int i, int i1, int i2) {
+                if (charSequence.length() == 0) {
+                    dialogDism.getButton(AlertDialog.BUTTON_POSITIVE).setEnabled(false);
+                    dialogDism.getButton(AlertDialog.BUTTON_POSITIVE).setTextColor(getColor(R.color.colorPrimaryDark));
+                    dialogDism.getButton(DialogInterface.BUTTON_NEGATIVE).setTextColor(getColor(R.color.colorAccent));
+                } else {
+                    dialogDism.getButton(AlertDialog.BUTTON_POSITIVE).setEnabled(true);
+                    dialogDism.getButton(AlertDialog.BUTTON_POSITIVE).setTextColor(getColor(R.color.colorAccent));
+                    dialogDism.getButton(DialogInterface.BUTTON_NEGATIVE).setTextColor(getColor(R.color.colorAccent));
+
+                }
+            }
+
+            @Override
+            public void afterTextChanged(Editable editable) {
+            }
+        });
+    }
+
+    public void addNote(String text){
+        noteTitle.setVisibility(View.VISIBLE);
+        notes.setVisibility(View.VISIBLE);
+        notes.setText(text);
+        editButton.setText("Edit");
+        deleteButton.setVisibility(View.VISIBLE);
+        hasNote = true;
+        sharedPref.edit().putString("notes",text).apply();
+    }
+
+    public void deleteNote(){
+        noteTitle.setVisibility(View.GONE);
+        notes.setVisibility(View.GONE);
+        editButton.setText("Add Notes");
+        deleteButton.setVisibility(View.GONE);
+        sharedPref.edit().remove("notes").apply();
+        hasNote = false;
     }
 
     public void removeItem(int index){

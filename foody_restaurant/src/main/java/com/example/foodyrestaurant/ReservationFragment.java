@@ -62,7 +62,6 @@ public class ReservationFragment extends Fragment {
 
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-
         View view = inflater.inflate(R.layout.fragment_reservation, container, false);
         pending_recycler = view.findViewById(R.id.pending_display);
         doing_recycler = view.findViewById(R.id.doing_display);
@@ -189,18 +188,6 @@ public class ReservationFragment extends Fragment {
                     }
                 });
 
-                if(pending_reservations.size() != pendingNumber){
-                    father.setNotification(true);
-                    sharedPreferences.edit().putBoolean("kitchenNotification", true).apply();
-                    sharedPreferences.edit().putInt("kitchenPending", pending_reservations.size()).apply();
-                    sharedPreferences.edit().putInt("kitchenDoing", doing_reservations.size()).apply();
-                }
-                if(doing_reservations.size() != doingNumber){
-                    father.setNotification(true);
-                    sharedPreferences.edit().putBoolean("kitchenNotification", true).apply();
-                    sharedPreferences.edit().putInt("kitchenPending", pending_reservations.size()).apply();
-                    sharedPreferences.edit().putInt("kitchenDoing", doing_reservations.size()).apply();
-                }
 
                 doing_recycler.setAdapter(adapterDoing);
 
@@ -251,10 +238,6 @@ public class ReservationFragment extends Fragment {
                                     pending_reservations.add(index, reservation);
                                     adapterPending.notifyItemInserted(index);
                                     adapterPending.notifyItemRangeChanged(index, pending_reservations.size());
-                                    father.setNotification(true);
-                                    sharedPreferences.edit().putBoolean("kitchenNotification", true).apply();
-                                    sharedPreferences.edit().putInt("kitchenPending", pending_reservations.size()).apply();
-                                    sharedPreferences.edit().putInt("kitchenDoing", doing_reservations.size()).apply();
                                 }
                             }
                         }
@@ -296,10 +279,6 @@ public class ReservationFragment extends Fragment {
                                     doing_reservations.add(index, reservation);
                                     adapterDoing.notifyItemInserted(index);
                                     adapterDoing.notifyItemRangeChanged(index, pending_reservations.size());
-                                    father.setNotification(true);
-                                    sharedPreferences.edit().putBoolean("kitchenNotification", true).apply();
-                                    sharedPreferences.edit().putInt("kitchenPending", pending_reservations.size()).apply();
-                                    sharedPreferences.edit().putInt("kitchenDoing", doing_reservations.size()).apply();
                                 }
                             }
                         }
@@ -354,10 +333,65 @@ public class ReservationFragment extends Fragment {
         setInterface();
     }
 
+    public boolean hasNotification(){
+        return notification.getVisibility() == View.VISIBLE;
+    }
+
     public void addNotification(){
         if(doing_recycler.getVisibility() == View.VISIBLE){
             notification.setVisibility(View.VISIBLE);
         }
+    }
+
+    public void addPendingOrder(DataSnapshot ds) {
+
+        Log.d("PROVA","addPendingOrder()");
+
+        ReservationDBRestaurant reservationDB = ds.getValue(ReservationDBRestaurant.class);
+
+        ArrayList<Dish> dishes = new ArrayList<>();
+        for (OrderItem o : reservationDB.getDishesOrdered()) {
+            Dish dish = new Dish();
+            dish.setQuantity(o.getPieces());
+            dish.setDishName(o.getOrderName());
+            dish.setPrice(o.getPrice());
+            dishes.add(dish);
+            Log.d("PROVA",""+dish.getDishName()+" "+dishes.size());
+        }
+        Reservation.prepStatus status;
+        if (reservationDB.getStatus().equals("Pending")) {
+            status = Reservation.prepStatus.PENDING;
+        } else if (reservationDB.getStatus().equals("Doing")) {
+            status = Reservation.prepStatus.DOING;
+        } else {
+            status = Reservation.prepStatus.DONE;
+        }
+
+        String orderID = reservationDB.getReservationID().substring(28);
+        Reservation reservation = new Reservation(orderID, dishes, status,
+                reservationDB.isAccepted(), reservationDB.getOrderTimeBiker(), reservationDB.getNameUser(),
+                reservationDB.getNumberPhone(), reservationDB.getResNote(), "",
+                sharedPreferences.getString("email", ""), reservationDB.getUserAddress());
+        reservation.setUserUID(reservationDB.getReservationID().substring(0, 28));
+        reservation.setDeliveryTime(reservationDB.getOrderTime());
+        reservation.setTotalPrice(reservationDB.getTotalCost());
+        reservation.setRestaurantAddress(sharedPreferences.getString("address", null));
+        reservation.setRestaurantName(sharedPreferences.getString("name", null));
+
+        int i;
+        for (i = 0; i < pending_reservations.size(); i++) {
+            if (reservation.getOrderTime().compareTo(pending_reservations.get(i).getOrderTime()) > 0)
+                break;
+        }
+
+        pending_reservations.add(i, reservation);
+        adapterPending.notifyItemInserted(i);
+        adapterPending.notifyItemRangeChanged(i, pending_reservations.size());
+
+    }
+
+    public void clearNotification(){
+        notification.setVisibility(View.GONE);
     }
 
     public void addInDoing(Reservation toAdd){

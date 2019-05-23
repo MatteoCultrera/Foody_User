@@ -103,6 +103,14 @@ public class UserFragment extends Fragment {
                 query.addListenerForSingleValueEvent(new ValueEventListener() {
                     @Override
                     public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                        Float latitude, longitude;
+                        if(dataSnapshot.child("latitude").exists() && dataSnapshot.child("longitude").exists()) {
+                            latitude = dataSnapshot.child("latitude").getValue(Float.class);
+                            longitude = dataSnapshot.child("longitude").getValue(Float.class);
+                            edit.putFloat("latitude", latitude);
+                            edit.putFloat("longitude", longitude);
+                        }
+
                         info = dataSnapshot.getValue(RestaurantInfo.class);
                         name.setText(info.getUsername());
                         email.setText(info.getEmail());
@@ -124,6 +132,31 @@ public class UserFragment extends Fragment {
                                     cuisineText += ", ";
                             }
                         }
+
+                        int lung = cuisine.size();
+                        switch (lung) {
+                            case 0:
+                                break;
+                            case 1: {
+                                edit.putInt("foodIndexOne", cuisine.get(0));
+                                edit.putInt("foodIndexTwo", -1);
+                                edit.putInt("foodIndexThree", -1);
+                                break;
+                            }
+                            case 2: {
+                                edit.putInt("foodIndexOne", cuisine.get(0));
+                                edit.putInt("foodIndexTwo", cuisine.get(1));
+                                edit.putInt("foodIndexThree", -1);
+                                break;
+                            }
+                            case 3: {
+                                edit.putInt("foodIndexOne", cuisine.get(0));
+                                edit.putInt("foodIndexTwo", cuisine.get(1));
+                                edit.putInt("foodIndexThree", cuisine.get(2));
+                                break;
+                            }
+                        }
+
                         foodType.setText(cuisineText);
                         ArrayList<String> days = info.getDaysTime();
                         monTime.setText(days.get(0));

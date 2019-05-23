@@ -172,12 +172,14 @@ public class BikerFragment extends Fragment {
                 }
 
                 if(reservationList.size() != numberWaiting){
+                    Log.d("SWSW", "notifica offline waiting");
                     father.setNotification(false);
                     sharedPreferences.edit().putBoolean("bikerNotification", true).apply();
                     sharedPreferences.edit().putInt("bikerWaiting", reservationList.size()).apply();
                     sharedPreferences.edit().putInt("bikerAccepted", reservationAcceptedList.size()).apply();
                 }
                 if (reservationAcceptedList.size() != numberAccepted){
+                    Log.d("SWSW", "notifica offline accepted");
                     father.setNotification(false);
                     sharedPreferences.edit().putBoolean("bikerNotification", true).apply();
                     sharedPreferences.edit().putInt("bikerWaiting", reservationList.size()).apply();
@@ -200,29 +202,12 @@ public class BikerFragment extends Fragment {
                     public void onChildChanged(@NonNull DataSnapshot dataSnapshot, @Nullable String s) {
                         ReservationDBRestaurant reservationDB = dataSnapshot.getValue(ReservationDBRestaurant.class);
                         String orderID = reservationDB.getReservationID().substring(28);
-
-                        if(!dataSnapshot.child("attemptedBiker").exists()) {
-                            if (reservationDB.isAccepted() && !reservationDB.isWaitingBiker() && !reservationDB.isBiker()){
-                                father.setNotification(false);
-                                sharedPreferences.edit().putBoolean("bikerNotification", true).apply();
-                                sharedPreferences.edit().putInt("bikerWaiting", reservationList.size()).apply();
-                                sharedPreferences.edit().putInt("bikerAccepted", reservationAcceptedList.size()).apply();
-                            }
-                        }
                         if(reservationDB.isBiker() && reservationDB.getBikerID().compareTo("") != 0){
                             bikerAccepted(orderID, reservationDB.getBikerID());
-                            father.setNotification(false);
-                            sharedPreferences.edit().putBoolean("bikerNotification", true).apply();
-                            sharedPreferences.edit().putInt("bikerWaiting", reservationList.size()).apply();
-                            sharedPreferences.edit().putInt("bikerAccepted", reservationAcceptedList.size()).apply();
                         } else{
                             if(dataSnapshot.child("attemptedBiker").exists()) {
                                 if (!reservationDB.isWaitingBiker() && reservationDB.getBikerID().compareTo("") == 0) {
                                     bikerRefused(orderID);
-                                    father.setNotification(false);
-                                    sharedPreferences.edit().putBoolean("bikerNotification", true).apply();
-                                    sharedPreferences.edit().putInt("bikerWaiting", reservationList.size()).apply();
-                                    sharedPreferences.edit().putInt("bikerAccepted", reservationAcceptedList.size()).apply();
                                 }
                             }
                         }
@@ -385,6 +370,7 @@ public class BikerFragment extends Fragment {
             this.waitingBiker = waitingBiker;
             this.completeRes = completeRes;
         }
+
 
         public String getBikerID(){
             return bikerID;

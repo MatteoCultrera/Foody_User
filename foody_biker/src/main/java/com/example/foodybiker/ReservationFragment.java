@@ -32,6 +32,7 @@ import com.google.firebase.database.ValueEventListener;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.Locale;
 
 import static android.content.Context.MODE_PRIVATE;
 
@@ -106,12 +107,6 @@ public class ReservationFragment extends Fragment {
                 setActiveReservation(activeReservation);
                 setInterface(activeReservation!=null);
 
-                if(reservations.size() != pending){
-                    sharedPreferences.edit().putInt("pending", reservations.size()).apply();
-                    sharedPreferences.edit().putBoolean("hasNotification", true).apply();
-                    father.setNotification(1);
-                }
-
                 orderList.setAdapter(adapter);
                 notes.setMovementMethod(new ScrollingMovementMethod());
                 LinearLayoutManager llm = new LinearLayoutManager(view.getContext());
@@ -147,12 +142,6 @@ public class ReservationFragment extends Fragment {
                                 reservations.add(index, reservation);
                                 adapter.notifyItemInserted(index);
                                 adapter.notifyItemRangeChanged(index, reservations.size());
-                                if(reservations.size() != pending){
-                                    Log.d("SWSW", "notifica");
-                                    sharedPreferences.edit().putInt("pending", reservations.size()).apply();
-                                    sharedPreferences.edit().putBoolean("hasNotification", true).apply();
-                                    father.setNotification(1);
-                                }
                                 updateTitles();
                                 father.newReservation(reservation);
                             }
@@ -274,7 +263,9 @@ public class ReservationFragment extends Fragment {
 
     public void updateTitles(){
         if(card.getVisibility() == View.GONE){
-            primaryText.setText(reservations.size()+" "+getString(R.string.pending_orders));
+            primaryText.setText(String.format(Locale.getDefault(), "%d %s", reservations.size(),
+                    getActivity().getString(R.string.pending_orders)));
+            //primaryText.setText(reservations.size()+" "+getString(R.string.pending_orders));
             if(activeReservation == null){
                 secondaryText.setText(getString(R.string.no_order_deliver));
             }else {

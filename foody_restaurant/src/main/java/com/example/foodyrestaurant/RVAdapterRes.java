@@ -159,7 +159,7 @@ public class RVAdapterRes extends RecyclerView.Adapter<RVAdapterRes.CardViewHold
                 }
                 String reservationID = reservations.get(pos).getUserUID() + reservations.get(pos).getReservationID();
                 ReservationDBUser reservation = new ReservationDBUser(reservationID,
-                        firebaseUser.getUid(), dishes, true, null, reservations.get(pos).getDeliveryTime(),
+                        firebaseUser.getUid(), dishes, true, reservations.get(pos).getResNote(), reservations.get(pos).getDeliveryTime(),
                         "Doing", reservations.get(pos).getTotalPrice());
                 reservation.setRestaurantName(sharedPreferences.getString("name", null));
                 reservation.setRestaurantAddress(sharedPreferences.getString("address", null));
@@ -175,7 +175,7 @@ public class RVAdapterRes extends RecyclerView.Adapter<RVAdapterRes.CardViewHold
                         .child("reservations").child("restaurant").child(firebaseUser.getUid());
                 HashMap<String, Object> childRest = new HashMap<>();
                 ReservationDBRestaurant reservationRest = new ReservationDBRestaurant(reservationID,
-                        "", dishes, true, null, reservations.get(pos).getUserPhone(),
+                        "", dishes, true, reservations.get(pos).getResNote(), reservations.get(pos).getUserPhone(),
                         reservations.get(pos).getUserName(), reservations.get(pos).getDeliveryTime(),
                         reservations.get(pos).getOrderTime(), "Doing", reservations.get(pos).getUserAddress(), reservations.get(pos).getTotalPrice());
                 reservationRest.setWaitingBiker(false);
@@ -214,7 +214,7 @@ public class RVAdapterRes extends RecyclerView.Adapter<RVAdapterRes.CardViewHold
                 }
                 String reservationID = reservations.get(pos).getUserUID() + reservations.get(pos).getReservationID();
                 ReservationDBUser reservation = new ReservationDBUser(reservationID,
-                        firebaseUser.getUid(), dishes, false, null,
+                        firebaseUser.getUid(), dishes, false, reservations.get(pos).getResNote(),
                         reservations.get(pos).getDeliveryTime(), "Done", reservations.get(pos).getTotalPrice());
                 reservation.setRestaurantAddress(sharedPreferences.getString("address", null));
                 reservation.setRestaurantName(sharedPreferences.getString("name", null));
@@ -230,7 +230,7 @@ public class RVAdapterRes extends RecyclerView.Adapter<RVAdapterRes.CardViewHold
                         .child("reservations").child("restaurant").child(firebaseUser.getUid());
                 HashMap<String, Object> childRest = new HashMap<>();
                 ReservationDBRestaurant reservationRest = new ReservationDBRestaurant(reservationID,
-                        "", dishes, false, null, reservations.get(pos).getUserPhone(),
+                        "", dishes, false, reservations.get(pos).getResNote(), reservations.get(pos).getUserPhone(),
                         reservations.get(pos).getUserName(), reservations.get(pos).getDeliveryTime(),
                         reservations.get(pos).getOrderTime(), "Done",
                         reservations.get(pos).getUserAddress(), reservations.get(pos).getTotalPrice());
