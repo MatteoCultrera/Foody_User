@@ -143,7 +143,6 @@ public class ReservationFragment extends Fragment {
                         database.child(firebaseUser.getUid()).addValueEventListener(new ValueEventListener() {
                             @Override
                             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-                                Log.d("SWSW", "new order");
                                 int pending2 = 0;
                                 int doing2 = 0;
                                 int done2 = 0;
@@ -160,7 +159,6 @@ public class ReservationFragment extends Fragment {
                                                 break;
                                             }
                                         }
-                                        Log.d("SWSW", ""+i);
                                         if (i == reservations.size()){
                                             for (index = 0; index < reservations.size(); index++){
                                                 if (reservationDBUser.getOrderTime().compareTo(reservations.get(index).getOrderTime()) > 0){
@@ -218,11 +216,6 @@ public class ReservationFragment extends Fragment {
                                         pending = pending2;
                                         doing = doing2;
                                         done = done2;
-                                        sharedPreferences.edit().putInt("pending", pending2).apply();
-                                        sharedPreferences.edit().putInt("doing", doing2).apply();
-                                        sharedPreferences.edit().putInt("done", done2).apply();
-                                        sharedPreferences.edit().putBoolean("hasNotification", true).apply();
-                                        father.setNotification(1);
                                     }
                                 }
                             }
