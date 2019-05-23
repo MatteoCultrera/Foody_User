@@ -14,8 +14,6 @@ import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.TextView;
 
-import com.google.firebase.auth.FirebaseAuth;
-import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.DataSnapshot;
 
 import java.io.File;
@@ -27,13 +25,9 @@ import static android.content.Context.MODE_PRIVATE;
 public class ReservationFragment extends Fragment {
 
     private RecyclerView pending_recycler, doing_recycler;
-    private final String JSON_PENDING = "reservationsPending.json";
-    private final String JSON_DOING = "reservationsDoing.json";
     private File storageDir;
-    private final JsonHandler jsonHandler = new JsonHandler();
     private ArrayList<Reservation> pending_reservations = new ArrayList<>();
     private ArrayList<Reservation> doing_reservations = new ArrayList<>();
-    private FirebaseUser firebaseUser;
     private SharedPreferences sharedPreferences;
     private RVAdapterRes adapterPending, adapterDoing;
     private boolean pending;
@@ -62,30 +56,8 @@ public class ReservationFragment extends Fragment {
         init(view);
     }
 
-    @Override
-    public void onPause(){
-        super.onPause();
-        File file = new File(storageDir, JSON_PENDING);
-        if (pending_reservations != null) {
-            String json = jsonHandler.resToJSON(pending_reservations);
-            jsonHandler.saveStringToFile(json, file);
-        }
-        File fileDoing = new File (storageDir, JSON_DOING);
-        if(doing_reservations != null){
-            String json = jsonHandler.resToJSON(doing_reservations);
-            jsonHandler.saveStringToFile(json, fileDoing);
-        }
-        if(notification.getVisibility() == View.VISIBLE){
-            sharedPreferences.edit().putBoolean("notificationKitchen",true).apply();
-        }else{
-            sharedPreferences.edit().putBoolean("notificationKitchen",false).apply();
-        }
-    }
-
     private void init(View view){
         notification = view.findViewById(R.id.notification_reservation);
-        FirebaseAuth firebaseAuth = FirebaseAuth.getInstance();
-        firebaseUser = firebaseAuth.getCurrentUser();
         sharedPreferences = view.getContext().getSharedPreferences("myPreference", MODE_PRIVATE);
         storageDir = Objects.requireNonNull(getActivity()).getExternalFilesDir(Environment.DIRECTORY_DOCUMENTS);
         LinearLayoutManager llm = new LinearLayoutManager(view.getContext());

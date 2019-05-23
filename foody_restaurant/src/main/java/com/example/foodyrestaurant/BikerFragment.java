@@ -59,18 +59,14 @@ public class BikerFragment extends Fragment {
     private int numberAccepted, numberWaiting;
     private int currentPosition;
 
-    public BikerFragment() {
-        // Required empty public constructor
-    }
+    public BikerFragment() {}
 
     public void setFather(MainActivity father){
         this.father = father;
     }
 
     @Override
-    public View onCreateView(@NotNull LayoutInflater inflater, ViewGroup container,
-                             Bundle savedInstanceState) {
-        // Inflate the layout for this fragment
+    public View onCreateView(@NotNull LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_biker, container, false);
         notAcceptedRecycler = view.findViewById(R.id.not_accepted_display);
         acceptedRecycler = view.findViewById(R.id.accepted_display);
