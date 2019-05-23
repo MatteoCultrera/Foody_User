@@ -23,4 +23,7 @@
 
     <string name="call_restaurant">CALL RESTAURANT</string>
     <string name="call_user">CALL USER</string>
+
+    <string name="pick_time_text">Pickup at</string>
+    <string name="delivery_time_text">Delivery at</string>
 </resources>
