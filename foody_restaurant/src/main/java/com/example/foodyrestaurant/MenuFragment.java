@@ -11,6 +11,7 @@ import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 import android.view.LayoutInflater;
+import android.view.Menu;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
@@ -65,18 +66,12 @@ public class MenuFragment extends Fragment {
             String json = jsonHandler.toJSON(cards);
             jsonHandler.saveStringToFile(json, file);
 
-            DatabaseReference database = FirebaseDatabase.getInstance().getReference()
-                    .child("restaurantsMenu").child(user.getUid()).child("Card");
-            HashMap<String, Object> child = new HashMap<>();
-            for (int i = 0; i < cards.size(); i++) {
-                if (cards.get(i).getDishes().size() != 0)
-                    child.put(Integer.toString(i), cards.get(i));
-            }
-            database.updateChildren(child);
+            updateMenuDB();
         }
     }
 
     private void init(View view){
+        final MenuFragment mySelf = this;
         storageDir = Objects.requireNonNull(getActivity()).getExternalFilesDir(Environment.DIRECTORY_DOCUMENTS);
         LinearLayoutManager llm = new LinearLayoutManager(view.getContext());
         menu.setLayoutManager(llm);
@@ -162,13 +157,12 @@ public class MenuFragment extends Fragment {
                                 cards.add(card);
                             }
                         }
-                        RVAdapter adapter = new RVAdapter(cards);
+                        RVAdapter adapter = new RVAdapter(cards, mySelf);
                         menu.setAdapter(adapter);
                     }
 
                     @Override
                     public void onCancelled(@NonNull DatabaseError databaseError) {
-                        Log.d("SWSW", databaseError.getMessage());
                     }
                 });
                 editMode.setOnClickListener(new View.OnClickListener() {
@@ -185,5 +179,16 @@ public class MenuFragment extends Fragment {
     @Override
     public void onResume() {
         super.onResume();
+    }
+
+    public void updateMenuDB(){
+        DatabaseReference database = FirebaseDatabase.getInstance().getReference()
+                .child("restaurantsMenu").child(user.getUid()).child("Card");
+        HashMap<String, Object> child = new HashMap<>();
+        for (int i = 0; i < cards.size(); i++) {
+            if (cards.get(i).getDishes().size() != 0)
+                child.put(Integer.toString(i), cards.get(i));
+        }
+        database.updateChildren(child);
     }
 }

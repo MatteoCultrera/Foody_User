@@ -250,9 +250,16 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onChildAdded(@NonNull DataSnapshot dataSnapshot, @Nullable String s) {
                 if(!dataSnapshot.child("accepted").getValue(boolean.class)) {
-                    Log.d("PROVA","ChildAdded()");
-                    ((ReservationFragment)reservations).addPendingOrder(dataSnapshot);
-                    setNotification(true);
+                    String status = dataSnapshot.child("status").getValue(String.class);
+                    if (status.equals("Pending")) {
+                        ((ReservationFragment) reservations).addPendingOrder(dataSnapshot);
+                        setNotification(true);
+                    }
+                } else if (dataSnapshot.child("accepted").getValue(boolean.class)){
+                    String status = dataSnapshot.child("status").getValue(String.class);
+                    if(status.equals("Doing")){
+                        ((ReservationFragment) reservations).addDoingOrder(dataSnapshot);
+                    }
                 }
             }
 
