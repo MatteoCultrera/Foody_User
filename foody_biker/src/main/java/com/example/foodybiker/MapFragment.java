@@ -14,7 +14,6 @@ import android.support.v4.content.ContextCompat;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.Toast;
 
 import com.google.android.gms.location.FusedLocationProviderClient;
 import com.google.android.gms.location.LocationCallback;
@@ -81,131 +80,6 @@ public class MapFragment extends Fragment {
         locationRequest = new LocationRequest();
         builder = new LatLngBounds.Builder();
         builderUserRest = new LatLngBounds.Builder();
-    }
-
-    public void fetchRestaurant(Location location) {
-        mGoogleMap.clear();
-
-        activeReservation = null;
-
-        builder = new LatLngBounds.Builder();
-        builder.include(new LatLng(location.getLatitude(), location.getLongitude()));
-
-        if(!reservations.isEmpty()) {
-            for (int i = 0; i < reservations.size(); i++) {
-                String addressRest = reservations.get(i).getRestaurantAddress();
-                List<Address> lista = new ArrayList<>();
-
-                try {
-                    lista = geocoder.getFromLocationName(addressRest, 1);
-                } catch (IOException e) {
-                    e.printStackTrace();
-                }
-
-                LatLng latlngRest = new LatLng(lista.get(0).getLatitude(), lista.get(0).getLongitude());
-
-                MarkerOptions mark = new MarkerOptions();
-                mark.position(latlngRest);
-                mark.title(reservations.get(i).getRestaurantName());
-                Double distance = haversineDistance(location.getLatitude(), location.getLongitude(), latlngRest.latitude, latlngRest.longitude);
-                mark.snippet(String.format(Locale.getDefault(), "distant %.2f km from you", distance.floatValue()));
-                mark.icon(BitmapDescriptorFactory.fromResource(R.drawable.rest_icon));
-                mGoogleMap.addMarker(mark);
-
-                builder.include(latlngRest);
-            }
-            LatLngBounds bounds = builder.build();
-            CameraUpdate cu = CameraUpdateFactory.newLatLngBounds(bounds, 150);
-            mGoogleMap.animateCamera(cu);
-        }
-    }
-
-    public void thereIsAnActiveRes(Reservation res) {
-        activeReservation = res;
-        if(!reservations.isEmpty())
-            fetchUserAndRestaurant(currLoc);
-    }
-
-    public void noActive(Reservation res) {
-        for(int i = 0; i < reservations.size(); i++) {
-            if(reservations.get(i).getReservationID().equals(res.getReservationID())) {
-                activeReservation = null;
-                reservations.remove(i);
-            }
-        }
-        fetchRestaurant(currLoc);
-    }
-
-    public void clearMap() {
-        if(mGoogleMap != null)
-            mGoogleMap.clear();
-    }
-
-    public void newReservationToDisplay(Reservation res) {
-        reservations.add(res);
-        fetchRestaurant(currLoc);
-    }
-
-    public void fetchUserAndRestaurant(Location location) {
-        final Location loc = location;
-        List<Address> lista = new ArrayList<>();
-
-        mGoogleMap.clear();
-
-        String addressUser = activeReservation.getUserAddress();
-        try {
-            lista = geocoder.getFromLocationName(addressUser, 1);
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-        LatLng latLngUser = new LatLng(lista.get(0).getLatitude(), lista.get(0).getLongitude());
-
-        String addressRest = activeReservation.getRestaurantAddress();
-        try {
-            lista = geocoder.getFromLocationName(addressRest, 1);
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-        LatLng latLngRestaurant = new LatLng(lista.get(0).getLatitude(), lista.get(0).getLongitude());
-
-        MarkerOptions mark = new MarkerOptions();
-        mark.position(latLngRestaurant);
-        mark.title(activeReservation.getRestaurantName());
-        mark.snippet(String.format(Locale.getDefault(), "%s %s", getActivity().getString(R.string.pick_time_text), activeReservation.getRestaurantPickupTime()));
-        mark.icon(BitmapDescriptorFactory.fromResource(R.drawable.rest_icon));
-        mGoogleMap.addMarker(mark);
-
-        mark.position(latLngUser);
-        mark.title(activeReservation.getUserName());
-        mark.snippet(String.format(Locale.getDefault(), "%s %s", getActivity().getString(R.string.delivery_time_text), activeReservation.getUserDeliveryTime()));
-        mark.icon(BitmapDescriptorFactory.defaultMarker());
-        mGoogleMap.addMarker(mark);
-
-        builderUserRest = new LatLngBounds.Builder();
-        builderUserRest.include(new LatLng(loc.getLatitude(), loc.getLongitude()));
-        builderUserRest.include(latLngRestaurant);
-        builderUserRest.include(latLngUser);
-        LatLngBounds bounds = builderUserRest.build();
-        CameraUpdate cu = CameraUpdateFactory.newLatLngBounds(bounds, 150);
-        mGoogleMap.animateCamera(cu);
-    }
-
-    public double haversineDistance(double initialLat, double initialLong,
-                                    double finalLat, double finalLong){
-        int R = 6371; // km (Earth radius)
-        double dLat = toRadians(finalLat-initialLat);
-        double dLon = toRadians(finalLong-initialLong);
-        initialLat = toRadians(initialLat);
-        finalLat = toRadians(finalLat);
-
-        double a = Math.sin(dLat/2) * Math.sin(dLat/2) +
-                Math.sin(dLon/2) * Math.sin(dLon/2) * Math.cos(initialLat) * Math.cos(finalLat);
-        double c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1-a));
-        return R * c;
-    }
-
-    public double toRadians(double deg) {
-        return deg * (Math.PI/180);
     }
 
     @Override
@@ -412,8 +286,7 @@ public class MapFragment extends Fragment {
         //locationRequest.setSmallestDisplacement(30.0f);
         locationRequest.setMaxWaitTime(60000);
         locationRequest.setFastestInterval(10000);
-        locationRequest.setInterval(30000);
-        //TODO: think about polling or notification on changes
+        locationRequest.setInterval(20000);
         mFusedLocationProviderClient.requestLocationUpdates(locationRequest, locationCallback, Looper.getMainLooper());
     }
 
@@ -433,4 +306,109 @@ public class MapFragment extends Fragment {
         stopLocationUpdates();
     }
 
+    public void fetchRestaurant(Location location) {
+        mGoogleMap.clear();
+
+        activeReservation = null;
+
+        builder = new LatLngBounds.Builder();
+        builder.include(new LatLng(location.getLatitude(), location.getLongitude()));
+
+        if(!reservations.isEmpty()) {
+            for (int i = 0; i < reservations.size(); i++) {
+                String addressRest = reservations.get(i).getRestaurantAddress();
+                List<Address> lista = new ArrayList<>();
+
+                try {
+                    lista = geocoder.getFromLocationName(addressRest, 1);
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+
+                LatLng latlngRest = new LatLng(lista.get(0).getLatitude(), lista.get(0).getLongitude());
+
+                MarkerOptions mark = new MarkerOptions();
+                mark.position(latlngRest);
+                mark.title(reservations.get(i).getRestaurantName());
+                mark.snippet(String.format(Locale.getDefault(), "%s %s", getActivity().getString(R.string.pick_time_text), reservations.get(i).getRestaurantPickupTime()));
+                mark.icon(BitmapDescriptorFactory.fromResource(R.drawable.rest_icon));
+                mGoogleMap.addMarker(mark);
+
+                builder.include(latlngRest);
+            }
+            LatLngBounds bounds = builder.build();
+            CameraUpdate cu = CameraUpdateFactory.newLatLngBounds(bounds, 150);
+            mGoogleMap.animateCamera(cu);
+        }
+    }
+
+    public void fetchUserAndRestaurant(Location location) {
+        final Location loc = location;
+        List<Address> lista = new ArrayList<>();
+
+        mGoogleMap.clear();
+
+        String addressUser = activeReservation.getUserAddress();
+        try {
+            lista = geocoder.getFromLocationName(addressUser, 1);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        LatLng latLngUser = new LatLng(lista.get(0).getLatitude(), lista.get(0).getLongitude());
+
+        String addressRest = activeReservation.getRestaurantAddress();
+        try {
+            lista = geocoder.getFromLocationName(addressRest, 1);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        LatLng latLngRestaurant = new LatLng(lista.get(0).getLatitude(), lista.get(0).getLongitude());
+
+        MarkerOptions mark = new MarkerOptions();
+        mark.position(latLngRestaurant);
+        mark.title(activeReservation.getRestaurantName());
+        mark.snippet(String.format(Locale.getDefault(), "%s %s", getActivity().getString(R.string.pick_time_text), activeReservation.getRestaurantPickupTime()));
+        mark.icon(BitmapDescriptorFactory.fromResource(R.drawable.rest_icon));
+        mGoogleMap.addMarker(mark);
+
+        mark.position(latLngUser);
+        mark.title(activeReservation.getUserName());
+        mark.snippet(String.format(Locale.getDefault(), "%s %s", getActivity().getString(R.string.delivery_time_text), activeReservation.getUserDeliveryTime()));
+        mark.icon(BitmapDescriptorFactory.defaultMarker());
+        mGoogleMap.addMarker(mark);
+
+        builderUserRest = new LatLngBounds.Builder();
+        builderUserRest.include(new LatLng(loc.getLatitude(), loc.getLongitude()));
+        builderUserRest.include(latLngRestaurant);
+        builderUserRest.include(latLngUser);
+        LatLngBounds bounds = builderUserRest.build();
+        CameraUpdate cu = CameraUpdateFactory.newLatLngBounds(bounds, 150);
+        mGoogleMap.animateCamera(cu);
+    }
+
+    public void thereIsAnActiveRes(Reservation res) {
+        activeReservation = res;
+        if(!reservations.isEmpty())
+            fetchUserAndRestaurant(currLoc);
+    }
+
+    public void noActive(Reservation res) {
+        for(int i = 0; i < reservations.size(); i++) {
+            if(reservations.get(i).getReservationID().equals(res.getReservationID())) {
+                activeReservation = null;
+                reservations.remove(i);
+            }
+        }
+        fetchRestaurant(currLoc);
+    }
+
+    public void clearMap() {
+        if(mGoogleMap != null)
+            mGoogleMap.clear();
+    }
+
+    public void newReservationToDisplay(Reservation res) {
+        reservations.add(res);
+        fetchRestaurant(currLoc);
+    }
 }
