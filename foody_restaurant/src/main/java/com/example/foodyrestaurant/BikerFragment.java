@@ -3,7 +3,6 @@ package com.example.foodyrestaurant;
 
 import android.content.Intent;
 import android.content.SharedPreferences;
-import android.net.Uri;
 import android.os.Bundle;
 import android.os.Environment;
 import android.support.annotation.NonNull;
@@ -11,16 +10,12 @@ import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageButton;
 import android.widget.TextView;
 
-import com.bumptech.glide.Glide;
-import com.google.android.gms.tasks.OnFailureListener;
-import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.ChildEventListener;
@@ -30,9 +25,6 @@ import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.Query;
 import com.google.firebase.database.ValueEventListener;
-import com.google.firebase.storage.FileDownloadTask;
-import com.google.firebase.storage.FirebaseStorage;
-import com.google.firebase.storage.StorageReference;
 
 import org.jetbrains.annotations.NotNull;
 
@@ -46,7 +38,6 @@ import static android.content.Context.MODE_PRIVATE;
 public class BikerFragment extends Fragment {
 
     private RecyclerView notAcceptedRecycler, acceptedRecycler;
-    private MainActivity father;
     private TextView stringUp, stringDown;
     private ImageButton switchButton;
     private ArrayList<ReservationBiker> reservationList;
@@ -56,13 +47,12 @@ public class BikerFragment extends Fragment {
     private RVAdapterBiker adapterAccepted, adapterNotAccepted;
     private boolean onChooseSide;
     private final int CHOOSE_BIKER = 1;
-    private int numberAccepted, numberWaiting;
     private int currentPosition;
 
     public BikerFragment() {}
 
     public void setFather(MainActivity father){
-        this.father = father;
+        MainActivity father1 = father;
     }
 
     @Override
@@ -89,8 +79,6 @@ public class BikerFragment extends Fragment {
         notAcceptedRecycler.setLayoutManager(llm2);
 
         sharedPreferences = view.getContext().getSharedPreferences("myPreference", MODE_PRIVATE);
-        numberAccepted = sharedPreferences.getInt("bikerAccepted", 0);
-        numberWaiting = sharedPreferences.getInt("bikerWaiting", 0);
 
         reservationList = new ArrayList<>();
         reservationAcceptedList = new ArrayList<>();
@@ -165,21 +153,6 @@ public class BikerFragment extends Fragment {
 
                 for(int i = 0; i < reservationAcceptedList.size(); i++){
                     reservationAcceptedList.get(i).fetchBiker(i);
-                }
-
-                if(reservationList.size() != numberWaiting){
-                    Log.d("SWSW", "notifica offline waiting");
-                    father.setNotification(false);
-                    sharedPreferences.edit().putBoolean("bikerNotification", true).apply();
-                    sharedPreferences.edit().putInt("bikerWaiting", reservationList.size()).apply();
-                    sharedPreferences.edit().putInt("bikerAccepted", reservationAcceptedList.size()).apply();
-                }
-                if (reservationAcceptedList.size() != numberAccepted){
-                    Log.d("SWSW", "notifica offline accepted");
-                    father.setNotification(false);
-                    sharedPreferences.edit().putBoolean("bikerNotification", true).apply();
-                    sharedPreferences.edit().putInt("bikerWaiting", reservationList.size()).apply();
-                    sharedPreferences.edit().putInt("bikerAccepted", reservationAcceptedList.size()).apply();
                 }
 
                 notAcceptedRecycler.setAdapter(adapterNotAccepted);
@@ -269,13 +242,11 @@ public class BikerFragment extends Fragment {
         switch(requestCode){
             case CHOOSE_BIKER:
                 if(resultCode == RESULT_OK){
-                    Log.d("BIKERFETCH", "returned at pos "+currentPosition);
                     String bikerId = data.getStringExtra("BikerID");
                     reservationList.get(currentPosition).bikerID = bikerId;
                     //TODO: gestire anche il caso dei biker che stanno accettando sul db
                     //ora è solo in locale
                     reservationList.get(currentPosition).waitingBiker = true;
-                    Log.d("BIKERFETCH", "order "+reservationList.get(currentPosition).getReservation().getReservationID() + " " + reservationList.get(currentPosition).isWaitingBiker());
                     adapterNotAccepted.notifyItemChanged(currentPosition);
                 }
                 break;
@@ -299,41 +270,31 @@ public class BikerFragment extends Fragment {
     }
 
     public void bikerAccepted(String reservationID, String bikerID){
-
         int i;
         for(i = 0; i < reservationList.size(); i++){
             if(reservationList.get(i).getReservation().getReservationID().equals(reservationID)) {
                 break;
             }
         }
-
         if (i == reservationList.size()){
             return;
         }
-
         ReservationBiker res = reservationList.get(i);
-
         if(res == null)
             return;
-
         reservationList.remove(i);
         adapterNotAccepted.notifyItemRemoved(i);
         adapterNotAccepted.notifyItemRangeChanged(i, reservationList.size());
-
         res.bikerID = bikerID;
-
         res.fetchBiker(i);
-
         int j;
         for(j = 0; j < reservationAcceptedList.size(); j++){
-            if(reservationAcceptedList.get(i).reservation.getOrderTime().compareTo(res.reservation.getOrderTime()) > 0)
+            if(reservationAcceptedList.get(j).reservation.getOrderTime().compareTo(res.reservation.getOrderTime()) > 0)
                 break;
         }
-
-        reservationAcceptedList.add(i, res);
-        adapterAccepted.notifyItemInserted(i);
-        adapterAccepted.notifyItemRangeChanged(i, reservationAcceptedList.size());
-
+        reservationAcceptedList.add(j, res);
+        adapterAccepted.notifyItemInserted(j);
+        adapterAccepted.notifyItemRangeChanged(j, reservationAcceptedList.size());
     }
 
     public void bikerRefused(String reservationID){
@@ -353,14 +314,14 @@ public class BikerFragment extends Fragment {
         private boolean waitingBiker;
         private String completeRes;
 
-        public ReservationBiker(Reservation reservation, String bikerID, boolean waitingBiker, String completeRes){
+        ReservationBiker(Reservation reservation, String bikerID, boolean waitingBiker, String completeRes){
             this.reservation = reservation;
             this.bikerID = bikerID;
             this.waitingBiker = waitingBiker;
             this.completeRes = completeRes;
         }
 
-        public ReservationBiker(Reservation reservation, boolean waitingBiker, String completeRes){
+        ReservationBiker(Reservation reservation, boolean waitingBiker, String completeRes){
             this.reservation = reservation;
             this.biker = null;
             this.waitingBiker = waitingBiker;
@@ -372,11 +333,11 @@ public class BikerFragment extends Fragment {
             return bikerID;
         }
 
-        public boolean hasBiker(){
+        boolean hasBiker(){
            return this.biker != null;
         }
 
-        public Reservation getReservation() {
+        Reservation getReservation() {
             return reservation;
         }
 
@@ -392,7 +353,7 @@ public class BikerFragment extends Fragment {
             this.biker = biker;
         }
 
-        public void fetchBiker(final int pos){
+        void fetchBiker(final int pos){
             if(bikerID.length() == 0)
                 return;
 
@@ -439,7 +400,7 @@ public class BikerFragment extends Fragment {
             });
         }
 
-        public boolean isWaitingBiker() {
+        boolean isWaitingBiker() {
             return waitingBiker;
         }
 
@@ -447,7 +408,7 @@ public class BikerFragment extends Fragment {
             this.waitingBiker = waitingBiker;
         }
 
-        public String getCompleteRes() {
+        String getCompleteRes() {
             return completeRes;
         }
 

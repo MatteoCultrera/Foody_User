@@ -11,7 +11,6 @@ import android.support.v7.app.AppCompatActivity;
 import android.text.Editable;
 import android.text.TextWatcher;
 import android.view.View;
-import android.widget.EditText;
 import android.widget.Toast;
 
 import com.google.android.gms.tasks.OnCompleteListener;
@@ -27,7 +26,6 @@ public class Login extends AppCompatActivity {
     private TextInputLayout emailL, passwordL;
     private FirebaseAuth firebaseAuth;
     private FloatingActionButton login;
-    private ConstraintLayout register;
     private boolean correctness;
 
     @Override
@@ -65,7 +63,7 @@ public class Login extends AppCompatActivity {
             password = findViewById(R.id.password_login);
             passwordL = findViewById(R.id.password_login_outer);
             login = findViewById(R.id.FAB_login);
-            register = findViewById(R.id.register_button);
+            ConstraintLayout register = findViewById(R.id.register_button);
             password.addTextChangedListener(new TextWatcher() {
                 @Override
                 public void beforeTextChanged(CharSequence s, int start, int count, int after) {

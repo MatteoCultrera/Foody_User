@@ -1,37 +1,24 @@
 package com.example.foodyuser;
 
-import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
-import android.graphics.Bitmap;
-import android.location.SettingInjectorService;
-import android.net.Uri;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
-import android.support.constraint.ConstraintLayout;
-import android.support.design.button.MaterialButton;
 import android.support.v4.app.Fragment;
-import android.support.v4.content.ContextCompat;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.Button;
 import android.widget.ImageButton;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.bumptech.glide.Glide;
-import com.bumptech.glide.request.RequestOptions;
-import com.bumptech.glide.signature.ObjectKey;
 import com.google.android.libraries.places.api.Places;
 import com.google.android.libraries.places.api.model.Place;
 import com.google.android.libraries.places.widget.Autocomplete;
 import com.google.android.libraries.places.widget.model.AutocompleteActivityMode;
-import com.yalantis.ucrop.UCrop;
 
-import java.io.File;
 import java.util.Arrays;
 import java.util.List;
 
@@ -45,7 +32,6 @@ public class DiscoverFragment extends Fragment {
     private ImageButton searchButton;
     private TextView address;
     private boolean setted = false;
-    private SharedPreferences sharedPref;
     private SharedPreferences.Editor edit;
 
     public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
@@ -63,7 +49,7 @@ public class DiscoverFragment extends Fragment {
     }
 
     private void init(View view){
-        sharedPref = view.getContext().getSharedPreferences("myPreference", MODE_PRIVATE);
+        SharedPreferences sharedPref = view.getContext().getSharedPreferences("myPreference", MODE_PRIVATE);
         edit = sharedPref.edit();
         searchButton = view.findViewById(R.id.discover_search_button);
         address = view.findViewById(R.id.discover_search_address);
