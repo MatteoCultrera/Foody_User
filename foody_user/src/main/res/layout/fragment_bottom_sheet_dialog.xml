@@ -19,53 +19,51 @@
         android:textColor="@color/colorAccent"
         />
 
-        <TimePicker
-
-            android:timePickerMode="spinner"
+        <NumberPicker
             android:id="@+id/time_picker"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:datePickerMode="spinner"
-            android:calendarViewShown="false"
-            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintStart_toEndOf="@id/guideline2"
+            android:layout_marginEnd="16dp"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintTop_toBottomOf="@id/pickerTitle"
+            android:layout_marginTop="16dp"
+            android:descendantFocusability="blocksDescendants"
             />
 
-        <android.support.design.button.MaterialButton
-            android:id="@+id/cancel_button"
-            android:layout_width="wrap_content"
+        <NumberPicker
+            android:id="@+id/day_picker"
+            android:layout_marginStart="16dp"
+            android:layout_width="0dp"
+            android:textAlignment="viewEnd"
             android:layout_height="wrap_content"
-            android:text="@string/cancel"
-            app:cornerRadius="124dp"
-            android:fontFamily="@font/roboto_regular"
-            android:textSize="14sp"
-            android:padding="15dp"
-            app:iconSize="13dp"
-            android:backgroundTint="#FF0000"
-            app:layout_constraintTop_toBottomOf="@id/time_picker"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintEnd_toStartOf="@id/guideline2"
-            android:layout_marginTop="16dp"/>
-
-        <android.support.design.button.MaterialButton
-            android:id="@+id/accept_button"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="@string/accept"
-            app:cornerRadius="124dp"
-            android:layout_toEndOf="@id/cancel_button"
-            android:fontFamily="@font/roboto_regular"
-            android:textSize="14sp"
-            android:padding="15dp"
-            app:iconSize="13dp"
-            android:backgroundTint="@color/accept"
-            app:layout_constraintTop_toBottomOf="@id/time_picker"
-            app:layout_constraintStart_toEndOf="@id/guideline2"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/pickerTitle"
             android:layout_marginTop="16dp"
-            android:layout_marginBottom="16dp"/>
+            android:descendantFocusability="blocksDescendants"
+            />
+
+
+    <android.support.design.button.MaterialButton
+        android:id="@+id/accept_button"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="8dp"
+        android:layout_marginEnd="8dp"
+        android:layout_marginTop="16dp"
+        android:layout_marginBottom="16dp"
+        android:backgroundTint="@color/colorAccent"
+        android:fontFamily="@font/roboto_regular"
+        android:padding="15dp"
+        android:text="@string/Accept"
+        android:textSize="14sp"
+        app:cornerRadius="8dp"
+        app:iconSize="13dp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/time_picker" />
 
     <android.support.constraint.Guideline
         android:id="@+id/guideline2"

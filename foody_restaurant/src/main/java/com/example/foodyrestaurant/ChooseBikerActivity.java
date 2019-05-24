@@ -220,6 +220,8 @@ public class ChooseBikerActivity extends AppCompatActivity {
                 DatabaseReference reference = FirebaseDatabase.getInstance().getReference().child("reservations").child("Bikers")
                         .child(bikers.get(pos).biker.getBikerID());
                 reference.updateChildren(map);
+                reference.child(getIntent().getStringExtra("ReservationID"))
+                        .child("userPhone").setValue(res.getNumberPhone());
 
                 DatabaseReference db2 = database.child(firebaseUser.getUid()).child(getIntent().getStringExtra("ReservationID"));
                 db2.child("waitingBiker").setValue(true).addOnCompleteListener(new OnCompleteListener<Void>() {

@@ -133,8 +133,8 @@ public class RestaurantsList extends AppCompatActivity {
                         }
 
                         if(ds1.child("address").exists()) {
-                            Double distance = calculateDistance(delivAddress, restaurant.getAddress());
-                            restaurant.setDistance(distance.floatValue());
+                            //Double distance = calculateDistance(delivAddress, restaurant.getAddress());
+                            //restaurant.setDistance(distance.floatValue());
                         }
 
                         restaurants.add(restaurant);
