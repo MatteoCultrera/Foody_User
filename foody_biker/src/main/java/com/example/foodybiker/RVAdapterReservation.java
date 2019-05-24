@@ -100,11 +100,6 @@ public class RVAdapterReservation extends RecyclerView.Adapter<RVAdapterReservat
                             reservations.get(pos).getRestaurantID());
                     reservation.setUserPhone(reservations.get(pos).getUserPhone());
                     reservation.setRestPhone(reservations.get(pos).getRestPhone());
-                    //TODO: spariscono i numeri
-                    Log.d("MAD", "user " + reservations.get(pos).getUserPhone() +
-                            " rest " + reservations.get(pos).getRestPhone());
-
-                    Log.d("MAD", "user " + reservation.getUserPhone() + " rest " + reservation.getRestPhone());
                     reservation.setStatus("accepted");
                     child.put(reservations.get(pos).getReservationID(), reservation);
                     database.updateChildren(child).addOnFailureListener(new OnFailureListener() {
