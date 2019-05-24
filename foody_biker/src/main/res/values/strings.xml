@@ -3,8 +3,8 @@
     <string name="foody_level">Biker Beginner</string>
     <string name="city_hint">City</string>
     <string name="invalid_city">Invalid City</string>
-    <string name="opening_time">Select opening time</string>
-    <string name="closing_time">Select closing time</string>
+    <string name="opening_time">Select starting time</string>
+    <string name="closing_time">Select ending time</string>
     <string name="free">Free</string>
     <string name="okButton">OK</string>
 

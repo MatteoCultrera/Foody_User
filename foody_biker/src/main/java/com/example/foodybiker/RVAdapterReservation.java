@@ -6,6 +6,7 @@ import android.support.constraint.ConstraintLayout;
 import android.support.design.button.MaterialButton;
 import android.support.v7.widget.CardView;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -122,6 +123,34 @@ public class RVAdapterReservation extends RecyclerView.Adapter<RVAdapterReservat
 
                     fatherFragment.setActiveReservation(currentRes);
                     fatherFragment.removeItem(pos);
+                    fatherFragment.updateTitles();
+
+                    //Here I delete the other reservations when one is accepted
+                    DatabaseReference databaseBiker = FirebaseDatabase.getInstance().getReference()
+                            .child("reservations").child("Bikers").child(firebaseUser.getUid());
+                    DatabaseReference databaseRests = FirebaseDatabase.getInstance().getReference()
+                            .child("reservations").child("restaurant");
+                    for(Reservation res : reservations){
+                        //Here I generate the map to update the biker node in the db
+                        databaseBiker.child(res.getReservationID()).child("status").setValue("rejected")
+                            .addOnFailureListener(new OnFailureListener() {
+                                @Override
+                                public void onFailure(@NonNull Exception e) {
+                                    Toast.makeText(fatherFragment.getContext(), R.string.error_order, Toast.LENGTH_SHORT).show();
+                                }
+                            });
+
+                        //Setting the new status of the waiting biker for all the reservation rejected
+                        databaseRests.child(res.getRestaurantID()).child(res.getReservationID())
+                                .child("waitingBiker").setValue(false).addOnFailureListener(new OnFailureListener() {
+                            @Override
+                            public void onFailure(@NonNull Exception e) {
+                                Toast.makeText(fatherFragment.getContext(), R.string.error_order, Toast.LENGTH_SHORT).show();
+                            }
+                        });
+                    }
+                    //Removing all the pending delivery and update the title
+                    fatherFragment.removeAllItem();
                     fatherFragment.updateTitles();
                 }
             });
