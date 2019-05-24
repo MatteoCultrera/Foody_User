@@ -8,6 +8,7 @@ import android.os.Bundle;
 import android.support.design.button.MaterialButton;
 import android.support.design.widget.BottomSheetDialogFragment;
 import android.util.Log;
+import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -19,6 +20,7 @@ import android.widget.Toast;
 
 import java.lang.reflect.Field;
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.List;
 import java.util.Locale;
 
@@ -26,14 +28,22 @@ import static android.content.Context.MODE_PRIVATE;
 
 public class BottomSheetFragment extends BottomSheetDialogFragment {
 
-    MaterialButton delete;
-    TimePicker picker;
+    MaterialButton accept;
+    NumberPicker picker, day;
     private SharedPreferences sharedPreferences;
     TextView title;
+    String restTime;
+    ArrayList<String> stringsHours, stringsDays;
+    Order fatherClass;
+
 
 
     public BottomSheetFragment() {
         // Required empty public constructor
+    }
+
+    public void setFatherClass(Order fatherClass){
+        this.fatherClass = fatherClass;
     }
 
     @Override
@@ -47,21 +57,56 @@ public class BottomSheetFragment extends BottomSheetDialogFragment {
         // Inflate the layout for this fragment
         View view = inflater.inflate(R.layout.fragment_bottom_sheet_dialog, container, false);
         sharedPreferences = view.getContext().getSharedPreferences("myPreference", MODE_PRIVATE);
-        delete = view.findViewById(R.id.cancel_button);
+        accept = view.findViewById(R.id.accept_button);
         title = view.findViewById(R.id.pickerTitle);
-        delete.setOnClickListener(new View.OnClickListener() {
+        accept.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                if(picker.getValue() != 0)
+                    sharedPreferences.edit().putString("selectedTime",stringsHours.get(picker.getValue())).apply();
+                else{
+                    String soonAs = sharedPreferences.getString("minTime","");
+                    Log.d("MAD",soonAs);
+                    sharedPreferences.edit().putString("selectedTime",soonAs).apply();
+                }
+                fatherClass.updateTime();
                 dismiss();
             }
         });
+        stringsHours = new ArrayList<>();
+        stringsDays = new ArrayList<>();
 
-        String restTime = sharedPreferences.getString("restTime", "");
+        restTime = sharedPreferences.getString("restTime", "");
         Log.d("MAD", "orario del ristorante -> " + restTime);
 
         picker = view.findViewById(R.id.time_picker);
+        day = view.findViewById(R.id.day_picker);
 
-        picker.setIs24HourView(true);
+        stringsHours.add(getResources().getString(R.string.soon_as_possible));
+        generateTimes();
+
+        stringsDays.add(getResources().getString(R.string.today));
+
+        picker.setMinValue(0);
+        picker.setMaxValue(stringsHours.size() - 1);
+
+        day.setMinValue(0);
+        day.setMaxValue(stringsDays.size()-1);
+
+        //TODO: check if restaurant opens tomorrow
+        //for now just today
+
+        picker.setWrapSelectorWheel(false);
+
+        String[] stringHoursArray = new String[stringsHours.size()];
+        stringHoursArray = stringsHours.toArray(stringHoursArray);
+
+        picker.setDisplayedValues(stringHoursArray);
+
+        String[] stringDaysArray = new String[stringsDays.size()];
+        stringDaysArray = stringsDays.toArray(stringDaysArray);
+
+        day.setDisplayedValues(stringDaysArray);
 
         /* per matte, se cambi vista tutto da eliminare
         String[] time = restTime.split( " - ");
@@ -124,5 +169,53 @@ public class BottomSheetFragment extends BottomSheetDialogFragment {
         return view;
     }
 
+    private void generateTimes(){
+        String[] time = restTime.split( " - ");
+        Log.d("MAD",time[1]);
+        ArrayList<String> times = new ArrayList<>();
+        String curTime = sharedPreferences.getString("minTime","");
+        String[] hourMin = curTime.split(":");
+        String[] hourMinClosed = time[1].split(":");
+
+        int curHour = Integer.valueOf(hourMin[0]);
+        int curMin = Integer.valueOf(hourMin[1]);
+
+        int maxHour = Integer.valueOf(hourMinClosed[0]);
+        int maxMin = Integer.valueOf(hourMinClosed[1]);
+
+        Log.d("MAD", " before "+curHour+":"+curMin+" "+maxHour+":"+maxMin);
+
+        if(maxMin >= 30){
+            maxMin+=30;
+        }else{
+            maxMin = maxMin + 30;
+            maxHour--;
+        }
+
+        curMin+=15;
+        curMin = curMin/15*15;
+        if(curMin >= 60){
+            curHour++;
+            curMin=curMin%60;
+        }
+
+        Log.d("MAD", " after "+curHour+":"+curMin+" "+maxHour+":"+maxMin);
+
+        while(true){
+            Log.d("MAD", curHour+":"+curMin+" "+maxHour+":"+maxMin);
+            Log.d("MAD", curHour*60+curMin+" "+maxHour*60+maxMin);
+            if(curHour*60+curMin > maxHour*60+maxMin){
+                Log.d("MAD", "break");
+                break;
+            }
+            stringsHours.add(String.format("%02d:%02d",curHour, curMin));
+            curMin+=15;
+            if(curMin>=60){
+                curHour++;
+                curMin = curMin%60;
+            }
+        }
+
+    }
 
 }

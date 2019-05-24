@@ -92,6 +92,8 @@ public class Order extends AppCompatActivity {
         final String restAddress = extras.getString("restaurantAddress", null);
         final String restTime = extras.getString("restaurantTime", "");
 
+        time.setText(sharedPref.getString("selectedTime",""));
+
         orders = handler.getOrders(orderFile);
         placeOrder.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -102,12 +104,20 @@ public class Order extends AppCompatActivity {
                 HashMap<String, Object> child = new HashMap<>();
                 copyOrders = orders;
                 final String identifier = firebaseUser.getUid() + System.currentTimeMillis();
-                Calendar calendar = Calendar.getInstance();
-                Calendar calendar2 = Calendar.getInstance();
-                calendar.add(Calendar.MINUTE, 40);
-                calendar2.add(Calendar.MINUTE, 20);
-                String deliveryTime = new SimpleDateFormat("HH:mm", Locale.UK).format(calendar.getTime());
-                String bikerTime = new SimpleDateFormat("HH:mm", Locale.UK).format(calendar2.getTime());
+                String deliveryTime = sharedPref.getString("selectedTime","");
+
+                String biker[] = deliveryTime.split(":");
+                int hours = Integer.valueOf(biker[0]);
+                int mins = Integer.valueOf(biker[1]);
+
+                if(mins >= 20){
+                    mins -=20;
+                }else{
+                    hours--;
+                    mins+=40;
+                }
+
+                String bikerTime = String.format("%02d:%02d",hours,mins);
                 String notes;
                 if(sharedPref.contains("notes"))
                     notes = sharedPref.getString("notes","");
@@ -189,11 +199,14 @@ public class Order extends AppCompatActivity {
             editButton.setText("Edit Note");
         }
 
+        final Order ord = this;
+
         time.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 sharedPref.edit().putString("restTime", restTime).apply();
                 BottomSheetFragment fragment = new BottomSheetFragment();
+                fragment.setFatherClass(ord);
                 fragment.show(getSupportFragmentManager(), fragment.getTag());
             }
         });
@@ -285,6 +298,10 @@ public class Order extends AppCompatActivity {
         deleteButton.setVisibility(View.VISIBLE);
         hasNote = true;
         sharedPref.edit().putString("notes",text).apply();
+    }
+
+    public void updateTime(){
+        time.setText(sharedPref.getString("selectedTime",""));
     }
 
     public void deleteNote(){
