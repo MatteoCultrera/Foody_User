@@ -5,8 +5,8 @@
     <string name="foody_level">Biker Principiante</string>
     <string name="free">Libero</string>
     <string name="invalid_city">Città non valida</string>
-    <string name="opening_time">Seleziona l\'orario di apertura</string>
-    <string name="closing_time">Selezione l\'orario di chiusura</string>
+    <string name="opening_time">Seleziona l\'orario d\'inizio</string>
+    <string name="closing_time">Selezione l\'orario di fine</string>
     <string name="okButton">Ok</string>
 
     <string name="map">Mappa</string>

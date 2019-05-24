@@ -334,4 +334,9 @@ public class ReservationFragment extends Fragment {
         adapter.notifyItemRemoved(pos);
         adapter.notifyItemRangeChanged(pos, reservations.size());
     }
+
+    public void removeAllItem(){
+        reservations.clear();
+        adapter.notifyDataSetChanged();
+    }
 }
