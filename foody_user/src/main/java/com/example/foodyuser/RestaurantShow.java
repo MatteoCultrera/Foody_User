@@ -33,6 +33,7 @@ import com.google.firebase.storage.StorageReference;
 
 import java.io.File;
 import java.util.ArrayList;
+import java.util.Calendar;
 
 public class RestaurantShow extends AppCompatActivity {
 
@@ -173,6 +174,10 @@ public class RestaurantShow extends AppCompatActivity {
                 intent.putExtra("restaurantID", reName);
                 intent.putExtra("restaurantName", reUsername);
                 intent.putExtra("restaurantAddress", reAddress);
+                Calendar cal = Calendar.getInstance();
+                int day = cal.get(Calendar.DAY_OF_WEEK);
+                String time = thisRestaurant.getDaysTime().get(day);
+                intent.putExtra("restaurantTime", time);
                 startActivity(intent);
             }
         });

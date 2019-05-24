@@ -15,6 +15,7 @@ import android.support.v7.widget.RecyclerView;
 import android.text.Editable;
 import android.text.InputType;
 import android.text.TextWatcher;
+import android.util.Log;
 import android.view.View;
 import android.view.WindowManager;
 import android.widget.EditText;
@@ -89,6 +90,7 @@ public class Order extends AppCompatActivity {
         final String restID = extras.getString("restaurantID","");
         final String restName = extras.getString("restaurantName", "");
         final String restAddress = extras.getString("restaurantAddress", null);
+        final String restTime = extras.getString("restaurantTime", "");
 
         orders = handler.getOrders(orderFile);
         placeOrder.setOnClickListener(new View.OnClickListener() {
@@ -190,6 +192,7 @@ public class Order extends AppCompatActivity {
         time.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                sharedPref.edit().putString("restTime", restTime).apply();
                 BottomSheetFragment fragment = new BottomSheetFragment();
                 fragment.show(getSupportFragmentManager(), fragment.getTag());
             }
