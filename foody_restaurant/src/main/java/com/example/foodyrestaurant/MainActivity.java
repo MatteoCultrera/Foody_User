@@ -1,6 +1,5 @@
 package com.example.foodyrestaurant;
 
-import android.content.Context;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
@@ -12,9 +11,7 @@ import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v7.app.AppCompatActivity;
-import android.util.Log;
 import android.view.LayoutInflater;
-import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 
@@ -25,8 +22,6 @@ import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
-
-import java.util.ArrayList;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -160,12 +155,6 @@ public class MainActivity extends AppCompatActivity {
         if(notificationBadgeKitchen == null){
             addBadgeView();
         }
-        if (sharedPref.getBoolean("kitchenNotification",false)){
-            setNotification(true);
-        }
-        if (sharedPref.getBoolean("bikerNotification", false)){
-            setNotification(false);
-        }
 
         notification();
     }
@@ -228,17 +217,6 @@ public class MainActivity extends AppCompatActivity {
     @Override
     protected void onPause() {
         super.onPause();
-        if(notificationBadgeKitchen.getVisibility() == View.VISIBLE){
-            sharedPref.edit().putBoolean("kitchenNotification", true).apply();
-        }else{
-            sharedPref.edit().putBoolean("kitchenNotification", false).apply();
-        }
-
-        if(notificationBadgeDeliv.getVisibility() == View.VISIBLE){
-            sharedPref.edit().putBoolean("bikerNotification", true).apply();
-        }else{
-            sharedPref.edit().putBoolean("bikerNotification", false).apply();
-        }
     }
 
     public void notification(){
