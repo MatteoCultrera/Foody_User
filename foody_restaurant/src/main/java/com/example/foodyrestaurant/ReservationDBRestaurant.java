@@ -19,8 +19,7 @@ public class ReservationDBRestaurant {
     private boolean biker;
     private boolean waitingBiker;
 
-    public ReservationDBRestaurant() {
-    }
+    public ReservationDBRestaurant() {}
 
     public ReservationDBRestaurant(String reservationID, String bikerID, ArrayList<OrderItem> dishesOrdered, boolean accepted, String resNote, String numberPhone, String nameUser, String orderTime, String orderTimeBiker, String status, String userAddress, String totalCost) {
         this.reservationID = reservationID;
@@ -149,4 +148,5 @@ public class ReservationDBRestaurant {
     public void setWaitingBiker(boolean waitingBiker) {
         this.waitingBiker = waitingBiker;
     }
+
 }

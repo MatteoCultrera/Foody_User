@@ -12,6 +12,7 @@ import android.support.design.widget.FloatingActionButton;
 import android.support.v7.widget.AppCompatImageButton;
 import android.support.v7.widget.CardView;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -177,6 +178,8 @@ public class RVAdapterRes extends RecyclerView.Adapter<RVAdapterRes.CardViewHold
                         reservations.get(pos).getOrderTime(), "Doing", reservations.get(pos).getUserAddress(), reservations.get(pos).getTotalPrice());
                 reservationRest.setWaitingBiker(false);
                 reservationRest.setBiker(false);
+
+                sharedPreferences.edit().putString("userPhone", reservations.get(pos).getUserPhone()).apply();
                 childRest.put(reservationID, reservationRest);
                 databaseRest.updateChildren(childRest).addOnFailureListener(new OnFailureListener() {
                     @Override

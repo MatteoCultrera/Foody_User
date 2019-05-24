@@ -11,8 +11,8 @@ public class ReservationDBBiker {
     private String userAddress;
     private String status;
     private String restaurantID;
-    private Double latitude;
-    private Double longitude;
+    private String userPhone;
+    private String restPhone;
 
     public ReservationDBBiker() {}
 
@@ -99,11 +99,19 @@ public class ReservationDBBiker {
         this.userAddress = userAddress;
     }
 
-    public Double getLatitude() {
-        return latitude;
+    public String getUserPhone() {
+        return userPhone;
     }
 
-    public Double getLongitude() {
-        return longitude;
+    public void setUserPhone(String userPhone) {
+        this.userPhone = userPhone;
+    }
+
+    public String getRestPhone() {
+        return restPhone;
+    }
+
+    public void setRestPhone(String restPhone) {
+        this.restPhone = restPhone;
     }
 }

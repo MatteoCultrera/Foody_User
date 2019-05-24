@@ -1,7 +1,9 @@
 package com.example.foodybiker;
 
 import android.animation.LayoutTransition;
+import android.content.Intent;
 import android.content.SharedPreferences;
+import android.net.Uri;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
@@ -15,6 +17,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageButton;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -53,6 +56,7 @@ public class ReservationFragment extends Fragment {
     private MainActivity father;
     private SharedPreferences sharedPreferences;
     private int pending;
+    LinearLayout callRestaurant, callUser;
 
     public ReservationFragment(){}
 
@@ -99,6 +103,7 @@ public class ReservationFragment extends Fragment {
                                 reservationDB.getOrderTimeBiker(), reservationDB.getUserName(), reservationDB.getUserAddress(),
                                 reservationDB.getOrderTime(), reservationDB.getRestaurantID(),null, true);
                         reservation.setReservationID(ds.getKey());
+
                         activeReservation = reservation;
                     }
                 }
@@ -191,6 +196,8 @@ public class ReservationFragment extends Fragment {
         noteLayout = view.findViewById(R.id.note_layout);
         pickupTime = view.findViewById(R.id.pickup_time);
         deliveryTime = view.findViewById(R.id.deliver_time);
+        callRestaurant = view.findViewById(R.id.call_restaurant);
+        callUser = view.findViewById(R.id.call_user);
 
         orderDeliveredLayout.getLayoutTransition().enableTransitionType(LayoutTransition.CHANGING);
 
@@ -258,6 +265,24 @@ public class ReservationFragment extends Fragment {
                 updateTitles();
             }
         });
+
+        callRestaurant.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(Intent.ACTION_DIAL);
+                intent.setData(Uri.parse("tel:"+ activeReservation.getRestPhone()));
+                startActivity(intent);
+            }
+        });
+
+        callUser.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(Intent.ACTION_DIAL);
+                intent.setData(Uri.parse("tel:"+ activeReservation.getUserPhone()));
+                startActivity(intent);
+            }
+        });
     }
 
     public void updateTitles(){
@@ -284,7 +309,7 @@ public class ReservationFragment extends Fragment {
 
     public void setInterface(Boolean deliveringOrder){
         updateTitles();
-        if(deliveringOrder ){
+        if(deliveringOrder){
             card.setVisibility(View.VISIBLE);
             orderList.setVisibility(View.GONE);
             orderDeliveredLayout.setBackgroundResource(R.drawable.order_delivered_background);
@@ -323,6 +348,8 @@ public class ReservationFragment extends Fragment {
                 noteLayout.setVisibility(View.VISIBLE);
                 notes.setText(activeReservation.getNotes());
             }
+
+            setInterface(true);
 
             father.thereisActive(activeReservation);
         }

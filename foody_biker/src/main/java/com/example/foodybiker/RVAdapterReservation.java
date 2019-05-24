@@ -6,6 +6,7 @@ import android.support.constraint.ConstraintLayout;
 import android.support.design.button.MaterialButton;
 import android.support.v7.widget.CardView;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -97,6 +98,10 @@ public class RVAdapterReservation extends RecyclerView.Adapter<RVAdapterReservat
                             reservations.get(pos).getRestaurantName(), reservations.get(pos).getUserName(),
                             reservations.get(pos).getRestaurantAddress(), reservations.get(pos).getUserAddress(),
                             reservations.get(pos).getRestaurantID());
+                    reservation.setUserPhone(reservations.get(pos).getUserPhone());
+                    reservation.setRestPhone(reservations.get(pos).getRestPhone());
+                    //TODO: spariscono i numeri 
+                    Log.d("MAD", "user " + reservation.getUserPhone() + " rest " + reservation.getRestPhone());
                     reservation.setStatus("accepted");
                     child.put(reservations.get(pos).getReservationID(), reservation);
                     database.updateChildren(child).addOnFailureListener(new OnFailureListener() {

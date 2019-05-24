@@ -213,6 +213,8 @@ public class ChooseBikerActivity extends AppCompatActivity {
                         res.getOrderTime(), res.getOrderTimeBiker(), preferences.getString("name",""),
                         res.getNameUser(), preferences.getString("address",""), res.getUserAddress(), firebaseUser.getUid());
 
+                biker.setRestPhone(preferences.getString("phoneNumber", null));
+                biker.setUserPhone(preferences.getString("userPhone", null));
                 HashMap<String, Object> map = new HashMap<>();
                 map.put(getIntent().getStringExtra("ReservationID"),biker);
                 DatabaseReference reference = FirebaseDatabase.getInstance().getReference().child("reservations").child("Bikers")
