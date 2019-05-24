@@ -4,6 +4,7 @@ import android.animation.LayoutTransition;
 import android.app.AlertDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.net.Uri;
 import android.os.Environment;
 import android.support.annotation.NonNull;
@@ -55,6 +56,7 @@ public class RestaurantShow extends AppCompatActivity {
     static int delPriceToPass;
     private boolean unchanged;
     private String dialogCode = "ok";
+    private SharedPreferences shared;
     private AlertDialog dialogDism;
 
     private String reName, reUsername, reAddress;
@@ -81,8 +83,31 @@ public class RestaurantShow extends AppCompatActivity {
         documentsDir = getExternalFilesDir(Environment.DIRECTORY_DOCUMENTS);
         handlerOrders = new JsonHandler();
         menuAdapter = new RVAdapterMenu(this);
+        shared = getSharedPreferences("myPreference", MODE_PRIVATE);
 
         File order = new File(documentsDir, getString(R.string.order_file_name));
+
+        if(!shared.contains("selectedTime")){
+            Log.d("MAD","Created times");
+            Calendar now = Calendar.getInstance();
+            int hours = now.get(Calendar.HOUR_OF_DAY);
+            int minutes = now.get(Calendar.MINUTE);
+            Log.d("MAD","Hours "+ hours+" minutes "+minutes);
+            minutes += 30;
+            if(minutes/60 != 0){
+                Log.d("MAD","Hours "+ hours+" minutes "+minutes);
+                hours++;
+                minutes = minutes%60;
+                Log.d("MAD","Hours "+ hours+" minutes "+minutes);
+            }
+
+            String minTime = String.format("%02d:%02d",hours,minutes);
+            shared.edit().putString("minTime",minTime).apply();
+            shared.edit().putString("selectedTime",minTime).apply();
+
+            Log.d("MAD",minTime);
+
+        }
 
         orders = handlerOrders.getOrders(order);
 

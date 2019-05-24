@@ -79,6 +79,8 @@ public class RVAdapterRestaurants  extends RecyclerView.Adapter<RVAdapterRestaur
                         f.delete();
                     SharedPreferences shared = cardViewHolder.restaurantBackground.getContext().getSharedPreferences("myPreference", Context.MODE_PRIVATE);
                     shared.edit().remove("notes").apply();
+                    if(shared.contains("selectedTime"))
+                        shared.edit().remove("selectedTime").apply();
 
                     //Start the Intent
                     cardViewHolder.card.getContext().startActivity(intent);

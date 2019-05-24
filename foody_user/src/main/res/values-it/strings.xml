@@ -39,4 +39,12 @@
 
     <string name="select_time">Seleziona Orario</string>
 
+
+
+    <string name="soon_as_possible">Appena Possibile</string>
+
+
+    <string name="today">Oggi</string>
+    <string name="tomorrow">Domani</string>
+
 </resources>
