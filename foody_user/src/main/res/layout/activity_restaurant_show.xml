@@ -201,7 +201,7 @@
             app:layout_anchor="@+id/appbar"
             app:layout_behavior="@string/appbar_scrolling_view_behavior"
             app:layout_anchorGravity="bottom|center" />
-
+        <!--ATTENTION: DO NOT DELETE APP:LAYOUT_BEHAVIOR IF RED IT'S NOT AN ERROR-->
     </android.support.design.widget.CoordinatorLayout>
 
 
