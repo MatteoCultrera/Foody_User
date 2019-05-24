@@ -97,13 +97,16 @@ public class ReservationFragment extends Fragment {
                                 reservationDB.getOrderTimeBiker(), reservationDB.getUserName(), reservationDB.getUserAddress(),
                                 reservationDB.getOrderTime(), reservationDB.getRestaurantID(),null, false);
                         reservation.setReservationID(ds.getKey());
+                        reservation.setUserPhone(reservationDB.getUserPhone());
+                        reservation.setRestPhone(reservationDB.getRestPhone());
                         reservations.add(reservation);
                     } else if(reservationDB.getStatus().equals("accepted")){
                         Reservation reservation = new Reservation(reservationDB.getRestaurantName(), reservationDB.getRestaurantAddress(),
                                 reservationDB.getOrderTimeBiker(), reservationDB.getUserName(), reservationDB.getUserAddress(),
                                 reservationDB.getOrderTime(), reservationDB.getRestaurantID(),null, true);
                         reservation.setReservationID(ds.getKey());
-
+                        reservation.setUserPhone(reservationDB.getUserPhone());
+                        reservation.setRestPhone(reservationDB.getRestPhone());
                         activeReservation = reservation;
                     }
                 }
@@ -137,6 +140,8 @@ public class ReservationFragment extends Fragment {
                                         reservationDB.getOrderTimeBiker(), reservationDB.getUserName(), reservationDB.getUserAddress(),
                                         reservationDB.getOrderTime(), reservationDB.getRestaurantID(), null, false);
                                 reservation.setReservationID(dataSnapshot.getKey());
+                                reservation.setUserPhone(reservationDB.getUserPhone());
+                                reservation.setRestPhone(reservationDB.getRestPhone());
 
                                 int index;
                                 for (index = 0; index < reservations.size(); index++) {

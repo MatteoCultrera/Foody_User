@@ -249,6 +249,7 @@
                         android:layout_marginTop="4dp"
                         android:layout_marginBottom="8dp"
                         android:src="@drawable/profile_placeholder"
+                        android:visibility="gone"
                         app:layout_constraintBottom_toTopOf="@+id/call_user"
                         app:layout_constraintEnd_toEndOf="parent"
                         app:layout_constraintHorizontal_bias="0.0"
