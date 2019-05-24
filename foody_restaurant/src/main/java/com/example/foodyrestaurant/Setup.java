@@ -918,7 +918,6 @@ public class Setup extends AppCompatActivity {
                     .addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
                         @Override
                         public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
-                            Log.d("SWSW", "success");
                         }
                     })
                     .addOnFailureListener(new OnFailureListener() {
@@ -998,6 +997,14 @@ public class Setup extends AppCompatActivity {
             HashMap<String, Object> childLoc = new HashMap<>();
             childLoc.put("latitude", pos.latitude);
             childLoc.put("longitude", pos.longitude);
+            databaseLoc.updateChildren(childLoc);
+        } else if(sharedPref.getFloat("latitude", (float) 0.0) != 0.0 &&
+                sharedPref.getFloat("longitude", (float) 0.0) != 0.0){
+            DatabaseReference databaseLoc = FirebaseDatabase.getInstance().getReference()
+                    .child("restaurantsInfo/" + user.getUid()).child("info");
+            HashMap<String, Object> childLoc = new HashMap<>();
+            childLoc.put("latitude", sharedPref.getFloat("latitude", (float) 0.0));
+            childLoc.put("longitude", sharedPref.getFloat("longitude", (float) 0.0));
             databaseLoc.updateChildren(childLoc);
         }
 
