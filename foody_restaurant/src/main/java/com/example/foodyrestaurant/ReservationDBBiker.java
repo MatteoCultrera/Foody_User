@@ -10,6 +10,8 @@ public class ReservationDBBiker {
     private String restaurantAddress;
     private String userAddress;
     private String restaurantID;
+    private String userPhone;
+    private String restPhone;
 
     public ReservationDBBiker() {}
 
@@ -86,5 +88,21 @@ public class ReservationDBBiker {
 
     public void setUserAddress(String userAddress) {
         this.userAddress = userAddress;
+    }
+
+    public String getUserPhone() {
+        return userPhone;
+    }
+
+    public void setUserPhone(String userPhone) {
+        this.userPhone = userPhone;
+    }
+
+    public String getRestPhone() {
+        return restPhone;
+    }
+
+    public void setRestPhone(String restPhone) {
+        this.restPhone = restPhone;
     }
 }
