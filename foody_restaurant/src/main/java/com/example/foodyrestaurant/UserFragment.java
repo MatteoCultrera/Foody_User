@@ -124,7 +124,9 @@ public class UserFragment extends Fragment {
                             }
                         }
 
-                        int lung = cuisine.size();
+                        int lung = 0;
+                        if(cuisine != null)
+                            lung = cuisine.size();
                         switch (lung) {
                             case 0:
                                 break;
@@ -146,6 +148,8 @@ public class UserFragment extends Fragment {
                                 edit.putInt("foodIndexThree", cuisine.get(2));
                                 break;
                             }
+                            default:
+                                break;
                         }
 
                         foodType.setText(cuisineText);
