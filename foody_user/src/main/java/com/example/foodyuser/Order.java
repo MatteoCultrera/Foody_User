@@ -188,6 +188,14 @@ public class Order extends AppCompatActivity {
             editButton.setText("Edit Note");
         }
 
+        time.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                BottomSheetFragment fragment = new BottomSheetFragment();
+                fragment.show(getSupportFragmentManager(), fragment.getTag());
+            }
+        });
+
         updatePrice();
     }
 
