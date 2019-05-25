@@ -201,6 +201,10 @@ public class RestaurantShow extends AppCompatActivity {
                 intent.putExtra("restaurantAddress", reAddress);
                 Calendar cal = Calendar.getInstance();
                 int day = cal.get(Calendar.DAY_OF_WEEK);
+                if(day == 1) {
+                    day = 6;
+                } else
+                    day = day-2;
                 String time = thisRestaurant.getDaysTime().get(day);
                 intent.putExtra("restaurantTime", time);
                 startActivity(intent);
