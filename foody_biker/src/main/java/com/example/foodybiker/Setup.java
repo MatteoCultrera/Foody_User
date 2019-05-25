@@ -66,12 +66,11 @@ public class Setup extends AppCompatActivity {
     private CircleImageView profilePicture;
     private ImageButton save;
     private FloatingActionButton editImage;
-    private EditText name, email, phoneNumber, city;
+    private EditText name, email, phoneNumber;
     private TextView errorName;
     private TextView errorMail;
     private TextView errorPhone;
     private TextView errorAddress;
-    private TextView errorCity;
     private TextView monday, thursday, wednesday, tuesday, friday, saturday, sunday, address;
     private CheckBox monC, thuC, wedC, tueC, friC, satC, sunC;
     private final int GALLERY_REQUEST_CODE = 1;
@@ -82,7 +81,7 @@ public class Setup extends AppCompatActivity {
     private File storageDir;
     private TextView tv;
     private int caller;
-    private boolean unchanged, addressCheck, nameCheck, numberCheck, mailCheck, cityCheck;
+    private boolean unchanged, addressCheck, nameCheck, numberCheck, mailCheck;
     private String dialogCode = "ok";
     private String openHour, closeHour;
     private AlertDialog dialogDism;
@@ -133,7 +132,6 @@ public class Setup extends AppCompatActivity {
         outState.putString("email", email.getText().toString());
         outState.putString("address", address.getText().toString());
         outState.putString("phoneNumber", phoneNumber.getText().toString());
-        outState.putString("city", city.getText().toString());
         outState.putString("monTime", monday.getText().toString());
         outState.putString("tueTime", tuesday.getText().toString());
         outState.putString("wedTime", wednesday.getText().toString());
@@ -166,7 +164,6 @@ public class Setup extends AppCompatActivity {
         email.setText(savedInstanceState.getString("email", getResources().getString(R.string.email_hint)));
         address.setText(savedInstanceState.getString("address", getResources().getString(R.string.address_hint)));
         phoneNumber.setText(savedInstanceState.getString("phoneNumber", getResources().getString(R.string.phone_hint)));
-        city.setText(savedInstanceState.getString("city", getResources().getString(R.string.city_hint)));
         monday.setText(savedInstanceState.getString("monTime", getResources().getString(R.string.free)));
         tuesday.setText(savedInstanceState.getString("tueTime", getResources().getString(R.string.free)));
         wednesday.setText(savedInstanceState.getString("wedTime", getResources().getString(R.string.free)));
@@ -207,7 +204,6 @@ public class Setup extends AppCompatActivity {
         email.clearFocus();
         address.clearFocus();
         phoneNumber.clearFocus();
-        city.clearFocus();
     }
 
     protected void onPause(){
@@ -221,7 +217,7 @@ public class Setup extends AppCompatActivity {
     }
 
     private void updateSave(){
-        if(nameCheck && numberCheck && cityCheck && addressCheck && mailCheck){
+        if(nameCheck && numberCheck && addressCheck && mailCheck){
             save.setImageResource(R.drawable.save_white);
             save.setEnabled(true);
             save.setClickable(true);
@@ -317,29 +313,6 @@ public class Setup extends AppCompatActivity {
         updateSave();
     }
 
-    private void checkCity(){
-        String c = city.getText().toString();
-        String regx = "^[\\p{L} .'-]+$";
-        View errorLine = findViewById(R.id.city_error_line);
-        Pattern regex = Pattern.compile(regx);
-        Matcher matcher = regex.matcher(c);
-
-        if(!matcher.matches()){
-            cityCheck = false;
-            errorCity.setText(getResources().getString(R.string.invalid_city));
-            errorLine.setBackgroundColor(getResources().getColor(R.color.errorColor,this.getTheme()));
-            errorLine.setAlpha(1);
-
-        }else{
-            cityCheck = true;
-            errorCity.setText("");
-            errorLine.setAlpha(0.2f);
-            errorLine.setBackgroundColor(Color.BLACK);
-        }
-
-        updateSave();
-    }
-
     private  void pickFromGallery(){
         Intent intent = new Intent(Intent.ACTION_PICK);
         intent.setType("image/*");
@@ -367,7 +340,6 @@ public class Setup extends AppCompatActivity {
 
     private void init(){
         addressCheck = true;
-        cityCheck = true;
         numberCheck = true;
         nameCheck = true;
         mailCheck = true;
@@ -378,7 +350,6 @@ public class Setup extends AppCompatActivity {
         this.email = findViewById(R.id.emailAddress);
         this.address = findViewById(R.id.address);
         this.phoneNumber = findViewById(R.id.phoneNumber);
-        this.city = findViewById(R.id.city);
         this.monday = findViewById(R.id.timeMonday);
         this.tuesday = findViewById(R.id.timeTuesday);
         this.wednesday = findViewById(R.id.timeWednesday);
@@ -404,15 +375,12 @@ public class Setup extends AppCompatActivity {
         this.errorMail = findViewById(R.id.email_error);
         this.errorPhone = findViewById(R.id.number_error);
         this.errorAddress = findViewById(R.id.address_error);
-        this.errorCity = findViewById(R.id.city_error);
         this.save = findViewById(R.id.saveButton);
 
         errorName.setText("");
         errorMail.setText("");
         errorPhone.setText("");
         errorAddress.setText("");
-        errorCity.setText("");
-
 
         pathImage = sharedPref.getString("Path", "");
 
@@ -443,7 +411,6 @@ public class Setup extends AppCompatActivity {
         email.setText(sharedPref.getString("email", ""));
         address.setText(sharedPref.getString("address", ""));
         phoneNumber.setText(sharedPref.getString("phoneNumber", ""));
-        city.setText(sharedPref.getString("city",""));
         monday.setText(sharedPref.getString("monTime", getResources().getString(R.string.free)));
         tuesday.setText(sharedPref.getString("tueTime", getResources().getString(R.string.free)));
         wednesday.setText(sharedPref.getString("wedTime", getResources().getString(R.string.free)));
@@ -556,24 +523,6 @@ public class Setup extends AppCompatActivity {
 
                     if(editable.subSequence(i-1, i).toString().equals("\n"))
                         editable.replace(i-1, i, "");
-                }
-            }
-        });
-        this.city.addTextChangedListener(new TextWatcher() {
-            @Override
-            public void beforeTextChanged(CharSequence charSequence, int i, int i1, int i2) {
-            }
-
-            @Override
-            public void onTextChanged(CharSequence charSequence, int i, int i1, int i2) {
-                checkCity();
-            }
-
-            @Override
-            public void afterTextChanged(Editable editable) {
-                String check = sharedPref.getString("city", null);
-                if (check != null && check.compareTo(editable.toString()) != 0){
-                    unchanged = false;
                 }
             }
         });
@@ -849,8 +798,7 @@ public class Setup extends AppCompatActivity {
         days.add(friday.getText().toString());
         days.add(saturday.getText().toString());
         days.add(sunday.getText().toString());
-        BikerInfo info = new BikerInfo(name.getText().toString(), email.getText().toString(), address.getText().toString(),
-               city.getText().toString(),  phoneNumber.getText().toString(), days);
+        BikerInfo info = new BikerInfo(name.getText().toString(), email.getText().toString(), address.getText().toString(), phoneNumber.getText().toString(), days);
         info.setPath(pathImage);
         child.put("info", info);
         database.updateChildren(child);
@@ -859,7 +807,6 @@ public class Setup extends AppCompatActivity {
         edit.putString("email", email.getText().toString());
         edit.putString("address", address.getText().toString());
         edit.putString("phoneNumber", phoneNumber.getText().toString());
-        edit.putString("city", city.getText().toString());
         edit.putString("monTime", monday.getText().toString());
         edit.putString("tueTime", tuesday.getText().toString());
         edit.putString("wedTime", wednesday.getText().toString());

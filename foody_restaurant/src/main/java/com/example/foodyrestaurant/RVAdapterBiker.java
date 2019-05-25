@@ -9,7 +9,6 @@ import android.support.constraint.ConstraintLayout;
 import android.support.design.button.MaterialButton;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.widget.RecyclerView;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -141,10 +140,6 @@ public class RVAdapterBiker extends RecyclerView.Adapter<RVAdapterBiker.CardView
             foodTitle.setText(d.getStringForRes());
             pvh.dishesLayout.addView(dish);
         }
-
-        Log.d("BIKERFETCH", "waiting biker: "+current.isWaitingBiker()+"");
-
-
     }
 
     @Override

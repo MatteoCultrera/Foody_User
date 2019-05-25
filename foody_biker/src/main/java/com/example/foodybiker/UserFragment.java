@@ -42,7 +42,6 @@ public class UserFragment extends Fragment {
     private TextView email;
     private TextView address;
     private TextView phoneNumber;
-    private TextView city;
     private CircleImageView profilePicture;
     private TextView monTime, tueTime, wedTime, thuTime, friTime, satTime,sunTime;
     private final String PLACEHOLDER_CAMERA="PlaceCamera.jpg";
@@ -76,7 +75,6 @@ public class UserFragment extends Fragment {
         this.email = view.findViewById(R.id.emailAddress);
         this.address = view.findViewById(R.id.address);
         this.phoneNumber = view.findViewById(R.id.phoneNumber);
-        this.city = view.findViewById(R.id.city);
         this.logout = view.findViewById(R.id.logout_button);
 
         monTime = view.findViewById(R.id.monTime);
@@ -102,7 +100,6 @@ public class UserFragment extends Fragment {
                                 email.setText(info.getEmail());
                                 address.setText(info.getAddress());
                                 phoneNumber.setText(info.getNumberPhone());
-                                city.setText(info.getCity());
                                 imagePath = info.getPath();
                                 monTime.setText(info.getDaysTime().get(0));
                                 tueTime.setText(info.getDaysTime().get(1));
@@ -117,8 +114,6 @@ public class UserFragment extends Fragment {
                                     edit.putString("address", info.getAddress());
                                 if (!phoneNumber.getText().toString().equals(getResources().getString(R.string.phone_hint)))
                                     edit.putString("phoneNumber", info.getNumberPhone());
-                                if (!city.getText().toString().equals(getResources().getString(R.string.city_hint)))
-                                    edit.putString("city", info.getCity());
                                 if (!info.getDaysTime().get(0).equals(getResources().getString(R.string.free))){
                                     edit.putBoolean("monState", true);
                                 }
@@ -196,7 +191,6 @@ public class UserFragment extends Fragment {
                             email.setText(sharedPref.getString("email", getResources().getString(R.string.email_hint)));
                             address.setText(sharedPref.getString("address", getResources().getString(R.string.address_hint)));
                             phoneNumber.setText(sharedPref.getString("phoneNumber", getResources().getString(R.string.phone_hint)));
-                            city.setText(sharedPref.getString("city", getResources().getString(R.string.city_hint)));
                             monTime.setText(sharedPref.getString("monTime", getResources().getString(R.string.free)));
                             tueTime.setText(sharedPref.getString("tueTime", getResources().getString(R.string.free)));
                             wedTime.setText(sharedPref.getString("wedTime", getResources().getString(R.string.free)));
