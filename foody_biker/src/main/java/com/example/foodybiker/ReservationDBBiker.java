@@ -13,6 +13,7 @@ public class ReservationDBBiker {
     private String restaurantID;
     private String userPhone;
     private String restPhone;
+    private String notes;
 
     public ReservationDBBiker() {}
 
@@ -113,5 +114,13 @@ public class ReservationDBBiker {
 
     public void setRestPhone(String restPhone) {
         this.restPhone = restPhone;
+    }
+
+    public String getNotes() {
+        return notes;
+    }
+
+    public void setNotes(String notes) {
+        this.notes = notes;
     }
 }
