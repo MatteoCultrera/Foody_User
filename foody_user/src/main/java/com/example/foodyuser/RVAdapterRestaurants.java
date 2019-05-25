@@ -70,7 +70,7 @@ public class RVAdapterRestaurants  extends RecyclerView.Adapter<RVAdapterRestaur
             cardViewHolder.card.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    Intent intent = new Intent(v.getContext(), RestaurantView.class);
+                    Intent intent = new Intent(v.getContext(), RestaurantShow.class);
                     intent.putExtra("restaurant_id", restaurants.get(i).getUid());
                     intent.putExtra("restaurant_name", restaurants.get(i).getUsername());
                     intent.putExtra("restaurant_address", restaurants.get(i).getAddress());
