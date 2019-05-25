@@ -97,7 +97,7 @@ public class ReservationFragment extends Fragment {
                     if (reservationDB.getStatus() == null) {
                         Reservation reservation = new Reservation(reservationDB.getRestaurantName(), reservationDB.getRestaurantAddress(),
                                 reservationDB.getOrderTimeBiker(), reservationDB.getUserName(), reservationDB.getUserAddress(),
-                                reservationDB.getOrderTime(), reservationDB.getRestaurantID(),null, false);
+                                reservationDB.getOrderTime(), reservationDB.getRestaurantID(),reservationDB.getNotes(), false);
                         reservation.setReservationID(ds.getKey());
                         reservation.setUserPhone(reservationDB.getUserPhone());
                         reservation.setRestPhone(reservationDB.getRestPhone());
@@ -105,7 +105,7 @@ public class ReservationFragment extends Fragment {
                     } else if(reservationDB.getStatus().equals("accepted")){
                         Reservation reservation = new Reservation(reservationDB.getRestaurantName(), reservationDB.getRestaurantAddress(),
                                 reservationDB.getOrderTimeBiker(), reservationDB.getUserName(), reservationDB.getUserAddress(),
-                                reservationDB.getOrderTime(), reservationDB.getRestaurantID(),null, true);
+                                reservationDB.getOrderTime(), reservationDB.getRestaurantID(),reservationDB.getNotes(), true);
                         reservation.setReservationID(ds.getKey());
                         reservation.setUserPhone(reservationDB.getUserPhone());
                         reservation.setRestPhone(reservationDB.getRestPhone());
@@ -140,7 +140,7 @@ public class ReservationFragment extends Fragment {
                             if (toAdd) {
                                 Reservation reservation = new Reservation(reservationDB.getRestaurantName(), reservationDB.getRestaurantAddress(),
                                         reservationDB.getOrderTimeBiker(), reservationDB.getUserName(), reservationDB.getUserAddress(),
-                                        reservationDB.getOrderTime(), reservationDB.getRestaurantID(), null, false);
+                                        reservationDB.getOrderTime(), reservationDB.getRestaurantID(), reservationDB.getNotes(), false);
                                 reservation.setReservationID(dataSnapshot.getKey());
                                 reservation.setUserPhone(reservationDB.getUserPhone());
                                 reservation.setRestPhone(reservationDB.getRestPhone());
