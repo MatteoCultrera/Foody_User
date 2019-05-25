@@ -37,7 +37,6 @@ public class RVAdapterReservation extends RecyclerView.Adapter<RVAdapterReservat
         this.orderActive = orderActive;
     }
 
-
     void setOrderActive(boolean orderActive) {
         this.orderActive = orderActive;
     }
