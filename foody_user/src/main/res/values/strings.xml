@@ -49,9 +49,13 @@
     <string name="insert_note">Insert Note</string>
 
     <string name="select_time">Select Time</string>
-    
+
     <string name="soon_as_possible">As Soon As Possible</string>
 
     <string name="today">Today</string>
     <string name="tomorrow">Tomorrow</string>
+    <string name="menu">Menu</string>
+    <string name="reviews">Reviews</string>
+    <string name="info">Info</string>
+
 </resources>

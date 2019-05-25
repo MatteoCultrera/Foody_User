@@ -8,6 +8,7 @@ import android.os.Environment;
 import android.support.annotation.NonNull;
 import android.support.v7.widget.CardView;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -21,10 +22,12 @@ import com.google.firebase.storage.StorageReference;
 
 import java.io.File;
 import java.util.ArrayList;
+import java.util.EventListener;
 
 public class RVAdapterRestaurants  extends RecyclerView.Adapter<RVAdapterRestaurants.CardViewHolder>{
 
     private ArrayList<Restaurant> restaurants;
+    private final String DIRECTORY_IMAGES = "showImages";
 
     RVAdapterRestaurants(ArrayList<Restaurant> restaurants){
         this.restaurants = restaurants;
@@ -67,7 +70,7 @@ public class RVAdapterRestaurants  extends RecyclerView.Adapter<RVAdapterRestaur
             cardViewHolder.card.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    Intent intent = new Intent(v.getContext(), RestaurantShow.class);
+                    Intent intent = new Intent(v.getContext(), RestaurantView.class);
                     intent.putExtra("restaurant_id", restaurants.get(i).getUid());
                     intent.putExtra("restaurant_name", restaurants.get(i).getUsername());
                     intent.putExtra("restaurant_address", restaurants.get(i).getAddress());
@@ -81,6 +84,17 @@ public class RVAdapterRestaurants  extends RecyclerView.Adapter<RVAdapterRestaur
                     shared.edit().remove("notes").apply();
                     if(shared.contains("selectedTime"))
                         shared.edit().remove("selectedTime").apply();
+
+                    //Delete directory images RestaurantView
+                    File root = cardViewHolder.card.getContext().getExternalFilesDir(Environment.DIRECTORY_PICTURES);
+                    File dir = new File(root.getPath()+File.separator+DIRECTORY_IMAGES);
+                    Log.d("MAD",dir.getPath());
+                    if(dir.exists()){
+                        for(File child: dir.listFiles())
+                            child.delete();
+                        dir.delete();
+                        Log.d("MAD","Deleted DIR");
+                    }
 
                     //Start the Intent
                     cardViewHolder.card.getContext().startActivity(intent);

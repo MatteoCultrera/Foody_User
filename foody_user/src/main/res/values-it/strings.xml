@@ -47,4 +47,8 @@
     <string name="today">Oggi</string>
     <string name="tomorrow">Domani</string>
 
+    <string name="menu">Menu</string>
+    <string name="reviews">Recensioni</string>
+    <string name="info">Info</string>
+
 </resources>
