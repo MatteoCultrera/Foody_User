@@ -261,50 +261,6 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginStart="16dp"
-                android:layout_marginTop="36dp"
-                android:layout_marginEnd="16dp"
-                android:orientation="horizontal">
-
-                <ImageView
-                    android:layout_width="30dp"
-                    android:layout_height="30dp"
-                    android:layout_marginTop="8dp"
-                    android:scaleType="fitCenter"
-                    android:adjustViewBounds="true"
-                    android:padding="2dp"
-                    android:contentDescription="@null"
-                    android:src="@drawable/city_black" />
-
-                <TextView
-                    android:id="@+id/city"
-                    style="@android:style/Widget.Material.EditText"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_marginStart="8dp"
-                    android:layout_marginTop="11dp"
-                    android:background="@android:color/transparent"
-                    android:fontFamily="@font/roboto_regular"
-                    android:hint="@string/city_hint"
-                    android:textSize="15sp"
-                    android:textColor="@color/primaryText"/>
-
-            </LinearLayout>
-
-            <View
-                android:layout_width="match_parent"
-                android:layout_height="1dp"
-                android:layout_marginLeft="16dp"
-                android:layout_marginTop="3.5dp"
-                android:layout_marginRight="16dp"
-                android:layout_marginBottom="16dp"
-                android:alpha="0.2"
-                android:background="@android:color/black" />
-
-
-            <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginStart="16dp"
                 android:layout_marginTop="16dp"
                 android:layout_marginEnd="16dp"
                 android:orientation="horizontal">

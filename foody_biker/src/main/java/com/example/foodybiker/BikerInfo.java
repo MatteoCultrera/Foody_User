@@ -6,7 +6,6 @@ public class BikerInfo {
     private String username;
     private String email;
     private String address;
-    private String city;
     private String numberPhone;
     private ArrayList<String> daysTime;
     private String path;
@@ -19,11 +18,10 @@ public class BikerInfo {
         this.daysTime= daysTime;
     }
 
-    public BikerInfo(String username, String email, String address, String city, String numberPhone, ArrayList<String> daysTime) {
+    public BikerInfo(String username, String email, String address, String numberPhone, ArrayList<String> daysTime) {
         this.username = username;
         this.email = email;
         this.address = address;
-        this.city = city;
         this.numberPhone = numberPhone;
         this.daysTime = daysTime;
     }
@@ -50,14 +48,6 @@ public class BikerInfo {
 
     public void setAddress(String address) {
         this.address = address;
-    }
-
-    public String getCity() {
-        return city;
-    }
-
-    public void setCity(String city) {
-        this.city = city;
     }
 
     public String getNumberPhone() {
