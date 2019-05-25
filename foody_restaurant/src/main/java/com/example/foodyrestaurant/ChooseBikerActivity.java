@@ -6,6 +6,7 @@ import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.widget.Toast;
 
 import com.google.android.gms.maps.model.LatLng;
@@ -212,6 +213,10 @@ public class ChooseBikerActivity extends AppCompatActivity {
                         getIntent().getStringExtra("ReservationID"),
                         res.getOrderTime(), res.getOrderTimeBiker(), preferences.getString("name",""),
                         res.getNameUser(), preferences.getString("address",""), res.getUserAddress(), firebaseUser.getUid());
+
+                if(res.getResNote() != null) {
+                    biker.setNotes(res.getResNote());
+                }
 
                 biker.setRestPhone(preferences.getString("phoneNumber", null));
                 biker.setUserPhone(preferences.getString("userPhone", null));
