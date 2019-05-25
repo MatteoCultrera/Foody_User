@@ -1,5 +1,7 @@
 package com.example.foodybiker;
 
+import android.animation.Animator;
+import android.animation.AnimatorListenerAdapter;
 import android.animation.LayoutTransition;
 import android.content.Intent;
 import android.content.SharedPreferences;
@@ -314,9 +316,24 @@ public class ReservationFragment extends Fragment {
 
     public void setInterface(Boolean deliveringOrder){
         updateTitles();
-        if(deliveringOrder){
+        int shortAnimationDuration = 600;
+        if(deliveringOrder) {
+            orderList.setAlpha(1f);
+            card.setAlpha(0f);
             card.setVisibility(View.VISIBLE);
-            orderList.setVisibility(View.GONE);
+            card.animate().alpha(1f)
+                    .setDuration(shortAnimationDuration)
+                    .setListener(null);
+            orderList.animate()
+                    .alpha(0f)
+                    .setDuration(shortAnimationDuration)
+                    .setListener(new AnimatorListenerAdapter() {
+                        @Override
+                        public void onAnimationEnd(Animator animation) {
+                            orderList.setVisibility(View.GONE);
+                        }
+                    });
+            //orderList.setVisibility(View.GONE);
             orderDeliveredLayout.setBackgroundResource(R.drawable.order_delivered_background);
         }else{
             card.setVisibility(View.GONE);
