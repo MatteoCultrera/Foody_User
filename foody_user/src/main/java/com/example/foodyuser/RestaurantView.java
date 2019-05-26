@@ -154,8 +154,10 @@ public class RestaurantView extends AppCompatActivity {
             //Fetch Cards From Storage
             if (thisRestaurant == null)
                 fetchRestaurant();
-            else
+            else{
                 price.setText(thisRestaurant.getDeliveryPriceString());
+                showInfo.init(thisRestaurant);
+            }
             cardsFromTotal();
             updateTotal();
 
@@ -358,6 +360,7 @@ public class RestaurantView extends AppCompatActivity {
 
                 }
                 toolbar.setTitle(thisRestaurant.getUsername());
+                showInfo.init(thisRestaurant);
                 price.setText(thisRestaurant.getDeliveryPriceString());
                 toolbar.setNavigationOnClickListener(new View.OnClickListener() {
                     @Override
