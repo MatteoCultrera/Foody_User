@@ -99,6 +99,8 @@ public class RestaurantsList extends AppCompatActivity {
                 for (DataSnapshot ds : dataSnapshot.getChildren()) {
                     for (DataSnapshot ds1 : ds.getChildren()) {
                         Restaurant restaurant = ds1.getValue(Restaurant.class);
+                        Log.d("MAD", "email: " + restaurant.getEmail());
+                        Log.d("MAD", "phone: " + restaurant.getNumberPhone());
                         restaurant.setUid(ds.getKey());
                         if (restaurant.getDaysTime() != null) {
                             String intervalTime = restaurant.getDaysTime().get(day).replace(" ", "");
