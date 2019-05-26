@@ -25,6 +25,7 @@
             app:titleEnabled="false">
 
             <ImageView
+                android:contentDescription="@string/cancel"
                 android:id="@+id/htab_header"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
@@ -54,6 +55,7 @@
 
             <android.support.v7.widget.Toolbar
                 android:id="@+id/htab_toolbar"
+                app:navigationIcon="@drawable/back_white"
                 android:layout_width="match_parent"
                 android:layout_height="?attr/actionBarSize"
                 android:layout_gravity="top"
@@ -80,5 +82,35 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         app:layout_behavior="@string/appbar_scrolling_view_behavior"/>
+
+    <android.support.constraint.ConstraintLayout
+        android:id="@+id/price_show_layout_frag"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:animateLayoutChanges="true"
+        android:background="@drawable/price_background"
+        android:elevation="16dp"
+        android:layout_gravity="end|bottom"
+        app:layout_goneMarginBottom="16dp"
+        android:layout_marginBottom="16dp">
+
+        <TextView
+            android:id="@+id/price_show_frag"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_margin="16dp"
+            android:layout_marginStart="16.5dp"
+            android:layout_marginEnd="10dp"
+            android:drawableStart="@drawable/shopping_kart_white"
+            android:drawablePadding="10dp"
+            android:fontFamily="@font/roboto_bold"
+            android:gravity="center"
+            android:textColor="@android:color/white"
+            android:textSize="16sp"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
+    </android.support.constraint.ConstraintLayout>
 
 </android.support.design.widget.CoordinatorLayout>

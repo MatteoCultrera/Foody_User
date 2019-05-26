@@ -17,6 +17,7 @@ class Dish {
     private boolean prepared;
     private boolean available;
     private boolean editImage;
+    private OrderItem order;
 
     public Dish(){}
 
@@ -30,6 +31,7 @@ class Dish {
         prepared = false;
         editImage = false;
         available = true;
+        order = null;
     }
 
     public String getPathDB() {
@@ -116,6 +118,14 @@ class Dish {
 
     boolean isPrepared() {
         return prepared;
+    }
+
+    public OrderItem getOrderItem() {
+        return order;
+    }
+
+    public void setOrderItem(OrderItem orderItem) {
+        this.order = orderItem;
     }
 }
 

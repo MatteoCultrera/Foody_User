@@ -3,6 +3,7 @@ package com.example.foodyuser;
 
 import android.os.Bundle;
 import android.support.annotation.NonNull;
+import android.support.constraint.ConstraintLayout;
 import android.support.v4.app.Fragment;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -10,6 +11,7 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.TextView;
 
 import com.github.ybq.android.spinkit.SpinKitView;
 
@@ -26,10 +28,15 @@ public class ShowMenuFragment extends Fragment {
     private RecyclerView recyclerMenu;
     private RVAdapterShowRestaurantMenu show;
     SpinKitView loading;
+    RestaurantView father;
 
 
     public ShowMenuFragment() {
         // Required empty public constructor
+    }
+
+    public void setFather(RestaurantView father){
+        this.father = father;
     }
 
 
@@ -47,7 +54,7 @@ public class ShowMenuFragment extends Fragment {
             Log.d("MAD","Initialised on createVIew()");
             recyclerMenu.setVisibility(View.VISIBLE);
             loading.setVisibility(View.GONE);
-            show = new RVAdapterShowRestaurantMenu(cards);
+            show = new RVAdapterShowRestaurantMenu(cards, father);
             recyclerMenu.setAdapter(show);
         }else{
             recyclerMenu.setVisibility(View.GONE);
@@ -56,15 +63,15 @@ public class ShowMenuFragment extends Fragment {
         return currentView;
     }
 
+    public void dataChanged(){
+        show.notifyDataSetChanged();
+    }
+
     public void init(ArrayList<Card> cards){
-        Log.d("MAD","Called Init");
        this.cards = cards;
 
-       for(Card d: cards)
-           for (Dish i : d.getDishes())
-               Log.d("MAD","Dish "+i.getDishName()+" "+(i.getImage()==null?"has no Image":"has Image"));
 
-       RVAdapterShowRestaurantMenu show = new RVAdapterShowRestaurantMenu(cards);
+       show = new RVAdapterShowRestaurantMenu(cards, father);
        if(recyclerMenu != null){
            recyclerMenu.setVisibility(View.VISIBLE);
            loading.setVisibility(View.GONE);

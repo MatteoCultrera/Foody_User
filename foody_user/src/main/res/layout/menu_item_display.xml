@@ -82,6 +82,7 @@
     </LinearLayout>
 
     <LinearLayout
+        android:id="@+id/layout_plus_minus"
         android:layout_width="0dp"
         android:layout_height="0dp"
         app:layout_constraintStart_toEndOf="@id/guideline"
@@ -89,6 +90,7 @@
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintBottom_toTopOf="@id/separator"
         android:gravity="center"
+        android:animateLayoutChanges="true"
         >
 
         <ImageButton

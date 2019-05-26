@@ -1,8 +1,12 @@
 package com.example.foodyuser;
 
+import android.animation.LayoutTransition;
+import android.content.Intent;
+import android.content.SharedPreferences;
 import android.net.Uri;
 import android.os.Environment;
 import android.support.annotation.NonNull;
+import android.support.constraint.ConstraintLayout;
 import android.support.design.widget.TabLayout;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
@@ -12,7 +16,9 @@ import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
+import android.view.View;
 import android.widget.ImageView;
+import android.widget.TextView;
 
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.annotation.GlideOption;
@@ -32,6 +38,7 @@ import com.google.firebase.storage.StorageReference;
 
 import java.io.File;
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.List;
 
 public class RestaurantView extends AppCompatActivity {
@@ -44,21 +51,31 @@ public class RestaurantView extends AppCompatActivity {
     private Toolbar toolbar;
     private final String DIRECTORY_IMAGES = "showImages";
     private final String PROFILE_IMAGE = "profilePic.jpg";
+    private final String CARDS = "cards.json";
+    private final String ORDERS = "orders.json";
+    private SharedPreferences shared;
     private String reName, reUsername, reAddress;
     private ArrayList<Card> cards;
     private ShowMenuFragment showMenu;
     private int imageFetched;
     private int imageToFetch;
+    private TextView totalText;
+    private ConstraintLayout totalLayout;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        shared = getSharedPreferences("myPreference", MODE_PRIVATE);
         setContentView(R.layout.activity_restaurant_view);
         tabs = findViewById(R.id.htab_tabs);
         viewPager = findViewById(R.id.htab_viewpager);
         toolbar = findViewById(R.id.htab_toolbar);
         background = findViewById(R.id.htab_header);
+        totalText = findViewById(R.id.price_show_frag);
+        totalLayout = findViewById(R.id.price_show_layout_frag);
+        totalLayout.getLayoutTransition().enableTransitionType(LayoutTransition.CHANGING);
         showMenu = new ShowMenuFragment();
+        showMenu.setFather(this);
 
         setupViewPager(viewPager);
 
@@ -91,26 +108,161 @@ public class RestaurantView extends AppCompatActivity {
 
             }
         });
-
-        init();
     }
 
 
     private void init(){
-        if(storage == null)
-            setupImagesDirectory();
 
         Bundle extras = getIntent().getExtras();
         reName = extras.getString("restaurant_id","");
         reUsername = extras.getString("restaurant_name", null);
         reAddress = extras.getString("restaurant_address", null);
 
-        //Fetch Restaurant Image and save in internal storage
-        fetchRestaurant();
-        fetchMenu();
+        if(!shared.contains("selectedTime")){
+            Calendar now = Calendar.getInstance();
+            int hours = now.get(Calendar.HOUR_OF_DAY);
+            int minutes = now.get(Calendar.MINUTE);
+            minutes += 30;
+            if(minutes/60 != 0){
+                hours++;
+                minutes = minutes%60;
+            }
+
+            String minTime = String.format("%02d:%02d",hours,minutes);
+            shared.edit().putString("minTime",minTime).apply();
+            shared.edit().putString("selectedTime",minTime).apply();
+
+        }
+
+        if(storage == null){
+            setupImagesDirectory();
+            //Fetch Restaurant Image and save in internal storage
+            fetchRestaurant();
+            //Fetches the menu and automatically adds it to fragment
+            fetchMenu();
+            totalDisappear();
+        }else{
+            //Fetch Cards From Storage
+            Log.d("MAD2","new orders found");
+            cardsFromTotal();
+            updateTotal();
+        }
 
 
     }
+
+    public void cardsFromTotal(){
+        File cardFile = new File(storage, CARDS);
+        File orderFile = new File(storage, ORDERS);
+        JsonHandler handler = new JsonHandler();
+
+        cards = handler.getCards(cardFile);
+        ArrayList<OrderItem> orders = handler.getOrders(orderFile);
+
+        for(OrderItem o : orders){
+            for(Card c: cards){
+                for(Dish d: c.getDishes()){
+                    Log.d("MAD2","Dish "+d.getDishName()+" order "+o.getOrderName());
+                    if(d.getDishName().equals(o.getOrderName())){
+                        Log.d("MAD2", "Found ");
+                        d.setOrderItem(o);
+                        Log.d("MAD2", d.getDishName()+" "+d.getOrderItem().getPieces());
+                    }
+                }
+            }
+
+        }
+
+        showMenu.init(cards);
+
+    }
+
+    public void updateTotal(){
+
+        float total = 0;
+        for(Card c : cards){
+            for(Dish d : c.getDishes()){
+                if(d.getOrderItem() != null)
+                    total += d.getOrderItem().getPrice() * d.getOrderItem().getPieces();
+            }
+        }
+
+
+        if (total > 0){
+            if(totalText.getText().length() > 0)
+                setTotalText(total);
+            else
+                totalAppear(total);
+        }else{
+            totalDisappear();
+        }
+
+
+    }
+
+    private void setTotalText(float total){
+        totalText.setText(String.format("%.2f €", total));
+    }
+
+    private void totalAppear(float total){
+        totalText.setCompoundDrawablePadding(getResources().getDimensionPixelSize(R.dimen.short10));
+        totalText.setText(String.format("%.2f €", total));
+        totalLayout.setBackgroundResource(R.drawable.price_background);
+        totalLayout.setClickable(true);
+        totalLayout.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                JsonHandler handler = new JsonHandler();
+                //Save Cards To Storage
+                if(cards!=null){
+                    File file = new File(storage, CARDS);
+                    String json = handler.toJSON(cards);
+                    handler.saveStringToFile(json, file);
+                }
+                //Save Orders to Storage
+                ArrayList<OrderItem> orders = new ArrayList<>();
+                for (Card c: cards){
+                    for(Dish d : c.getDishes()){
+                        if(d.getOrderItem() != null)
+                            orders.add(d.getOrderItem());
+                    }
+                }
+
+                if(orders.size() > 0){
+                    File file = new File(storage, ORDERS);
+                    String json = handler.ordersToJSON(orders);
+                    handler.saveStringToFile(json, file);
+                }
+
+                Calendar cal = Calendar.getInstance();
+                int day = cal.get(Calendar.DAY_OF_WEEK);
+                if(day == 1) {
+                    day = 6;
+                } else
+                    day = day-2;
+                String time = thisRestaurant.getDaysTime().get(day);
+
+                Intent intent = new Intent(totalLayout.getContext(), Order.class);
+                intent.putExtra("restaurantID", reName);
+                intent.putExtra("restaurantName", reUsername);
+                intent.putExtra("restaurantAddress", reAddress);
+                intent.putExtra("restaurantTime", time);
+
+                startActivity(intent);
+
+            }
+        });
+
+    }
+
+    private void totalDisappear(){
+        totalText.setText("");
+        totalText.setCompoundDrawablePadding(0);
+        totalLayout.setBackgroundResource(R.drawable.price_background_dis);
+        totalLayout.setClickable(false);
+        totalLayout.setOnClickListener(null);
+    }
+
 
     private void setupImagesDirectory(){
 
@@ -195,6 +347,17 @@ public class RestaurantView extends AppCompatActivity {
 
                 }
                 toolbar.setTitle(thisRestaurant.getUsername());
+                toolbar.setNavigationOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        for(Card c :cards){
+                            Log.d("MAD2",c.getTitle());
+                            for(Dish d: c.getDishes()){
+                                Log.d("MAD2",String.format("\t %s ",d.getDishName())+(d.getOrderItem()==null?"none":d.getOrderItem().getPiecesString()));
+                            }
+                        }
+                    }
+                });
             }
             @Override
             public void onCancelled(@NonNull DatabaseError databaseError) {
@@ -270,6 +433,9 @@ public class RestaurantView extends AppCompatActivity {
         });
     }
 
-
-
+    @Override
+    protected void onResume() {
+        super.onResume();
+        init();
+    }
 }
