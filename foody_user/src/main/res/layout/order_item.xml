@@ -9,7 +9,6 @@
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_marginEnd="50dp"
-        android:text="Pizza Margherita"
         android:textColor="@color/primaryText"
         android:textSize="16sp"
         app:layout_constraintHorizontal_bias="0.0"
@@ -23,19 +22,20 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@id/item_name"
         android:textColor="@color/secondaryText"
-        android:text="13.50 €"
         android:textSize="16sp"
         />
 
 
     <android.support.constraint.ConstraintLayout
+        android:id="@+id/constraint_buttons"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         app:layout_constraintBottom_toBottomOf="@id/item_price"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="1.0"
         app:layout_constraintStart_toEndOf="@id/item_name"
-        app:layout_constraintTop_toTopOf="@id/item_name">
+        app:layout_constraintTop_toTopOf="@id/item_name"
+        android:animateLayoutChanges="true">
 
         <ImageButton
             android:id="@+id/item_remove_button"
@@ -54,7 +54,6 @@
             android:layout_height="wrap_content"
             android:layout_marginStart="7dp"
             android:fontFamily="@font/roboto_regular"
-            android:text="1"
             android:textColor="@color/primaryText"
             android:textSize="16sp"
             app:layout_constraintBottom_toBottomOf="parent"

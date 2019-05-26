@@ -1,5 +1,6 @@
 package com.example.foodyuser;
 
+import android.animation.LayoutTransition;
 import android.content.Context;
 import android.net.Uri;
 import android.support.annotation.NonNull;
@@ -29,10 +30,11 @@ import java.util.Locale;
 public class RVAdapterShowRestaurantMenu extends RecyclerView.Adapter<RVAdapterShowRestaurantMenu.CardViewHolder>{
 
     ArrayList<Card> cards;
+    RestaurantView grandFather;
 
-    RVAdapterShowRestaurantMenu(ArrayList<Card> cards){
+    RVAdapterShowRestaurantMenu(ArrayList<Card> cards, RestaurantView grandFather){
         this.cards = cards;
-
+        this.grandFather = grandFather;
     }
 
 
@@ -59,7 +61,7 @@ public class RVAdapterShowRestaurantMenu extends RecyclerView.Adapter<RVAdapterS
         pvh.title.setText(current.getTitle());
 
         pvh.menuDishes.removeAllViews();
-        for(Dish d: current.getDishes()){
+        for(final Dish d: current.getDishes()){
             if(d.isAvailable()){
                 final View dish = inflater.inflate(R.layout.menu_item_display, pvh.menuDishes, false);
                 final TextView title = dish.findViewById(R.id.food_title);
@@ -67,7 +69,7 @@ public class RVAdapterShowRestaurantMenu extends RecyclerView.Adapter<RVAdapterS
                 final TextView price = dish.findViewById(R.id.price);
                 final ImageView image = dish.findViewById(R.id.food_image);
                 ImageButton plus = dish.findViewById(R.id.button_plus);
-                ImageButton minus = dish.findViewById(R.id.button_minus);
+                final ImageButton minus = dish.findViewById(R.id.button_minus);
                 TextView orderQuantity = dish.findViewById(R.id.order_quantity);
 
                 title.setText(d.getDishName());
@@ -92,10 +94,84 @@ public class RVAdapterShowRestaurantMenu extends RecyclerView.Adapter<RVAdapterS
                             .into(image);
                 }
 
+                plus.setOnClickListener(new plusClick(d,minus, orderQuantity));
+                minus.setOnClickListener(new minusClick(d, minus, orderQuantity));
+
+                if(d.getOrderItem() == null){
+                    plus.setVisibility(View.VISIBLE);
+                    minus.setVisibility(View.GONE);
+                    orderQuantity.setVisibility(View.GONE);
+                }else{
+                    plus.setVisibility(View.VISIBLE);
+                    minus.setVisibility(View.VISIBLE);
+                    orderQuantity.setVisibility(View.VISIBLE);
+                    orderQuantity.setText(d.getOrderItem().getPiecesString());
+                }
+
+                LinearLayout layout = dish.findViewById(R.id.layout_plus_minus);
+                layout.getLayoutTransition().enableTransitionType(LayoutTransition.CHANGING);
+
                 pvh.menuDishes.addView(dish);
             }
         }
 
+    }
+
+
+    private class plusClick implements View.OnClickListener{
+
+        Dish d;
+        ImageButton minus;
+        TextView quantity;
+
+        public plusClick(Dish d, ImageButton minus, TextView quantity){
+            this.d = d;
+            this.minus = minus;
+            this.quantity = quantity;
+        }
+
+        @Override
+        public void onClick(View v) {
+            if(d.getOrderItem() == null){
+                d.setOrderItem(new OrderItem(1, d.getDishName(), d.getPrice()));
+                minus.setVisibility(View.VISIBLE);
+                quantity.setVisibility(View.VISIBLE);
+                quantity.setText("1");
+            }else{
+                OrderItem item = d.getOrderItem();
+                item.plus();
+                quantity.setText(item.getPiecesString());
+            }
+            grandFather.updateTotal();
+        }
+    }
+
+    private class minusClick implements View.OnClickListener{
+
+        Dish d;
+        ImageButton minus;
+        TextView quantity;
+
+        public minusClick(Dish d, ImageButton minus, TextView quantity){
+            this.d = d;
+            this.minus = minus;
+            this.quantity = quantity;
+        }
+
+        @Override
+        public void onClick(View v) {
+            if(minus.getVisibility() == View.GONE)
+                return;
+            if(d.getOrderItem().getPieces() == 1){
+                d.setOrderItem(null);
+                minus.setVisibility(View.GONE);
+                quantity.setVisibility(View.GONE);
+            }else{
+                d.getOrderItem().minus();
+                quantity.setText(d.getOrderItem().getPiecesString());
+            }
+            grandFather.updateTotal();
+        }
     }
 
     @Override
