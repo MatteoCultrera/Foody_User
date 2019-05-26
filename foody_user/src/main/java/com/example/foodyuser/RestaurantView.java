@@ -18,6 +18,7 @@ import com.bumptech.glide.Glide;
 import com.bumptech.glide.annotation.GlideOption;
 import com.bumptech.glide.request.RequestOptions;
 import com.bumptech.glide.signature.ObjectKey;
+import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
@@ -45,6 +46,9 @@ public class RestaurantView extends AppCompatActivity {
     private final String PROFILE_IMAGE = "profilePic.jpg";
     private String reName, reUsername, reAddress;
     private ArrayList<Card> cards;
+    private ShowMenuFragment showMenu;
+    private int imageFetched;
+    private int imageToFetch;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -54,8 +58,11 @@ public class RestaurantView extends AppCompatActivity {
         viewPager = findViewById(R.id.htab_viewpager);
         toolbar = findViewById(R.id.htab_toolbar);
         background = findViewById(R.id.htab_header);
+        showMenu = new ShowMenuFragment();
 
         setupViewPager(viewPager);
+
+        viewPager.setOffscreenPageLimit(3);
 
         tabs.post(new Runnable() {
             @Override
@@ -98,11 +105,9 @@ public class RestaurantView extends AppCompatActivity {
         reUsername = extras.getString("restaurant_name", null);
         reAddress = extras.getString("restaurant_address", null);
 
-
-        Log.d("MAD",storage.getAbsolutePath());
         //Fetch Restaurant Image and save in internal storage
         fetchRestaurant();
-
+        fetchMenu();
 
 
     }
@@ -118,9 +123,10 @@ public class RestaurantView extends AppCompatActivity {
 
     private void setupViewPager(ViewPager viewPager) {
 
+
         ViewPagerAdapter adapter = new ViewPagerAdapter(
                 getSupportFragmentManager());
-        adapter.addFrag(new UserFragment(), getResources().getString(R.string.menu));
+        adapter.addFrag(showMenu, getResources().getString(R.string.menu));
         adapter.addFrag(new UserFragment(), getResources().getString(R.string.reviews));
         adapter.addFrag(new UserFragment(), getResources().getString(R.string.info));
         viewPager.setAdapter(adapter);
@@ -198,33 +204,64 @@ public class RestaurantView extends AppCompatActivity {
     }
 
     private void fetchMenu(){
-        DatabaseReference database = FirebaseDatabase.getInstance().getReference();
+        imageFetched = 0;
+        imageToFetch = 0;
+        final DatabaseReference database = FirebaseDatabase.getInstance().getReference();
         DatabaseReference ref = database.child("restaurantsMenu").child(reName);
         ref.addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                int i = 0;
                 cards = new ArrayList<>();
                 for (DataSnapshot ds : dataSnapshot.getChildren()) {
                     for (DataSnapshot ds1 : ds.getChildren()) {
                         Card card = ds1.getValue(Card.class);
-                        int i = 0;
                         for(final Dish d : card.getDishes()){
-                            final int dnum = i;
-                            if(d.getPathDB()!=null){
-                                StorageReference mStorageRef = FirebaseStorage.getInstance().getReference();
-                                final File image = new File(storage, "dish"+dnum+".jpg");
-                                mStorageRef.child(d.getPathDB()).getFile(image);
-                                i++;
-                            }
+                            if(d.getPathDB()!=null)
+                                imageToFetch++;
                         }
-
                         cards.add(card);
                     }
                 }
-                /*
-                menuAdapter.setProperties(cards, orders);
-                menu.setAdapter(menuAdapter);
-                */
+
+                if(imageToFetch == 0)
+                    showMenu.init(cards);
+                else{
+                    int pos = 0;
+                    for(Card c : cards){
+                        for(final Dish d: c.getDishes()){
+                            if(d.getPathDB()!=null){
+                                Log.d("MAD","Saving image");
+                                StorageReference mStorageRef = FirebaseStorage.getInstance().getReference();
+                                final File currentimage = new File(storage, "dish"+pos+".jpg");
+                                mStorageRef.child(d.getPathDB()).getFile(currentimage).addOnSuccessListener(new OnSuccessListener<FileDownloadTask.TaskSnapshot>() {
+                                    @Override
+                                    public void onSuccess(FileDownloadTask.TaskSnapshot taskSnapshot) {
+                                        Log.d("MAD", "Saved Image "+imageToFetch+" "+imageFetched);
+                                        d.setImage(Uri.fromFile(currentimage));
+                                        imageFetched++;
+                                        if(imageFetched == imageToFetch){
+                                            Log.d("MAD","called init");
+                                            showMenu.init(cards);
+                                        }
+                                    }
+                                }).addOnFailureListener(new OnFailureListener() {
+                                    @Override
+                                    public void onFailure(@NonNull Exception e) {
+                                        imageFetched++;
+                                        d.setImage(null);
+                                        if(imageFetched == imageToFetch){
+                                            Log.d("MAD","called init");
+                                            showMenu.init(cards);
+                                        }
+                                    }
+                                });
+                            }
+                            pos++;
+                        }
+                    }
+                }
+
             }
             @Override
             public void onCancelled(@NonNull DatabaseError databaseError) {
@@ -232,5 +269,7 @@ public class RestaurantView extends AppCompatActivity {
             }
         });
     }
+
+
 
 }
