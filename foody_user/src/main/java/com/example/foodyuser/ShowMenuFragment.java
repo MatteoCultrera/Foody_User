@@ -2,6 +2,7 @@ package com.example.foodyuser;
 
 
 import android.os.Bundle;
+import android.support.annotation.NonNull;
 import android.support.v4.app.Fragment;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -33,7 +34,7 @@ public class ShowMenuFragment extends Fragment {
 
 
     @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container,
+    public View onCreateView(@NonNull  LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
 
@@ -45,7 +46,7 @@ public class ShowMenuFragment extends Fragment {
         if(cards!=null){
             Log.d("MAD","Initialised on createVIew()");
             recyclerMenu.setVisibility(View.VISIBLE);
-            loading.setVisibility(View.VISIBLE);
+            loading.setVisibility(View.GONE);
             show = new RVAdapterShowRestaurantMenu(cards);
             recyclerMenu.setAdapter(show);
         }else{
