@@ -42,6 +42,8 @@ import java.util.Objects;
 public class Order extends AppCompatActivity {
 
     private ArrayList<OrderItem> orders, copyOrders;
+    private final String ORDERS = "orders.json";
+    private final String DIRECTORY_IMAGES = "showImages";
     private RVAdapterOrder adapter;
     private RecyclerView ordersList;
     private TextView total;
@@ -84,8 +86,9 @@ public class Order extends AppCompatActivity {
         deleteButton = findViewById(R.id.delete_button);
         pickTime = findViewById(R.id.chooseTime);
         JsonHandler handler =  new JsonHandler();
-        final File directory = getExternalFilesDir(Environment.DIRECTORY_DOCUMENTS);
-        File orderFile = new File(directory, getString(R.string.order_file_name));
+        File root = getExternalFilesDir(Environment.DIRECTORY_PICTURES);
+        final File directory = new File(root.getPath()+File.separator+DIRECTORY_IMAGES);
+        File orderFile = new File(directory, ORDERS);
         Bundle extras = getIntent().getExtras();
         final String restID = extras.getString("restaurantID","");
         final String restName = extras.getString("restaurantName", "");
@@ -321,8 +324,9 @@ public class Order extends AppCompatActivity {
 
     public void closeActivity(){
         if(orders.size() == 0){
-            File directory = getExternalFilesDir(Environment.DIRECTORY_DOCUMENTS);
-            File orderFile = new File(directory, getString(R.string.order_file_name));
+            File root = getExternalFilesDir(Environment.DIRECTORY_PICTURES);
+            final File directory = new File(root.getPath()+File.separator+DIRECTORY_IMAGES);
+            File orderFile = new File(directory, ORDERS);
             if(orderFile.exists())
                 orderFile.delete();
         }
@@ -335,8 +339,9 @@ public class Order extends AppCompatActivity {
         JsonHandler handler = new JsonHandler();
         if(orders!=null && orders.size() > 0){
             String jsonOrders = handler.ordersToJSON(orders);
-            File directory = getExternalFilesDir(Environment.DIRECTORY_DOCUMENTS);
-            File toSave = new File(directory, getString(R.string.order_file_name));
+            File root = getExternalFilesDir(Environment.DIRECTORY_PICTURES);
+            final File directory = new File(root.getPath()+File.separator+DIRECTORY_IMAGES);
+            File toSave = new File(directory, ORDERS);
             handler.saveStringToFile(jsonOrders, toSave);
         }
     }
