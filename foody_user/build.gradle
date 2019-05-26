@@ -59,5 +59,8 @@ dependencies {
     implementation 'com.github.bumptech.glide:glide:4.8.0'
 
     implementation 'com.google.android.libraries.places:places:1.1.0'
+
+    //Loading Animations
+    implementation 'com.github.ybq:Android-SpinKit:1.2.0'
 }
 apply plugin: 'com.google.gms.google-services'
