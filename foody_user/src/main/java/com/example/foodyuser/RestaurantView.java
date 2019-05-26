@@ -57,9 +57,10 @@ public class RestaurantView extends AppCompatActivity {
     private String reName, reUsername, reAddress;
     private ArrayList<Card> cards;
     private ShowMenuFragment showMenu;
+    private ShowInfoFragment showInfo;
     private int imageFetched;
     private int imageToFetch;
-    private TextView totalText;
+    private TextView totalText, price;
     private ConstraintLayout totalLayout;
 
     @Override
@@ -73,8 +74,10 @@ public class RestaurantView extends AppCompatActivity {
         background = findViewById(R.id.htab_header);
         totalText = findViewById(R.id.price_show_frag);
         totalLayout = findViewById(R.id.price_show_layout_frag);
+        price = findViewById(R.id.restaurant_del_price_frag);
         totalLayout.getLayoutTransition().enableTransitionType(LayoutTransition.CHANGING);
         showMenu = new ShowMenuFragment();
+        showInfo = new ShowInfoFragment();
         showMenu.setFather(this);
 
         setupViewPager(viewPager);
@@ -94,6 +97,10 @@ public class RestaurantView extends AppCompatActivity {
                 viewPager.setCurrentItem(tab.getPosition());
                 switch (tab.getPosition()){
                     case 0:
+                        totalLayout.setVisibility(View.VISIBLE);
+                        break;
+                    default:
+                        totalLayout.setVisibility(View.GONE);
                         break;
                 }
             }
@@ -141,11 +148,17 @@ public class RestaurantView extends AppCompatActivity {
             //Fetches the menu and automatically adds it to fragment
             fetchMenu();
             totalDisappear();
+
+
         }else{
             //Fetch Cards From Storage
-            Log.d("MAD2","new orders found");
+            if (thisRestaurant == null)
+                fetchRestaurant();
+            else
+                price.setText(thisRestaurant.getDeliveryPriceString());
             cardsFromTotal();
             updateTotal();
+
         }
 
 
@@ -263,7 +276,6 @@ public class RestaurantView extends AppCompatActivity {
         totalLayout.setOnClickListener(null);
     }
 
-
     private void setupImagesDirectory(){
 
         File root = getExternalFilesDir(Environment.DIRECTORY_PICTURES);
@@ -280,10 +292,9 @@ public class RestaurantView extends AppCompatActivity {
                 getSupportFragmentManager());
         adapter.addFrag(showMenu, getResources().getString(R.string.menu));
         adapter.addFrag(new UserFragment(), getResources().getString(R.string.reviews));
-        adapter.addFrag(new UserFragment(), getResources().getString(R.string.info));
+        adapter.addFrag(showInfo, getResources().getString(R.string.info));
         viewPager.setAdapter(adapter);
     }
-
 
     private static class ViewPagerAdapter extends FragmentPagerAdapter {
         private final List<Fragment> mFragmentList = new ArrayList<>();
@@ -347,6 +358,7 @@ public class RestaurantView extends AppCompatActivity {
 
                 }
                 toolbar.setTitle(thisRestaurant.getUsername());
+                price.setText(thisRestaurant.getDeliveryPriceString());
                 toolbar.setNavigationOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
