@@ -14,15 +14,20 @@ public class Restaurant {
     private float distance;
     private String imagePath;
     private boolean open;
+    private String numberPhone;
+    private String email;
 
     public Restaurant() {}
 
-    public Restaurant(String name, ArrayList<String> cuisines, int deliveryPrice, float distance, String imagePath){
+    public Restaurant(String name, ArrayList<String> cuisines, int deliveryPrice, float distance, String imagePath,
+                      String numberPhone, String email){
         this.username = name;
         this.cuisines = cuisines;
         this.deliveryPrice = deliveryPrice;
         this.distance = distance;
         this.imagePath = imagePath;
+        this.numberPhone = numberPhone;
+        this.email = email;
     }
 
     public boolean isOpen() {
@@ -126,5 +131,21 @@ public class Restaurant {
 
     public void setUid(String uid) {
         this.uid = uid;
+    }
+
+    public String getEmail() {
+        return email;
+    }
+
+    public void setEmail(String email) {
+        this.email = email;
+    }
+
+    public String getNumberPhone() {
+        return numberPhone;
+    }
+
+    public void setNumberPhone(String numberPhone) {
+        this.numberPhone = numberPhone;
     }
 }

@@ -2,6 +2,7 @@ package com.example.foodybiker;
 
 import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
@@ -17,6 +18,7 @@ import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.Toast;
 
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
@@ -25,6 +27,14 @@ import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
+
+import java.io.IOException;
+import java.net.InetSocketAddress;
+import java.net.Socket;
+import java.net.SocketAddress;
+import java.util.concurrent.ExecutionException;
+
+import static android.os.SystemClock.sleep;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -39,10 +49,65 @@ public class MainActivity extends AppCompatActivity {
     private SharedPreferences sharedPref;
 
     private static final int PERMISSIONS_REQUEST_ACCESS_FINE_LOCATION = 6;
+/*
+    class networkCheck extends AsyncTask<Void, Void, Boolean> {
+
+        @Override
+        protected void onPreExecute() {
+            super.onPreExecute();
+        }
+
+        // TCP/HTTP/DNS (depending on the port, 53=DNS, 80=HTTP, etc.)
+        private boolean isOnline() {
+            try {
+                int timeoutMs = 1500;
+                Socket sock = new Socket();
+                SocketAddress sockaddr = new InetSocketAddress("8.8.8.8", 53);
+
+                sock.connect(sockaddr, timeoutMs);
+                sock.close();
+
+                return true;
+            } catch (IOException e) {
+                return false;
+            }
+        }
+
+        @Override
+        protected Boolean doInBackground(Void... voids) {
+            return isOnline();
+        }
+
+        @Override
+        protected void onPostExecute(Boolean aBoolean) {
+            super.onPostExecute(aBoolean);
+            if(aBoolean) {
+                Toast.makeText(getApplicationContext(), "INTERNET", Toast.LENGTH_LONG).show();
+            } else {
+                Toast.makeText(getApplicationContext(), "No internet connection", Toast.LENGTH_LONG).show();
+            }
+        }
+    }
+*/
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        /*
+        Boolean bool = true;
+        try {
+            bool = new networkCheck().execute().get();
+        } catch (ExecutionException e) {
+            e.printStackTrace();
+        } catch (InterruptedException i) {
+            i.printStackTrace();
+        }
+        if(!bool) {
+            Log.d("MAD", "false bool: " + bool);
+        } else {
+            Log.d("MAD", "true bool: " + bool);
+        }
+        */
         setContentView(R.layout.bottom_bar);
         sharedPref = getSharedPreferences("myPreference", MODE_PRIVATE);
         if (savedInstanceState != null) {
