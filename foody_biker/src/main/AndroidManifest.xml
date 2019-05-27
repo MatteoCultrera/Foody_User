@@ -50,8 +50,7 @@
             android:screenOrientation="portrait">
         </activity>
 
-        <activity
-            android:name=".NoInternetActivity"
+        <activity android:name="com.example.foody_library.NoInternetActivity"
             android:screenOrientation="portrait">
         </activity>
 

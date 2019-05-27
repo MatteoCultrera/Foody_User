@@ -1,4 +1,4 @@
-package com.example.foodybiker;
+package com.example.foody_library;
 
 import android.os.Bundle;
 import android.support.annotation.Nullable;

@@ -1,7 +1,6 @@
-package com.example.foodybiker;
+package com.example.foody_library;
 
 import android.os.AsyncTask;
-import android.widget.Toast;
 
 import java.io.IOException;
 import java.net.InetSocketAddress;
