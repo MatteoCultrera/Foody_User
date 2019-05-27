@@ -1,5 +1,6 @@
 package com.example.foodybiker;
 
+import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.os.AsyncTask;
@@ -28,13 +29,7 @@ import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 
-import java.io.IOException;
-import java.net.InetSocketAddress;
-import java.net.Socket;
-import java.net.SocketAddress;
 import java.util.concurrent.ExecutionException;
-
-import static android.os.SystemClock.sleep;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -47,92 +42,55 @@ public class MainActivity extends AppCompatActivity {
     private final FragmentManager fm = getSupportFragmentManager();
     private Fragment active;
     private SharedPreferences sharedPref;
+    private Boolean bool = true;
 
     private static final int PERMISSIONS_REQUEST_ACCESS_FINE_LOCATION = 6;
-/*
-    class networkCheck extends AsyncTask<Void, Void, Boolean> {
-
-        @Override
-        protected void onPreExecute() {
-            super.onPreExecute();
-        }
-
-        // TCP/HTTP/DNS (depending on the port, 53=DNS, 80=HTTP, etc.)
-        private boolean isOnline() {
-            try {
-                int timeoutMs = 1500;
-                Socket sock = new Socket();
-                SocketAddress sockaddr = new InetSocketAddress("8.8.8.8", 53);
-
-                sock.connect(sockaddr, timeoutMs);
-                sock.close();
-
-                return true;
-            } catch (IOException e) {
-                return false;
-            }
-        }
-
-        @Override
-        protected Boolean doInBackground(Void... voids) {
-            return isOnline();
-        }
-
-        @Override
-        protected void onPostExecute(Boolean aBoolean) {
-            super.onPostExecute(aBoolean);
-            if(aBoolean) {
-                Toast.makeText(getApplicationContext(), "INTERNET", Toast.LENGTH_LONG).show();
-            } else {
-                Toast.makeText(getApplicationContext(), "No internet connection", Toast.LENGTH_LONG).show();
-            }
-        }
-    }
-*/
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        /*
-        Boolean bool = true;
+
         try {
-            bool = new networkCheck().execute().get();
+            bool = new NetworkCheck().execute().get();
         } catch (ExecutionException e) {
             e.printStackTrace();
         } catch (InterruptedException i) {
             i.printStackTrace();
         }
+
         if(!bool) {
-            Log.d("MAD", "false bool: " + bool);
+            //No Internet
+            Intent i = new Intent(getApplicationContext(), NoInternetActivity.class);
+            startActivity(i);
+            finish();
         } else {
-            Log.d("MAD", "true bool: " + bool);
-        }
-        */
-        setContentView(R.layout.bottom_bar);
-        sharedPref = getSharedPreferences("myPreference", MODE_PRIVATE);
-        if (savedInstanceState != null) {
-            String lastFragment = savedInstanceState.getString("lastFragment", null);
-            if (lastFragment != null) {
-                if (lastFragment.compareTo("map") == 0) {
-                    active = map;
-                } else if (lastFragment.compareTo("reservations") == 0) {
-                    active = reservations;
-                } else if (lastFragment.compareTo("user") == 0) {
-                    active = user;
+            //here there is an internet connection
+            setContentView(R.layout.bottom_bar);
+            sharedPref = getSharedPreferences("myPreference", MODE_PRIVATE);
+            if (savedInstanceState != null) {
+                String lastFragment = savedInstanceState.getString("lastFragment", null);
+                if (lastFragment != null) {
+                    if (lastFragment.compareTo("map") == 0) {
+                        active = map;
+                    } else if (lastFragment.compareTo("reservations") == 0) {
+                        active = reservations;
+                    } else if (lastFragment.compareTo("user") == 0) {
+                        active = user;
+                    }
                 }
+                init();
+                return;
             }
+            map = new MapFragment();
+            ((MapFragment) map).setFather(this);
+            reservations = new ReservationFragment();
+            ((ReservationFragment) reservations).setFather(this);
+            user = new UserFragment();
+            fm.beginTransaction().add(R.id.mainFrame, user, "3").hide(user).commit();
+            fm.beginTransaction().add(R.id.mainFrame, reservations, "2").hide(reservations).commit();
+            fm.beginTransaction().add(R.id.mainFrame, map, "1").show(map).commit();
             init();
-            return;
         }
-        map = new MapFragment();
-        ((MapFragment) map).setFather(this);
-        reservations = new ReservationFragment();
-        ((ReservationFragment) reservations).setFather(this);
-        user = new UserFragment();
-        fm.beginTransaction().add(R.id.mainFrame, user, "3").hide(user).commit();
-        fm.beginTransaction().add(R.id.mainFrame, reservations, "2").hide(reservations).commit();
-        fm.beginTransaction().add(R.id.mainFrame, map, "1").show(map).commit();
-        init();
     }
 
     @Override
@@ -305,11 +263,13 @@ public class MainActivity extends AppCompatActivity {
     @Override
     protected void onPause() {
         super.onPause();
+
         if(notificationBadgeTwo.getVisibility() == View.VISIBLE){
             sharedPref.edit().putBoolean("hasNotification", true).apply();
         }else{
             sharedPref.edit().putBoolean("hasNotification", false).apply();
         }
+
     }
 
     public void notification() {
