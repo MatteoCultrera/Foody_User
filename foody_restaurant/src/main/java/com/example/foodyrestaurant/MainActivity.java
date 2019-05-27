@@ -1,5 +1,6 @@
 package com.example.foodyrestaurant;
 
+import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
@@ -15,6 +16,8 @@ import android.view.LayoutInflater;
 import android.view.MenuItem;
 import android.view.View;
 
+import com.example.foody_library.NetworkCheck;
+import com.example.foody_library.NoInternetActivity;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.ChildEventListener;
@@ -22,6 +25,8 @@ import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
+
+import java.util.concurrent.ExecutionException;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -35,11 +40,28 @@ public class MainActivity extends AppCompatActivity {
     private final FragmentManager fm = getSupportFragmentManager();
     private Fragment active;
     private SharedPreferences sharedPref;
+    private Boolean bool = true;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         setTheme(R.style.AppTheme);
         super.onCreate(savedInstanceState);
+
+        try {
+            bool = new NetworkCheck().execute().get();
+        } catch (ExecutionException e) {
+            e.printStackTrace();
+        } catch (InterruptedException i) {
+            i.printStackTrace();
+        }
+
+        if(!bool) {
+            //No Internet
+            Intent i = new Intent(getApplicationContext(), NoInternetActivity.class);
+            startActivity(i);
+            finish();
+        }
+        //here there is an internet connection
         sharedPref = getSharedPreferences("myPreference", MODE_PRIVATE);
         setContentView(R.layout.bottom_bar);
         if (savedInstanceState != null) {
