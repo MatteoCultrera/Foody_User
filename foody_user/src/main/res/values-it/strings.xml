@@ -3,6 +3,8 @@
     <string name="app_name">Foody</string>
 
     <string name="foody_level">Foody Principiante</string>
+
+    <string name="filters_string">Filtri</string>
     <string name="okButton">Ok</string>
     <string name="edit">Modifica %1$s</string>
     <string name="discover">Esplora</string>
@@ -27,7 +29,7 @@
     <string name="dialog_cuisine">Filtra per tipo di cucina</string>
     <string name="your_order">Il Tuo Ordine</string>
     <string name="total">Totale:</string>
-    <string name="delete_filter">Azzera filtri</string>
+    <string name="delete_filter">Azzera</string>
 
     <string name="place_order">CONFERMA ORDINE</string>
     <string name="your_reservation">I tuoi ordini</string>
@@ -50,5 +52,6 @@
     <string name="menu">Menu</string>
     <string name="reviews">Recensioni</string>
     <string name="info">Info</string>
+
 
 </resources>

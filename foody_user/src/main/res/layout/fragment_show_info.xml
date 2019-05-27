@@ -9,19 +9,17 @@
 
         <LinearLayout
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
+            android:layout_height="match_parent"
             android:orientation="vertical">
 
             <com.github.ybq.android.spinkit.SpinKitView
-                xmlns:app="http://schemas.android.com/apk/res-auto"
                 android:id="@+id/spin_kit_info"
-                style="@style/SpinKitView.Large.WanderingCubes"
+                style="@style/SpinKitView.Large.CubeGrid"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_gravity="center"
                 app:SpinKit_Color="@color/colorAccent"
-                android:layout_marginTop="100dp"
-                android:layout_marginBottom="80dp"
+                android:layout_marginTop="150dp"
                 />
 
             <LinearLayout

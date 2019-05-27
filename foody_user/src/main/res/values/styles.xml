@@ -26,7 +26,7 @@
         <item name="android:windowNoTitle">true</item>
     </style>
 
-    <style name="AppCompatAlertDialogStyle" parent="Theme.MaterialComponents.Light.Dialog.Alert">
+    <style name="AppCompatAlertDialogStyle" parent="Theme.AppCompat.Light.Dialog.Alert">
         <item name="colorAccent">@color/colorAccent</item>
         <item name="android:buttonBarNegativeButtonStyle">@style/ButtonColor</item>
         <item name="android:buttonBarPositiveButtonStyle">@style/ButtonColor</item>
@@ -37,10 +37,11 @@
         <item name="android:windowTitleSize">20dp</item>
     </style>
 
-    <style name="ButtonColor" parent="Widget.MaterialComponents.Button.TextButton">
+    <style name="ButtonColor" parent="Widget.AppCompat.Button.Borderless">
+        <item name="android:background">@android:color/transparent</item>
+        <item name="android:backgroundTint">@android:color/transparent</item>
         <item name="android:textColor">@color/colorPrimaryDark</item>
         <item name="android:fontFamily">@font/roboto_bold</item>
-        <item name="android:background">#FFFFFF</item>
         <item name="android:letterSpacing">-0.009</item>
         <item name="android:colorAccent">@android:color/transparent</item>
         <item name="android:textSize">14sp</item>
@@ -48,8 +49,10 @@
         <item name="android:layout_width">wrap_content</item>
         <item name="android:layout_height">wrap_content</item>
         <item name="android:padding">0dp</item>
-        <item name="android:layout_gravity">right</item>
+        <item name="android:shadowColor">@android:color/transparent</item>
     </style>
+
+
 
     <style name="Widget.PrayerTimes.FABlikeButton" parent="@style/Widget.MaterialComponents.Button">
         <item name="android:fontFamily">@font/roboto</item>
