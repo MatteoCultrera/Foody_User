@@ -16,6 +16,8 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.bumptech.glide.Glide;
+import com.bumptech.glide.request.RequestOptions;
+import com.bumptech.glide.signature.ObjectKey;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
@@ -44,23 +46,22 @@ public class RVAdapterRestaurants  extends RecyclerView.Adapter<RVAdapterRestaur
     @Override
     public void onBindViewHolder(@NonNull final CardViewHolder cardViewHolder, final int i) {
 
+        final Restaurant currentRes = restaurants.get(i);
+
         cardViewHolder.restaurantName.setText(restaurants.get(i).getUsername());
         cardViewHolder.restaurantDeliveryPrice.setText(restaurants.get(i).getDeliveryPriceString());
         cardViewHolder.restaurantDistance.setText(restaurants.get(i).getDistanceString());
-        StorageReference mStorageRef = FirebaseStorage.getInstance().getReference();
-        if (restaurants.get(i).getImagePath()!=null){
-            if(restaurants.get(i).getImagePath().length() > 0)
-                mStorageRef.child(restaurants.get(i).getImagePath()).getDownloadUrl()
-                        .addOnSuccessListener(new OnSuccessListener<Uri>() {
-                            @Override
-                            public void onSuccess(Uri uri) {
-                                Glide
-                                        .with(cardViewHolder.restaurantBackground.getContext())
-                                        .load(uri)
-                                        .into(cardViewHolder.restaurantBackground);
-                            }
-                        });
-        }
+        File imageFile = new File(currentRes.getImagePath());
+        RequestOptions options = new RequestOptions();
+        options.signature(new ObjectKey(currentRes.getImagePath()+" "+imageFile.lastModified()));
+
+        Glide
+                .with(cardViewHolder.card)
+                .setDefaultRequestOptions(options)
+                .load(currentRes.getImagePath())
+                .into(cardViewHolder.restaurantBackground);
+
+
         if (restaurants.get(i).isOpen()) {
             cardViewHolder.restaurantDescription.setText(restaurants.get(i).getKitchensString());
             Glide
@@ -85,15 +86,15 @@ public class RVAdapterRestaurants  extends RecyclerView.Adapter<RVAdapterRestaur
                     if(shared.contains("selectedTime"))
                         shared.edit().remove("selectedTime").apply();
 
+                    Log.d("MADPATH",""+currentRes.getImagePath());
+
                     //Delete directory images RestaurantView
                     File root = cardViewHolder.card.getContext().getExternalFilesDir(Environment.DIRECTORY_PICTURES);
                     File dir = new File(root.getPath()+File.separator+DIRECTORY_IMAGES);
-                    Log.d("MAD",dir.getPath());
                     if(dir.exists()){
                         for(File child: dir.listFiles())
                             child.delete();
                         dir.delete();
-                        Log.d("MAD","Deleted DIR");
                     }
 
                     //Start the Intent

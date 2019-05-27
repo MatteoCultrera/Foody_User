@@ -58,10 +58,12 @@ public class RestaurantView extends AppCompatActivity {
     private ArrayList<Card> cards;
     private ShowMenuFragment showMenu;
     private ShowInfoFragment showInfo;
+    private ShowReviewFragment showReview;
     private int imageFetched;
     private int imageToFetch;
     private TextView totalText, price;
     private ConstraintLayout totalLayout;
+    private final String RESTAURANT_IMAGES = "RestaurantImages";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -78,6 +80,7 @@ public class RestaurantView extends AppCompatActivity {
         totalLayout.getLayoutTransition().enableTransitionType(LayoutTransition.CHANGING);
         showMenu = new ShowMenuFragment();
         showInfo = new ShowInfoFragment();
+        showReview = new ShowReviewFragment();
         showMenu.setFather(this);
 
         setupViewPager(viewPager);
@@ -90,6 +93,7 @@ public class RestaurantView extends AppCompatActivity {
                 tabs.setupWithViewPager(viewPager);
             }
         });
+
 
         tabs.addOnTabSelectedListener(new TabLayout.OnTabSelectedListener() {
             @Override
@@ -293,7 +297,7 @@ public class RestaurantView extends AppCompatActivity {
         ViewPagerAdapter adapter = new ViewPagerAdapter(
                 getSupportFragmentManager());
         adapter.addFrag(showMenu, getResources().getString(R.string.menu));
-        adapter.addFrag(new UserFragment(), getResources().getString(R.string.reviews));
+        adapter.addFrag(showReview, getResources().getString(R.string.reviews));
         adapter.addFrag(showInfo, getResources().getString(R.string.info));
         viewPager.setAdapter(adapter);
     }
@@ -342,24 +346,26 @@ public class RestaurantView extends AppCompatActivity {
                     //cuisines.setText(thisRestaurant.getKitchensString());
                     //deliveryPrice.setText(thisRestaurant.getDeliveryPriceString());
                     //distance.setText(thisRestaurant.getDistanceString());
-                    StorageReference mStorageRef = FirebaseStorage.getInstance().getReference();
-                    final File image = new File(storage, PROFILE_IMAGE);
-                    mStorageRef.child(thisRestaurant.getImagePath()).getFile(image).addOnSuccessListener(new OnSuccessListener<FileDownloadTask.TaskSnapshot>() {
-                        @Override
-                        public void onSuccess(FileDownloadTask.TaskSnapshot taskSnapshot) {
-                            thisRestaurant.setImagePath(image.getPath());
-                            RequestOptions options = new RequestOptions();
-                            options.signature(new ObjectKey(image.getName()+image.lastModified()));
-                            Glide
-                                    .with(getApplicationContext())
-                                    .setDefaultRequestOptions(options)
-                                    .load(thisRestaurant.getImagePath())
-                                    .into(background);
-                        }
-                    });
+                    thisRestaurant.setUid(dataSnapshot.getKey());
+                    File root = getExternalFilesDir(Environment.DIRECTORY_PICTURES);
+                    File dir = new File(root.getPath()+File.separator+RESTAURANT_IMAGES);
+                    thisRestaurant.setImagePath(dir.getPath()+File.separator+thisRestaurant.getUid()+".jpg");
+                    File imageFile = new File(thisRestaurant.getImagePath());
+                    RequestOptions options = new RequestOptions();
+                    options.signature(new ObjectKey(thisRestaurant.getImagePath()+" "+imageFile.lastModified()));
+
+                    if(thisRestaurant.getImagePath()!=null){
+                        Glide
+                                .with(toolbar.getContext())
+                                .setDefaultRequestOptions(options)
+                                .load(thisRestaurant.getImagePath())
+                                .into(background);
+                    }
+
 
                 }
                 toolbar.setTitle(thisRestaurant.getUsername());
+                Log.d("VANGOGH",""+thisRestaurant.getUid());
                 showInfo.init(thisRestaurant);
                 price.setText(thisRestaurant.getDeliveryPriceString());
                 toolbar.setNavigationOnClickListener(new View.OnClickListener() {

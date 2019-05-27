@@ -54,7 +54,7 @@ public class ShowInfoFragment extends Fragment {
         if(showingRestaurant == null){
             loading.setVisibility(View.VISIBLE);
             scroll.setVisibility(View.GONE);
-        }else {
+        }else{
             loading.setVisibility(View.GONE);
             scroll.setVisibility(View.VISIBLE);
             setInterface();
