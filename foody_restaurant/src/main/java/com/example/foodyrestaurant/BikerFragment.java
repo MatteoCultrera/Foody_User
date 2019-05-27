@@ -255,8 +255,8 @@ public class BikerFragment extends Fragment {
     }
 
     @Override
-    public void onDestroy() {
-        super.onDestroy();
+    public void onStop() {
+        super.onStop();
         final File storageImage = getActivity().getExternalFilesDir(Environment.DIRECTORY_PICTURES);
         for(int i = 0; i < reservationAcceptedList.size(); i++){
             if(reservationAcceptedList.get(i).getBiker() != null){
@@ -268,6 +268,7 @@ public class BikerFragment extends Fragment {
             }
         }
     }
+
 
     public void bikerAccepted(String reservationID, String bikerID){
         int i;

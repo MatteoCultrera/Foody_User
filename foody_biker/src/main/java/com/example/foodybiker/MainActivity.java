@@ -65,34 +65,33 @@ public class MainActivity extends AppCompatActivity {
             Intent i = new Intent(getApplicationContext(), NoInternetActivity.class);
             startActivity(i);
             finish();
-        } else {
-            //here there is an internet connection
-            setContentView(R.layout.bottom_bar);
-            sharedPref = getSharedPreferences("myPreference", MODE_PRIVATE);
-            if (savedInstanceState != null) {
-                String lastFragment = savedInstanceState.getString("lastFragment", null);
-                if (lastFragment != null) {
-                    if (lastFragment.compareTo("map") == 0) {
-                        active = map;
-                    } else if (lastFragment.compareTo("reservations") == 0) {
-                        active = reservations;
-                    } else if (lastFragment.compareTo("user") == 0) {
-                        active = user;
-                    }
-                }
-                init();
-                return;
-            }
-            map = new MapFragment();
-            ((MapFragment) map).setFather(this);
-            reservations = new ReservationFragment();
-            ((ReservationFragment) reservations).setFather(this);
-            user = new UserFragment();
-            fm.beginTransaction().add(R.id.mainFrame, user, "3").hide(user).commit();
-            fm.beginTransaction().add(R.id.mainFrame, reservations, "2").hide(reservations).commit();
-            fm.beginTransaction().add(R.id.mainFrame, map, "1").show(map).commit();
-            init();
         }
+        //here there is an internet connection
+        setContentView(R.layout.bottom_bar);
+        sharedPref = getSharedPreferences("myPreference", MODE_PRIVATE);
+        if (savedInstanceState != null) {
+            String lastFragment = savedInstanceState.getString("lastFragment", null);
+            if (lastFragment != null) {
+                if (lastFragment.compareTo("map") == 0) {
+                    active = map;
+                } else if (lastFragment.compareTo("reservations") == 0) {
+                    active = reservations;
+                } else if (lastFragment.compareTo("user") == 0) {
+                    active = user;
+                }
+            }
+            init();
+            return;
+        }
+        map = new MapFragment();
+        ((MapFragment) map).setFather(this);
+        reservations = new ReservationFragment();
+        ((ReservationFragment) reservations).setFather(this);
+        user = new UserFragment();
+        fm.beginTransaction().add(R.id.mainFrame, user, "3").hide(user).commit();
+        fm.beginTransaction().add(R.id.mainFrame, reservations, "2").hide(reservations).commit();
+        fm.beginTransaction().add(R.id.mainFrame, map, "1").show(map).commit();
+        init();
     }
 
     @Override
