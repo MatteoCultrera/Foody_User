@@ -36,8 +36,7 @@ import java.util.concurrent.ExecutionException;
 public class MainActivity extends AppCompatActivity {
 
     private View notificationBadgeOne, notificationBadgeTwo, notificationBadgeThree;
-    BottomNavigationView bottomBar;
-
+    private BottomNavigationView bottomBar;
     private Fragment map;
     private Fragment reservations;
     private Fragment user;
@@ -256,7 +255,6 @@ public class MainActivity extends AppCompatActivity {
     }
 
     public void nothingActive() {
-        Log.d("PROVA", "nothingActive()");
         ((MapFragment) map).reservations.clear();
         ((MapFragment) map).clearMap();
     }

@@ -24,6 +24,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.google.android.gms.tasks.OnFailureListener;
+import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.ChildEventListener;
@@ -35,6 +36,7 @@ import com.google.firebase.database.Query;
 import com.google.firebase.database.ValueEventListener;
 
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.HashMap;
 import java.util.Locale;
 
@@ -236,26 +238,39 @@ public class ReservationFragment extends Fragment {
                         }
                     });
 
+                    Calendar calendar = Calendar.getInstance();
+                    String monthYear = calendar.get(Calendar.MONTH) + "-" + calendar.get(Calendar.YEAR);
                     DatabaseReference databaseRest = FirebaseDatabase.getInstance().getReference()
-                            .child("reservations").child("Bikers").child(firebaseUser.getUid())
-                            .child(activeReservation.getReservationID());
-                    HashMap<String, Object> childRest = new HashMap<>();
-                    childRest.put("status", "delivered");
-                    databaseRest.updateChildren(childRest).addOnFailureListener(new OnFailureListener() {
+                            .child("archive").child("Bikers").child(firebaseUser.getUid()).child(monthYear);
+                    ReservationDBBiker reservation = new ReservationDBBiker(activeReservation.getReservationID(),
+                            activeReservation.getUserDeliveryTime(), activeReservation.getRestaurantPickupTime(),
+                            activeReservation.getRestaurantName(), activeReservation.getUserName(),
+                            activeReservation.getRestaurantAddress(), activeReservation.getUserAddress(),
+                            activeReservation.getRestaurantID());
+                    reservation.setStatus("delivered");
+                    HashMap<String, Object> childSelf = new HashMap<>();
+                    childSelf.put(activeReservation.getReservationID(), reservation);
+                    databaseRest.updateChildren(childSelf).addOnFailureListener(new OnFailureListener() {
                         @Override
                         public void onFailure(@NonNull Exception e) {
                             Toast.makeText(father, R.string.error_order, Toast.LENGTH_SHORT).show();
                         }
+                    }).addOnSuccessListener(new OnSuccessListener<Void>() {
+                        @Override
+                        public void onSuccess(Void aVoid) {
+                            DatabaseReference databaseDelete = FirebaseDatabase.getInstance().getReference()
+                                    .child("reservations").child("Bikers").child(firebaseUser.getUid())
+                                    .child(activeReservation.getReservationID());
+                            databaseDelete.removeValue();
+                            father.noActiveReservation(activeReservation);
+                            setInterface(false);
+                            canClick = false;
+                            setActiveReservation(null);
+                            adapter.setOrderActive(false);
+                            orderDelivered.setText("");
+                            updateTitles();
+                        }
                     });
-
-                    father.noActiveReservation(activeReservation);
-
-                    setInterface(false);
-                    canClick = false;
-                    setActiveReservation(null);
-                    adapter.setOrderActive(false);
-                    orderDelivered.setText("");
-                    updateTitles();
                 }
             }
         });
