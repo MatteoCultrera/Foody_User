@@ -125,6 +125,7 @@ public class RestaurantView extends AppCompatActivity {
     private void init(){
 
         Bundle extras = getIntent().getExtras();
+
         reName = extras.getString("restaurant_id","");
         reUsername = extras.getString("restaurant_name", null);
         reAddress = extras.getString("restaurant_address", null);
@@ -175,24 +176,28 @@ public class RestaurantView extends AppCompatActivity {
         File orderFile = new File(storage, ORDERS);
         JsonHandler handler = new JsonHandler();
 
-        cards = handler.getCards(cardFile);
-        ArrayList<OrderItem> orders = handler.getOrders(orderFile);
+        if(cardFile.exists()){
+            cards = handler.getCards(cardFile);
+            ArrayList<OrderItem> orders = handler.getOrders(orderFile);
 
-        for(OrderItem o : orders){
-            for(Card c: cards){
-                for(Dish d: c.getDishes()){
-                    Log.d("MAD2","Dish "+d.getDishName()+" order "+o.getOrderName());
-                    if(d.getDishName().equals(o.getOrderName())){
-                        Log.d("MAD2", "Found ");
-                        d.setOrderItem(o);
-                        Log.d("MAD2", d.getDishName()+" "+d.getOrderItem().getPieces());
+            for(OrderItem o : orders){
+                for(Card c: cards){
+                    for(Dish d: c.getDishes()){
+                        Log.d("MAD2","Dish "+d.getDishName()+" order "+o.getOrderName());
+                        if(d.getDishName().equals(o.getOrderName())){
+                            Log.d("MAD2", "Found ");
+                            d.setOrderItem(o);
+                            Log.d("MAD2", d.getDishName()+" "+d.getOrderItem().getPieces());
+                        }
                     }
                 }
+
             }
 
+            showMenu.init(cards);
+        }else{
+            fetchMenu();
         }
-
-        showMenu.init(cards);
 
     }
 
