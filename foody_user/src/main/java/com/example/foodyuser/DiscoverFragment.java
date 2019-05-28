@@ -72,6 +72,7 @@ public class DiscoverFragment extends Fragment {
                             child.delete();
                         directory.delete();
                     }
+                    sharedPref.edit().putBoolean("restaurantFetches",false).apply();
                     //Delete Image directory
 
                     startActivity(intent);
