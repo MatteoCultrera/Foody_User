@@ -55,12 +55,15 @@ public class MainActivity extends AppCompatActivity {
             i.printStackTrace();
         }
 
+        /*
         if(!bool) {
             //No Internet
             Intent i = new Intent(getApplicationContext(), NoInternetActivity.class);
             startActivity(i);
             finish();
         }
+        */
+
         //here there is an internet connection
         setContentView(R.layout.bottom_bar);
         sharedPref = getSharedPreferences("myPreference", MODE_PRIVATE);
