@@ -63,6 +63,7 @@ public class RestaurantView extends AppCompatActivity {
     private TextView totalText, price;
     private ConstraintLayout totalLayout;
     private final String RESTAURANT_IMAGES = "RestaurantImages";
+    int session;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -80,6 +81,7 @@ public class RestaurantView extends AppCompatActivity {
         showInfo = new ShowInfoFragment();
         showReview = new ShowReviewFragment();
         totalLayout.getLayoutTransition().enableTransitionType(LayoutTransition.CHANGING);
+        session = 0;
     }
 
 
@@ -177,6 +179,7 @@ public class RestaurantView extends AppCompatActivity {
     }
 
     public void cardsFromTotal(){
+        final int set = session;
         File cardFile = new File(storage, CARDS);
         File orderFile = new File(storage, ORDERS);
         JsonHandler handler = new JsonHandler();
@@ -198,7 +201,9 @@ public class RestaurantView extends AppCompatActivity {
 
         }
 
-        showMenu.init(cards);
+        Log.d("MAD","called init set "+set+" session "+session);
+        if(set == session)
+            showMenu.init(cards);
 
     }
 
@@ -396,6 +401,7 @@ public class RestaurantView extends AppCompatActivity {
     private void fetchMenu(){
         imageFetched = 0;
         imageToFetch = 0;
+        final int set = session;
         final DatabaseReference database = FirebaseDatabase.getInstance().getReference();
         DatabaseReference ref = database.child("restaurantsMenu").child(reName);
         ref.addValueEventListener(new ValueEventListener() {
@@ -414,8 +420,11 @@ public class RestaurantView extends AppCompatActivity {
                     }
                 }
 
-                if(imageToFetch == 0)
-                    showMenu.init(cards);
+                if(imageToFetch == 0){
+                    Log.d("MAD","called init set "+set+" session "+session);
+                    if(set == session)
+                        showMenu.init(cards);
+                }
                 else{
                     int pos = 0;
                     for(Card c : cards){
@@ -431,8 +440,9 @@ public class RestaurantView extends AppCompatActivity {
                                         d.setImage(Uri.fromFile(currentimage));
                                         imageFetched++;
                                         if(imageFetched == imageToFetch){
-                                            Log.d("MAD","called init");
-                                            showMenu.init(cards);
+                                            Log.d("MAD","called init set "+set+" session "+session);
+                                            if(set == session)
+                                                showMenu.init(cards);
                                         }
                                     }
                                 }).addOnFailureListener(new OnFailureListener() {
@@ -441,8 +451,9 @@ public class RestaurantView extends AppCompatActivity {
                                         imageFetched++;
                                         d.setImage(null);
                                         if(imageFetched == imageToFetch){
-                                            Log.d("MAD","called init");
-                                            showMenu.init(cards);
+                                            Log.d("MAD","called init set "+set+" session "+session);
+                                            if(set == session)
+                                                showMenu.init(cards);
                                         }
                                     }
                                 });
@@ -463,8 +474,10 @@ public class RestaurantView extends AppCompatActivity {
     @Override
     protected void onPause() {
         super.onPause();
+        session++;
+        if(session > 2000)
+            session = 0;
         File menu = new File(storage, CARDS);
-        showMenu.setVisible(false);
         if(imageFetched != imageToFetch){
             Log.d("PROVA","deleting storage because not completed");
             Log.d("PROVA",menu.exists()?"Menu Exists":"Menu not exists");
@@ -490,7 +503,6 @@ public class RestaurantView extends AppCompatActivity {
     @Override
     protected void onResume() {
         super.onResume();
-        showMenu.setVisible(true);
         init();
     }
 

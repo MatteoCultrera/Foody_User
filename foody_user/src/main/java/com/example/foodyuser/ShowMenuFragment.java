@@ -29,7 +29,6 @@ public class ShowMenuFragment extends Fragment {
     private RVAdapterShowRestaurantMenu show;
     SpinKitView loading;
     RestaurantView father;
-    private boolean isVisible;
 
 
     public ShowMenuFragment() {
@@ -70,10 +69,8 @@ public class ShowMenuFragment extends Fragment {
     }
 
     public void init(ArrayList<Card> cards){
-        if(isVisible)
-            this.cards = cards;
-        else
-            return;
+
+        this.cards = cards;
 
         Log.d("PROVA","Init with"+(recyclerMenu == null?"no Recycler":"Recycler"));
 
@@ -96,11 +93,4 @@ public class ShowMenuFragment extends Fragment {
 
     }
 
-    public boolean getVisible() {
-        return isVisible;
-    }
-
-    public void setVisible(boolean visible) {
-        isVisible = visible;
-    }
 }
