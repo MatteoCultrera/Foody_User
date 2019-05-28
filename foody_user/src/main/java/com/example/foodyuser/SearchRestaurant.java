@@ -278,13 +278,13 @@ public class SearchRestaurant extends AppCompatActivity {
                     }
                 });
 
+                for(Restaurant r : restaurants){
+                    if(r.getImagePath() != null)
+                        r.setImagePath(storage.getPath()+File.separator+r.getUid()+".jpg");
+                }
+
                 if(hasImages && allImages){
                     //Ready to go
-                    for(Restaurant r : restaurants){
-                        if(r.getImagePath() != null)
-                            r.setImagePath(storage.getPath()+File.separator+r.getUid()+".jpg");
-                    }
-
                     loading.setVisibility(View.GONE);
                     adapter = new RVAdapterRestaurants(restaurants);
                     scrollView.setAdapter(adapter);
