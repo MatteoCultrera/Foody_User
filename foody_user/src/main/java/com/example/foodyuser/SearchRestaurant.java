@@ -70,6 +70,7 @@ public class SearchRestaurant extends AppCompatActivity {
     private ArrayList<Integer> indexFoods;
     private ArrayList<Integer> copyIndexFoods;
     private ArrayList<String> selectedFoods;
+    private SharedPreferences sharedPrefer;
     private TextView filterButton;
     private String[] foodCategories;
     private int imageToFetch, imageFetched;
@@ -81,6 +82,7 @@ public class SearchRestaurant extends AppCompatActivity {
     private AlertDialog foodChooseType;
     private int width;
     private int height;
+    private boolean allImages;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -94,6 +96,9 @@ public class SearchRestaurant extends AppCompatActivity {
         filterButton = findViewById(R.id.filter_button);
         search = findViewById(R.id.search_restaurant);
         parent = findViewById(R.id.parent_restaurants);
+        sharedPrefer = getSharedPreferences("myPreference", MODE_PRIVATE);
+
+        allImages = sharedPrefer.getBoolean("restaurantFetches",false);
 
         DisplayMetrics displayMetrics = new DisplayMetrics();
         getWindowManager().getDefaultDisplay().getMetrics(displayMetrics);
@@ -273,7 +278,7 @@ public class SearchRestaurant extends AppCompatActivity {
                     }
                 });
 
-                if(hasImages){
+                if(hasImages && allImages){
                     //Ready to go
                     for(Restaurant r : restaurants){
                         if(r.getImagePath() != null)
@@ -329,6 +334,7 @@ public class SearchRestaurant extends AppCompatActivity {
                 imageFetched++;
                 if(imageFetched == imageToFetch){
                     loading.setVisibility(View.GONE);
+                    sharedPrefer.edit().putBoolean("restaurantFetches", true).apply();
                     //Create RecyclerView
                     adapter = new RVAdapterRestaurants(restaurants);
                     scrollView.setAdapter(adapter);
@@ -349,6 +355,8 @@ public class SearchRestaurant extends AppCompatActivity {
                 imageFetched++;
                 if(imageFetched == imageToFetch){
 
+                    allImages = true;
+                    sharedPrefer.edit().putBoolean("restaurantFetches", true).apply();
                     loading.setVisibility(View.GONE);
                     //Create RecyclerView
                     adapter = new RVAdapterRestaurants(restaurants);
