@@ -50,7 +50,6 @@ public class RestaurantView extends AppCompatActivity {
     private Restaurant thisRestaurant;
     private Toolbar toolbar;
     private final String DIRECTORY_IMAGES = "showImages";
-    private final String PROFILE_IMAGE = "profilePic.jpg";
     private final String CARDS = "cards.json";
     private final String ORDERS = "orders.json";
     private SharedPreferences shared;
@@ -176,28 +175,24 @@ public class RestaurantView extends AppCompatActivity {
         File orderFile = new File(storage, ORDERS);
         JsonHandler handler = new JsonHandler();
 
-        if(cardFile.exists()){
-            cards = handler.getCards(cardFile);
-            ArrayList<OrderItem> orders = handler.getOrders(orderFile);
+        cards = handler.getCards(cardFile);
+        ArrayList<OrderItem> orders = handler.getOrders(orderFile);
 
-            for(OrderItem o : orders){
-                for(Card c: cards){
-                    for(Dish d: c.getDishes()){
-                        Log.d("MAD2","Dish "+d.getDishName()+" order "+o.getOrderName());
-                        if(d.getDishName().equals(o.getOrderName())){
-                            Log.d("MAD2", "Found ");
-                            d.setOrderItem(o);
-                            Log.d("MAD2", d.getDishName()+" "+d.getOrderItem().getPieces());
-                        }
+        for(OrderItem o : orders){
+            for(Card c: cards){
+                for(Dish d: c.getDishes()){
+                    Log.d("MAD2","Dish "+d.getDishName()+" order "+o.getOrderName());
+                    if(d.getDishName().equals(o.getOrderName())){
+                        Log.d("MAD2", "Found ");
+                        d.setOrderItem(o);
+                        Log.d("MAD2", d.getDishName()+" "+d.getOrderItem().getPieces());
                     }
                 }
-
             }
 
-            showMenu.init(cards);
-        }else{
-            fetchMenu();
         }
+
+        showMenu.init(cards);
 
     }
 
@@ -460,8 +455,24 @@ public class RestaurantView extends AppCompatActivity {
     }
 
     @Override
+    protected void onPause() {
+        super.onPause();
+        File menu = new File(storage, CARDS);
+        if(imageFetched != imageToFetch || !menu.exists())
+            removeStorage();
+
+    }
+
+    @Override
     protected void onResume() {
         super.onResume();
         init();
+    }
+
+    private void removeStorage(){
+        for(File f : storage.listFiles()){
+            f.delete();
+        }
+        storage.delete();
     }
 }
