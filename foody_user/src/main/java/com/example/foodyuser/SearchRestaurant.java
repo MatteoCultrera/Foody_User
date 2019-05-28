@@ -255,7 +255,7 @@ public class SearchRestaurant extends AppCompatActivity {
                             //restaurant.setDistance(distance.floatValue());
                         }
 
-                        if(restaurant.getImagePath()!=null){
+                        if(restaurant.getImagePath()!=null && !hasImages){
                             imageToFetch++;
                         }
 
@@ -283,6 +283,8 @@ public class SearchRestaurant extends AppCompatActivity {
                         if(r.getImagePath() != null)
                             r.setImagePath(storage.getPath()+File.separator+r.getUid()+".jpg");
                     }
+
+                    allImages = sharedPrefer.getBoolean("restaurantFetches",false);
 
                     if(allImages){
                         Log.d("MADPROVA", "All the images");
@@ -321,8 +323,8 @@ public class SearchRestaurant extends AppCompatActivity {
 
     private void fetchImages(final Restaurant restaurant){
 
-        Log.d("MAD", "Entering fetch Images with restaurant "+restaurant.getUsername());
-        Log.d("MAD", "Path "+restaurant.getImagePath());
+        Log.d("MAD2", "Entering fetch Images with restaurant "+restaurant.getUsername());
+        Log.d("MAD2", "Path "+restaurant.getImagePath());
 
         final File file = new File(storage.getPath()+File.separator+restaurant.getUid()+".jpg");
 
@@ -331,9 +333,9 @@ public class SearchRestaurant extends AppCompatActivity {
                 .addOnSuccessListener(new OnSuccessListener<FileDownloadTask.TaskSnapshot>() {
             @Override
             public void onSuccess(FileDownloadTask.TaskSnapshot taskSnapshot) {
-                Log.d("MAD", "Restaurant "+restaurant.getUsername()+" saved on "+file.getPath());
                 restaurant.setImagePath(file.getPath());
                 imageFetched++;
+                Log.d("MADPROVA", "Restaurant "+restaurant.getUsername()+" "+imageToFetch+" "+imageFetched+" saved on "+file.getPath()+" ");
                 if(imageFetched == imageToFetch){
                     Log.d("MADPROVA", "removing pause after finding all images");
                     loading.setVisibility(View.GONE);
@@ -354,7 +356,7 @@ public class SearchRestaurant extends AppCompatActivity {
             @Override
             public void onFailure(@NonNull Exception e) {
                 restaurant.setImagePath(null);
-                Log.d("MAD", "Restaurant "+restaurant.getUsername()+" not saved on "+file.getPath());
+                Log.d("MAD", "Restaurant "+restaurant.getUsername()+restaurant.getUsername()+" "+imageToFetch+" "+imageFetched+" not saved on "+file.getPath());
                 imageFetched++;
                 if(imageFetched == imageToFetch){
                     Log.d("MADPROVA", "removing pause after finding all images");
