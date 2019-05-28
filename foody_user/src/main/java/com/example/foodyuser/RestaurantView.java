@@ -77,6 +77,11 @@ public class RestaurantView extends AppCompatActivity {
         totalLayout = findViewById(R.id.price_show_layout_frag);
         price = findViewById(R.id.restaurant_del_price_frag);
         totalLayout.getLayoutTransition().enableTransitionType(LayoutTransition.CHANGING);
+    }
+
+
+    private void init(){
+
         showMenu = new ShowMenuFragment();
         showInfo = new ShowInfoFragment();
         showReview = new ShowReviewFragment();
@@ -118,10 +123,6 @@ public class RestaurantView extends AppCompatActivity {
 
             }
         });
-    }
-
-
-    private void init(){
 
         Bundle extras = getIntent().getExtras();
 
@@ -146,6 +147,7 @@ public class RestaurantView extends AppCompatActivity {
         }
 
         if(storage == null){
+            Log.d("PROVA","No storage found");
             setupImagesDirectory();
             //Fetch Restaurant Image and save in internal storage
             fetchRestaurant();
@@ -156,6 +158,7 @@ public class RestaurantView extends AppCompatActivity {
 
         }else{
             //Fetch Cards From Storage
+            Log.d("PROVA","Storage found");
             if (thisRestaurant == null)
                 fetchRestaurant();
             else{
@@ -458,8 +461,22 @@ public class RestaurantView extends AppCompatActivity {
     protected void onPause() {
         super.onPause();
         File menu = new File(storage, CARDS);
-        if(imageFetched != imageToFetch || !menu.exists())
+        if(imageFetched != imageToFetch){
+            Log.d("PROVA","deleting storage because not completed");
+            Log.d("PROVA",menu.exists()?"Menu Exists":"Menu not exists");
+            if(storage.exists())
+                removeStorage();
+        }else if(!menu.exists() && cards.size() > 0){
+            Log.d("PROVA",menu.exists()?"Menu Exists":"Menu not exists");
+            Log.d("PROVA","cards size "+cards.size());
+            JsonHandler handler = new JsonHandler();
+            String cardsToJson = handler.toJSON(cards);
+            File m1 = new File(storage, CARDS);
+            handler.saveStringToFile(cardsToJson, m1);
+        }else if(cards.size() == 0){
+            Log.d("PROVA","cards size "+cards.size());
             removeStorage();
+        }
 
     }
 
@@ -474,5 +491,6 @@ public class RestaurantView extends AppCompatActivity {
             f.delete();
         }
         storage.delete();
+        storage = null;
     }
 }
