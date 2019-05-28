@@ -76,15 +76,18 @@ public class RestaurantView extends AppCompatActivity {
         totalText = findViewById(R.id.price_show_frag);
         totalLayout = findViewById(R.id.price_show_layout_frag);
         price = findViewById(R.id.restaurant_del_price_frag);
+        showMenu = new ShowMenuFragment();
+        showInfo = new ShowInfoFragment();
+        showReview = new ShowReviewFragment();
         totalLayout.getLayoutTransition().enableTransitionType(LayoutTransition.CHANGING);
     }
 
 
     private void init(){
 
-        showMenu = new ShowMenuFragment();
-        showInfo = new ShowInfoFragment();
-        showReview = new ShowReviewFragment();
+        Log.d("PROVA","Into init");
+
+
         showMenu.setFather(this);
 
         setupViewPager(viewPager);
@@ -461,11 +464,13 @@ public class RestaurantView extends AppCompatActivity {
     protected void onPause() {
         super.onPause();
         File menu = new File(storage, CARDS);
+        showMenu.setVisible(false);
         if(imageFetched != imageToFetch){
             Log.d("PROVA","deleting storage because not completed");
             Log.d("PROVA",menu.exists()?"Menu Exists":"Menu not exists");
             if(storage.exists())
                 removeStorage();
+            showMenu.removeCards();
         }else if(!menu.exists() && cards.size() > 0){
             Log.d("PROVA",menu.exists()?"Menu Exists":"Menu not exists");
             Log.d("PROVA","cards size "+cards.size());
@@ -475,7 +480,9 @@ public class RestaurantView extends AppCompatActivity {
             handler.saveStringToFile(cardsToJson, m1);
         }else if(cards.size() == 0){
             Log.d("PROVA","cards size "+cards.size());
-            removeStorage();
+            if(storage.exists())
+                removeStorage();
+            showMenu.removeCards();
         }
 
     }
@@ -483,6 +490,7 @@ public class RestaurantView extends AppCompatActivity {
     @Override
     protected void onResume() {
         super.onResume();
+        showMenu.setVisible(true);
         init();
     }
 
