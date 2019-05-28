@@ -278,23 +278,25 @@ public class SearchRestaurant extends AppCompatActivity {
                     }
                 });
 
-                for(Restaurant r : restaurants){
-                    if(r.getImagePath() != null)
-                        r.setImagePath(storage.getPath()+File.separator+r.getUid()+".jpg");
-                }
-
-                if(hasImages && allImages){
+                if(hasImages){
                     //Ready to go
-                    loading.setVisibility(View.GONE);
-                    adapter = new RVAdapterRestaurants(restaurants);
-                    scrollView.setAdapter(adapter);
-                    scrollView.setVisibility(View.VISIBLE);
-                    filterButton.setOnClickListener(new View.OnClickListener() {
-                        @Override
-                        public void onClick(View v) {
-                            showPickFood(filterButton);
-                        }
-                    });
+                    for(Restaurant r : restaurants){
+                        if(r.getImagePath() != null)
+                            r.setImagePath(storage.getPath()+File.separator+r.getUid()+".jpg");
+                    }
+
+                    if(allImages){
+                        loading.setVisibility(View.GONE);
+                        adapter = new RVAdapterRestaurants(restaurants);
+                        scrollView.setAdapter(adapter);
+                        scrollView.setVisibility(View.VISIBLE);
+                        filterButton.setOnClickListener(new View.OnClickListener() {
+                            @Override
+                            public void onClick(View v) {
+                                showPickFood(filterButton);
+                            }
+                        });
+                    }
                 }else{
                     //Fetch All Images
                     Log.d("MAD", "Fetching Images "+imageToFetch+" "+imageFetched);
