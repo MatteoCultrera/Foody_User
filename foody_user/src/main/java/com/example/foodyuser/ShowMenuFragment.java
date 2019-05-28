@@ -44,6 +44,7 @@ public class ShowMenuFragment extends Fragment {
     public View onCreateView(@NonNull  LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
+        Log.d("PROVA","OnCreateView with"+(cards == null?"no Cards":"cards"));
 
         currentView = inflater.inflate(R.layout.fragment_show_menu, container, false);
         loading = currentView.findViewById(R.id.spin_kit);
@@ -68,7 +69,10 @@ public class ShowMenuFragment extends Fragment {
     }
 
     public void init(ArrayList<Card> cards){
-       this.cards = cards;
+
+        this.cards = cards;
+
+        Log.d("PROVA","Init with"+(recyclerMenu == null?"no Recycler":"Recycler"));
 
 
        show = new RVAdapterShowRestaurantMenu(cards, father);
@@ -77,6 +81,16 @@ public class ShowMenuFragment extends Fragment {
            loading.setVisibility(View.GONE);
            recyclerMenu.setAdapter(show);
        }
+    }
+
+    public void removeCards(){
+        Log.d("PROVA","removeCards with"+(recyclerMenu == null?"no Recycler":"Recycler"));
+        this.cards = null;
+        if(recyclerMenu != null){
+            recyclerMenu.setVisibility(View.GONE);
+            loading.setVisibility(View.VISIBLE);
+        }
+
     }
 
 }

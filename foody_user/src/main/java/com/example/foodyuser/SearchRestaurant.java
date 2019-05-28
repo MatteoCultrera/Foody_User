@@ -70,6 +70,7 @@ public class SearchRestaurant extends AppCompatActivity {
     private ArrayList<Integer> indexFoods;
     private ArrayList<Integer> copyIndexFoods;
     private ArrayList<String> selectedFoods;
+    private SharedPreferences sharedPrefer;
     private TextView filterButton;
     private String[] foodCategories;
     private int imageToFetch, imageFetched;
@@ -81,6 +82,7 @@ public class SearchRestaurant extends AppCompatActivity {
     private AlertDialog foodChooseType;
     private int width;
     private int height;
+    private boolean allImages;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -94,6 +96,7 @@ public class SearchRestaurant extends AppCompatActivity {
         filterButton = findViewById(R.id.filter_button);
         search = findViewById(R.id.search_restaurant);
         parent = findViewById(R.id.parent_restaurants);
+        sharedPrefer = getSharedPreferences("myPreference", MODE_PRIVATE);
 
         DisplayMetrics displayMetrics = new DisplayMetrics();
         getWindowManager().getDefaultDisplay().getMetrics(displayMetrics);
@@ -103,6 +106,8 @@ public class SearchRestaurant extends AppCompatActivity {
     }
 
     private void init(){
+        allImages = sharedPrefer.getBoolean("restaurantFetches",false);
+        Log.d("MADPROVA","All images "+allImages);
         visible = true;
         search.clearFocus();
         search.setY(getResources().getDimensionPixelSize(R.dimen.short30));
@@ -195,8 +200,6 @@ public class SearchRestaurant extends AppCompatActivity {
 
     private void fetchRestaurants(final Boolean hasImages){
 
-        Log.d("MAD", "FetchRestaurants()");
-
         Calendar calendar = Calendar.getInstance(Locale.ITALY);
         int dayOfWeek = calendar.get(Calendar.DAY_OF_WEEK) - 2;
         if (dayOfWeek == -1)
@@ -252,7 +255,7 @@ public class SearchRestaurant extends AppCompatActivity {
                             //restaurant.setDistance(distance.floatValue());
                         }
 
-                        if(restaurant.getImagePath()!=null){
+                        if(restaurant.getImagePath()!=null && !hasImages){
                             imageToFetch++;
                         }
 
@@ -274,22 +277,28 @@ public class SearchRestaurant extends AppCompatActivity {
                 });
 
                 if(hasImages){
+                    Log.d("MADPROVA", "Has Images with all images "+allImages);
                     //Ready to go
                     for(Restaurant r : restaurants){
                         if(r.getImagePath() != null)
                             r.setImagePath(storage.getPath()+File.separator+r.getUid()+".jpg");
                     }
 
-                    loading.setVisibility(View.GONE);
-                    adapter = new RVAdapterRestaurants(restaurants);
-                    scrollView.setAdapter(adapter);
-                    scrollView.setVisibility(View.VISIBLE);
-                    filterButton.setOnClickListener(new View.OnClickListener() {
-                        @Override
-                        public void onClick(View v) {
-                            showPickFood(filterButton);
-                        }
-                    });
+                    allImages = sharedPrefer.getBoolean("restaurantFetches",false);
+
+                    if(allImages){
+                        Log.d("MADPROVA", "All the images");
+                        loading.setVisibility(View.GONE);
+                        adapter = new RVAdapterRestaurants(restaurants);
+                        scrollView.setAdapter(adapter);
+                        scrollView.setVisibility(View.VISIBLE);
+                        filterButton.setOnClickListener(new View.OnClickListener() {
+                            @Override
+                            public void onClick(View v) {
+                                showPickFood(filterButton);
+                            }
+                        });
+                    }
                 }else{
                     //Fetch All Images
                     Log.d("MAD", "Fetching Images "+imageToFetch+" "+imageFetched);
@@ -314,8 +323,8 @@ public class SearchRestaurant extends AppCompatActivity {
 
     private void fetchImages(final Restaurant restaurant){
 
-        Log.d("MAD", "Entering fetch Images with restaurant "+restaurant.getUsername());
-        Log.d("MAD", "Path "+restaurant.getImagePath());
+        Log.d("MAD2", "Entering fetch Images with restaurant "+restaurant.getUsername());
+        Log.d("MAD2", "Path "+restaurant.getImagePath());
 
         final File file = new File(storage.getPath()+File.separator+restaurant.getUid()+".jpg");
 
@@ -324,11 +333,13 @@ public class SearchRestaurant extends AppCompatActivity {
                 .addOnSuccessListener(new OnSuccessListener<FileDownloadTask.TaskSnapshot>() {
             @Override
             public void onSuccess(FileDownloadTask.TaskSnapshot taskSnapshot) {
-                Log.d("MAD", "Restaurant "+restaurant.getUsername()+" saved on "+file.getPath());
                 restaurant.setImagePath(file.getPath());
                 imageFetched++;
+                Log.d("MADPROVA", "Restaurant "+restaurant.getUsername()+" "+imageToFetch+" "+imageFetched+" saved on "+file.getPath()+" ");
                 if(imageFetched == imageToFetch){
+                    Log.d("MADPROVA", "removing pause after finding all images");
                     loading.setVisibility(View.GONE);
+                    sharedPrefer.edit().putBoolean("restaurantFetches", true).apply();
                     //Create RecyclerView
                     adapter = new RVAdapterRestaurants(restaurants);
                     scrollView.setAdapter(adapter);
@@ -345,10 +356,12 @@ public class SearchRestaurant extends AppCompatActivity {
             @Override
             public void onFailure(@NonNull Exception e) {
                 restaurant.setImagePath(null);
-                Log.d("MAD", "Restaurant "+restaurant.getUsername()+" not saved on "+file.getPath());
+                Log.d("MAD", "Restaurant "+restaurant.getUsername()+restaurant.getUsername()+" "+imageToFetch+" "+imageFetched+" not saved on "+file.getPath());
                 imageFetched++;
                 if(imageFetched == imageToFetch){
-
+                    Log.d("MADPROVA", "removing pause after finding all images");
+                    allImages = true;
+                    sharedPrefer.edit().putBoolean("restaurantFetches", true).apply();
                     loading.setVisibility(View.GONE);
                     //Create RecyclerView
                     adapter = new RVAdapterRestaurants(restaurants);
