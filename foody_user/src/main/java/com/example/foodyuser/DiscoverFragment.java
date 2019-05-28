@@ -3,6 +3,7 @@ package com.example.foodyuser;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
+import android.os.Environment;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
@@ -19,6 +20,7 @@ import com.google.android.libraries.places.api.model.Place;
 import com.google.android.libraries.places.widget.Autocomplete;
 import com.google.android.libraries.places.widget.model.AutocompleteActivityMode;
 
+import java.io.File;
 import java.util.Arrays;
 import java.util.List;
 
@@ -33,6 +35,7 @@ public class DiscoverFragment extends Fragment {
     private TextView address;
     private boolean setted = false;
     private SharedPreferences.Editor edit;
+    private final String RESTAURANT_IMAGES = "RestaurantImages";
 
     public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
 
@@ -49,7 +52,7 @@ public class DiscoverFragment extends Fragment {
     }
 
     private void init(View view){
-        SharedPreferences sharedPref = view.getContext().getSharedPreferences("myPreference", MODE_PRIVATE);
+        final SharedPreferences sharedPref = view.getContext().getSharedPreferences("myPreference", MODE_PRIVATE);
         edit = sharedPref.edit();
         searchButton = view.findViewById(R.id.discover_search_button);
         address = view.findViewById(R.id.discover_search_address);
@@ -60,7 +63,18 @@ public class DiscoverFragment extends Fragment {
                 if(!setted)
                     Toast.makeText(address.getContext(), R.string.address_not_selected, Toast.LENGTH_SHORT).show();
                 else {
-                    Intent intent = new Intent(getActivity(), RestaurantsList.class);
+                    Intent intent = new Intent(getActivity(), SearchRestaurant.class);
+                    File root = v.getContext().getExternalFilesDir(Environment.DIRECTORY_PICTURES);
+                    File directory = new File(root.getPath()+File.separator+RESTAURANT_IMAGES);
+                    sharedPref.edit().remove("positionSearch").apply();
+                    if(directory.exists()){
+                        for(File child: directory.listFiles())
+                            child.delete();
+                        directory.delete();
+                    }
+                    sharedPref.edit().putBoolean("restaurantFetches",false).apply();
+                    //Delete Image directory
+
                     startActivity(intent);
                 }
             }
@@ -69,6 +83,7 @@ public class DiscoverFragment extends Fragment {
         address.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                address.setClickable(false);
                 addressActivity();
             }
         });
@@ -93,7 +108,6 @@ public class DiscoverFragment extends Fragment {
             if (requestCode == AUTOCOMPLETE_REQUEST_CODE) {
                 Place place = Autocomplete.getPlaceFromIntent(data);
                 Log.d("PLACE", "Place: " + place.getAddress() + " LAT_LNG " + place.getLatLng());
-                //TODO: here we can start the query to search restaurant
                 if(place.getAddress().equals(""))
                     setted = false;
                 address.setText(place.getAddress());
@@ -104,5 +118,11 @@ public class DiscoverFragment extends Fragment {
                 edit.apply();
             }
         }
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+        address.setClickable(true);
     }
 }

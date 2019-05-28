@@ -50,7 +50,6 @@ public class RestaurantView extends AppCompatActivity {
     private Restaurant thisRestaurant;
     private Toolbar toolbar;
     private final String DIRECTORY_IMAGES = "showImages";
-    private final String PROFILE_IMAGE = "profilePic.jpg";
     private final String CARDS = "cards.json";
     private final String ORDERS = "orders.json";
     private SharedPreferences shared;
@@ -58,10 +57,13 @@ public class RestaurantView extends AppCompatActivity {
     private ArrayList<Card> cards;
     private ShowMenuFragment showMenu;
     private ShowInfoFragment showInfo;
+    private ShowReviewFragment showReview;
     private int imageFetched;
     private int imageToFetch;
     private TextView totalText, price;
     private ConstraintLayout totalLayout;
+    private final String RESTAURANT_IMAGES = "RestaurantImages";
+    int session;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -75,9 +77,19 @@ public class RestaurantView extends AppCompatActivity {
         totalText = findViewById(R.id.price_show_frag);
         totalLayout = findViewById(R.id.price_show_layout_frag);
         price = findViewById(R.id.restaurant_del_price_frag);
-        totalLayout.getLayoutTransition().enableTransitionType(LayoutTransition.CHANGING);
         showMenu = new ShowMenuFragment();
         showInfo = new ShowInfoFragment();
+        showReview = new ShowReviewFragment();
+        totalLayout.getLayoutTransition().enableTransitionType(LayoutTransition.CHANGING);
+        session = 0;
+    }
+
+
+    private void init(){
+
+        Log.d("PROVA","Into init");
+
+
         showMenu.setFather(this);
 
         setupViewPager(viewPager);
@@ -90,6 +102,7 @@ public class RestaurantView extends AppCompatActivity {
                 tabs.setupWithViewPager(viewPager);
             }
         });
+
 
         tabs.addOnTabSelectedListener(new TabLayout.OnTabSelectedListener() {
             @Override
@@ -115,12 +128,9 @@ public class RestaurantView extends AppCompatActivity {
 
             }
         });
-    }
-
-
-    private void init(){
 
         Bundle extras = getIntent().getExtras();
+
         reName = extras.getString("restaurant_id","");
         reUsername = extras.getString("restaurant_name", null);
         reAddress = extras.getString("restaurant_address", null);
@@ -142,6 +152,7 @@ public class RestaurantView extends AppCompatActivity {
         }
 
         if(storage == null){
+            Log.d("PROVA","No storage found");
             setupImagesDirectory();
             //Fetch Restaurant Image and save in internal storage
             fetchRestaurant();
@@ -152,6 +163,7 @@ public class RestaurantView extends AppCompatActivity {
 
         }else{
             //Fetch Cards From Storage
+            Log.d("PROVA","Storage found");
             if (thisRestaurant == null)
                 fetchRestaurant();
             else{
@@ -167,6 +179,7 @@ public class RestaurantView extends AppCompatActivity {
     }
 
     public void cardsFromTotal(){
+        final int set = session;
         File cardFile = new File(storage, CARDS);
         File orderFile = new File(storage, ORDERS);
         JsonHandler handler = new JsonHandler();
@@ -188,7 +201,9 @@ public class RestaurantView extends AppCompatActivity {
 
         }
 
-        showMenu.init(cards);
+        Log.d("MAD","called init set "+set+" session "+session);
+        if(set == session)
+            showMenu.init(cards);
 
     }
 
@@ -293,7 +308,7 @@ public class RestaurantView extends AppCompatActivity {
         ViewPagerAdapter adapter = new ViewPagerAdapter(
                 getSupportFragmentManager());
         adapter.addFrag(showMenu, getResources().getString(R.string.menu));
-        adapter.addFrag(new UserFragment(), getResources().getString(R.string.reviews));
+        adapter.addFrag(showReview, getResources().getString(R.string.reviews));
         adapter.addFrag(showInfo, getResources().getString(R.string.info));
         viewPager.setAdapter(adapter);
     }
@@ -342,24 +357,26 @@ public class RestaurantView extends AppCompatActivity {
                     //cuisines.setText(thisRestaurant.getKitchensString());
                     //deliveryPrice.setText(thisRestaurant.getDeliveryPriceString());
                     //distance.setText(thisRestaurant.getDistanceString());
-                    StorageReference mStorageRef = FirebaseStorage.getInstance().getReference();
-                    final File image = new File(storage, PROFILE_IMAGE);
-                    mStorageRef.child(thisRestaurant.getImagePath()).getFile(image).addOnSuccessListener(new OnSuccessListener<FileDownloadTask.TaskSnapshot>() {
-                        @Override
-                        public void onSuccess(FileDownloadTask.TaskSnapshot taskSnapshot) {
-                            thisRestaurant.setImagePath(image.getPath());
-                            RequestOptions options = new RequestOptions();
-                            options.signature(new ObjectKey(image.getName()+image.lastModified()));
-                            Glide
-                                    .with(getApplicationContext())
-                                    .setDefaultRequestOptions(options)
-                                    .load(thisRestaurant.getImagePath())
-                                    .into(background);
-                        }
-                    });
+                    thisRestaurant.setUid(dataSnapshot.getKey());
+                    File root = getExternalFilesDir(Environment.DIRECTORY_PICTURES);
+                    File dir = new File(root.getPath()+File.separator+RESTAURANT_IMAGES);
+                    thisRestaurant.setImagePath(dir.getPath()+File.separator+thisRestaurant.getUid()+".jpg");
+                    File imageFile = new File(thisRestaurant.getImagePath());
+                    RequestOptions options = new RequestOptions();
+                    options.signature(new ObjectKey(thisRestaurant.getImagePath()+" "+imageFile.lastModified()));
+
+                    if(thisRestaurant.getImagePath()!=null){
+                        Glide
+                                .with(toolbar.getContext())
+                                .setDefaultRequestOptions(options)
+                                .load(thisRestaurant.getImagePath())
+                                .into(background);
+                    }
+
 
                 }
                 toolbar.setTitle(thisRestaurant.getUsername());
+                Log.d("VANGOGH",""+thisRestaurant.getUid());
                 showInfo.init(thisRestaurant);
                 price.setText(thisRestaurant.getDeliveryPriceString());
                 toolbar.setNavigationOnClickListener(new View.OnClickListener() {
@@ -384,6 +401,7 @@ public class RestaurantView extends AppCompatActivity {
     private void fetchMenu(){
         imageFetched = 0;
         imageToFetch = 0;
+        final int set = session;
         final DatabaseReference database = FirebaseDatabase.getInstance().getReference();
         DatabaseReference ref = database.child("restaurantsMenu").child(reName);
         ref.addValueEventListener(new ValueEventListener() {
@@ -402,8 +420,11 @@ public class RestaurantView extends AppCompatActivity {
                     }
                 }
 
-                if(imageToFetch == 0)
-                    showMenu.init(cards);
+                if(imageToFetch == 0){
+                    Log.d("MAD","called init set "+set+" session "+session);
+                    if(set == session)
+                        showMenu.init(cards);
+                }
                 else{
                     int pos = 0;
                     for(Card c : cards){
@@ -419,8 +440,9 @@ public class RestaurantView extends AppCompatActivity {
                                         d.setImage(Uri.fromFile(currentimage));
                                         imageFetched++;
                                         if(imageFetched == imageToFetch){
-                                            Log.d("MAD","called init");
-                                            showMenu.init(cards);
+                                            Log.d("MAD","called init set "+set+" session "+session);
+                                            if(set == session)
+                                                showMenu.init(cards);
                                         }
                                     }
                                 }).addOnFailureListener(new OnFailureListener() {
@@ -429,8 +451,9 @@ public class RestaurantView extends AppCompatActivity {
                                         imageFetched++;
                                         d.setImage(null);
                                         if(imageFetched == imageToFetch){
-                                            Log.d("MAD","called init");
-                                            showMenu.init(cards);
+                                            Log.d("MAD","called init set "+set+" session "+session);
+                                            if(set == session)
+                                                showMenu.init(cards);
                                         }
                                     }
                                 });
@@ -449,8 +472,45 @@ public class RestaurantView extends AppCompatActivity {
     }
 
     @Override
+    protected void onPause() {
+        super.onPause();
+        session++;
+        if(session > 2000)
+            session = 0;
+        File menu = new File(storage, CARDS);
+        if(imageFetched != imageToFetch){
+            Log.d("PROVA","deleting storage because not completed");
+            Log.d("PROVA",menu.exists()?"Menu Exists":"Menu not exists");
+            if(storage.exists())
+                removeStorage();
+            showMenu.removeCards();
+        }else if(!menu.exists() && cards.size() > 0){
+            Log.d("PROVA",menu.exists()?"Menu Exists":"Menu not exists");
+            Log.d("PROVA","cards size "+cards.size());
+            JsonHandler handler = new JsonHandler();
+            String cardsToJson = handler.toJSON(cards);
+            File m1 = new File(storage, CARDS);
+            handler.saveStringToFile(cardsToJson, m1);
+        }else if(cards.size() == 0){
+            Log.d("PROVA","cards size "+cards.size());
+            if(storage.exists())
+                removeStorage();
+            showMenu.removeCards();
+        }
+
+    }
+
+    @Override
     protected void onResume() {
         super.onResume();
         init();
+    }
+
+    private void removeStorage(){
+        for(File f : storage.listFiles()){
+            f.delete();
+        }
+        storage.delete();
+        storage = null;
     }
 }
