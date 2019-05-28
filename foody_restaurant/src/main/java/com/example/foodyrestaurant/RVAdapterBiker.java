@@ -15,15 +15,22 @@ import android.view.ViewGroup;
 import android.widget.ImageButton;
 import android.widget.LinearLayout;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.bumptech.glide.Glide;
+import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
 
 import java.io.File;
+import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.HashMap;
 import java.util.List;
 
 import de.hdodenhof.circleimageview.CircleImageView;
@@ -78,7 +85,43 @@ public class RVAdapterBiker extends RecyclerView.Adapter<RVAdapterBiker.CardView
             pvh.callBiker.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
+                    Calendar calendar = Calendar.getInstance();
+                    String monthYear = calendar.get(Calendar.MONTH) + "-" + calendar.get(Calendar.YEAR);
+                    DatabaseReference databaseRest = FirebaseDatabase.getInstance().getReference()
+                            .child("archive").child("restaurant").child(firebaseUser.getUid()).child(monthYear);
+                    HashMap<String, Object> childRest = new HashMap<>();
+                    final Reservation reservation = current.getReservation();
+                    final String orderID = reservation.getUserUID() + reservation.getReservationID();
+                    ArrayList<OrderItem> dishes = new ArrayList<>();
+                    for(Dish d : reservation.getDishesOrdered()){
+                        OrderItem order = new OrderItem();
+                        order.setPieces(d.getQuantity());
+                        order.setOrderName(d.getDishName());
+                        order.setPrice(d.getPrice());
+                        dishes.add(order);
+                    }
+                    ReservationDBRestaurant reservationRest = new ReservationDBRestaurant(orderID,
+                            current.getBikerID(), dishes, true, reservation.getResNote(),
+                            reservation.getUserPhone(), reservation.getUserName(), reservation.getDeliveryTime(),
+                            reservation.getOrderTime(), "Done", reservation.getUserAddress(), reservation.getTotalPrice());
+                    childRest.put(orderID, reservationRest);
+                    databaseRest.updateChildren(childRest).addOnFailureListener(new OnFailureListener() {
+                        @Override
+                        public void onFailure(@NonNull Exception e) {
+                            Toast.makeText(fatherClass.getContext(), R.string.error_order, Toast.LENGTH_SHORT).show();
+                        }
+                    }).addOnSuccessListener(new OnSuccessListener<Void>() {
+                        @Override
+                        public void onSuccess(Void aVoid) {
+                            DatabaseReference databaseDelete = FirebaseDatabase.getInstance().getReference()
+                                    .child("reservations").child("restaurant").child(firebaseUser.getUid()).child(orderID);
+                            databaseDelete.removeValue();
 
+                            reservations.remove(i);
+                            notifyItemRemoved(i);
+                            notifyItemRangeChanged(i, reservations.size());
+                        }
+                    });
                 }
             });
 
