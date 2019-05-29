@@ -1,6 +1,5 @@
 package com.example.foodyrestaurant;
 
-
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;

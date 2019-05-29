@@ -15,15 +15,25 @@ import android.view.ViewGroup;
 import android.widget.ImageButton;
 import android.widget.LinearLayout;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.bumptech.glide.Glide;
+import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ValueEventListener;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
 
 import java.io.File;
+import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.HashMap;
 import java.util.List;
 
 import de.hdodenhof.circleimageview.CircleImageView;
@@ -78,7 +88,123 @@ public class RVAdapterBiker extends RecyclerView.Adapter<RVAdapterBiker.CardView
             pvh.callBiker.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
+                    Calendar calendar = Calendar.getInstance();
+                    String monthYear = calendar.get(Calendar.MONTH) + "-" + calendar.get(Calendar.YEAR);
+                    DatabaseReference databaseRest = FirebaseDatabase.getInstance().getReference()
+                            .child("archive").child("restaurant").child(firebaseUser.getUid()).child(monthYear);
+                    HashMap<String, Object> childRest = new HashMap<>();
+                    final Reservation reservation = current.getReservation();
+                    final String orderID = reservation.getUserUID() + reservation.getReservationID();
+                    final ArrayList<OrderItem> dishes = new ArrayList<>();
+                    for(Dish d : reservation.getDishesOrdered()){
+                        OrderItem order = new OrderItem();
+                        order.setPieces(d.getQuantity());
+                        order.setOrderName(d.getDishName());
+                        order.setPrice(d.getPrice());
+                        dishes.add(order);
+                    }
+                    final ReservationDBRestaurant reservationRest = new ReservationDBRestaurant(orderID,
+                            current.getBikerID(), dishes, true, reservation.getResNote(),
+                            reservation.getUserPhone(), reservation.getUserName(), reservation.getDeliveryTime(),
+                            reservation.getOrderTime(), "Done", reservation.getUserAddress(), reservation.getTotalPrice());
+                    childRest.put(orderID, reservationRest);
+                    databaseRest.updateChildren(childRest).addOnFailureListener(new OnFailureListener() {
+                        @Override
+                        public void onFailure(@NonNull Exception e) {
+                            Toast.makeText(fatherClass.getContext(), R.string.error_order, Toast.LENGTH_SHORT).show();
+                        }
+                    }).addOnSuccessListener(new OnSuccessListener<Void>() {
+                        @Override
+                        public void onSuccess(Void aVoid) {
+                            final DatabaseReference databaseDish = FirebaseDatabase.getInstance().getReference()
+                                    .child("archive").child("restaurant").child(firebaseUser.getUid()).child("dishesCount");
+                            databaseDish.addListenerForSingleValueEvent(new ValueEventListener() {
+                                @Override
+                                public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                                    if (dataSnapshot.exists()){
+                                        HashMap<String, Object> frequencies = new HashMap<>();
+                                        for (DataSnapshot ds : dataSnapshot.getChildren()) {
+                                            frequencies.put(ds.getKey(), ds.getValue(Integer.class));
+                                        }
+                                        for (int i = 0; i < dishes.size(); i++) {
+                                            if(frequencies.containsKey(dishes.get(i).getOrderName())){
+                                                Integer count = (Integer) frequencies.get(dishes.get(i).getOrderName());
+                                                count ++;
+                                                frequencies.put(dishes.get(i).getOrderName(), count);
+                                            }
+                                        }
+                                        databaseDish.updateChildren(frequencies);
+                                    }
+                                }
 
+                                @Override
+                                public void onCancelled(@NonNull DatabaseError databaseError) {
+
+                                }
+                            });
+
+                            final DatabaseReference databaseFreq = FirebaseDatabase.getInstance().getReference()
+                                    .child("archive").child("restaurant").child(firebaseUser.getUid()).child("frequency");
+                            databaseFreq.addListenerForSingleValueEvent(new ValueEventListener() {
+                                @Override
+                                public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                                    if (dataSnapshot.exists()) {
+                                        HashMap<String, Object> frequencies = new HashMap<>();
+                                        for (DataSnapshot ds : dataSnapshot.getChildren()) {
+                                            frequencies.put(ds.getKey(), ds.getValue(Integer.class));
+                                        }
+
+                                        String hour = reservationRest.getOrderTime().split(":")[0];
+                                        Integer count = (Integer) frequencies.get(hour) + 1;
+                                        frequencies.put(hour, count);
+                                        databaseFreq.updateChildren(frequencies);
+                                    } else {
+                                        HashMap<String, Object> frequencies = new HashMap<>();
+                                        for (int i = 0; i < 24; i ++){
+                                            frequencies.put(String.valueOf(i), 0);
+                                        }
+
+                                        String hour = reservationRest.getOrderTime().split(":")[0];
+                                        Integer count = (Integer) frequencies.get(hour) + 1;
+                                        frequencies.put(hour, count);
+                                        databaseFreq.updateChildren(frequencies);
+                                    }
+                                }
+
+                                @Override
+                                public void onCancelled(@NonNull DatabaseError databaseError) {
+                                }
+                            });
+
+                            final DatabaseReference databaseAcc = FirebaseDatabase.getInstance().getReference()
+                                    .child("archive").child("restaurant").child(firebaseUser.getUid()).child("accepted");
+                            databaseAcc.addListenerForSingleValueEvent(new ValueEventListener() {
+                                @Override
+                                public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                                    if (dataSnapshot.exists()) {
+                                        int count = dataSnapshot.getValue(int.class);
+                                        count ++;
+                                        databaseAcc.setValue(count);
+                                    } else {
+                                        databaseAcc.setValue(1);
+                                    }
+                                }
+
+                                @Override
+                                public void onCancelled(@NonNull DatabaseError databaseError) {
+
+                                }
+                            });
+
+                            DatabaseReference databaseDelete = FirebaseDatabase.getInstance().getReference()
+                                    .child("reservations").child("restaurant").child(firebaseUser.getUid()).child(orderID);
+                            databaseDelete.removeValue();
+
+                            reservations.remove(i);
+                            notifyItemRemoved(i);
+                            notifyItemRangeChanged(i, reservations.size());
+                        }
+                    });
                 }
             });
 
