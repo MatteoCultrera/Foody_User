@@ -3,6 +3,8 @@ package com.example.foodyuser;
 import android.net.Uri;
 import android.util.JsonReader;
 
+import com.example.foody_library.Review;
+
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -51,6 +53,17 @@ class JsonHandler {
         return reservations;
     }
 
+    ArrayList<Review> getReviews(File file){
+        ArrayList<Review> reviews;
+        try{
+            reviews = readRevFromFile(file);
+        }catch(IOException e){
+            e.getMessage();
+            return new ArrayList<>();
+        }
+        return reviews;
+    }
+
     private ArrayList<OrderItem> readOrdersFromJSON (File path) throws  IOException {
         ArrayList<OrderItem> orders = new ArrayList<>();
         FileInputStream fin = new FileInputStream(path);
@@ -87,6 +100,25 @@ class JsonHandler {
             }
         }
         return cards;
+    }
+
+    private ArrayList<Review> readRevFromFile(File path) throws  IOException{
+        ArrayList<Review> reviews = new ArrayList<>();
+        FileInputStream fin = new FileInputStream(path);
+        JsonReader reader = new JsonReader(new InputStreamReader(fin, StandardCharsets.UTF_8));
+        try{
+            reader.beginObject();
+            if(reader.nextName().equals("Review"))
+                reviews = readMultipleReviews(reader);
+        }finally {
+            try{
+                reader.close();
+            }
+            catch (IOException e){
+                e.getMessage();
+            }
+        }
+        return  reviews;
     }
 
     private ArrayList<Reservation> readResFromFile (File path) throws IOException {
@@ -131,6 +163,17 @@ class JsonHandler {
         return cards;
     }
 
+    private  ArrayList<Review> readMultipleReviews(JsonReader reader) throws  IOException{
+        ArrayList<Review> reviews = new ArrayList<>();
+
+        reader.beginArray();
+        while(reader.hasNext()){
+            reviews.add(readSingleReview(reader));
+        }
+        reader.endArray();
+        return reviews;
+    }
+
     private ArrayList<Reservation> readMultipleReservations(JsonReader reader) throws  IOException{
         ArrayList<Reservation> reservations = new ArrayList<>();
 
@@ -140,6 +183,43 @@ class JsonHandler {
         }
         reader.endArray();
         return reservations;
+    }
+
+    private Review readSingleReview(JsonReader reader) throws IOException{
+        String reviewID = null, userID = null, userName = null, imagePath = null, note = null;
+        float rating = 0;
+
+        reader.beginObject();
+        while (reader.hasNext()){
+            String name = reader.nextName();
+            switch(name){
+                case "reviewID":
+                    reviewID = reader.nextString();
+                    break;
+                case "userID":
+                    userID = reader.nextString();
+                    break;
+                case "userName":
+                    userName = reader.nextString();
+                    break;
+                case "imagePath":
+                    imagePath = reader.nextString();
+                    break;
+                case "note":
+                    note = reader.nextString();
+                    break;
+                case "rating":
+                    rating = (float)reader.nextDouble();
+                    break;
+                default:
+                    reader.skipValue();
+                    break;
+            }
+
+        }
+        reader.endObject();
+        Review review = new Review(reviewID, userID, userName, imagePath, note, rating);
+        return  review;
     }
 
     private Reservation readSingleReservation(JsonReader reader) throws IOException{
@@ -333,6 +413,29 @@ class JsonHandler {
             return "Error String";
         }
         return obj.toString();
+    }
+
+    String reviewsToJSON(ArrayList<Review> reviews){
+        JSONObject obj = new JSONObject();
+        JSONArray objRevArray = new JSONArray();
+        try{
+            for(Review r :reviews){
+                JSONObject objRev = new JSONObject();
+                objRev.put("reviewID", r.getReviewID());
+                objRev.put("userID", r.getUserID());
+                objRev.put("userName", r.getUserName());
+                objRev.put("imagePath", r.getImagePath());
+                objRev.put("note", r.getNote());
+                objRev.put("rating", r.getRating());
+                objRevArray.put(objRev);
+            }
+            obj.put("Review",objRevArray);
+
+        }catch(JSONException e){
+            e.getMessage();
+            return "Error String";
+        }
+        return  obj.toString();
     }
 
     String toJSON (ArrayList<Card> cards){
