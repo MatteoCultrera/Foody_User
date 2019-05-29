@@ -7,6 +7,9 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.pm.ApplicationInfo;
 import android.content.pm.PackageManager;
+import android.location.Address;
+import android.location.Geocoder;
+import android.location.Location;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
@@ -17,6 +20,7 @@ import android.support.v7.widget.CardView;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.text.method.ScrollingMovementMethod;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -25,6 +29,7 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.firebase.auth.FirebaseAuth;
@@ -37,9 +42,11 @@ import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.Query;
 import com.google.firebase.database.ValueEventListener;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Locale;
 
 import static android.content.Context.MODE_PRIVATE;
@@ -63,6 +70,9 @@ public class ReservationFragment extends Fragment {
     private SharedPreferences sharedPreferences;
     private int pending;
     LinearLayout callRestaurant, callUser;
+    private Geocoder geocoder;
+    Double distance = 0.0;
+    Double totalDistance = 0.0;
 
     public ReservationFragment(){}
 
@@ -91,6 +101,7 @@ public class ReservationFragment extends Fragment {
         firebaseUser = firebaseAuth.getCurrentUser();
         activeReservation = null;
         reservations = new ArrayList<>();
+        geocoder = new Geocoder(this.getContext(), Locale.getDefault());
         final DatabaseReference database = FirebaseDatabase.getInstance().getReference().child("reservations").child("Bikers");
         Query query = database.child(firebaseUser.getUid());
         query.addListenerForSingleValueEvent(new ValueEventListener() {
@@ -231,6 +242,9 @@ public class ReservationFragment extends Fragment {
                     orderDelivered.setText(getString(R.string.order_delivered));
                     canClick = true;
                 }else if(card.getVisibility() == View.VISIBLE){
+                    calculateDistance(activeReservation);
+                    Log.d("DISTANCES", "distanza : " + distance);
+
                     DatabaseReference databaseB = FirebaseDatabase.getInstance().getReference()
                             .child("Bikers").child(firebaseUser.getUid());
                     HashMap<String, Object> childB = new HashMap<>();
@@ -250,10 +264,16 @@ public class ReservationFragment extends Fragment {
                             activeReservation.getUserDeliveryTime(), activeReservation.getRestaurantPickupTime(),
                             activeReservation.getRestaurantName(), activeReservation.getUserName(),
                             activeReservation.getRestaurantAddress(), activeReservation.getUserAddress(),
-                            activeReservation.getRestaurantID());
+                            activeReservation.getRestaurantID(), distance);
                     reservation.setStatus("delivered");
+
+                    Query query = databaseRest;
+                    //TODO MAKE QUERY TO GET TOTALDISTANCE
+                    totalDistance += distance;
+
                     HashMap<String, Object> childSelf = new HashMap<>();
                     childSelf.put(activeReservation.getReservationID(), reservation);
+                    childSelf.put("totalDistance", totalDistance);
                     databaseRest.updateChildren(childSelf).addOnFailureListener(new OnFailureListener() {
                         @Override
                         public void onFailure(@NonNull Exception e) {
@@ -441,5 +461,51 @@ public class ReservationFragment extends Fragment {
     public void removeAllItem(){
         reservations.clear();
         adapter.notifyDataSetChanged();
+    }
+
+    public double haversineDistance(double initialLat, double initialLong,
+                                    double finalLat, double finalLong){
+        int R = 6371; // km (Earth radius)
+        double dLat = toRadians(finalLat-initialLat);
+        double dLon = toRadians(finalLong-initialLong);
+        initialLat = toRadians(initialLat);
+        finalLat = toRadians(finalLat);
+
+        double a = Math.sin(dLat/2) * Math.sin(dLat/2) +
+                Math.sin(dLon/2) * Math.sin(dLon/2) * Math.cos(initialLat) * Math.cos(finalLat);
+        double c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1-a));
+        return R * c;
+    }
+
+    public double toRadians(double deg) {
+        return deg * (Math.PI/180);
+    }
+
+    public void calculateDistance(Reservation activeReservation) {
+        distance = 0.0;
+        List<Address> lista = new ArrayList<>();
+
+        String addressUser = activeReservation.getUserAddress();
+        Log.d("DISTANCES", "user: "+ addressUser);
+        try {
+            lista = geocoder.getFromLocationName(addressUser, 1);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        LatLng latLngUser = new LatLng(lista.get(0).getLatitude(), lista.get(0).getLongitude());
+
+        String addressRest = activeReservation.getRestaurantAddress();
+        Log.d("DISTANCES", "restaurant: "+ addressRest);
+        try {
+            lista = geocoder.getFromLocationName(addressRest, 1);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        LatLng latLngRestaurant = new LatLng(lista.get(0).getLatitude(), lista.get(0).getLongitude());
+
+        //distance from me to rest and from rest to user
+
+        distance += haversineDistance(latLngRestaurant.latitude, latLngRestaurant.longitude,
+                latLngUser.latitude, latLngUser.longitude);
     }
 }

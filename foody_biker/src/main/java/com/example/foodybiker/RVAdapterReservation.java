@@ -96,7 +96,7 @@ public class RVAdapterReservation extends RecyclerView.Adapter<RVAdapterReservat
                             reservations.get(pos).getUserDeliveryTime(), reservations.get(pos).getRestaurantPickupTime(),
                             reservations.get(pos).getRestaurantName(), reservations.get(pos).getUserName(),
                             reservations.get(pos).getRestaurantAddress(), reservations.get(pos).getUserAddress(),
-                            reservations.get(pos).getRestaurantID());
+                            reservations.get(pos).getRestaurantID(), 0.0);
                     reservation.setUserPhone(reservations.get(pos).getUserPhone());
                     reservation.setRestPhone(reservations.get(pos).getRestPhone());
                     reservation.setStatus("accepted");
@@ -167,7 +167,7 @@ public class RVAdapterReservation extends RecyclerView.Adapter<RVAdapterReservat
                             reservations.get(pos).getUserDeliveryTime(), reservations.get(pos).getRestaurantPickupTime(),
                             reservations.get(pos).getRestaurantName(), reservations.get(pos).getUserName(),
                             reservations.get(pos).getRestaurantAddress(), reservations.get(pos).getUserAddress(),
-                            reservations.get(pos).getRestaurantID());
+                            reservations.get(pos).getRestaurantID(), 0.0);
                     HashMap<String, Object> childSelf = new HashMap<>();
                     reservation.setStatus("rejected");
                     childSelf.put(reservations.get(pos).getReservationID(), reservation);
