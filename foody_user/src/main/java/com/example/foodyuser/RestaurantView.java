@@ -24,6 +24,7 @@ import com.bumptech.glide.Glide;
 import com.bumptech.glide.annotation.GlideOption;
 import com.bumptech.glide.request.RequestOptions;
 import com.bumptech.glide.signature.ObjectKey;
+import com.example.foody_library.Review;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.firebase.database.DataSnapshot;
@@ -39,6 +40,8 @@ import com.google.firebase.storage.StorageReference;
 import java.io.File;
 import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 
 public class RestaurantView extends AppCompatActivity {
@@ -51,15 +54,19 @@ public class RestaurantView extends AppCompatActivity {
     private Toolbar toolbar;
     private final String DIRECTORY_IMAGES = "showImages";
     private final String CARDS = "cards.json";
+    private final String REVIEWS = "reviews.json";
     private final String ORDERS = "orders.json";
     private SharedPreferences shared;
     private String reName, reUsername, reAddress;
     private ArrayList<Card> cards;
+    private ArrayList<Review> reviews;
     private ShowMenuFragment showMenu;
     private ShowInfoFragment showInfo;
     private ShowReviewFragment showReview;
     private int imageFetched;
     private int imageToFetch;
+    private int reviewsImageToFetch;
+    private int reviewsImageFetched;
     private TextView totalText, price;
     private ConstraintLayout totalLayout;
     private final String RESTAURANT_IMAGES = "RestaurantImages";
@@ -91,6 +98,7 @@ public class RestaurantView extends AppCompatActivity {
 
 
         showMenu.setFather(this);
+        showReview.setFather(this);
 
         setupViewPager(viewPager);
 
@@ -151,26 +159,32 @@ public class RestaurantView extends AppCompatActivity {
 
         }
 
-        if(storage == null){
+        File root = getExternalFilesDir(Environment.DIRECTORY_PICTURES);
+        storage = new File(root.getPath()+File.separator+DIRECTORY_IMAGES);
+
+        if(!storage.exists()){
             Log.d("PROVA","No storage found");
             setupImagesDirectory();
             //Fetch Restaurant Image and save in internal storage
             fetchRestaurant();
             //Fetches the menu and automatically adds it to fragment
             fetchMenu();
-            totalDisappear();
+            //Fetches the reviews and automatically adds them to fragment
+            fetchReviews();
 
+            totalDisappear();
 
         }else{
             //Fetch Cards From Storage
-            Log.d("PROVA","Storage found");
+            Log.d("MAD3","Storage found");
             if (thisRestaurant == null)
                 fetchRestaurant();
             else{
                 price.setText(thisRestaurant.getDeliveryPriceString());
                 showInfo.init(thisRestaurant);
             }
-            cardsFromTotal();
+            cardsFromFile();
+            reviewsFromFile();
             updateTotal();
 
         }
@@ -178,38 +192,57 @@ public class RestaurantView extends AppCompatActivity {
 
     }
 
-    public void cardsFromTotal(){
+    public void cardsFromFile(){
+        Log.d("MAD3","ON cards From File");
         final int set = session;
         File cardFile = new File(storage, CARDS);
         File orderFile = new File(storage, ORDERS);
         JsonHandler handler = new JsonHandler();
 
-        cards = handler.getCards(cardFile);
-        ArrayList<OrderItem> orders = handler.getOrders(orderFile);
+        if(set == session){
+            cards = handler.getCards(cardFile);
 
-        for(OrderItem o : orders){
-            for(Card c: cards){
-                for(Dish d: c.getDishes()){
-                    Log.d("MAD2","Dish "+d.getDishName()+" order "+o.getOrderName());
-                    if(d.getDishName().equals(o.getOrderName())){
-                        Log.d("MAD2", "Found ");
-                        d.setOrderItem(o);
-                        Log.d("MAD2", d.getDishName()+" "+d.getOrderItem().getPieces());
+            for(Card c : cards){
+                Log.d("MAD3",c.getTitle()+" ");
+            }
+            ArrayList<OrderItem> orders = handler.getOrders(orderFile);
+
+            for(OrderItem o : orders){
+                for(Card c: cards){
+                    for(Dish d: c.getDishes()){
+                        Log.d("MAD3","Dish "+d.getDishName()+" order "+o.getOrderName());
+                        if(d.getDishName().equals(o.getOrderName())){
+                            Log.d("MAD2", "Found ");
+                            d.setOrderItem(o);
+                            Log.d("MAD3", d.getDishName()+" "+d.getOrderItem().getPieces());
+                        }
                     }
                 }
+
             }
 
+
+            Log.d("MAD3","called init set "+set+" session "+session);
+            showMenu.init(cards);
         }
 
-        Log.d("MAD","called init set "+set+" session "+session);
-        if(set == session)
-            showMenu.init(cards);
+    }
 
+    public void reviewsFromFile(){
+        final int set = session;
+        File reviewsFile = new File(storage, REVIEWS);
+        JsonHandler handler = new JsonHandler();
+
+        if(set == session){
+            reviews = handler.getReviews(reviewsFile);
+            showReview.init(reviews);
+        }
     }
 
     public void updateTotal(){
 
         float total = 0;
+
         for(Card c : cards){
             for(Dish d : c.getDishes()){
                 if(d.getOrderItem() != null)
@@ -471,12 +504,149 @@ public class RestaurantView extends AppCompatActivity {
         });
     }
 
+    private void fetchReviews(){
+        final int set = session;
+        final DatabaseReference database = FirebaseDatabase.getInstance().getReference();
+        DatabaseReference ref = database.child("reviews").child(reName);
+        ref.addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                if(set == session){
+                    reviews = new ArrayList<>();
+                    for (DataSnapshot ds : dataSnapshot.getChildren()) {
+                        String reviewID = ds.getKey();
+                        String userId = ds.child("userID").getValue(String.class);
+                        String notes = ds.child("notes").getValue(String.class);
+                        Float rating = ds.child("rating").getValue(Float.class);
+
+                        if(notes != null)
+                            if(notes.length() == 0)
+                                notes = null;
+
+                        Review review = new Review(reviewID, userId, notes,rating);
+
+                        reviews.add(review);
+
+                    }
+
+                    if(reviews.size() > 0)
+                        fetchUsers(set);
+                }
+            }
+            @Override
+            public void onCancelled(@NonNull DatabaseError databaseError) {
+                Log.d("SWSW", databaseError.getMessage());
+            }
+        });
+    }
+
+    private void fetchUsers(final int num){
+        final int set = num;
+        final HashMap<String, String> usersWithImages = new HashMap<>();
+        final DatabaseReference database = FirebaseDatabase.getInstance().getReference();
+        DatabaseReference ref = database.child("endUsers");
+        ref.addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                if(set == session) {
+                    for (Review r : reviews) {
+                        String username = dataSnapshot.child(r.getUserID()).child("info").child("username").getValue(String.class);
+                        String imagePath = dataSnapshot.child(r.getUserID()).child("info").child("imagePath").getValue(String.class);
+                        if (imagePath != null) {
+                            if (imagePath.length() > 0) {
+                                usersWithImages.put(r.getUserID(), imagePath);
+                                r.setImagePath(storage.getPath() + File.separator + r.getUserID() + ".jpg");
+                            }
+                        }
+
+                        r.setUserName(username);
+                    }
+
+                    if (!usersWithImages.isEmpty()) {
+                        setUserImages(usersWithImages, set);
+                    } else {
+                        if (set == session)
+                            showReview.init(reviews);
+                    }
+                }
+            }
+            @Override
+            public void onCancelled(@NonNull DatabaseError databaseError) {
+                Log.d("SWSW", databaseError.getMessage());
+            }
+        });
+
+    }
+
+    private void setUserImages(final HashMap<String, String> images, int num){
+        Log.d("TESTFETCH","Into Set User Image");
+        final int set = num;
+        if(set == session){
+            reviewsImageToFetch = images.size();
+            reviewsImageFetched = 0;
+        }
+
+        for(final String s : images.keySet()){
+            Log.d("TESTFETCH",s+ " "+images.get(s));
+        }
+
+        for(final String s : images.keySet()){
+            StorageReference mStorageRef = FirebaseStorage.getInstance().getReference();
+            final File currentimage = new File(storage.getPath() + File.separator + s + ".jpg");
+            mStorageRef.child(images.get(s)).getFile(currentimage).addOnSuccessListener(new OnSuccessListener<FileDownloadTask.TaskSnapshot>() {
+                @Override
+                public void onSuccess(FileDownloadTask.TaskSnapshot taskSnapshot) {
+                    Log.d("TESTFETCH", "Saved Image "+reviewsImageToFetch+" "+reviewsImageFetched+" "+s+" "+images.get(s));
+                    reviewsImageFetched++;
+                    if(reviewsImageFetched == reviewsImageToFetch){
+                        if(set == session)
+                            showReview.init(reviews);
+                    }
+                }
+            }).addOnFailureListener(new OnFailureListener() {
+                @Override
+                public void onFailure(@NonNull Exception e) {
+                    Log.d("TESTFETCH", "Not saved Image "+reviewsImageToFetch+" "+reviewsImageFetched+" "+s+" "+images.get(s));
+                    reviewsImageFetched++;
+                    if(reviewsImageFetched == reviewsImageToFetch){
+                        Log.d("MAD","called init set "+set+" session "+session);
+                        if(set == session)
+                            showReview.init(reviews);
+                    }
+                }
+            });
+        }
+
+    }
+
     @Override
     protected void onPause() {
         super.onPause();
         session++;
         if(session > 2000)
             session = 0;
+
+        if(showMenu.notReady() || showReview.notReady()){
+            Log.d("PROVA","deleting storage because not completed");
+            if(storage.exists())
+                removeStorage();
+            showMenu.removeCards();
+            showReview.removeReviews();
+        }else{
+            JsonHandler handler = new JsonHandler();
+            String cJson = handler.toJSON(cards);
+            for(Card c: cards)
+                Log.d("MAD3",c.getTitle());
+            File m1 = new File(storage, CARDS);
+            handler.saveStringToFile(cJson, m1);
+            String reviewsToJson = handler.reviewsToJSON(reviews);
+            File m2 = new File(storage, REVIEWS);
+            handler.saveStringToFile(reviewsToJson, m2);
+            showMenu.removeCards();
+            showReview.removeReviews();
+        }
+
+        /*
         File menu = new File(storage, CARDS);
         if(imageFetched != imageToFetch){
             Log.d("PROVA","deleting storage because not completed");
@@ -496,7 +666,7 @@ public class RestaurantView extends AppCompatActivity {
             if(storage.exists())
                 removeStorage();
             showMenu.removeCards();
-        }
+        }*/
 
     }
 
