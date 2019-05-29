@@ -5,6 +5,7 @@ import android.animation.AnimatorListenerAdapter;
 import android.app.AlertDialog;
 import android.content.DialogInterface;
 import android.os.Environment;
+import android.support.annotation.NonNull;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
@@ -24,8 +25,12 @@ import android.widget.Toast;
 
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ValueEventListener;
+
 import java.io.File;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -135,10 +140,46 @@ public class MenuEdit extends AppCompatActivity {
                                     .child("restaurantsMenu").child(user.getUid()).child("Card");
                             HashMap<String, Object> child = new HashMap<>();
                             for (int i = 0; i < cards.size(); i++) {
-                                if (cards.get(i).getDishes().size() != 0)
+                                if (cards.get(i).getDishes().size() != 0) {
                                     child.put(Integer.toString(i), cards.get(i));
+                                }
                             }
                             database.updateChildren(child);
+
+                            final DatabaseReference databaseFreq = FirebaseDatabase.getInstance().getReference()
+                                    .child("archive").child("restaurant").child(user.getUid()).child("dishesCount");
+                            databaseFreq.addListenerForSingleValueEvent(new ValueEventListener() {
+                                @Override
+                                public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                                    if (dataSnapshot.exists()){
+                                        HashMap<String, Object> frequencies = new HashMap<>();
+                                        for (DataSnapshot ds : dataSnapshot.getChildren()) {
+                                            frequencies.put(ds.getKey(), ds.getValue(Integer.class));
+                                        }
+                                        for (int i = 0; i < cards.size(); i++) {
+                                            for(int j = 0; j < cards.get(i).getDishes().size(); j++){
+                                                if (!frequencies.containsKey(cards.get(i).getDishes().get(j).getDishName()))
+                                                    frequencies.put(cards.get(i).getDishes().get(j).getDishName(), 0);
+                                            }
+                                        }
+                                        databaseFreq.updateChildren(frequencies);
+
+                                    } else{
+                                        HashMap<String, Object> frequencies = new HashMap<>();
+                                        for (int i = 0; i < cards.size(); i++) {
+                                            for(int j = 0; j < cards.get(i).getDishes().size(); j++){
+                                                frequencies.put(cards.get(i).getDishes().get(j).getDishName(), 0);
+                                            }
+                                        }
+                                        databaseFreq.updateChildren(frequencies);
+                                    }
+                                }
+
+                                @Override
+                                public void onCancelled(@NonNull DatabaseError databaseError) {
+
+                                }
+                            });
                         }
                     }).start();
 
