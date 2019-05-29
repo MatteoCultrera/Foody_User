@@ -55,15 +55,17 @@ public class HistoryFragment extends Fragment {
         FirebaseAuth firebaseAuth = FirebaseAuth.getInstance();
         FirebaseUser firebaseUser = firebaseAuth.getCurrentUser();
         DatabaseReference databaseReference = FirebaseDatabase.getInstance().getReference().child("archive")
-                .child("restaurant").child(firebaseUser.getUid());
+                .child("restaurant").child(firebaseUser.getUid()).child("frequency");
         databaseReference.addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-                for(DataSnapshot ds : dataSnapshot.getChildren()){
-                    for(DataSnapshot ds2 : ds.getChildren()) {
-                        Integer time = Integer.parseInt(ds2.child("orderTime").getValue(String.class).split(":")[0]);
-                        Integer count = frequency.get(time) + 1;
-                        frequency.put(time, count);
+                if (dataSnapshot.exists()) {
+                    for (DataSnapshot ds : dataSnapshot.getChildren()) {
+                        frequency.put(Integer.parseInt(ds.getKey()), ds.getValue(Integer.class));
+                    }
+                } else {
+                    for (int i = 0; i < 24; i ++){
+                        frequency.put(i, 0);
                     }
                 }
 
