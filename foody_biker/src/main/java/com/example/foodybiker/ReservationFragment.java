@@ -5,6 +5,8 @@ import android.animation.AnimatorListenerAdapter;
 import android.animation.LayoutTransition;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.content.pm.ApplicationInfo;
+import android.content.pm.PackageManager;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
@@ -52,7 +54,7 @@ public class ReservationFragment extends Fragment {
     private ArrayList<Reservation> reservations;
     private Reservation activeReservation;
     private RecyclerView orderList;
-    private ImageButton switchButton;
+    private ImageButton switchButton, navigationRest, navigationUser;
     private RVAdapterReservation adapter;
     private boolean toAdd;
     private FirebaseUser firebaseUser;
@@ -207,6 +209,8 @@ public class ReservationFragment extends Fragment {
         deliveryTime = view.findViewById(R.id.deliver_time);
         callRestaurant = view.findViewById(R.id.call_restaurant);
         callUser = view.findViewById(R.id.call_user);
+        navigationRest = view.findViewById(R.id.navigation_to_rest);
+        navigationUser = view.findViewById(R.id.navigation_to_user);
 
         orderDeliveredLayout.getLayoutTransition().enableTransitionType(LayoutTransition.CHANGING);
 
@@ -305,6 +309,42 @@ public class ReservationFragment extends Fragment {
                 startActivity(intent);
             }
         });
+
+        boolean mapsFound = true;
+        String packageName = "com.google.android.apps.maps";
+        ApplicationInfo appInfo = null;
+        try {
+            appInfo = getActivity().getPackageManager().getApplicationInfo(packageName, 0);
+
+        } catch (PackageManager.NameNotFoundException e) {
+            mapsFound = false;
+            navigationUser.setVisibility(View.GONE);
+            navigationRest.setVisibility(View.GONE);
+        }
+
+        if(mapsFound) {
+            navigationRest.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    String address = activeReservation.getRestaurantAddress();
+                    Uri gmmIntentUri = Uri.parse("google.navigation:q=" + address + "&mode=b");
+                    Intent mapIntent = new Intent(Intent.ACTION_VIEW, gmmIntentUri);
+                    mapIntent.setPackage("com.google.android.apps.maps");
+                    startActivity(mapIntent);
+                }
+            });
+
+            navigationUser.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    String address = activeReservation.getUserAddress();
+                    Uri gmmIntentUri = Uri.parse("google.navigation:q=" + address + "&mode=b");
+                    Intent mapIntent = new Intent(Intent.ACTION_VIEW, gmmIntentUri);
+                    mapIntent.setPackage("com.google.android.apps.maps");
+                    startActivity(mapIntent);
+                }
+            });
+        }
     }
 
     public void updateTitles(){
