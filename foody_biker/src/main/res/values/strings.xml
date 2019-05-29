@@ -12,6 +12,7 @@
     <string name="profile">Profile</string>
     <string name="orders">Reservations</string>
     <string name="notes">Notes:</string>
+    <string name="history">History</string>
 
     <string name="delivering_order">Delivering Order</string>
     <string name="pending_orders"> Pending Orders</string>
@@ -26,4 +27,7 @@
 
     <string name="pick_time_text">Pickup at</string>
     <string name="delivery_time_text">Delivery at</string>
+
+    <!-- TODO: Remove or change this placeholder text -->
+    <string name="hello_blank_fragment" translatable="false">Hello blank fragment</string>
 </resources>
