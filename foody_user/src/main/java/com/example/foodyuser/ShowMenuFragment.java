@@ -93,4 +93,8 @@ public class ShowMenuFragment extends Fragment {
 
     }
 
+    public boolean notReady(){
+        return cards == null;
+    }
+
 }

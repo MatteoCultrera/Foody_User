@@ -1,4 +1,4 @@
-package com.example.foodyuser;
+package com.example.foody_library;
 
 public class UserInfo {
     private String username;
