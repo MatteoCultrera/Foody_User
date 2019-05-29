@@ -1,12 +1,9 @@
 package com.example.foodyrestaurant;
 
-import android.graphics.Color;
 import android.os.Bundle;
-import android.provider.ContactsContract;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -18,7 +15,6 @@ import com.github.mikephil.charting.components.YAxis;
 import com.github.mikephil.charting.data.BarData;
 import com.github.mikephil.charting.data.BarDataSet;
 import com.github.mikephil.charting.data.BarEntry;
-import com.github.mikephil.charting.interfaces.datasets.IBarDataSet;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.DataSnapshot;
@@ -59,15 +55,17 @@ public class HistoryFragment extends Fragment {
         FirebaseAuth firebaseAuth = FirebaseAuth.getInstance();
         FirebaseUser firebaseUser = firebaseAuth.getCurrentUser();
         DatabaseReference databaseReference = FirebaseDatabase.getInstance().getReference().child("archive")
-                .child("restaurant").child(firebaseUser.getUid());
+                .child("restaurant").child(firebaseUser.getUid()).child("frequency");
         databaseReference.addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-                for(DataSnapshot ds : dataSnapshot.getChildren()){
-                    for(DataSnapshot ds2 : ds.getChildren()) {
-                        Integer time = Integer.parseInt(ds2.child("orderTime").getValue(String.class).split(":")[0]);
-                        Integer count = frequency.get(time) + 1;
-                        frequency.put(time, count);
+                if (dataSnapshot.exists()) {
+                    for (DataSnapshot ds : dataSnapshot.getChildren()) {
+                        frequency.put(Integer.parseInt(ds.getKey()), ds.getValue(Integer.class));
+                    }
+                } else {
+                    for (int i = 0; i < 24; i ++){
+                        frequency.put(i, 0);
                     }
                 }
 
