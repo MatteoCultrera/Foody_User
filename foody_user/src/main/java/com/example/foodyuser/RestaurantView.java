@@ -357,6 +357,9 @@ public class RestaurantView extends AppCompatActivity {
                 });
                 dialog.getWindow().setAttributes(lp);
                 dialog.getWindow().setBackgroundDrawableResource(android.R.color.transparent);
+                WindowManager.LayoutParams layPam = dialog.getWindow().getAttributes();
+                layPam.dimAmount = 0.7f;
+                dialog.getWindow().addFlags(WindowManager.LayoutParams.FLAG_DIM_BEHIND);
             }
         });
     }
