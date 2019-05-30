@@ -17,8 +17,11 @@ import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ValueEventListener;
 
 import java.util.Calendar;
 import java.util.HashMap;
@@ -30,6 +33,7 @@ public class RVAdapterReservation extends RecyclerView.Adapter<RVAdapterReservat
     private ReservationFragment fatherFragment;
     private boolean orderActive;
     private FirebaseUser firebaseUser;
+    private int incRejected;
 
     RVAdapterReservation(List<Reservation> reservations, ReservationFragment fatherFragment, boolean orderActive){
         this.reservations = reservations;
@@ -96,7 +100,7 @@ public class RVAdapterReservation extends RecyclerView.Adapter<RVAdapterReservat
                             reservations.get(pos).getUserDeliveryTime(), reservations.get(pos).getRestaurantPickupTime(),
                             reservations.get(pos).getRestaurantName(), reservations.get(pos).getUserName(),
                             reservations.get(pos).getRestaurantAddress(), reservations.get(pos).getUserAddress(),
-                            reservations.get(pos).getRestaurantID());
+                            reservations.get(pos).getRestaurantID(), 0.0);
                     reservation.setUserPhone(reservations.get(pos).getUserPhone());
                     reservation.setRestPhone(reservations.get(pos).getRestPhone());
                     reservation.setStatus("accepted");
@@ -125,12 +129,14 @@ public class RVAdapterReservation extends RecyclerView.Adapter<RVAdapterReservat
                     fatherFragment.removeItem(pos);
                     fatherFragment.updateTitles();
 
+                    incRejected = 0;
                     //Here I delete the other reservations when one is accepted
                     DatabaseReference databaseBiker = FirebaseDatabase.getInstance().getReference()
                             .child("reservations").child("Bikers").child(firebaseUser.getUid());
                     DatabaseReference databaseRests = FirebaseDatabase.getInstance().getReference()
                             .child("reservations").child("restaurant");
                     for(Reservation res : reservations){
+                        incRejected++;
                         //Here I generate the map to update the biker node in the db
                         databaseBiker.child(res.getReservationID()).removeValue()
                             .addOnFailureListener(new OnFailureListener() {
@@ -139,7 +145,6 @@ public class RVAdapterReservation extends RecyclerView.Adapter<RVAdapterReservat
                                     Toast.makeText(fatherFragment.getContext(), R.string.error_order, Toast.LENGTH_SHORT).show();
                                 }
                             });
-
                         //Setting the new status of the waiting biker for all the reservation rejected
                         databaseRests.child(res.getRestaurantID()).child(res.getReservationID())
                                 .child("waitingBiker").setValue(false).addOnFailureListener(new OnFailureListener() {
@@ -149,6 +154,27 @@ public class RVAdapterReservation extends RecyclerView.Adapter<RVAdapterReservat
                             }
                         });
                     }
+
+                    final DatabaseReference databaseRej = FirebaseDatabase.getInstance().getReference()
+                            .child("archive").child("Bikers").child(firebaseUser.getUid()).child("rejected");
+                    databaseRej.addListenerForSingleValueEvent(new ValueEventListener() {
+                        @Override
+                        public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                            if (dataSnapshot.exists()) {
+                                int count = dataSnapshot.getValue(int.class);
+                                databaseRej.setValue(count+incRejected);
+                                Log.d("PROVA", "Inside : count: " + count + " toInc: "+ incRejected);
+                            } else {
+                                databaseRej.setValue(1);
+                                Log.d("PROVA", "Inside in else");
+                            }
+                        }
+
+                        @Override
+                        public void onCancelled(@NonNull DatabaseError databaseError) {
+
+                        }
+                    });
                     //Removing all the pending delivery and update the title
                     fatherFragment.removeAllItem();
                     fatherFragment.updateTitles();
@@ -167,7 +193,7 @@ public class RVAdapterReservation extends RecyclerView.Adapter<RVAdapterReservat
                             reservations.get(pos).getUserDeliveryTime(), reservations.get(pos).getRestaurantPickupTime(),
                             reservations.get(pos).getRestaurantName(), reservations.get(pos).getUserName(),
                             reservations.get(pos).getRestaurantAddress(), reservations.get(pos).getUserAddress(),
-                            reservations.get(pos).getRestaurantID());
+                            reservations.get(pos).getRestaurantID(), 0.0);
                     HashMap<String, Object> childSelf = new HashMap<>();
                     reservation.setStatus("rejected");
                     childSelf.put(reservations.get(pos).getReservationID(), reservation);
@@ -197,6 +223,26 @@ public class RVAdapterReservation extends RecyclerView.Adapter<RVAdapterReservat
                         @Override
                         public void onFailure(@NonNull Exception e) {
                             Toast.makeText(fatherFragment.getContext(), R.string.error_order, Toast.LENGTH_SHORT).show();
+                        }
+                    });
+
+                    final DatabaseReference databaseRej = FirebaseDatabase.getInstance().getReference()
+                            .child("archive").child("Bikers").child(firebaseUser.getUid()).child("rejected");
+                    databaseRej.addListenerForSingleValueEvent(new ValueEventListener() {
+                        @Override
+                        public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                            if (dataSnapshot.exists()) {
+                                int count = dataSnapshot.getValue(int.class);
+                                count ++;
+                                databaseRej.setValue(count);
+                            } else {
+                                databaseRej.setValue(1);
+                            }
+                        }
+
+                        @Override
+                        public void onCancelled(@NonNull DatabaseError databaseError) {
+
                         }
                     });
                 }
