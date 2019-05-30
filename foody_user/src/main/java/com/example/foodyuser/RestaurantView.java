@@ -55,7 +55,6 @@ public class RestaurantView extends AppCompatActivity {
     private final String DIRECTORY_IMAGES = "showImages";
     private final String CARDS = "cards.json";
     private final String REVIEWS = "reviews.json";
-    private final String ORDERS = "orders.json";
     private SharedPreferences shared;
     private String reName, reUsername, reAddress;
     private ArrayList<Card> cards;
@@ -172,7 +171,7 @@ public class RestaurantView extends AppCompatActivity {
             //Fetches the reviews and automatically adds them to fragment
             fetchReviews();
 
-            totalDisappear();
+            updateTotal();
 
         }else{
             //Fetch Cards From Storage
@@ -196,32 +195,11 @@ public class RestaurantView extends AppCompatActivity {
         Log.d("MAD3","ON cards From File");
         final int set = session;
         File cardFile = new File(storage, CARDS);
-        File orderFile = new File(storage, ORDERS);
         JsonHandler handler = new JsonHandler();
 
         if(set == session){
             cards = handler.getCards(cardFile);
-
-            for(Card c : cards){
-                Log.d("MAD3",c.getTitle()+" ");
-            }
-            ArrayList<OrderItem> orders = handler.getOrders(orderFile);
-
-            for(OrderItem o : orders){
-                for(Card c: cards){
-                    for(Dish d: c.getDishes()){
-                        Log.d("MAD3","Dish "+d.getDishName()+" order "+o.getOrderName());
-                        if(d.getDishName().equals(o.getOrderName())){
-                            Log.d("MAD2", "Found ");
-                            d.setOrderItem(o);
-                            Log.d("MAD3", d.getDishName()+" "+d.getOrderItem().getPieces());
-                        }
-                    }
-                }
-
-            }
-
-
+            addOrders();
             Log.d("MAD3","called init set "+set+" session "+session);
             showMenu.init(cards);
         }
@@ -242,6 +220,15 @@ public class RestaurantView extends AppCompatActivity {
     public void updateTotal(){
 
         float total = 0;
+
+        if(cards == null){
+            totalDisappear();
+            return;
+        }
+        if(cards.size() == 0){
+            totalDisappear();
+            return;
+        }
 
         for(Card c : cards){
             for(Dish d : c.getDishes()){
@@ -292,7 +279,8 @@ public class RestaurantView extends AppCompatActivity {
                 }
 
                 if(orders.size() > 0){
-                    File file = new File(storage, ORDERS);
+                    File root = getExternalFilesDir(Environment.DIRECTORY_DOCUMENTS);
+                    File file = new File(root, getString(R.string.order_file_name));
                     String json = handler.ordersToJSON(orders);
                     handler.saveStringToFile(json, file);
                 }
@@ -332,6 +320,30 @@ public class RestaurantView extends AppCompatActivity {
         storage = new File(root.getPath()+File.separator+DIRECTORY_IMAGES);
 
         storage.mkdirs();
+
+    }
+
+    private void addOrders(){
+
+        File root = getExternalFilesDir(Environment.DIRECTORY_DOCUMENTS);
+        File orders = new File(root, getResources().getString(R.string.order_file_name));
+
+        if(!orders.exists())
+            return;
+
+        JsonHandler handler = new JsonHandler();
+        ArrayList<OrderItem> ordersArray = handler.getOrders(orders);
+
+        for(OrderItem o : ordersArray){
+            for(Card c: cards){
+                for(Dish d: c.getDishes()){
+                    if(d.getDishName().equals(o.getOrderName())){
+                        d.setOrderItem(o);
+                    }
+                }
+            }
+
+        }
 
     }
 
@@ -455,8 +467,10 @@ public class RestaurantView extends AppCompatActivity {
 
                 if(imageToFetch == 0){
                     Log.d("MAD","called init set "+set+" session "+session);
-                    if(set == session)
+                    if(set == session){
+                        addOrders();
                         showMenu.init(cards);
+                    }
                 }
                 else{
                     int pos = 0;
@@ -474,8 +488,10 @@ public class RestaurantView extends AppCompatActivity {
                                         imageFetched++;
                                         if(imageFetched == imageToFetch){
                                             Log.d("MAD","called init set "+set+" session "+session);
-                                            if(set == session)
+                                            if(set == session){
+                                                addOrders();
                                                 showMenu.init(cards);
+                                            }
                                         }
                                     }
                                 }).addOnFailureListener(new OnFailureListener() {
@@ -485,8 +501,10 @@ public class RestaurantView extends AppCompatActivity {
                                         d.setImage(null);
                                         if(imageFetched == imageToFetch){
                                             Log.d("MAD","called init set "+set+" session "+session);
-                                            if(set == session)
+                                            if(set == session){
+                                                addOrders();
                                                 showMenu.init(cards);
+                                            }
                                         }
                                     }
                                 });
