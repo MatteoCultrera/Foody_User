@@ -51,6 +51,7 @@ public class UserFragment extends Fragment {
     private SharedPreferences.Editor edit;
     private FirebaseAuth firebaseAuth;
     private MaterialButton logout;
+    private final String PROFILE_IMAGE = "profile.jpg";
     private String imagePath;
     private UserInfo info;
 
@@ -121,6 +122,7 @@ public class UserFragment extends Fragment {
                                 }
                             });
                         }else{
+
                             Glide
                                     .with(profilePicture.getContext())
                                     .load(R.drawable.profile_placeholder)
