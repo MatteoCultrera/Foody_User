@@ -42,7 +42,6 @@ import java.util.Objects;
 public class Order extends AppCompatActivity {
 
     private ArrayList<OrderItem> orders, copyOrders;
-    private final String ORDERS = "orders.json";
     private final String DIRECTORY_IMAGES = "showImages";
     private RVAdapterOrder adapter;
     private RecyclerView ordersList;
@@ -56,7 +55,6 @@ public class Order extends AppCompatActivity {
     private ImageButton pickTime;
     private EditText input;
     private SharedPreferences sharedPref;
-    private SharedPreferences.Editor edit;
     private String delivAddress;
     private boolean hasNote;
 
@@ -86,9 +84,8 @@ public class Order extends AppCompatActivity {
         deleteButton = findViewById(R.id.delete_button);
         pickTime = findViewById(R.id.chooseTime);
         JsonHandler handler =  new JsonHandler();
-        File root = getExternalFilesDir(Environment.DIRECTORY_PICTURES);
-        final File directory = new File(root.getPath()+File.separator+DIRECTORY_IMAGES);
-        File orderFile = new File(directory, ORDERS);
+        File root = getExternalFilesDir(Environment.DIRECTORY_DOCUMENTS);
+        File orderFile = new File(root, getString(R.string.order_file_name));
         Bundle extras = getIntent().getExtras();
         final String restID = extras.getString("restaurantID","");
         final String restName = extras.getString("restaurantName", "");
@@ -324,9 +321,8 @@ public class Order extends AppCompatActivity {
 
     public void closeActivity(){
         if(orders.size() == 0){
-            File root = getExternalFilesDir(Environment.DIRECTORY_PICTURES);
-            final File directory = new File(root.getPath()+File.separator+DIRECTORY_IMAGES);
-            File orderFile = new File(directory, ORDERS);
+            File root = getExternalFilesDir(Environment.DIRECTORY_DOCUMENTS);
+            File orderFile = new File(root, getString(R.string.order_file_name));
             if(orderFile.exists())
                 orderFile.delete();
         }
@@ -339,9 +335,8 @@ public class Order extends AppCompatActivity {
         JsonHandler handler = new JsonHandler();
         if(orders!=null && orders.size() > 0){
             String jsonOrders = handler.ordersToJSON(orders);
-            File root = getExternalFilesDir(Environment.DIRECTORY_PICTURES);
-            final File directory = new File(root.getPath()+File.separator+DIRECTORY_IMAGES);
-            File toSave = new File(directory, ORDERS);
+            File root = getExternalFilesDir(Environment.DIRECTORY_DOCUMENTS);
+            File toSave = new File(root, getString(R.string.order_file_name));
             handler.saveStringToFile(jsonOrders, toSave);
         }
     }
