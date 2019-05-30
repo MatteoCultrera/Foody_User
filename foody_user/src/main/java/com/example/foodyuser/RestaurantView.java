@@ -278,16 +278,29 @@ public class RestaurantView extends AppCompatActivity {
                                     @Override
                                     public void run() {
                                         button.setVisibility(View.GONE);
-                                        imageLayout.animate().translationY(getResources().getDimensionPixelSize(R.dimen.short800)).setDuration(400).start();
-                                        mainLayout.animate().translationY(getResources().getDimensionPixelSize(R.dimen.short800)).setDuration(300).start();
+                                        imageLayout.animate().translationY(getResources().getDimensionPixelSize(R.dimen.short800)).setDuration(300)
+                                                .start();
+                                        mainLayout.animate().translationY(getResources().getDimensionPixelSize(R.dimen.short800)).setDuration(400)
+                                                .withEndAction(new Runnable() {
+                                                     @Override
+                                                     public void run() {
+                                                         dialog.dismiss();
+                                                     }
+                                                 }
+                                        );
                                     }
                                 });
                             }else {
-                                imageLayout.animate().translationY(getResources().getDimensionPixelSize(R.dimen.short800)).setDuration(400).start();
-                                mainLayout.animate().translationY(getResources().getDimensionPixelSize(R.dimen.short800)).setDuration(300).start();
+                                imageLayout.animate().translationY(getResources().getDimensionPixelSize(R.dimen.short800)).setDuration(300)
+                                        .start();
+                                mainLayout.animate().translationY(getResources().getDimensionPixelSize(R.dimen.short800)).setDuration(400)
+                                        .withEndAction(new Runnable() {
+                                            @Override
+                                            public void run() {
+                                                dialog.dismiss();
+                                            }
+                                        });
                             }
-
-                            dialog.dismiss();
                         }
                         return true;
                     }
@@ -301,13 +314,15 @@ public class RestaurantView extends AppCompatActivity {
                             @Override
                             public void run() {
                                 button.setVisibility(View.GONE);
-                                imageLayout.animate().translationY(getResources().getDimensionPixelSize(R.dimen.short800)).setDuration(400).withEndAction(new Runnable() {
-                                    @Override
-                                    public void run() {
-                                        dialog.dismiss();
-                                    }
-                                });
-                                mainLayout.animate().translationY(getResources().getDimensionPixelSize(R.dimen.short800)).setDuration(300).start();
+                                imageLayout.animate().translationY(getResources().getDimensionPixelSize(R.dimen.short800)).setDuration(300)
+                                        .start();
+                                mainLayout.animate().translationY(getResources().getDimensionPixelSize(R.dimen.short800)).setDuration(400)
+                                        .withEndAction(new Runnable() {
+                                            @Override
+                                            public void run() {
+                                                dialog.dismiss();
+                                            }
+                                        });
                             }
                         });
 
