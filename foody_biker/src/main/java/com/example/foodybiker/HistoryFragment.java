@@ -32,6 +32,7 @@ import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
@@ -49,6 +50,7 @@ public class HistoryFragment extends Fragment {
     private Integer count;
     private int delivered;
     private int orders;
+    private Double dbDistance;
 
     public HistoryFragment() {
     }
@@ -68,7 +70,7 @@ public class HistoryFragment extends Fragment {
         orders = 0;
         return view;
     }
-/*
+
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
@@ -117,6 +119,25 @@ public class HistoryFragment extends Fragment {
 
             }
         });
+
+        DatabaseReference databaseDistance = FirebaseDatabase.getInstance().getReference().
+                child("archive").child("Bikers").child(firebaseUser.getUid());
+        databaseDistance.addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                Double dbDistance = 0.0;
+                for(DataSnapshot ds : dataSnapshot.getChildren()){
+                    if (ds.getKey().compareTo("totalDistance") == 0) {
+                        dbDistance = ds.getValue(Double.class);
+                        distance.setText(String.format("%.2f km", dbDistance));
+                    }
+                }
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError databaseError) {
+            }
+        });
     }
 
     public void drawChart() {
@@ -157,5 +178,4 @@ public class HistoryFragment extends Fragment {
         barChart.setFitBars(true);
         barChart.invalidate();
     }
-*/
 }

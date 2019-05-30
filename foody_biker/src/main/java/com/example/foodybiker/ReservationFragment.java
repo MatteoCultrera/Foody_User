@@ -73,6 +73,8 @@ public class ReservationFragment extends Fragment {
     private Geocoder geocoder;
     Double distance = 0.0;
     Double totalDistance = 0.0;
+    Double currLatitude = 0.0;
+    Double currLongitude = 0.0;
 
     public ReservationFragment(){}
 
@@ -242,9 +244,6 @@ public class ReservationFragment extends Fragment {
                     orderDelivered.setText(getString(R.string.order_delivered));
                     canClick = true;
                 }else if(card.getVisibility() == View.VISIBLE){
-                    calculateDistance(activeReservation);
-                    Log.d("DISTANCES", "distanza : " + distance);
-
                     DatabaseReference databaseB = FirebaseDatabase.getInstance().getReference()
                             .child("Bikers").child(firebaseUser.getUid());
                     HashMap<String, Object> childB = new HashMap<>();
@@ -255,6 +254,61 @@ public class ReservationFragment extends Fragment {
                             Toast.makeText(father, R.string.error_order, Toast.LENGTH_SHORT).show();
                         }
                     });
+
+                    DatabaseReference databaseLocation = FirebaseDatabase.getInstance().getReference()
+                            .child("Bikers").child(firebaseUser.getUid()).child("location");
+                    databaseLocation.addValueEventListener(new ValueEventListener() {
+                        @Override
+                        public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                            for(DataSnapshot ds : dataSnapshot.getChildren()){
+                                if (ds.getKey().compareTo("latitude") == 0) {
+                                    currLatitude = ds.getValue(Double.class);
+                                }
+                                if (ds.getKey().compareTo("longitude") == 0) {
+                                    currLongitude = ds.getValue(Double.class);
+                                }
+                            }
+                        }
+
+                        @Override
+                        public void onCancelled(@NonNull DatabaseError databaseError) {
+
+                        }
+                    });
+
+                    //TODO : finish the distance calculus
+                    distance = calculateDistance(currLatitude, currLongitude, activeReservation);
+
+                    DatabaseReference databaseDistance = FirebaseDatabase.getInstance().getReference().
+                            child("archive").child("Bikers").child(firebaseUser.getUid());
+                    databaseDistance.addValueEventListener(new ValueEventListener() {
+                        @Override
+                        public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                            Double dbDistance = 0.0;
+                            for(DataSnapshot ds : dataSnapshot.getChildren()){
+                                if (ds.getKey().compareTo("totalDistance") == 0) {
+                                    dbDistance = ds.getValue(Double.class);
+                                }
+                            }
+                            totalDistance = dbDistance;
+                        }
+
+                        @Override
+                        public void onCancelled(@NonNull DatabaseError databaseError) {
+                        }
+                    });
+
+                    HashMap<String, Object> childDistance = new HashMap<>();
+                    totalDistance += distance;
+                    childDistance.put("totalDistance", totalDistance);
+                    databaseDistance.updateChildren(childDistance).addOnFailureListener(new OnFailureListener() {
+                        @Override
+                        public void onFailure(@NonNull Exception e) {
+                            Toast.makeText(father, R.string.error_order, Toast.LENGTH_SHORT).show();
+                        }
+                    });
+
+                    Log.d("BIKERDIS", "totaldistance " + totalDistance);
 
                     Calendar calendar = Calendar.getInstance();
                     String monthYear = calendar.get(Calendar.MONTH) + "-" + calendar.get(Calendar.YEAR);
@@ -267,13 +321,8 @@ public class ReservationFragment extends Fragment {
                             activeReservation.getRestaurantID(), distance);
                     reservation.setStatus("delivered");
 
-                    Query query = databaseRest;
-                    //TODO MAKE QUERY TO GET TOTALDISTANCE
-                    totalDistance += distance;
-
                     HashMap<String, Object> childSelf = new HashMap<>();
                     childSelf.put(activeReservation.getReservationID(), reservation);
-                    childSelf.put("totalDistance", totalDistance);
                     databaseRest.updateChildren(childSelf).addOnFailureListener(new OnFailureListener() {
                         @Override
                         public void onFailure(@NonNull Exception e) {
@@ -481,7 +530,7 @@ public class ReservationFragment extends Fragment {
         return deg * (Math.PI/180);
     }
 
-    public void calculateDistance(Reservation activeReservation) {
+    public Double calculateDistance(Double latBiker, Double longBiker, Reservation activeReservation) {
         distance = 0.0;
         List<Address> lista = new ArrayList<>();
 
@@ -505,7 +554,13 @@ public class ReservationFragment extends Fragment {
 
         //distance from me to rest and from rest to user
 
+        distance += haversineDistance(latBiker, longBiker,
+                latLngRestaurant.latitude, latLngRestaurant.longitude);
+        Log.d("PROVA", "biker-rest: " + distance);
         distance += haversineDistance(latLngRestaurant.latitude, latLngRestaurant.longitude,
                 latLngUser.latitude, latLngUser.longitude);
+        Log.d("PROVA", "rest-user: " + distance);
+
+        return distance;
     }
 }
