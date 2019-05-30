@@ -49,8 +49,7 @@ public class HistoryFragment extends Fragment {
     private HashMap<Integer, Integer> frequency = new HashMap<>();
     private Integer count;
     private int delivered;
-    private int orders;
-    private Double dbDistance;
+    private int rejected;
 
     public HistoryFragment() {
     }
@@ -67,7 +66,7 @@ public class HistoryFragment extends Fragment {
             frequency.put(i, 0);
         }
         delivered = 0;
-        orders = 0;
+        rejected = 0;
         return view;
     }
 
@@ -77,6 +76,27 @@ public class HistoryFragment extends Fragment {
 
         FirebaseAuth firebaseAuth = FirebaseAuth.getInstance();
         FirebaseUser firebaseUser = firebaseAuth.getCurrentUser();
+        DatabaseReference databaseAccRej = FirebaseDatabase.getInstance().getReference()
+                .child("archive").child("Bikers").child(firebaseUser.getUid());
+        databaseAccRej.addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                for(DataSnapshot ds : dataSnapshot.getChildren()) {
+                    if(ds.getKey().compareTo("delivered") == 0) {
+                        delivered = ds.getValue(Integer.class);
+                    }
+                    if(ds.getKey().compareTo("rejected") == 0) {
+                        rejected = ds.getValue(Integer.class);
+                    }
+                }
+                drawPieCharts();
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError databaseError) {
+            }
+        });
+
         DatabaseReference databaseReference = FirebaseDatabase.getInstance().getReference().child("archive")
                 .child("Bikers").child(firebaseUser.getUid());
         Log.d("BIKERLOG", "" + firebaseUser.getUid());
@@ -89,27 +109,8 @@ public class HistoryFragment extends Fragment {
                         Integer time = Integer.parseInt(ds2.child("orderTime").getValue(String.class).split(":")[0]);
                         count = frequency.get(time) + 1;
                         frequency.put(time, count);
-
-                        if(ds2.child("status").getValue().equals("delivered")) {
-                            delivered++;
-                        }
-                        orders++;
                     }
                 }
-                ArrayList<PieEntry> entries = new ArrayList<>();
-                entries.add(new PieEntry(delivered));
-                entries.add(new PieEntry(orders-delivered));
-                PieDataSet dataSet = new PieDataSet(entries, "Orders Results");
-                ArrayList<Integer> colors = new ArrayList<>();
-
-                for (int c : ColorTemplate.VORDIPLOM_COLORS)
-                    colors.add(c);
-
-                dataSet.setColors(colors);
-
-                PieData data = new PieData(dataSet);
-                pieChart.setData(data);
-                Log.d("SRSRSR", "orders: "+ orders + " delivered: " + delivered);
 
                 drawChart();
             }
@@ -129,15 +130,32 @@ public class HistoryFragment extends Fragment {
                 for(DataSnapshot ds : dataSnapshot.getChildren()){
                     if (ds.getKey().compareTo("totalDistance") == 0) {
                         dbDistance = ds.getValue(Double.class);
-                        distance.setText(String.format("%.2f km", dbDistance));
                     }
                 }
+                distance.setText(String.format("%.2f km", dbDistance));
             }
 
             @Override
             public void onCancelled(@NonNull DatabaseError databaseError) {
             }
         });
+    }
+
+    public void drawPieCharts() {
+        ArrayList<PieEntry> entries = new ArrayList<>();
+        entries.add(new PieEntry(delivered));
+        entries.add(new PieEntry(rejected));
+        PieDataSet dataSet = new PieDataSet(entries, "Orders Results");
+        ArrayList<Integer> colors = new ArrayList<>();
+
+        for (int c : ColorTemplate.VORDIPLOM_COLORS)
+            colors.add(c);
+
+        dataSet.setColors(colors);
+
+        PieData data = new PieData(dataSet);
+        pieChart.setData(data);
+        Log.d("SRSRSR", "orders: "+ rejected + " delivered: " + delivered);
     }
 
     public void drawChart() {

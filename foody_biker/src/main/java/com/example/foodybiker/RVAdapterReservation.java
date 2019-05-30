@@ -17,8 +17,11 @@ import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ValueEventListener;
 
 import java.util.Calendar;
 import java.util.HashMap;
@@ -138,7 +141,30 @@ public class RVAdapterReservation extends RecyclerView.Adapter<RVAdapterReservat
                                 public void onFailure(@NonNull Exception e) {
                                     Toast.makeText(fatherFragment.getContext(), R.string.error_order, Toast.LENGTH_SHORT).show();
                                 }
-                            });
+                            }).addOnSuccessListener(new OnSuccessListener<Void>() {
+                            @Override
+                            public void onSuccess(Void aVoid) {
+                                final DatabaseReference databaseRej = FirebaseDatabase.getInstance().getReference()
+                                        .child("archive").child("Bikers").child(firebaseUser.getUid()).child("rejected");
+                                databaseRej.addListenerForSingleValueEvent(new ValueEventListener() {
+                                    @Override
+                                    public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                                        if (dataSnapshot.exists()) {
+                                            int count = dataSnapshot.getValue(int.class);
+                                            count ++;
+                                            databaseRej.setValue(count);
+                                        } else {
+                                            databaseRej.setValue(1);
+                                        }
+                                    }
+
+                                    @Override
+                                    public void onCancelled(@NonNull DatabaseError databaseError) {
+
+                                    }
+                                });
+                            }
+                        });
 
                         //Setting the new status of the waiting biker for all the reservation rejected
                         databaseRests.child(res.getRestaurantID()).child(res.getReservationID())
@@ -197,6 +223,26 @@ public class RVAdapterReservation extends RecyclerView.Adapter<RVAdapterReservat
                         @Override
                         public void onFailure(@NonNull Exception e) {
                             Toast.makeText(fatherFragment.getContext(), R.string.error_order, Toast.LENGTH_SHORT).show();
+                        }
+                    });
+
+                    final DatabaseReference databaseRej = FirebaseDatabase.getInstance().getReference()
+                            .child("archive").child("Bikers").child(firebaseUser.getUid()).child("rejected");
+                    databaseRej.addListenerForSingleValueEvent(new ValueEventListener() {
+                        @Override
+                        public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                            if (dataSnapshot.exists()) {
+                                int count = dataSnapshot.getValue(int.class);
+                                count ++;
+                                databaseRej.setValue(count);
+                            } else {
+                                databaseRej.setValue(1);
+                            }
+                        }
+
+                        @Override
+                        public void onCancelled(@NonNull DatabaseError databaseError) {
+
                         }
                     });
                 }

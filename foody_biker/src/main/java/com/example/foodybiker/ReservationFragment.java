@@ -292,6 +292,26 @@ public class ReservationFragment extends Fragment {
                             updateTitles();
                         }
                     });
+
+                    final DatabaseReference databaseDelivered = FirebaseDatabase.getInstance().getReference()
+                            .child("archive").child("Bikers").child(firebaseUser.getUid()).child("delivered");
+                    databaseDelivered.addListenerForSingleValueEvent(new ValueEventListener() {
+                        @Override
+                        public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                            if (dataSnapshot.exists()) {
+                                int count = dataSnapshot.getValue(int.class);
+                                count ++;
+                                databaseDelivered.setValue(count);
+                            } else {
+                                databaseDelivered.setValue(1);
+                            }
+                        }
+
+                        @Override
+                        public void onCancelled(@NonNull DatabaseError databaseError) {
+
+                        }
+                    });
                 }
             }
         });
@@ -502,7 +522,7 @@ public class ReservationFragment extends Fragment {
 
         DatabaseReference databaseLocation = FirebaseDatabase.getInstance().getReference()
                 .child("Bikers").child(firebaseUser.getUid()).child("location");
-        databaseLocation.addValueEventListener(new ValueEventListener() {
+        databaseLocation.addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
                 for (DataSnapshot ds : dataSnapshot.getChildren()) {
@@ -519,45 +539,44 @@ public class ReservationFragment extends Fragment {
                 distance += haversineDistance(currLatitude, currLongitude,
                         latLngRestaurant.latitude, latLngRestaurant.longitude);
                 Log.d("PROVA", "biker-rest: " + distance);
-            }
 
-            @Override
-            public void onCancelled(@NonNull DatabaseError databaseError) {
+                final DatabaseReference databaseDistance = FirebaseDatabase.getInstance().getReference().
+                        child("archive").child("Bikers").child(firebaseUser.getUid());
+                databaseDistance.addListenerForSingleValueEvent(new ValueEventListener() {
+                    @Override
+                    public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                        Double dbDistance = 0.0;
+                        for (DataSnapshot ds : dataSnapshot.getChildren()) {
+                            if (ds.getKey().compareTo("totalDistance") == 0) {
+                                dbDistance = ds.getValue(Double.class);
+                            }
+                        }
+                        totalDistance = dbDistance;
+                        distance += haversineDistance(latLngRestaurant.latitude, latLngRestaurant.longitude,
+                                latLngUser.latitude, latLngUser.longitude);
+                        Log.d("PROVA", "rest-user: " + distance);
 
-            }
-        });
-
-        final DatabaseReference databaseDistance = FirebaseDatabase.getInstance().getReference().
-                child("archive").child("Bikers").child(firebaseUser.getUid());
-        databaseDistance.addValueEventListener(new ValueEventListener() {
-            @Override
-            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-                Double dbDistance = 0.0;
-                for (DataSnapshot ds : dataSnapshot.getChildren()) {
-                    if (ds.getKey().compareTo("totalDistance") == 0) {
-                        dbDistance = ds.getValue(Double.class);
+                        totalDistance += distance;
+                        HashMap<String, Object> childDistance = new HashMap<>();
+                        childDistance.put("totalDistance", totalDistance);
+                        databaseDistance.updateChildren(childDistance).addOnFailureListener(new OnFailureListener() {
+                            @Override
+                            public void onFailure(@NonNull Exception e) {
+                                Toast.makeText(father, R.string.error_order, Toast.LENGTH_SHORT).show();
+                            }
+                        });
                     }
-                }
-                totalDistance = dbDistance;
+
+                    @Override
+                    public void onCancelled(@NonNull DatabaseError databaseError) {
+
+                    }
+                });
             }
 
             @Override
             public void onCancelled(@NonNull DatabaseError databaseError) {
-            }
-        });
 
-        distance += haversineDistance(latLngRestaurant.latitude, latLngRestaurant.longitude,
-                latLngUser.latitude, latLngUser.longitude);
-        Log.d("PROVA", "rest-user: " + distance);
-
-        totalDistance += distance;
-        
-        HashMap<String, Object> childDistance = new HashMap<>();
-        childDistance.put("totalDistance", totalDistance);
-        databaseDistance.updateChildren(childDistance).addOnFailureListener(new OnFailureListener() {
-            @Override
-            public void onFailure(@NonNull Exception e) {
-                Toast.makeText(father, R.string.error_order, Toast.LENGTH_SHORT).show();
             }
         });
     }
