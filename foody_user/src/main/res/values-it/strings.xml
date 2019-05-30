@@ -59,4 +59,9 @@
 
     <string name="add_review">Aggiungi Recensione</string>
 
+
+    <string name="add_comment">AGGIUNGERE UN COMMENTO?</string>
+    <string name="submit_rating">Pubblica Recensione</string>
+    <string name="rate_restaurant_hint">Recensisci questo ristorante</string>
+
 </resources>

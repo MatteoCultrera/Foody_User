@@ -66,4 +66,8 @@
 
     <string name="add_review">Add Review</string>
 
+    <string name="add_comment">ADD A COMMENT?</string>
+    <string name="submit_rating">Submit Rating</string>
+    <string name="rate_restaurant_hint">Rate this Restaurant</string>
+
 </resources>

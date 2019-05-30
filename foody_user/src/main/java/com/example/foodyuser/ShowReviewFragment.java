@@ -92,6 +92,18 @@ public class ShowReviewFragment extends Fragment {
         }
     }
 
+    public void addReview(Review review){
+
+        reviews.add(0, review);
+        show.notifyItemInserted(0);
+        show.notifyItemRangeChanged(0, reviews.size());
+
+        if(noReviews.getVisibility() == View.VISIBLE){
+            noReviews.setVisibility(View.GONE);
+            recyclerMenu.setVisibility(View.VISIBLE);
+        }
+    }
+
     public void removeReviews(){
         Log.d("PROVA","removeCards with"+(recyclerMenu == null?"no Recycler":"Recycler"));
         this.reviews = null;

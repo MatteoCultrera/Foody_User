@@ -1,12 +1,15 @@
 package com.example.foodyuser;
 
 import android.animation.LayoutTransition;
+import android.app.Dialog;
+import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.net.Uri;
 import android.os.Environment;
 import android.support.annotation.NonNull;
 import android.support.constraint.ConstraintLayout;
+import android.support.design.button.MaterialButton;
 import android.support.design.widget.AppBarLayout;
 import android.support.design.widget.CollapsingToolbarLayout;
 import android.support.design.widget.CoordinatorLayout;
@@ -21,7 +24,11 @@ import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.MotionEvent;
 import android.view.View;
+import android.view.Window;
+import android.view.WindowManager;
+import android.widget.EditText;
 import android.widget.ImageView;
+import android.widget.RatingBar;
 import android.widget.TextView;
 
 import com.bumptech.glide.Glide;
@@ -170,6 +177,8 @@ public class RestaurantView extends AppCompatActivity {
 
         }
 
+        setAddReview(this);
+
         File root = getExternalFilesDir(Environment.DIRECTORY_PICTURES);
         storage = new File(root.getPath()+File.separator+DIRECTORY_IMAGES);
 
@@ -216,6 +225,69 @@ public class RestaurantView extends AppCompatActivity {
             showMenu.init(cards);
         }
 
+    }
+
+    public void setAddReview(final Context context){
+        addReview.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if(showReview.notReady())
+                    return;
+                if(showMenu.notReady())
+                    return;
+
+
+
+                final Dialog dialog = new Dialog(context);
+                dialog.setContentView(R.layout.review_dialog);
+
+                EditText edit = (EditText)dialog.findViewById(R.id.review_comment);
+                ImageView image = (ImageView)dialog.findViewById(R.id.review_image);
+                TextView name = (TextView)dialog.findViewById(R.id.review_restaurant_name);
+                RatingBar rating = (RatingBar)dialog.findViewById(R.id.review_rating);
+                final MaterialButton button = (MaterialButton)dialog.findViewById(R.id.review_submit);
+
+                button.setVisibility(View.GONE);
+
+                edit.clearFocus();
+
+                name.setText(thisRestaurant.getUsername());
+
+                File resim  = new File(thisRestaurant.getImagePath());
+                RequestOptions options = new RequestOptions();
+                options.signature(new ObjectKey(resim.getName()+" "+resim.lastModified()));
+                Glide
+                        .with(context)
+                        .setDefaultRequestOptions(options)
+                        .load(resim)
+                        .into(image);
+
+                button.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+
+
+
+                        dialog.dismiss();
+                    }
+                });
+
+                rating.setOnRatingBarChangeListener(new RatingBar.OnRatingBarChangeListener() {
+                    @Override
+                    public void onRatingChanged(RatingBar ratingBar, float rating, boolean fromUser) {
+                        button.setVisibility(View.VISIBLE);
+                    }
+                });
+
+                WindowManager.LayoutParams lp = new WindowManager.LayoutParams();
+                lp.copyFrom(dialog.getWindow().getAttributes());
+                lp.width = WindowManager.LayoutParams.MATCH_PARENT;
+                lp.height = WindowManager.LayoutParams.WRAP_CONTENT;
+                dialog.show();
+                dialog.getWindow().setAttributes(lp);
+                dialog.getWindow().setBackgroundDrawableResource(android.R.color.transparent);
+            }
+        });
     }
 
 
