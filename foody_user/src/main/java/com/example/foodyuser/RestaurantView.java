@@ -3,6 +3,7 @@ package com.example.foodyuser;
 import android.animation.LayoutTransition;
 import android.app.Dialog;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.net.Uri;
@@ -22,6 +23,7 @@ import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
+import android.view.KeyEvent;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.Window;
@@ -241,10 +243,12 @@ public class RestaurantView extends AppCompatActivity {
                 final Dialog dialog = new Dialog(context);
                 dialog.setContentView(R.layout.review_dialog);
 
-                EditText edit = (EditText)dialog.findViewById(R.id.review_comment);
+                final EditText edit = (EditText)dialog.findViewById(R.id.review_comment);
                 ImageView image = (ImageView)dialog.findViewById(R.id.review_image);
                 TextView name = (TextView)dialog.findViewById(R.id.review_restaurant_name);
-                RatingBar rating = (RatingBar)dialog.findViewById(R.id.review_rating);
+                final RatingBar rating = (RatingBar)dialog.findViewById(R.id.review_rating);
+                final ConstraintLayout mainLayout = (ConstraintLayout)dialog.findViewById(R.id.layout);
+                final ConstraintLayout imageLayout = (ConstraintLayout)dialog.findViewById(R.id.review_image_layout);
                 final MaterialButton button = (MaterialButton)dialog.findViewById(R.id.review_submit);
 
                 button.setVisibility(View.GONE);
@@ -262,13 +266,66 @@ public class RestaurantView extends AppCompatActivity {
                         .load(resim)
                         .into(image);
 
+                dialog.setOnKeyListener(new Dialog.OnKeyListener() {
+
+                    @Override
+                    public boolean onKey(DialogInterface arg0, int keyCode,
+                                         KeyEvent event) {
+                        // TODO Auto-generated method stub
+                        if (keyCode == KeyEvent.KEYCODE_BACK) {
+                            if(button.getVisibility() == View.VISIBLE){
+                                button.animate().translationY(-getResources().getDimensionPixelSize(R.dimen.short200)).withEndAction(new Runnable() {
+                                    @Override
+                                    public void run() {
+                                        button.setVisibility(View.GONE);
+                                        imageLayout.animate().translationY(getResources().getDimensionPixelSize(R.dimen.short800)).setDuration(300)
+                                                .start();
+                                        mainLayout.animate().translationY(getResources().getDimensionPixelSize(R.dimen.short800)).setDuration(400)
+                                                .withEndAction(new Runnable() {
+                                                     @Override
+                                                     public void run() {
+                                                         dialog.dismiss();
+                                                     }
+                                                 }
+                                        );
+                                    }
+                                });
+                            }else {
+                                imageLayout.animate().translationY(getResources().getDimensionPixelSize(R.dimen.short800)).setDuration(300)
+                                        .start();
+                                mainLayout.animate().translationY(getResources().getDimensionPixelSize(R.dimen.short800)).setDuration(400)
+                                        .withEndAction(new Runnable() {
+                                            @Override
+                                            public void run() {
+                                                dialog.dismiss();
+                                            }
+                                        });
+                            }
+                        }
+                        return true;
+                    }
+                });
+
                 button.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
 
+                        button.animate().translationY(-getResources().getDimensionPixelSize(R.dimen.short200)).withEndAction(new Runnable() {
+                            @Override
+                            public void run() {
+                                button.setVisibility(View.GONE);
+                                imageLayout.animate().translationY(getResources().getDimensionPixelSize(R.dimen.short800)).setDuration(300)
+                                        .start();
+                                mainLayout.animate().translationY(getResources().getDimensionPixelSize(R.dimen.short800)).setDuration(400)
+                                        .withEndAction(new Runnable() {
+                                            @Override
+                                            public void run() {
+                                                dialog.dismiss();
+                                            }
+                                        });
+                            }
+                        });
 
-
-                        dialog.dismiss();
                     }
                 });
 
@@ -276,6 +333,8 @@ public class RestaurantView extends AppCompatActivity {
                     @Override
                     public void onRatingChanged(RatingBar ratingBar, float rating, boolean fromUser) {
                         button.setVisibility(View.VISIBLE);
+                        button.setY(-200);
+                        button.animate().translationY(0).start();
                     }
                 });
 
@@ -283,7 +342,19 @@ public class RestaurantView extends AppCompatActivity {
                 lp.copyFrom(dialog.getWindow().getAttributes());
                 lp.width = WindowManager.LayoutParams.MATCH_PARENT;
                 lp.height = WindowManager.LayoutParams.WRAP_CONTENT;
+                mainLayout.setY(getResources().getDimensionPixelSize(R.dimen.short800));
+                imageLayout.setY(getResources().getDimensionPixelSize(R.dimen.short800));
+                edit.setAlpha(0);
+                rating.setAlpha(0);
                 dialog.show();
+                mainLayout.animate().translationY(0).setDuration(300).start();
+                imageLayout.animate().translationY(0).setDuration(400).withEndAction(new Runnable() {
+                    @Override
+                    public void run() {
+                        edit.animate().alpha(1).setDuration(600).start();
+                        rating.animate().alpha(1).setDuration(600).start();
+                    }
+                });
                 dialog.getWindow().setAttributes(lp);
                 dialog.getWindow().setBackgroundDrawableResource(android.R.color.transparent);
             }
