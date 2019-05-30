@@ -53,5 +53,10 @@
     <string name="reviews">Recensioni</string>
     <string name="info">Info</string>
 
+    <string name="reviews_whoops">OPS</string>
+    <string name="reviews_no_review_one">Sembra non ci siano recensioni quì. Non preoccuparti però, il nostro miglior uomo è sul caso</string>
+    <string name="reviews_no_reviews_two">Nel frattempo, perché non ne aggiungi una?</string>
+
+    <string name="add_review">Aggiungi Recensione</string>
 
 </resources>

@@ -2,6 +2,7 @@ package com.example.foodyuser;
 
 
 import android.os.Bundle;
+import android.support.constraint.ConstraintLayout;
 import android.support.v4.app.Fragment;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -25,6 +26,7 @@ public class ShowReviewFragment extends Fragment {
     private View currentView;
     private RecyclerView recyclerMenu;
     private RVAdapterShowRestaurantReviews show;
+    private ConstraintLayout noReviews;
     SpinKitView loading;
     RestaurantView father;
 
@@ -41,19 +43,26 @@ public class ShowReviewFragment extends Fragment {
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
         currentView = inflater.inflate(R.layout.fragment_show_review, container, false);
+        noReviews = currentView.findViewById(R.id.no_reviews);
         loading = currentView.findViewById(R.id.spin_kit_reviews);
         recyclerMenu = currentView.findViewById(R.id.recycler_reviews);
         LinearLayoutManager llm = new LinearLayoutManager(currentView.getContext());
         recyclerMenu.setLayoutManager(llm);
-        if(reviews!=null){
+        if(reviews!=null && reviews.size() > 0){
             Log.d("MAD","Reviews Initialised on createVIew()");
             recyclerMenu.setVisibility(View.VISIBLE);
             loading.setVisibility(View.GONE);
+            noReviews.setVisibility(View.GONE);
             show = new RVAdapterShowRestaurantReviews(reviews, father);
             recyclerMenu.setAdapter(show);
-        }else{
+        }else if(reviews != null && reviews.size() == 0){
+            loading.setVisibility(View.GONE);
+            recyclerMenu.setVisibility(View.GONE);
+            noReviews.setVisibility(View.VISIBLE);
+        } else{
             recyclerMenu.setVisibility(View.GONE);
             loading.setVisibility(View.VISIBLE);
+            noReviews.setVisibility(View.GONE);
         }
         return currentView;
     }
@@ -70,10 +79,16 @@ public class ShowReviewFragment extends Fragment {
 
 
         show = new RVAdapterShowRestaurantReviews(reviews, father);
-        if(recyclerMenu != null){
+        if(recyclerMenu != null && reviews.size() > 0){
             recyclerMenu.setVisibility(View.VISIBLE);
+            noReviews.setVisibility(View.GONE);
             loading.setVisibility(View.GONE);
             recyclerMenu.setAdapter(show);
+        }
+        if(recyclerMenu!=null && reviews.size() == 0){
+            loading.setVisibility(View.GONE);
+            noReviews.setVisibility(View.VISIBLE);
+            recyclerMenu.setVisibility(View.GONE);
         }
     }
 
@@ -82,6 +97,7 @@ public class ShowReviewFragment extends Fragment {
         this.reviews = null;
         if(recyclerMenu != null){
             recyclerMenu.setVisibility(View.GONE);
+            noReviews.setVisibility(View.GONE);
             loading.setVisibility(View.VISIBLE);
         }
     }
