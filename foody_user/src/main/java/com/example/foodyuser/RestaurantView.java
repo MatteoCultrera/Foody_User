@@ -7,6 +7,9 @@ import android.net.Uri;
 import android.os.Environment;
 import android.support.annotation.NonNull;
 import android.support.constraint.ConstraintLayout;
+import android.support.design.widget.AppBarLayout;
+import android.support.design.widget.CollapsingToolbarLayout;
+import android.support.design.widget.CoordinatorLayout;
 import android.support.design.widget.TabLayout;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
@@ -16,6 +19,7 @@ import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
+import android.view.MotionEvent;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.TextView;
@@ -67,7 +71,7 @@ public class RestaurantView extends AppCompatActivity {
     private int reviewsImageToFetch;
     private int reviewsImageFetched;
     private TextView totalText, price;
-    private ConstraintLayout totalLayout;
+    private ConstraintLayout totalLayout, addReview;
     private final String RESTAURANT_IMAGES = "RestaurantImages";
     int session;
 
@@ -83,6 +87,7 @@ public class RestaurantView extends AppCompatActivity {
         totalText = findViewById(R.id.price_show_frag);
         totalLayout = findViewById(R.id.price_show_layout_frag);
         price = findViewById(R.id.restaurant_del_price_frag);
+        addReview = findViewById(R.id.add_review);
         showMenu = new ShowMenuFragment();
         showInfo = new ShowInfoFragment();
         showReview = new ShowReviewFragment();
@@ -98,6 +103,7 @@ public class RestaurantView extends AppCompatActivity {
 
         showMenu.setFather(this);
         showReview.setFather(this);
+
 
         setupViewPager(viewPager);
 
@@ -118,9 +124,15 @@ public class RestaurantView extends AppCompatActivity {
                 switch (tab.getPosition()){
                     case 0:
                         totalLayout.setVisibility(View.VISIBLE);
+                        addReview.setVisibility(View.GONE);
+                        break;
+                    case 1:
+                        totalLayout.setVisibility(View.GONE);
+                        addReview.setVisibility(View.VISIBLE);
                         break;
                     default:
                         totalLayout.setVisibility(View.GONE);
+                        addReview.setVisibility(View.GONE);
                         break;
                 }
             }
@@ -205,6 +217,7 @@ public class RestaurantView extends AppCompatActivity {
         }
 
     }
+
 
     public void reviewsFromFile(){
         final int set = session;
@@ -392,11 +405,15 @@ public class RestaurantView extends AppCompatActivity {
         if(thisRestaurant != null)
             return;
 
+        final int set = session;
+
         DatabaseReference database = FirebaseDatabase.getInstance().getReference();
         Query query = database.child("restaurantsInfo").child(reName);
         query.addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                if (set!=session)
+                    return;
                 for (DataSnapshot ds : dataSnapshot.getChildren()) {
                     thisRestaurant = ds.getValue(Restaurant.class);
                     //cuisines.setText(thisRestaurant.getKitchensString());
@@ -549,6 +566,8 @@ public class RestaurantView extends AppCompatActivity {
 
                     if(reviews.size() > 0)
                         fetchUsers(set);
+                    else
+                        showReview.init(reviews);
                 }
             }
             @Override
