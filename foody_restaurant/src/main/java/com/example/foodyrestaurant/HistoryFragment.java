@@ -7,6 +7,7 @@ import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.TextView;
 
 import com.github.mikephil.charting.charts.BarChart;
 import com.github.mikephil.charting.components.Description;
@@ -29,18 +30,23 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 
 public class HistoryFragment extends Fragment {
 
+    private TextView income;
     private BarChart barChart;
     private HashMap<Integer, Integer> frequency = new HashMap<>();
+    private Float amount;
+    private Integer accepted, rejected;
 
     public HistoryFragment() {}
 
     @Override
     public View onCreateView(@NotNull LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_history, container, false);
+        income = view.findViewById(R.id.tot_income);
         barChart = view.findViewById(R.id.barChart);
         for(int i = 0; i < 24; i++){
             frequency.put(i, 0);
@@ -55,8 +61,10 @@ public class HistoryFragment extends Fragment {
         FirebaseAuth firebaseAuth = FirebaseAuth.getInstance();
         FirebaseUser firebaseUser = firebaseAuth.getCurrentUser();
         DatabaseReference databaseReference = FirebaseDatabase.getInstance().getReference().child("archive")
-                .child("restaurant").child(firebaseUser.getUid()).child("frequency");
-        databaseReference.addListenerForSingleValueEvent(new ValueEventListener() {
+                .child("restaurant").child(firebaseUser.getUid());
+
+        DatabaseReference databaseFrequency = databaseReference.child("frequency");
+        databaseFrequency.addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
                 if (dataSnapshot.exists()) {
@@ -77,6 +85,29 @@ public class HistoryFragment extends Fragment {
 
             }
         });
+
+        databaseReference.addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                for(DataSnapshot ds : dataSnapshot.getChildren()) {
+                    if(ds.getKey().compareTo("amount") == 0) {
+                        amount = ds.getValue(Float.class);
+                    }
+                    if(ds.getKey().compareTo("accepted") == 0) {
+                        accepted = ds.getValue(Integer.class);
+                    }
+                    if(ds.getKey().compareTo("rejected") == 0) {
+                        rejected = ds.getValue(Integer.class);
+                    }
+                }
+                income.setText(String.format(Locale.getDefault(), "%.2f \u20ac", amount));
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError databaseError) {
+            }
+        });
+
     }
 
     public void drawChart() {
