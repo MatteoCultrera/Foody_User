@@ -50,8 +50,7 @@ public class HistoryFragment extends Fragment {
     private PieChart pieChart;
     private HashMap<Integer, Integer> frequency = new HashMap<>();
     private Integer count;
-    private int delivered;
-    private int rejected;
+    private Integer delivered, rejected;
 
     public HistoryFragment() {
     }
