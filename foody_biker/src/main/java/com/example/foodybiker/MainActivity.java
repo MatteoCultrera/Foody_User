@@ -90,7 +90,7 @@ public class MainActivity extends AppCompatActivity {
         ((ReservationFragment) reservations).setFather(this);
         user = new UserFragment();
         history = new HistoryFragment();
-        fm.beginTransaction().add(R.id.mainFrame, history, "3").hide(history).commit();
+        fm.beginTransaction().add(R.id.mainFrame, history, "4").hide(history).commit();
         fm.beginTransaction().add(R.id.mainFrame, user, "3").hide(user).commit();
         fm.beginTransaction().add(R.id.mainFrame, reservations, "2").hide(reservations).commit();
         fm.beginTransaction().add(R.id.mainFrame, map, "1").show(map).commit();
