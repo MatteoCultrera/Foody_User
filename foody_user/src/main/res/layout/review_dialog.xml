@@ -20,44 +20,46 @@
         android:layout_marginStart="28dp"
         android:layout_marginEnd="28dp"
         />
-    
+
     <android.support.constraint.ConstraintLayout
         android:id="@+id/layout"
         android:layout_width="match_parent"
-        android:elevation="5dp"
-        android:background="@drawable/dialog_review_background"
         android:layout_height="wrap_content"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
         android:layout_marginStart="28dp"
-        android:layout_marginEnd="28dp">
+        android:layout_marginEnd="28dp"
+        android:animateLayoutChanges="true"
+        android:background="@drawable/dialog_review_background"
+        android:elevation="5dp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="1.0"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent">
 
         <View
             android:layout_width="match_parent"
             android:layout_height="2dp"
+            android:layout_marginTop="20dp"
+            android:clickable="true"
+            android:focusable="true"
             android:focusableInTouchMode="true"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent"
-            android:layout_marginTop="20dp"
-            android:focusable="true"
-            android:clickable="true"
-            />
+            app:layout_constraintTop_toTopOf="parent" />
 
         <EditText
             android:id="@+id/review_comment"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginTop="120dp"
+            android:gravity="center"
             android:hint="@string/add_comment"
+            android:lines="3"
+            android:maxLines="3"
             android:textSize="14sp"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent"
-            android:lines="3"
-            android:maxLines="3"
-            android:gravity="center"/>
+            app:layout_constraintTop_toTopOf="parent" />
 
 
         <RatingBar
@@ -68,14 +70,28 @@
             android:layout_marginBottom="20dp"
             android:numStars="5"
             android:progressDrawable="@drawable/ratingbar_custom"
-            android:stepSize="0.01"
             android:scaleX="1.5"
             android:scaleY="1.5"
+            android:stepSize="0.01"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/review_comment"
-            />
+            app:layout_constraintVertical_bias="0.0" />
+
+        <TextView
+            android:id="@+id/review_points"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="5dp"
+            android:layout_marginBottom="20dp"
+            android:fontFamily="@font/roboto_bold"
+            android:text="5.5"
+            android:textSize="18sp"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/review_rating" />
     </android.support.constraint.ConstraintLayout>
 
     <android.support.constraint.ConstraintLayout
@@ -86,11 +102,12 @@
         android:background="@drawable/dialog_review_background"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintTop_toTopOf="@id/layout"
         android:layout_marginTop="10dp"
         android:focusableInTouchMode="true"
         android:focusable="true"
         android:clickable="true"
+        android:animateLayoutChanges="true"
         android:layout_marginStart="20dp"
         android:layout_marginEnd="20dp"
         >
