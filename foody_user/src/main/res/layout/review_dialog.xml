@@ -1,25 +1,25 @@
 <?xml version="1.0" encoding="utf-8"?>
 <android.support.constraint.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:id="@+id/constraintLayout5"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:background="@android:color/transparent">
 
     <android.support.design.button.MaterialButton
         android:id="@+id/review_submit"
         android:layout_width="match_parent"
         android:layout_height="60dp"
+        android:layout_marginStart="28dp"
+        android:layout_marginTop="20dp"
+        android:layout_marginEnd="28dp"
+        android:elevation="0dp"
         android:text="@string/submit_rating"
         android:textAllCaps="false"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/layout"
-        android:layout_marginTop="20dp"
-        android:elevation="0dp"
         app:cornerRadius="10dp"
-        android:layout_marginStart="28dp"
-        android:layout_marginEnd="28dp"
-        />
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/layout" />
 
     <android.support.constraint.ConstraintLayout
         android:id="@+id/layout"
@@ -62,103 +62,197 @@
             app:layout_constraintTop_toTopOf="parent" />
 
 
+        <TextView
+            android:id="@+id/review_rating_text"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            app:layout_constraintTop_toBottomOf="@id/review_comment"
+            android:layout_marginTop="10dp"
+            app:layout_constraintStart_toStartOf="parent"
+            android:textSize="18sp"
+            android:text="Food Quality:"
+            app:layout_constraintHorizontal_bias="0.0"
+            android:layout_marginStart="20dp"/>
+
         <RatingBar
             android:id="@+id/review_rating"
             android:layout_width="wrap_content"
             android:layout_height="28dp"
-            android:layout_marginTop="20dp"
-            android:layout_marginBottom="20dp"
+            android:layout_marginStart="32dp"
+            android:scaleY="1.3"
+            android:scaleX="1.3"
+            android:layout_marginTop="8dp"
             android:numStars="5"
             android:progressDrawable="@drawable/ratingbar_custom"
-            android:scaleX="1.5"
-            android:scaleY="1.5"
-            android:stepSize="0.01"
+            android:stepSize="0.001"
             app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/review_comment"
+            app:layout_constraintTop_toBottomOf="@+id/review_rating_text"
             app:layout_constraintVertical_bias="0.0" />
 
         <TextView
             android:id="@+id/review_points"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginTop="5dp"
-            android:layout_marginBottom="20dp"
+            android:layout_marginStart="25dp"
             android:fontFamily="@font/roboto_bold"
-            android:text="5.5"
+            android:text="3"
             android:textSize="18sp"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintBottom_toBottomOf="@+id/review_rating"
+            app:layout_constraintStart_toEndOf="@+id/review_rating"
+            app:layout_constraintTop_toTopOf="@+id/review_rating" />
+
+        <TextView
+            android:id="@+id/review_rating_text_two"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            app:layout_constraintTop_toBottomOf="@id/review_rating"
+            android:layout_marginTop="10dp"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/review_rating" />
+            android:textSize="18sp"
+            android:text="Restaurant Service:"
+            app:layout_constraintHorizontal_bias="0.0"
+            android:layout_marginStart="20dp"/>
+
+        <RatingBar
+            android:id="@+id/review_rating_two"
+            android:layout_width="wrap_content"
+            android:layout_height="28dp"
+            android:scaleX="1.3"
+            android:scaleY="1.3"
+            android:layout_marginStart="32dp"
+            android:layout_marginTop="8dp"
+            android:layout_marginBottom="20dp"
+            android:numStars="5"
+            android:progressDrawable="@drawable/ratingbar_custom"
+            android:stepSize="0.001"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/review_rating_text_two"
+            app:layout_constraintVertical_bias="0.0" />
+
+        <TextView
+            android:id="@+id/review_points_two"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="25dp"
+            android:fontFamily="@font/roboto_bold"
+            android:text="3"
+            android:textSize="18sp"
+            app:layout_goneMarginStart="10dp"
+            app:layout_constraintBottom_toBottomOf="@+id/review_rating_two"
+            app:layout_constraintStart_toEndOf="@+id/review_rating_two"
+            app:layout_constraintTop_toTopOf="@+id/review_rating_two" />
+
+        <TextView
+            android:id="@+id/review_rating_text_three"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            app:layout_constraintTop_toBottomOf="@id/review_rating_two"
+            android:layout_marginTop="10dp"
+            app:layout_constraintStart_toStartOf="parent"
+            android:textSize="18sp"
+            android:text="Delivery TIme:"
+            app:layout_constraintHorizontal_bias="0.0"
+            android:layout_marginStart="20dp"/>
+
+        <RatingBar
+            android:id="@+id/review_rating_three"
+            android:layout_width="wrap_content"
+            android:layout_height="28dp"
+            android:layout_marginStart="32dp"
+            android:layout_marginTop="8dp"
+            android:layout_marginBottom="20dp"
+            android:scaleX="1.3"
+            android:scaleY="1.3"
+            android:numStars="5"
+            android:progressDrawable="@drawable/ratingbar_custom"
+            android:stepSize="0.001"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/review_rating_text_three"
+            app:layout_constraintVertical_bias="0.0" />
+
+        <TextView
+            android:id="@+id/review_points_three"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="25dp"
+            android:fontFamily="@font/roboto_bold"
+            android:text="3"
+            android:textSize="18sp"
+            app:layout_constraintBottom_toBottomOf="@+id/review_rating_three"
+            app:layout_constraintStart_toEndOf="@+id/review_rating_three"
+            app:layout_constraintTop_toTopOf="@+id/review_rating_three" />
+
+
     </android.support.constraint.ConstraintLayout>
 
     <android.support.constraint.ConstraintLayout
         android:id="@+id/review_image_layout"
         android:layout_width="match_parent"
         android:layout_height="100dp"
-        android:elevation="10dp"
-        android:background="@drawable/dialog_review_background"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toTopOf="@id/layout"
-        android:layout_marginTop="10dp"
-        android:focusableInTouchMode="true"
-        android:focusable="true"
-        android:clickable="true"
-        android:animateLayoutChanges="true"
         android:layout_marginStart="20dp"
+        android:layout_marginTop="10dp"
         android:layout_marginEnd="20dp"
-        >
+        android:animateLayoutChanges="true"
+        android:background="@drawable/dialog_review_background"
+        android:clickable="true"
+        android:elevation="10dp"
+        android:focusable="true"
+        android:focusableInTouchMode="true"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="@id/layout">
+
         <ImageView
             android:id="@+id/review_image"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintBottom_toBottomOf="parent"
-            android:src="@drawable/user_static_background"
             android:scaleType="center"
-            />
+            android:src="@drawable/user_static_background"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
 
         <View
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:background="#000000"
             android:alpha="0.6"
-            app:layout_constraintStart_toStartOf="parent"
+            android:background="#000000"
+            app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintTop_toTopOf="parent"
-            app:layout_constraintBottom_toBottomOf="parent"/>
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
 
-       <LinearLayout
-           android:layout_width="wrap_content"
-           android:layout_height="wrap_content"
-           android:orientation="vertical"
-           app:layout_constraintStart_toStartOf="parent"
-           app:layout_constraintTop_toTopOf="parent"
-           app:layout_constraintBottom_toBottomOf="parent"
-           android:layout_marginStart="40dp">
-           <TextView
-               android:layout_width="wrap_content"
-               android:layout_height="wrap_content"
-               android:text="@string/rate_restaurant_hint"
-               android:textColor="@color/whiteText"
-               android:textSize="16sp"
-               android:fontFamily="@font/roboto_regular"/>
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="40dp"
+            android:orientation="vertical"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent">
 
-           <TextView
-               android:id="@+id/review_restaurant_name"
-               android:layout_width="wrap_content"
-               android:layout_height="wrap_content"
-               android:text="RossoPomodoro"
-               android:layout_marginTop="2dp"
-               android:textColor="@color/whiteText"
-               android:textSize="22sp"
-               android:fontFamily="@font/roboto_bold"/>
-       </LinearLayout>
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:fontFamily="@font/roboto_regular"
+                android:text="@string/rate_restaurant_hint"
+                android:textColor="@color/whiteText"
+                android:textSize="16sp" />
+
+            <TextView
+                android:id="@+id/review_restaurant_name"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="2dp"
+                android:fontFamily="@font/roboto_bold"
+                android:text="RossoPomodoro"
+                android:textColor="@color/whiteText"
+                android:textSize="22sp" />
+        </LinearLayout>
 
     </android.support.constraint.ConstraintLayout>
 
