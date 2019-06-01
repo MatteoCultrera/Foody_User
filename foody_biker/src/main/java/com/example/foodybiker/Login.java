@@ -2,6 +2,7 @@ package com.example.foodybiker;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.os.Environment;
 import android.support.annotation.NonNull;
 import android.support.constraint.ConstraintLayout;
 import android.support.design.widget.FloatingActionButton;
@@ -10,18 +11,33 @@ import android.support.design.widget.TextInputLayout;
 import android.support.v7.app.AppCompatActivity;
 import android.text.Editable;
 import android.text.TextWatcher;
+import android.util.Log;
 import android.view.View;
 import android.widget.Toast;
 
 import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.OnFailureListener;
+import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.Query;
+import com.google.firebase.database.ValueEventListener;
+import com.google.firebase.storage.FileDownloadTask;
+import com.google.firebase.storage.FirebaseStorage;
+import com.google.firebase.storage.StorageReference;
 
+import java.io.File;
 import java.util.regex.Pattern;
 
 public class Login extends AppCompatActivity {
 
+    private File storage;
+    private final String PROFILE = "profileImage";
     private TextInputEditText email, password;
     private TextInputLayout emailL, passwordL;
     private FirebaseAuth firebaseAuth;
@@ -84,32 +100,77 @@ public class Login extends AppCompatActivity {
             login.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
-                    if (email.getText().toString().equals("")) {
-                        emailL.setError(getResources().getString(R.string.empty_email));
-                        if (password.getText().toString().equals("")){
-                            passwordL.setError(getResources().getString(R.string.empty_password));
-                        }
-                        return;
-                    }
+                if (email.getText().toString().equals("")) {
+                    emailL.setError(getResources().getString(R.string.empty_email));
                     if (password.getText().toString().equals("")){
                         passwordL.setError(getResources().getString(R.string.empty_password));
-                        return;
                     }
-                    firebaseAuth.signInWithEmailAndPassword(email.getText().toString(), password.getText().toString())
-                            .addOnCompleteListener(new OnCompleteListener<AuthResult>() {
+                    return;
+                }
+                if (password.getText().toString().equals("")){
+                    passwordL.setError(getResources().getString(R.string.empty_password));
+                    return;
+                }
+                firebaseAuth.signInWithEmailAndPassword(email.getText().toString(), password.getText().toString())
+                    .addOnCompleteListener(new OnCompleteListener<AuthResult>() {
+                        @Override
+                        public void onComplete(@NonNull Task<AuthResult> task) {
+                        if (task.isSuccessful()) {
+                            //Saving the image of the profile if there would be one
+                            final DatabaseReference database = FirebaseDatabase.getInstance().getReference().child("Bikers");
+                            Query query = database.child(firebaseAuth.getCurrentUser().getUid());
+                            query.addListenerForSingleValueEvent(new ValueEventListener() {
                                 @Override
-                                public void onComplete(@NonNull Task<AuthResult> task) {
-                                    if (task.isSuccessful()) {
-                                        Toast.makeText(getApplicationContext(), R.string.login_success, Toast.LENGTH_SHORT).show();
-                                        Intent intent = new Intent(Login.this, MainActivity.class);
-                                        intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK);
-                                        startActivity(intent);
-                                        finish();
-                                    } else {
-                                        Toast.makeText(getApplicationContext(), R.string.login_failure, Toast.LENGTH_SHORT).show();
+                                public void onDataChange(@NonNull final DataSnapshot dataSnapshot) {
+                                    Log.d("SWSW1", dataSnapshot.getKey());
+                                    String imagePath = dataSnapshot.child("info").child("path").getValue(String.class);
+                                    if(imagePath != null){
+                                        Log.d("SWSW1", imagePath);
+                                        File root = getExternalFilesDir(Environment.DIRECTORY_PICTURES);
+                                        storage = new File(root.getPath()+File.separator+PROFILE);
+                                        if(storage.exists()){
+                                            for(File f : storage.listFiles())
+                                                f.delete();
+                                            Log.d("SWSW1", "Deleted previous files");
+                                        }else{
+                                            storage.mkdirs();
+                                            Log.d("SWSW1", "created with path: "+storage.getPath());
+                                        }
+                                        File imageProfile = new File(storage.getPath()+
+                                                File.separator+firebaseAuth.getCurrentUser().getUid()+System.currentTimeMillis()+".jpg");
+                                        StorageReference mStorageRef = FirebaseStorage.getInstance().getReference();
+                                        mStorageRef.child(imagePath).getFile(imageProfile)
+                                                .addOnSuccessListener(new OnSuccessListener<FileDownloadTask.TaskSnapshot>() {
+                                                    @Override
+                                                    public void onSuccess(FileDownloadTask.TaskSnapshot taskSnapshot) {
+                                                        Log.d("SWSW1", "Profile image correctly saved");
+                                                    }
+                                                }).addOnFailureListener(new OnFailureListener() {
+                                            @Override
+                                            public void onFailure(@NonNull Exception e) {
+                                                storage.delete();
+                                                Log.d("SWSW1", "Storage deleted");
+                                            }
+                                        });
                                     }
                                 }
+
+                                @Override
+                                public void onCancelled(@NonNull DatabaseError databaseError) {
+
+                                }
                             });
+
+                            Toast.makeText(getApplicationContext(), R.string.login_success, Toast.LENGTH_SHORT).show();
+                            Intent intent = new Intent(Login.this, MainActivity.class);
+                            intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK);
+                            startActivity(intent);
+                            finish();
+                        } else {
+                            Toast.makeText(getApplicationContext(), R.string.login_failure, Toast.LENGTH_SHORT).show();
+                        }
+                        }
+                    });
                 }
             });
             register.setOnClickListener(new View.OnClickListener() {
