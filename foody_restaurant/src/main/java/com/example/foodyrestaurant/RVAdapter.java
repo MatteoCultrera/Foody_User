@@ -75,17 +75,26 @@ public class RVAdapter extends RecyclerView.Adapter<RVAdapter.CardViewHolder>{
                 if (dishes.get(j).getPathDB() == null)
                     image.setVisibility(View.GONE);
                 else {
-                    StorageReference mStorageRef = FirebaseStorage.getInstance().getReference();
-                    mStorageRef.child(dishes.get(j).getPathDB()).getDownloadUrl()
-                            .addOnSuccessListener(new OnSuccessListener<Uri>() {
-                                @Override
-                                public void onSuccess(Uri uri) {
-                                    Glide
-                                            .with(image.getContext())
-                                            .load(uri)
-                                            .into(image);
-                                }
-                            });
+                    if (father.getPhotoDish(dishes.get(j).getDishName()) == null) {
+                        StorageReference mStorageRef = FirebaseStorage.getInstance().getReference();
+                        mStorageRef.child(dishes.get(j).getPathDB()).getDownloadUrl()
+                                .addOnSuccessListener(new OnSuccessListener<Uri>() {
+                                    @Override
+                                    public void onSuccess(Uri uri) {
+                                        father.setPhotoDish(dishes.get(index).getDishName(), uri);
+                                        Glide
+                                                .with(image.getContext())
+                                                .load(uri)
+                                                .into(image);
+                                    }
+                                });
+                    }
+                    else{
+                        Glide
+                                .with(image.getContext())
+                                .load(father.getPhotoDish(dishes.get(j).getDishName()))
+                                .into(image);
+                    }
                 }
                 pvh.menuDishes.addView(dish);
                 dishes.get(j).setAdded(true);
