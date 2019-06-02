@@ -156,9 +156,13 @@
         android:layout_gravity="center_horizontal|bottom"
         android:background="@drawable/add_review_background"
         android:layout_marginBottom="16dp"
+        android:animateLayoutChanges="true"
+        android:elevation="16dp"
         >
 
         <TextView
+            android:id="@+id/add_review_text"
+            android:visibility="invisible"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="@string/add_review"
@@ -172,6 +176,20 @@
             android:gravity="center_vertical"
             android:textColor="@color/whiteText"
             android:fontFamily="@font/roboto_bold"/>
+
+        <com.github.ybq.android.spinkit.SpinKitView
+            android:id="@+id/add_review_loading"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintBottom_toBottomOf="parent"
+            style="@style/SpinKitView.ThreeBounce"
+            app:SpinKit_Color="@color/whiteText"
+            android:elevation="5dp"
+            android:layout_marginStart="32dp"
+            android:layout_marginEnd="32dp"/>
 
     </android.support.constraint.ConstraintLayout>
 
