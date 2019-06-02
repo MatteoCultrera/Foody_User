@@ -53,5 +53,19 @@
     <string name="reviews">Recensioni</string>
     <string name="info">Info</string>
 
+    <string name="reviews_whoops">OPS</string>
+    <string name="reviews_no_review_one">Sembra non ci siano recensioni quì. Non preoccuparti però, il nostro miglior uomo è sul caso</string>
+    <string name="reviews_no_reviews_two">Nel frattempo, perché non ne aggiungi una?</string>
+
+    <string name="add_review">Aggiungi Recensione</string>
+
+
+    <string name="add_comment">AGGIUNGERE UN COMMENTO?</string>
+    <string name="submit_rating">Pubblica Recensione</string>
+    <string name="rate_restaurant_hint">Recensisci questo ristorante</string>
+
+    <string name="food_quality">Qualità del cibo:</string>
+    <string name="restaurant_service">Servizio del Ristorante:</string>
+    <string name="delivery_time_hint">Tempo di consegna:</string>
 
 </resources>

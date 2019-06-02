@@ -8,4 +8,6 @@
     <dimen name="short60">60dp</dimen>
     <dimen name="short100">90dp</dimen>
     <dimen name="short20">20dp</dimen>
+    <dimen name="short800">800dp</dimen>
+    <dimen name="short200">200dp</dimen>
 </resources>

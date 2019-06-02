@@ -1,12 +1,19 @@
 package com.example.foodyuser;
 
 import android.animation.LayoutTransition;
+import android.app.Dialog;
+import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.net.Uri;
 import android.os.Environment;
 import android.support.annotation.NonNull;
 import android.support.constraint.ConstraintLayout;
+import android.support.design.button.MaterialButton;
+import android.support.design.widget.AppBarLayout;
+import android.support.design.widget.CollapsingToolbarLayout;
+import android.support.design.widget.CoordinatorLayout;
 import android.support.design.widget.TabLayout;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
@@ -16,8 +23,14 @@ import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
+import android.view.KeyEvent;
+import android.view.MotionEvent;
 import android.view.View;
+import android.view.Window;
+import android.view.WindowManager;
+import android.widget.EditText;
 import android.widget.ImageView;
+import android.widget.RatingBar;
 import android.widget.TextView;
 
 import com.bumptech.glide.Glide;
@@ -67,7 +80,7 @@ public class RestaurantView extends AppCompatActivity {
     private int reviewsImageToFetch;
     private int reviewsImageFetched;
     private TextView totalText, price;
-    private ConstraintLayout totalLayout;
+    private ConstraintLayout totalLayout, addReview;
     private final String RESTAURANT_IMAGES = "RestaurantImages";
     int session;
 
@@ -83,6 +96,7 @@ public class RestaurantView extends AppCompatActivity {
         totalText = findViewById(R.id.price_show_frag);
         totalLayout = findViewById(R.id.price_show_layout_frag);
         price = findViewById(R.id.restaurant_del_price_frag);
+        addReview = findViewById(R.id.add_review);
         showMenu = new ShowMenuFragment();
         showInfo = new ShowInfoFragment();
         showReview = new ShowReviewFragment();
@@ -104,6 +118,7 @@ public class RestaurantView extends AppCompatActivity {
             }
         });
 
+        addReview.setVisibility(View.GONE);
         tabs.addOnTabSelectedListener(new TabLayout.OnTabSelectedListener() {
             @Override
             public void onTabSelected(TabLayout.Tab tab) {
@@ -111,9 +126,15 @@ public class RestaurantView extends AppCompatActivity {
                 switch (tab.getPosition()){
                     case 0:
                         totalLayout.setVisibility(View.VISIBLE);
+                        addReview.setVisibility(View.GONE);
+                        break;
+                    case 1:
+                        totalLayout.setVisibility(View.GONE);
+                        addReview.setVisibility(View.VISIBLE);
                         break;
                     default:
                         totalLayout.setVisibility(View.GONE);
+                        addReview.setVisibility(View.GONE);
                         break;
                 }
             }
@@ -150,6 +171,8 @@ public class RestaurantView extends AppCompatActivity {
             shared.edit().putString("selectedTime",minTime).apply();
 
         }
+
+        setAddReview(this);
 
         File root = getExternalFilesDir(Environment.DIRECTORY_PICTURES);
         storage = new File(root.getPath()+File.separator+DIRECTORY_IMAGES);
@@ -194,6 +217,215 @@ public class RestaurantView extends AppCompatActivity {
         }
 
     }
+
+    public void setAddReview(final Context context){
+        addReview.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if(showReview.notReady())
+                    return;
+                if(showMenu.notReady())
+                    return;
+
+
+
+                final Dialog dialog = new Dialog(context);
+                dialog.setContentView(R.layout.review_dialog);
+
+                final EditText edit = (EditText)dialog.findViewById(R.id.review_comment);
+                ImageView image = (ImageView)dialog.findViewById(R.id.review_image);
+                TextView name = (TextView)dialog.findViewById(R.id.review_restaurant_name);
+                final RatingBar rating = (RatingBar)dialog.findViewById(R.id.review_rating);
+                final RatingBar ratingTwo = (RatingBar)dialog.findViewById(R.id.review_rating_two);
+                final RatingBar ratingThree = (RatingBar)dialog.findViewById(R.id.review_rating_three);
+                final TextView ratingText = (TextView)dialog.findViewById(R.id.review_points);
+                final TextView ratingTextTwo = (TextView)dialog.findViewById(R.id.review_points_two);
+                final TextView ratingTextThree = (TextView)dialog.findViewById(R.id.review_points_three);
+                final TextView ratingTextHint = (TextView)dialog.findViewById(R.id.review_rating_text);
+                final TextView ratingTextHintTwo = (TextView)dialog.findViewById(R.id.review_rating_text_two);
+                final TextView ratingTextHintThree = (TextView)dialog.findViewById(R.id.review_rating_text_three);
+                final ConstraintLayout mainLayout = (ConstraintLayout)dialog.findViewById(R.id.layout);
+                final ConstraintLayout imageLayout = (ConstraintLayout)dialog.findViewById(R.id.review_image_layout);
+                final MaterialButton button = (MaterialButton)dialog.findViewById(R.id.review_submit);
+
+                button.setVisibility(View.GONE);
+                edit.clearFocus();
+                ratingText.setVisibility(View.GONE);
+                ratingTextTwo.setVisibility(View.GONE);
+                ratingTextThree.setVisibility(View.GONE);
+                mainLayout.getLayoutTransition().enableTransitionType(LayoutTransition.CHANGING);
+                imageLayout.getLayoutTransition().enableTransitionType(LayoutTransition.CHANGING);
+                name.setText(thisRestaurant.getUsername());
+                File resim  = new File(thisRestaurant.getImagePath());
+                RequestOptions options = new RequestOptions();
+                options.signature(new ObjectKey(resim.getName()+" "+resim.lastModified()));
+                Glide
+                        .with(context)
+                        .setDefaultRequestOptions(options)
+                        .load(resim)
+                        .into(image);
+
+                dialog.setOnKeyListener(new Dialog.OnKeyListener() {
+
+                    @Override
+                    public boolean onKey(DialogInterface arg0, int keyCode,
+                                         KeyEvent event) {
+                        if (keyCode == KeyEvent.KEYCODE_BACK) {
+                            if(button.getVisibility() == View.VISIBLE){
+                                button.animate().translationY(-getResources().getDimensionPixelSize(R.dimen.short200)).withEndAction(new Runnable() {
+                                    @Override
+                                    public void run() {
+                                        button.setVisibility(View.GONE);
+                                        imageLayout.animate().translationY(getResources().getDimensionPixelSize(R.dimen.short800)).setDuration(300)
+                                                .start();
+                                        mainLayout.animate().translationY(getResources().getDimensionPixelSize(R.dimen.short800)).setDuration(400)
+                                                .withEndAction(new Runnable() {
+                                                     @Override
+                                                     public void run() {
+                                                         dialog.dismiss();
+                                                     }
+                                                 }
+                                        );
+                                    }
+                                });
+                            }else {
+                                imageLayout.animate().translationY(getResources().getDimensionPixelSize(R.dimen.short800)).setDuration(300)
+                                        .start();
+                                mainLayout.animate().translationY(getResources().getDimensionPixelSize(R.dimen.short800)).setDuration(400)
+                                        .withEndAction(new Runnable() {
+                                            @Override
+                                            public void run() {
+                                                dialog.dismiss();
+                                            }
+                                        });
+                            }
+                        }
+                        return true;
+                    }
+                });
+
+                button.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+
+                        button.animate().translationY(-getResources().getDimensionPixelSize(R.dimen.short200)).withEndAction(new Runnable() {
+                            @Override
+                            public void run() {
+                                button.setVisibility(View.GONE);
+                                imageLayout.animate().translationY(getResources().getDimensionPixelSize(R.dimen.short800)).setDuration(300)
+                                        .start();
+                                mainLayout.animate().translationY(getResources().getDimensionPixelSize(R.dimen.short800)).setDuration(400)
+                                        .withEndAction(new Runnable() {
+                                            @Override
+                                            public void run() {
+                                                dialog.dismiss();
+                                            }
+                                        });
+                            }
+                        });
+
+                    }
+                });
+
+                rating.setOnTouchListener(new View.OnTouchListener() {
+                    @Override
+                    public boolean onTouch(View v, MotionEvent event) {
+                        if(ratingText.getVisibility() == View.GONE)
+                            ratingText.setVisibility(View.VISIBLE);
+
+                        ratingText.setText(String.format("%.1f",rating.getRating()));
+
+                        return false;
+                    }
+                });
+
+                ratingTwo.setOnTouchListener(new View.OnTouchListener() {
+                    @Override
+                    public boolean onTouch(View v, MotionEvent event) {
+                        if(ratingTextTwo.getVisibility() == View.GONE)
+                            ratingTextTwo.setVisibility(View.VISIBLE);
+                        ratingTextTwo.setText(String.format("%.1f",ratingTwo.getRating()));
+                        return false;
+                    }
+                });
+
+
+                ratingThree.setOnTouchListener(new View.OnTouchListener() {
+                    @Override
+                    public boolean onTouch(View v, MotionEvent event) {
+                        if(ratingTextThree.getVisibility() == View.GONE)
+                            ratingTextThree.setVisibility(View.VISIBLE);
+                        ratingTextThree.setText(String.format("%.1f",ratingThree.getRating()));
+                        return false;
+                    }
+                });
+
+                rating.setOnRatingBarChangeListener(new RatingBar.OnRatingBarChangeListener() {
+                    @Override
+                    public void onRatingChanged(RatingBar ratingBar, float rating, boolean fromUser) {
+                        if(button.getVisibility() == View.GONE && ratingTextTwo.getVisibility() == View.VISIBLE && ratingTextThree.getVisibility() == View.VISIBLE){
+                            button.setVisibility(View.VISIBLE);
+                            button.setY(-200);
+                            button.animate().translationY(0).start();
+                        }
+                    }
+                });
+
+                ratingTwo.setOnRatingBarChangeListener(new RatingBar.OnRatingBarChangeListener() {
+                    @Override
+                    public void onRatingChanged(RatingBar ratingBar, float rating, boolean fromUser) {
+                        if(button.getVisibility() == View.GONE && ratingText.getVisibility() == View.VISIBLE && ratingTextThree.getVisibility() == View.VISIBLE){
+                            button.setVisibility(View.VISIBLE);
+                            button.setY(-200);
+                            button.animate().translationY(0).start();
+                        }
+                    }
+                });
+
+                ratingThree.setOnRatingBarChangeListener(new RatingBar.OnRatingBarChangeListener() {
+                    @Override
+                    public void onRatingChanged(RatingBar ratingBar, float rating, boolean fromUser) {
+                        if(button.getVisibility() == View.GONE && ratingText.getVisibility() == View.VISIBLE && ratingTextTwo.getVisibility() == View.VISIBLE){
+                            button.setVisibility(View.VISIBLE);
+                            button.setY(-200);
+                            button.animate().translationY(0).start();
+                        }
+                    }
+                });
+
+                WindowManager.LayoutParams lp = new WindowManager.LayoutParams();
+                lp.copyFrom(dialog.getWindow().getAttributes());
+                lp.width = WindowManager.LayoutParams.MATCH_PARENT;
+                lp.height = WindowManager.LayoutParams.MATCH_PARENT;
+                mainLayout.setY(getResources().getDimensionPixelSize(R.dimen.short800));
+                imageLayout.setY(getResources().getDimensionPixelSize(R.dimen.short800));
+                edit.setAlpha(0);
+                rating.setAlpha(0);
+                ratingTwo.setAlpha(0);
+                ratingThree.setAlpha(0);
+                ratingTextHint.setAlpha(0);
+                ratingTextHintTwo.setAlpha(0);
+                ratingTextHintThree.setAlpha(0);
+                dialog.show();
+                mainLayout.animate().translationY(0).setDuration(300).start();
+                imageLayout.animate().translationY(0).setDuration(400).withEndAction(new Runnable() {
+                    @Override
+                    public void run() {
+                        edit.animate().alpha(1).setDuration(600).start();
+                        rating.animate().alpha(1).setDuration(600).start();
+                        ratingTwo.animate().alpha(1).setDuration(600).start();
+                        ratingThree.animate().alpha(1).setDuration(600).start();
+                        ratingTextHint.animate().alpha(1).setDuration(600).start();
+                        ratingTextHintTwo.animate().alpha(1).setDuration(600).start();
+                        ratingTextHintThree.animate().alpha(1).setDuration(600).start();
+                    }
+                });
+                dialog.getWindow().setAttributes(lp);
+                dialog.getWindow().setBackgroundDrawableResource(android.R.color.transparent);
+            }
+        });
+    }
+
 
     public void reviewsFromFile(){
         final int set = session;
@@ -376,11 +608,15 @@ public class RestaurantView extends AppCompatActivity {
         if(thisRestaurant != null)
             return;
 
+        final int set = session;
+
         DatabaseReference database = FirebaseDatabase.getInstance().getReference();
         Query query = database.child("restaurantsInfo").child(reName);
         query.addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                if (set!=session)
+                    return;
                 for (DataSnapshot ds : dataSnapshot.getChildren()) {
                     thisRestaurant = ds.getValue(Restaurant.class);
                     //cuisines.setText(thisRestaurant.getKitchensString());
@@ -533,6 +769,8 @@ public class RestaurantView extends AppCompatActivity {
 
                     if(reviews.size() > 0)
                         fetchUsers(set);
+                    else
+                        showReview.init(reviews);
                 }
             }
             @Override

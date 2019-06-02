@@ -7,6 +7,9 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.pm.ApplicationInfo;
 import android.content.pm.PackageManager;
+import android.location.Address;
+import android.location.Geocoder;
+import android.location.Location;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
@@ -17,6 +20,7 @@ import android.support.v7.widget.CardView;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.text.method.ScrollingMovementMethod;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -25,6 +29,7 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.firebase.auth.FirebaseAuth;
@@ -37,9 +42,11 @@ import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.Query;
 import com.google.firebase.database.ValueEventListener;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Locale;
 
 import static android.content.Context.MODE_PRIVATE;
@@ -63,10 +70,16 @@ public class ReservationFragment extends Fragment {
     private SharedPreferences sharedPreferences;
     private int pending;
     LinearLayout callRestaurant, callUser;
+    private Geocoder geocoder;
+    Double distance = 0.0;
+    Double totalDistance = 0.0;
+    Double currLatitude = 0.0;
+    Double currLongitude = 0.0;
 
-    public ReservationFragment(){}
+    public ReservationFragment() {
+    }
 
-    public void setFather(MainActivity father){
+    public void setFather(MainActivity father) {
         this.father = father;
     }
 
@@ -82,7 +95,7 @@ public class ReservationFragment extends Fragment {
         init(view);
     }
 
-    public void init(final View view){
+    public void init(final View view) {
         final ReservationFragment ref = this;
         toAdd = true;
         sharedPreferences = view.getContext().getSharedPreferences("myPreference", MODE_PRIVATE);
@@ -91,6 +104,7 @@ public class ReservationFragment extends Fragment {
         firebaseUser = firebaseAuth.getCurrentUser();
         activeReservation = null;
         reservations = new ArrayList<>();
+        geocoder = new Geocoder(this.getContext(), Locale.getDefault());
         final DatabaseReference database = FirebaseDatabase.getInstance().getReference().child("reservations").child("Bikers");
         Query query = database.child(firebaseUser.getUid());
         query.addListenerForSingleValueEvent(new ValueEventListener() {
@@ -101,24 +115,24 @@ public class ReservationFragment extends Fragment {
                     if (reservationDB.getStatus() == null) {
                         Reservation reservation = new Reservation(reservationDB.getRestaurantName(), reservationDB.getRestaurantAddress(),
                                 reservationDB.getOrderTimeBiker(), reservationDB.getUserName(), reservationDB.getUserAddress(),
-                                reservationDB.getOrderTime(), reservationDB.getRestaurantID(),reservationDB.getNotes(), false);
+                                reservationDB.getOrderTime(), reservationDB.getRestaurantID(), reservationDB.getNotes(), false);
                         reservation.setReservationID(ds.getKey());
                         reservation.setUserPhone(reservationDB.getUserPhone());
                         reservation.setRestPhone(reservationDB.getRestPhone());
                         reservations.add(reservation);
-                    } else if(reservationDB.getStatus().equals("accepted")){
+                    } else if (reservationDB.getStatus().equals("accepted")) {
                         Reservation reservation = new Reservation(reservationDB.getRestaurantName(), reservationDB.getRestaurantAddress(),
                                 reservationDB.getOrderTimeBiker(), reservationDB.getUserName(), reservationDB.getUserAddress(),
-                                reservationDB.getOrderTime(), reservationDB.getRestaurantID(),reservationDB.getNotes(), true);
+                                reservationDB.getOrderTime(), reservationDB.getRestaurantID(), reservationDB.getNotes(), true);
                         reservation.setReservationID(ds.getKey());
                         reservation.setUserPhone(reservationDB.getUserPhone());
                         reservation.setRestPhone(reservationDB.getRestPhone());
                         activeReservation = reservation;
                     }
                 }
-                adapter = new RVAdapterReservation(reservations, ref, activeReservation!=null);
+                adapter = new RVAdapterReservation(reservations, ref, activeReservation != null);
                 setActiveReservation(activeReservation);
-                setInterface(activeReservation!=null);
+                setInterface(activeReservation != null);
 
                 orderList.setAdapter(adapter);
                 notes.setMovementMethod(new ScrollingMovementMethod());
@@ -134,7 +148,7 @@ public class ReservationFragment extends Fragment {
                         ReservationDBBiker reservationDB = dataSnapshot.getValue(ReservationDBBiker.class);
                         if (reservationDB.getStatus() == null) {
                             toAdd = true;
-                            if(reservations != null) {
+                            if (reservations != null) {
                                 for (Reservation r : reservations) {
                                     if (r.getReservationID().equals(reservationDB.getReservationID())) {
                                         toAdd = false;
@@ -227,10 +241,10 @@ public class ReservationFragment extends Fragment {
         orderDeliveredLayout.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if(!canClick && card.getVisibility() == View.VISIBLE){
+                if (!canClick && card.getVisibility() == View.VISIBLE) {
                     orderDelivered.setText(getString(R.string.order_delivered));
                     canClick = true;
-                }else if(card.getVisibility() == View.VISIBLE){
+                } else if (card.getVisibility() == View.VISIBLE) {
                     DatabaseReference databaseB = FirebaseDatabase.getInstance().getReference()
                             .child("Bikers").child(firebaseUser.getUid());
                     HashMap<String, Object> childB = new HashMap<>();
@@ -242,6 +256,8 @@ public class ReservationFragment extends Fragment {
                         }
                     });
 
+                    calculateDistance(activeReservation);
+
                     Calendar calendar = Calendar.getInstance();
                     String monthYear = calendar.get(Calendar.MONTH) + "-" + calendar.get(Calendar.YEAR);
                     DatabaseReference databaseRest = FirebaseDatabase.getInstance().getReference()
@@ -250,8 +266,9 @@ public class ReservationFragment extends Fragment {
                             activeReservation.getUserDeliveryTime(), activeReservation.getRestaurantPickupTime(),
                             activeReservation.getRestaurantName(), activeReservation.getUserName(),
                             activeReservation.getRestaurantAddress(), activeReservation.getUserAddress(),
-                            activeReservation.getRestaurantID());
+                            activeReservation.getRestaurantID(), distance);
                     reservation.setStatus("delivered");
+
                     HashMap<String, Object> childSelf = new HashMap<>();
                     childSelf.put(activeReservation.getReservationID(), reservation);
                     databaseRest.updateChildren(childSelf).addOnFailureListener(new OnFailureListener() {
@@ -275,6 +292,26 @@ public class ReservationFragment extends Fragment {
                             updateTitles();
                         }
                     });
+
+                    final DatabaseReference databaseDelivered = FirebaseDatabase.getInstance().getReference()
+                            .child("archive").child("Bikers").child(firebaseUser.getUid()).child("delivered");
+                    databaseDelivered.addListenerForSingleValueEvent(new ValueEventListener() {
+                        @Override
+                        public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                            if (dataSnapshot.exists()) {
+                                int count = dataSnapshot.getValue(int.class);
+                                count ++;
+                                databaseDelivered.setValue(count);
+                            } else {
+                                databaseDelivered.setValue(1);
+                            }
+                        }
+
+                        @Override
+                        public void onCancelled(@NonNull DatabaseError databaseError) {
+
+                        }
+                    });
                 }
             }
         });
@@ -284,7 +321,7 @@ public class ReservationFragment extends Fragment {
             public void onClick(View v) {
                 orderDelivered.setText("");
                 canClick = false;
-                if(card.getVisibility() == View.VISIBLE)
+                if (card.getVisibility() == View.VISIBLE)
                     setInterface(false);
                 else
                     setInterface(true);
@@ -296,7 +333,7 @@ public class ReservationFragment extends Fragment {
             @Override
             public void onClick(View v) {
                 Intent intent = new Intent(Intent.ACTION_DIAL);
-                intent.setData(Uri.parse("tel:"+ activeReservation.getRestPhone()));
+                intent.setData(Uri.parse("tel:" + activeReservation.getRestPhone()));
                 startActivity(intent);
             }
         });
@@ -305,7 +342,7 @@ public class ReservationFragment extends Fragment {
             @Override
             public void onClick(View v) {
                 Intent intent = new Intent(Intent.ACTION_DIAL);
-                intent.setData(Uri.parse("tel:"+ activeReservation.getUserPhone()));
+                intent.setData(Uri.parse("tel:" + activeReservation.getUserPhone()));
                 startActivity(intent);
             }
         });
@@ -322,7 +359,7 @@ public class ReservationFragment extends Fragment {
             navigationRest.setVisibility(View.GONE);
         }
 
-        if(mapsFound) {
+        if (mapsFound) {
             navigationRest.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
@@ -347,32 +384,32 @@ public class ReservationFragment extends Fragment {
         }
     }
 
-    public void updateTitles(){
-        if(card.getVisibility() == View.GONE){
+    public void updateTitles() {
+        if (card.getVisibility() == View.GONE) {
             primaryText.setText(String.format(Locale.getDefault(), "%d %s", reservations.size(),
                     getActivity().getString(R.string.pending_orders)));
             //primaryText.setText(reservations.size()+" "+getString(R.string.pending_orders));
-            if(activeReservation == null){
+            if (activeReservation == null) {
                 secondaryText.setText(getString(R.string.no_order_deliver));
-            }else {
+            } else {
                 secondaryText.setText(getString(R.string.delivering_order));
             }
-        }else{
-              if(activeReservation == null){
+        } else {
+            if (activeReservation == null) {
                 primaryText.setText(getString(R.string.no_order_deliver));
-            }else {
+            } else {
                 primaryText.setText(getString(R.string.delivering_order));
             }
-            secondaryText.setText(  reservations.size()+" "+getString(R.string.pending_orders));
+            secondaryText.setText(reservations.size() + " " + getString(R.string.pending_orders));
         }
-        if(reservations.size() == 0)
+        if (reservations.size() == 0)
             father.nothingActive();
     }
 
-    public void setInterface(Boolean deliveringOrder){
+    public void setInterface(Boolean deliveringOrder) {
         updateTitles();
         int shortAnimationDuration = 600;
-        if(deliveringOrder) {
+        if (deliveringOrder) {
             orderList.setAlpha(1f);
             card.setAlpha(0f);
             card.setVisibility(View.VISIBLE);
@@ -390,27 +427,27 @@ public class ReservationFragment extends Fragment {
                     });
             //orderList.setVisibility(View.GONE);
             orderDeliveredLayout.setBackgroundResource(R.drawable.order_delivered_background);
-        }else{
+        } else {
             card.setVisibility(View.GONE);
             orderList.setVisibility(View.VISIBLE);
             orderDeliveredLayout.setBackgroundResource(R.drawable.order_delivered_background_dis);
         }
     }
 
-    public void setActiveReservation(Reservation reservation){
+    public void setActiveReservation(Reservation reservation) {
         this.activeReservation = reservation;
-        if(reservation == null){
+        if (reservation == null) {
             switchButton.setImageResource(R.drawable.swap_dis);
             switchButton.setClickable(false);
             adapter.setOrderActive(false);
-            for(int i = 0; i < reservations.size() ; i++){
+            for (int i = 0; i < reservations.size(); i++) {
                 adapter.notifyItemChanged(i);
             }
-        }else{
+        } else {
             switchButton.setImageResource(R.drawable.swap_white);
             switchButton.setClickable(true);
             adapter.setOrderActive(true);
-            for(int i = 0; i < reservations.size() ; i++){
+            for (int i = 0; i < reservations.size(); i++) {
                 adapter.notifyItemChanged(i);
             }
             restaurantName.setText(activeReservation.getRestaurantName());
@@ -419,9 +456,9 @@ public class ReservationFragment extends Fragment {
             userAddress.setText(activeReservation.getUserAddress());
             pickupTime.setText(activeReservation.getRestaurantPickupTime());
             deliveryTime.setText(activeReservation.getUserDeliveryTime());
-            if(activeReservation.getNotes() == null){
+            if (activeReservation.getNotes() == null) {
                 noteLayout.setVisibility(View.GONE);
-            }else{
+            } else {
                 noteLayout.setVisibility(View.VISIBLE);
                 notes.setText(activeReservation.getNotes());
             }
@@ -432,14 +469,115 @@ public class ReservationFragment extends Fragment {
         }
     }
 
-    public void removeItem(int pos){
+    public void removeItem(int pos) {
         reservations.remove(pos);
         adapter.notifyItemRemoved(pos);
         adapter.notifyItemRangeChanged(pos, reservations.size());
     }
 
-    public void removeAllItem(){
+    public void removeAllItem() {
         reservations.clear();
         adapter.notifyDataSetChanged();
+    }
+
+    public double haversineDistance(double initialLat, double initialLong,
+                                    double finalLat, double finalLong) {
+        int R = 6371; // km (Earth radius)
+        double dLat = toRadians(finalLat - initialLat);
+        double dLon = toRadians(finalLong - initialLong);
+        initialLat = toRadians(initialLat);
+        finalLat = toRadians(finalLat);
+
+        double a = Math.sin(dLat / 2) * Math.sin(dLat / 2) +
+                Math.sin(dLon / 2) * Math.sin(dLon / 2) * Math.cos(initialLat) * Math.cos(finalLat);
+        double c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
+        return R * c;
+    }
+
+    public double toRadians(double deg) {
+        return deg * (Math.PI / 180);
+    }
+
+    public void calculateDistance(Reservation activeReservation) {
+        distance = 0.0;
+        List<Address> lista = new ArrayList<>();
+
+        String addressUser = activeReservation.getUserAddress();
+        Log.d("PROVA", "user: " + addressUser);
+        try {
+            lista = geocoder.getFromLocationName(addressUser, 1);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        final LatLng latLngUser = new LatLng(lista.get(0).getLatitude(), lista.get(0).getLongitude());
+
+        String addressRest = activeReservation.getRestaurantAddress();
+        Log.d("PROVA", "restaurant: " + addressRest);
+        try {
+            lista = geocoder.getFromLocationName(addressRest, 1);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        final LatLng latLngRestaurant = new LatLng(lista.get(0).getLatitude(), lista.get(0).getLongitude());
+
+        DatabaseReference databaseLocation = FirebaseDatabase.getInstance().getReference()
+                .child("Bikers").child(firebaseUser.getUid()).child("location");
+        databaseLocation.addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                for (DataSnapshot ds : dataSnapshot.getChildren()) {
+                    if (ds.getKey().compareTo("latitude") == 0) {
+                        currLatitude = ds.getValue(Double.class);
+                        Log.d("PROVA", "currLatitude: " + currLatitude);
+                    }
+                    if (ds.getKey().compareTo("longitude") == 0) {
+                        currLongitude = ds.getValue(Double.class);
+                        Log.d("PROVA", "currLongitude: " + currLongitude);
+                    }
+                }
+
+                distance += haversineDistance(currLatitude, currLongitude,
+                        latLngRestaurant.latitude, latLngRestaurant.longitude);
+                Log.d("PROVA", "biker-rest: " + distance);
+
+                final DatabaseReference databaseDistance = FirebaseDatabase.getInstance().getReference().
+                        child("archive").child("Bikers").child(firebaseUser.getUid());
+                databaseDistance.addListenerForSingleValueEvent(new ValueEventListener() {
+                    @Override
+                    public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                        Double dbDistance = 0.0;
+                        for (DataSnapshot ds : dataSnapshot.getChildren()) {
+                            if (ds.getKey().compareTo("totalDistance") == 0) {
+                                dbDistance = ds.getValue(Double.class);
+                            }
+                        }
+                        totalDistance = dbDistance;
+                        distance += haversineDistance(latLngRestaurant.latitude, latLngRestaurant.longitude,
+                                latLngUser.latitude, latLngUser.longitude);
+                        Log.d("PROVA", "rest-user: " + distance);
+
+                        totalDistance += distance;
+                        HashMap<String, Object> childDistance = new HashMap<>();
+                        childDistance.put("totalDistance", totalDistance);
+                        databaseDistance.updateChildren(childDistance).addOnFailureListener(new OnFailureListener() {
+                            @Override
+                            public void onFailure(@NonNull Exception e) {
+                                Toast.makeText(father, R.string.error_order, Toast.LENGTH_SHORT).show();
+                            }
+                        });
+                    }
+
+                    @Override
+                    public void onCancelled(@NonNull DatabaseError databaseError) {
+
+                    }
+                });
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError databaseError) {
+
+            }
+        });
     }
 }
