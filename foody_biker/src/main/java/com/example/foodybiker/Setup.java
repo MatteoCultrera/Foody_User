@@ -34,6 +34,8 @@ import android.widget.TimePicker;
 import android.widget.Toast;
 
 import com.bumptech.glide.Glide;
+import com.bumptech.glide.request.RequestOptions;
+import com.bumptech.glide.signature.ObjectKey;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.libraries.places.api.Places;
@@ -90,6 +92,7 @@ public class Setup extends AppCompatActivity {
     private SharedPreferences sharedPref;
     private SharedPreferences.Editor edit;
     private String pathImage;
+    private final String MAIN_DIR = "user_utils";
 
     class Position {
         public String address;
@@ -112,16 +115,13 @@ public class Setup extends AppCompatActivity {
         setContentView(R.layout.activity_setup);
         firebaseAuth = FirebaseAuth.getInstance();
         storageDir = getExternalFilesDir(Environment.DIRECTORY_PICTURES);
-
         init();
-
         editImage.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 showPickImageDialog();
             }
         });
-
     }
 
     @Override
@@ -226,7 +226,6 @@ public class Setup extends AppCompatActivity {
             save.setEnabled(false);
             save.setClickable(false);
         }
-
     }
 
     private void checkName(){
@@ -319,7 +318,6 @@ public class Setup extends AppCompatActivity {
         String[] mimeTypes = {"image/jpeg", "image/png"};
         intent.putExtra(Intent.EXTRA_MIME_TYPES,mimeTypes);
         startActivityForResult(intent,GALLERY_REQUEST_CODE);
-
     }
 
     private void pickFromCamera(){
@@ -382,30 +380,26 @@ public class Setup extends AppCompatActivity {
         errorPhone.setText("");
         errorAddress.setText("");
 
-        pathImage = sharedPref.getString("Path", "");
+        pathImage = null;
+        if(sharedPref.contains("imgLocale"))
+            pathImage = sharedPref.getString("imgLocale", "");
 
-        if(pathImage.length()>0){
-            StorageReference mStorageRef = FirebaseStorage.getInstance().getReference();
-            mStorageRef.child(pathImage).getDownloadUrl()
-                    .addOnSuccessListener(new OnSuccessListener<Uri>() {
-                        @Override
-                        public void onSuccess(Uri uri) {
-                            Glide
-                                    .with(profilePicture.getContext())
-                                    .load(uri)
-                                    .into(profilePicture);
-                        }
-                    }).addOnFailureListener(new OnFailureListener() {
-                @Override
-                public void onFailure(@NonNull Exception e) {
-                    Glide
-                            .with(profilePicture.getContext())
-                            .load(R.drawable.profile_placeholder)
-                            .into(profilePicture);
-                }
-            });
+        if(pathImage != null){
+            File profileImage = new File(pathImage);
+            RequestOptions options = new RequestOptions();
+            options.signature(new ObjectKey(profileImage.getName()+" "+profileImage.lastModified()));
+
+            Glide
+                    .with(profilePicture.getContext())
+                    .setDefaultRequestOptions(options)
+                    .load(profileImage)
+                    .into(profilePicture);
+        }else{
+            Glide
+                    .with(profilePicture.getContext())
+                    .load(R.drawable.profile_placeholder)
+                    .into(profilePicture);
         }
-
 
         name.setText(sharedPref.getString("name", ""));
         email.setText(sharedPref.getString("email", ""));
@@ -448,7 +442,6 @@ public class Setup extends AppCompatActivity {
         ImageButton sun = findViewById(R.id.editSunday);
         if (sunC.isChecked())
             sun.setClickable(false);
-
 
         //onTextChange to notify the user that there are fields that are not saved
         this.name.addTextChangedListener(new TextWatcher() {
@@ -625,7 +618,6 @@ public class Setup extends AppCompatActivity {
         if(!dest.exists())
             return null;
         return  BitmapFactory.decodeFile(dest.getPath(), options);
-
     }
 
     private void showPickImageDialog(){
@@ -762,33 +754,29 @@ public class Setup extends AppCompatActivity {
             BitmapFactory.Options bmOptions = new BitmapFactory.Options();
             Bitmap bitmap = BitmapFactory.decodeFile(f.getAbsolutePath(),bmOptions);
             pathImage = "images/bikers/"+user.getUid() + System.currentTimeMillis()+".jpeg";
-            File profile = new File(storageDir, PROFILE_IMAGE);
+            File root = getExternalFilesDir(Environment.DIRECTORY_DOCUMENTS);
+            File directory = new File(root.getPath()+File.separator+MAIN_DIR);
+            final File profile = new File(sharedPref.getString("imgLocale",directory.getPath()+File.separator+firebaseAuth.getCurrentUser().getUid()+".jpg"));
             saveBitmap(bitmap, profile.getPath());
 
-            FirebaseStorage storage;
-            StorageReference storageReference;
-            storage = FirebaseStorage.getInstance();
-            storageReference = storage.getReference();
-
-            StorageReference ref = storageReference.child(pathImage);
+            StorageReference ref = FirebaseStorage.getInstance().getReference().child(pathImage);
             ref.putFile(Uri.fromFile(new File(storageDir, PROFILE_IMAGE)))
-                    .addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
-                        @Override
-                        public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
-                            Log.d("SWSW", "success");
-                        }
-                    })
-                    .addOnFailureListener(new OnFailureListener() {
-                        @Override
-                        public void onFailure(@NonNull Exception e) {
-                            Toast.makeText(getApplicationContext(), "Failed "+e.getMessage(), Toast.LENGTH_SHORT).show();
-                        }
-                    });
-
+                .addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
+                    @Override
+                    public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
+                        sharedPref.edit().putString("imgLocale",profile.getPath()).apply();
+                        sharedPref.edit().putString("imgRemote",pathImage).apply();
+                    }
+                })
+                .addOnFailureListener(new OnFailureListener() {
+                    @Override
+                    public void onFailure(@NonNull Exception e) {
+                        Toast.makeText(getApplicationContext(), "Failed "+e.getMessage(), Toast.LENGTH_SHORT).show();
+                    }
+                });
         }
 
-        DatabaseReference database = FirebaseDatabase.getInstance().getReference()
-                .child("Bikers/" + user.getUid());
+        DatabaseReference database = FirebaseDatabase.getInstance().getReference().child("Bikers/" + user.getUid());
         HashMap<String, Object> child = new HashMap<>();
         ArrayList<String> days = new ArrayList<>();
         days.add(monday.getText().toString());
@@ -803,25 +791,34 @@ public class Setup extends AppCompatActivity {
         child.put("info", info);
         database.updateChildren(child);
 
-        edit.putString("name", name.getText().toString());
-        edit.putString("email", email.getText().toString());
-        edit.putString("address", address.getText().toString());
-        edit.putString("phoneNumber", phoneNumber.getText().toString());
-        edit.putString("monTime", monday.getText().toString());
-        edit.putString("tueTime", tuesday.getText().toString());
-        edit.putString("wedTime", wednesday.getText().toString());
-        edit.putString("thuTime", thursday.getText().toString());
-        edit.putString("friTime", friday.getText().toString());
-        edit.putString("satTime", saturday.getText().toString());
-        edit.putString("sunTime", sunday.getText().toString());
-        edit.putBoolean("monState", monC.isChecked());
-        edit.putBoolean("tueState", tueC.isChecked());
-        edit.putBoolean("wedState", wedC.isChecked());
-        edit.putBoolean("thuState", thuC.isChecked());
-        edit.putBoolean("friState", friC.isChecked());
-        edit.putBoolean("satState", satC.isChecked());
-        edit.putBoolean("sunState", sunC.isChecked());
-        edit.apply();
+        sharedPref.edit().putString("name", name.getText().toString()).apply();
+        sharedPref.edit().putString("email", email.getText().toString()).apply();
+        sharedPref.edit().putString("address", address.getText().toString()).apply();
+        sharedPref.edit().putString("phoneNumber", phoneNumber.getText().toString()).apply();
+        sharedPref.edit().putString("monTime", monday.getText().toString()).apply();
+        sharedPref.edit().putString("tueTime", tuesday.getText().toString()).apply();
+        sharedPref.edit().putString("wedTime", wednesday.getText().toString()).apply();
+        sharedPref.edit().putString("thuTime", thursday.getText().toString()).apply();
+        sharedPref.edit().putString("friTime", friday.getText().toString()).apply();
+        sharedPref.edit().putString("satTime", saturday.getText().toString()).apply();
+        sharedPref.edit().putString("sunTime", sunday.getText().toString()).apply();
+        sharedPref.edit().putBoolean("monState", monC.isChecked()).apply();
+        sharedPref.edit().putBoolean("tueState", tueC.isChecked()).apply();
+        sharedPref.edit().putBoolean("wedState", wedC.isChecked()).apply();
+        sharedPref.edit().putBoolean("thuState", thuC.isChecked()).apply();
+        sharedPref.edit().putBoolean("friState", friC.isChecked()).apply();
+        sharedPref.edit().putBoolean("satState", satC.isChecked()).apply();
+        sharedPref.edit().putBoolean("sunState", sunC.isChecked()).apply();
+
+        if(pos.latitude != null && pos.longitude != null){
+            DatabaseReference databaseLoc = FirebaseDatabase.getInstance().getReference()
+                    .child("Bikers").child(user.getUid()).child("info");
+            HashMap<String, Object> childLoc = new HashMap<>();
+            childLoc.put("latitude", pos.latitude);
+            childLoc.put("longitude", pos.longitude);
+            databaseLoc.updateChildren(childLoc);
+        }
+
         Toast.makeText(getApplicationContext(), R.string.save, Toast.LENGTH_SHORT).show();
         unchanged = true;
     }

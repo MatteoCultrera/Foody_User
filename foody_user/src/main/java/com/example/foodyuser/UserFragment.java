@@ -38,7 +38,6 @@ import de.hdodenhof.circleimageview.CircleImageView;
 
 import static android.content.Context.MODE_PRIVATE;
 
-
 public class UserFragment extends Fragment {
 
     private CircleImageView profilePicture;
