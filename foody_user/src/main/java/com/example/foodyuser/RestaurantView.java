@@ -122,18 +122,11 @@ public class RestaurantView extends AppCompatActivity {
 
 
     private void init(){
-
-        Log.d("LIFECYCLE","init()");
-
-
+        Log.d("PROVA","Into init");
         showMenu.setFather(this);
         showReview.setFather(this);
-
-
         setupViewPager(viewPager);
-
         viewPager.setOffscreenPageLimit(3);
-
         tabs.post(new Runnable() {
             @Override
             public void run() {
@@ -142,7 +135,6 @@ public class RestaurantView extends AppCompatActivity {
         });
 
         addReview.setVisibility(View.GONE);
-
         tabs.addOnTabSelectedListener(new TabLayout.OnTabSelectedListener() {
             @Override
             public void onTabSelected(TabLayout.Tab tab) {
@@ -215,7 +207,6 @@ public class RestaurantView extends AppCompatActivity {
             //Fetches the reviews and automatically adds them to fragment
             Log.d("PROVATRE","called FetchReviews from init()");
             fetchReviews();
-
             updateTotal();
 
         }else{
@@ -231,7 +222,6 @@ public class RestaurantView extends AppCompatActivity {
             Log.d("PROVATRE","called reviewsFromFile from init()");
             reviewsFromFile();
             updateTotal();
-
         }
 
         if(localeReview != null){
@@ -649,12 +639,9 @@ public class RestaurantView extends AppCompatActivity {
     }
 
     private void setupImagesDirectory(){
-
         File root = getExternalFilesDir(Environment.DIRECTORY_PICTURES);
         storage = new File(root.getPath()+File.separator+DIRECTORY_IMAGES);
-
         storage.mkdirs();
-
     }
 
     private void addOrders(){

@@ -187,15 +187,10 @@ public class SearchRestaurant extends AppCompatActivity {
         }else{
             //Fetch Images from DB
             storage.mkdirs();
-
-
             imageToFetch = 0;
             imageFetched = 0;
             fetchRestaurants(false);
-
         }
-
-
     }
 
     private void fetchRestaurants(final Boolean hasImages){
