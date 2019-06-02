@@ -106,18 +106,11 @@ public class RestaurantView extends AppCompatActivity {
 
 
     private void init(){
-
         Log.d("PROVA","Into init");
-
-
         showMenu.setFather(this);
         showReview.setFather(this);
-
-
         setupViewPager(viewPager);
-
         viewPager.setOffscreenPageLimit(3);
-
         tabs.post(new Runnable() {
             @Override
             public void run() {
@@ -126,7 +119,6 @@ public class RestaurantView extends AppCompatActivity {
         });
 
         addReview.setVisibility(View.GONE);
-
         tabs.addOnTabSelectedListener(new TabLayout.OnTabSelectedListener() {
             @Override
             public void onTabSelected(TabLayout.Tab tab) {
@@ -194,7 +186,6 @@ public class RestaurantView extends AppCompatActivity {
             fetchMenu();
             //Fetches the reviews and automatically adds them to fragment
             fetchReviews();
-
             updateTotal();
 
         }else{
@@ -209,10 +200,7 @@ public class RestaurantView extends AppCompatActivity {
             cardsFromFile();
             reviewsFromFile();
             updateTotal();
-
         }
-
-
     }
 
     public void cardsFromFile(){
@@ -548,12 +536,9 @@ public class RestaurantView extends AppCompatActivity {
     }
 
     private void setupImagesDirectory(){
-
         File root = getExternalFilesDir(Environment.DIRECTORY_PICTURES);
         storage = new File(root.getPath()+File.separator+DIRECTORY_IMAGES);
-
         storage.mkdirs();
-
     }
 
     private void addOrders(){
@@ -581,8 +566,6 @@ public class RestaurantView extends AppCompatActivity {
     }
 
     private void setupViewPager(ViewPager viewPager) {
-
-
         ViewPagerAdapter adapter = new ViewPagerAdapter(
                 getSupportFragmentManager());
         adapter.addFrag(showMenu, getResources().getString(R.string.menu));
