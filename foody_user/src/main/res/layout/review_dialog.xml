@@ -23,6 +23,7 @@
 
     <android.support.constraint.ConstraintLayout
         android:id="@+id/layout"
+        android:layout_marginBottom="80dp"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginStart="28dp"
@@ -70,7 +71,7 @@
             android:layout_marginTop="10dp"
             app:layout_constraintStart_toStartOf="parent"
             android:textSize="18sp"
-            android:text="Food Quality:"
+            android:text="@string/food_quality"
             app:layout_constraintHorizontal_bias="0.0"
             android:layout_marginStart="20dp"/>
 
@@ -110,7 +111,7 @@
             android:layout_marginTop="10dp"
             app:layout_constraintStart_toStartOf="parent"
             android:textSize="18sp"
-            android:text="Restaurant Service:"
+            android:text="@string/restaurant_service"
             app:layout_constraintHorizontal_bias="0.0"
             android:layout_marginStart="20dp"/>
 
@@ -152,7 +153,7 @@
             android:layout_marginTop="10dp"
             app:layout_constraintStart_toStartOf="parent"
             android:textSize="18sp"
-            android:text="Delivery TIme:"
+            android:text="@string/delivery_time_hint"
             app:layout_constraintHorizontal_bias="0.0"
             android:layout_marginStart="20dp"/>
 

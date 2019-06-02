@@ -16,6 +16,8 @@ import android.view.ViewGroup;
 import android.widget.TextView;
 
 import com.bumptech.glide.Glide;
+import com.bumptech.glide.request.RequestOptions;
+import com.bumptech.glide.signature.ObjectKey;
 import com.example.foody_library.UserInfo;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
@@ -54,6 +56,7 @@ public class UserFragment extends Fragment {
     private final String PROFILE_IMAGE = "profile.jpg";
     private String imagePath;
     private UserInfo info;
+    private final String MAIN_DIR = "user_utils";
 
     public UserFragment() {}
 
@@ -81,6 +84,30 @@ public class UserFragment extends Fragment {
         this.bio = view.findViewById(R.id.bio);
         this.logout = view.findViewById(R.id.logout_button);
 
+        name.setText(sharedPref.getString("name", getResources().getString(R.string.name_hint)));
+        email.setText(sharedPref.getString("email", getResources().getString(R.string.email_hint)));
+        address.setText(sharedPref.getString("address", getResources().getString(R.string.address_hint)));
+        phoneNumber.setText(sharedPref.getString("phoneNumber", getResources().getString(R.string.phone_hint)));
+        bio.setText(sharedPref.getString("bio", getResources().getString(R.string.bio_hint)));
+
+        File image = new File(sharedPref.getString("imgLocale",""));
+
+        if(image.exists()){
+            RequestOptions options = new RequestOptions();
+            options.signature(new ObjectKey(image.getName()+" "+image.lastModified()));
+            Glide
+                    .with(view)
+                    .setDefaultRequestOptions(options)
+                    .load(image.getPath())
+                    .into(profilePicture);
+        }else{
+            Glide
+                    .with(profilePicture.getContext())
+                    .load(R.drawable.profile_placeholder)
+                    .into(profilePicture);
+        }
+
+        /*
         //setup of the Shared Preferences to save value in (key, value) format
         new Thread(new Runnable() {
             @Override
@@ -149,7 +176,7 @@ public class UserFragment extends Fragment {
                     }
                 });
             }
-        }).start();
+        }).start();*/
 
         editMode.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -159,7 +186,6 @@ public class UserFragment extends Fragment {
                 if(!pl.delete()){
                     System.out.println("Delete Failure");
                 }
-                intent.putExtra("imagePath", info.getImagePath());
                 startActivity(intent);
             }
         });

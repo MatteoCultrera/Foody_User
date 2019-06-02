@@ -248,7 +248,14 @@ public class RestaurantView extends AppCompatActivity {
                 ImageView image = (ImageView)dialog.findViewById(R.id.review_image);
                 TextView name = (TextView)dialog.findViewById(R.id.review_restaurant_name);
                 final RatingBar rating = (RatingBar)dialog.findViewById(R.id.review_rating);
+                final RatingBar ratingTwo = (RatingBar)dialog.findViewById(R.id.review_rating_two);
+                final RatingBar ratingThree = (RatingBar)dialog.findViewById(R.id.review_rating_three);
                 final TextView ratingText = (TextView)dialog.findViewById(R.id.review_points);
+                final TextView ratingTextTwo = (TextView)dialog.findViewById(R.id.review_points_two);
+                final TextView ratingTextThree = (TextView)dialog.findViewById(R.id.review_points_three);
+                final TextView ratingTextHint = (TextView)dialog.findViewById(R.id.review_rating_text);
+                final TextView ratingTextHintTwo = (TextView)dialog.findViewById(R.id.review_rating_text_two);
+                final TextView ratingTextHintThree = (TextView)dialog.findViewById(R.id.review_rating_text_three);
                 final ConstraintLayout mainLayout = (ConstraintLayout)dialog.findViewById(R.id.layout);
                 final ConstraintLayout imageLayout = (ConstraintLayout)dialog.findViewById(R.id.review_image_layout);
                 final MaterialButton button = (MaterialButton)dialog.findViewById(R.id.review_submit);
@@ -256,6 +263,8 @@ public class RestaurantView extends AppCompatActivity {
                 button.setVisibility(View.GONE);
                 edit.clearFocus();
                 ratingText.setVisibility(View.GONE);
+                ratingTextTwo.setVisibility(View.GONE);
+                ratingTextThree.setVisibility(View.GONE);
                 mainLayout.getLayoutTransition().enableTransitionType(LayoutTransition.CHANGING);
                 imageLayout.getLayoutTransition().enableTransitionType(LayoutTransition.CHANGING);
                 name.setText(thisRestaurant.getUsername());
@@ -342,10 +351,53 @@ public class RestaurantView extends AppCompatActivity {
                     }
                 });
 
+                ratingTwo.setOnTouchListener(new View.OnTouchListener() {
+                    @Override
+                    public boolean onTouch(View v, MotionEvent event) {
+                        if(ratingTextTwo.getVisibility() == View.GONE)
+                            ratingTextTwo.setVisibility(View.VISIBLE);
+                        ratingTextTwo.setText(String.format("%.1f",ratingTwo.getRating()));
+                        return false;
+                    }
+                });
+
+
+                ratingThree.setOnTouchListener(new View.OnTouchListener() {
+                    @Override
+                    public boolean onTouch(View v, MotionEvent event) {
+                        if(ratingTextThree.getVisibility() == View.GONE)
+                            ratingTextThree.setVisibility(View.VISIBLE);
+                        ratingTextThree.setText(String.format("%.1f",ratingThree.getRating()));
+                        return false;
+                    }
+                });
+
                 rating.setOnRatingBarChangeListener(new RatingBar.OnRatingBarChangeListener() {
                     @Override
                     public void onRatingChanged(RatingBar ratingBar, float rating, boolean fromUser) {
-                        if(button.getVisibility() == View.GONE){
+                        if(button.getVisibility() == View.GONE && ratingTextTwo.getVisibility() == View.VISIBLE && ratingTextThree.getVisibility() == View.VISIBLE){
+                            button.setVisibility(View.VISIBLE);
+                            button.setY(-200);
+                            button.animate().translationY(0).start();
+                        }
+                    }
+                });
+
+                ratingTwo.setOnRatingBarChangeListener(new RatingBar.OnRatingBarChangeListener() {
+                    @Override
+                    public void onRatingChanged(RatingBar ratingBar, float rating, boolean fromUser) {
+                        if(button.getVisibility() == View.GONE && ratingText.getVisibility() == View.VISIBLE && ratingTextThree.getVisibility() == View.VISIBLE){
+                            button.setVisibility(View.VISIBLE);
+                            button.setY(-200);
+                            button.animate().translationY(0).start();
+                        }
+                    }
+                });
+
+                ratingThree.setOnRatingBarChangeListener(new RatingBar.OnRatingBarChangeListener() {
+                    @Override
+                    public void onRatingChanged(RatingBar ratingBar, float rating, boolean fromUser) {
+                        if(button.getVisibility() == View.GONE && ratingText.getVisibility() == View.VISIBLE && ratingTextTwo.getVisibility() == View.VISIBLE){
                             button.setVisibility(View.VISIBLE);
                             button.setY(-200);
                             button.animate().translationY(0).start();
@@ -361,6 +413,11 @@ public class RestaurantView extends AppCompatActivity {
                 imageLayout.setY(getResources().getDimensionPixelSize(R.dimen.short800));
                 edit.setAlpha(0);
                 rating.setAlpha(0);
+                ratingTwo.setAlpha(0);
+                ratingThree.setAlpha(0);
+                ratingTextHint.setAlpha(0);
+                ratingTextHintTwo.setAlpha(0);
+                ratingTextHintThree.setAlpha(0);
                 dialog.show();
                 mainLayout.animate().translationY(0).setDuration(300).start();
                 imageLayout.animate().translationY(0).setDuration(400).withEndAction(new Runnable() {
@@ -368,6 +425,11 @@ public class RestaurantView extends AppCompatActivity {
                     public void run() {
                         edit.animate().alpha(1).setDuration(600).start();
                         rating.animate().alpha(1).setDuration(600).start();
+                        ratingTwo.animate().alpha(1).setDuration(600).start();
+                        ratingThree.animate().alpha(1).setDuration(600).start();
+                        ratingTextHint.animate().alpha(1).setDuration(600).start();
+                        ratingTextHintTwo.animate().alpha(1).setDuration(600).start();
+                        ratingTextHintThree.animate().alpha(1).setDuration(600).start();
                     }
                 });
                 dialog.getWindow().setAttributes(lp);
