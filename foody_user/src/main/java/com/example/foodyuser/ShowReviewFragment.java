@@ -61,6 +61,8 @@ public class ShowReviewFragment extends Fragment {
             loading.setVisibility(View.GONE);
             recyclerMenu.setVisibility(View.GONE);
             noReviews.setVisibility(View.VISIBLE);
+            show = new RVAdapterShowRestaurantReviews(reviews, father);
+            recyclerMenu.setAdapter(show);
         } else{
             recyclerMenu.setVisibility(View.GONE);
             loading.setVisibility(View.VISIBLE);
@@ -89,16 +91,21 @@ public class ShowReviewFragment extends Fragment {
             loading.setVisibility(View.GONE);
             noReviews.setVisibility(View.VISIBLE);
             recyclerMenu.setVisibility(View.GONE);
+            recyclerMenu.setAdapter(show);
         }
     }
 
     public void notifyAdded(int position){
-        show.notifyItemInserted(position);
-        for(Review r : reviews){
-            Log.d("PROVADUE", "Reviews on fragment "+r.getUserName()+" "+r.getUserID());
+        if(noReviews.getVisibility() == View.VISIBLE){
+            noReviews.setVisibility(View.GONE);
+            recyclerMenu.setVisibility(View.VISIBLE);
         }
-        Log.d("PROVADUE","Added element at position "+position+" with size "+reviews.size());
+
+        show.notifyItemInserted(position);
         show.notifyItemRangeChanged(position, reviews.size());
+        father.collapseToolbar();
+        recyclerMenu.scrollToPosition(reviews.size()-1);
+
     }
 
     public void removeReviews(){

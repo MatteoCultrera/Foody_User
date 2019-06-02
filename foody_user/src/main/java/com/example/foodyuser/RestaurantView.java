@@ -92,6 +92,7 @@ public class RestaurantView extends AppCompatActivity {
     private TextView addReviewText;
     private boolean isOnPause;
     private Review localeReview;
+    private AppBarLayout appBarLayout;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -102,6 +103,7 @@ public class RestaurantView extends AppCompatActivity {
         viewPager = findViewById(R.id.htab_viewpager);
         toolbar = findViewById(R.id.htab_toolbar);
         background = findViewById(R.id.htab_header);
+        appBarLayout = findViewById(R.id.htab_appbar);
         totalText = findViewById(R.id.price_show_frag);
         totalLayout = findViewById(R.id.price_show_layout_frag);
         price = findViewById(R.id.restaurant_del_price_frag);
@@ -232,6 +234,11 @@ public class RestaurantView extends AppCompatActivity {
 
         }
 
+        if(localeReview != null){
+            reviews.add(localeReview);
+            showReview.notifyAdded(reviews.size()-1);
+            localeReview = null;
+        }
 
     }
 
@@ -397,7 +404,11 @@ public class RestaurantView extends AppCompatActivity {
                                 Log.d("PROVADUE","Main On Success");
 
                                 if(!isOnPause){
+                                    Log.d("PROVATRE","Adding localeReview");
                                     enableAddReview();
+                                    reviews.add(localeReview);
+                                    showReview.notifyAdded(reviews.size()-1);
+                                    localeReview = null;
                                 }
                             }
                         }).addOnFailureListener(new OnFailureListener() {
@@ -527,7 +538,6 @@ public class RestaurantView extends AppCompatActivity {
             }
         });
     }
-
 
     public void reviewsFromFile(){
         final int set = session;
@@ -672,8 +682,6 @@ public class RestaurantView extends AppCompatActivity {
     }
 
     private void setupViewPager(ViewPager viewPager) {
-
-
         ViewPagerAdapter adapter = new ViewPagerAdapter(
                 getSupportFragmentManager());
         adapter.addFrag(showMenu, getResources().getString(R.string.menu));
@@ -746,7 +754,6 @@ public class RestaurantView extends AppCompatActivity {
                                 .into(background);
                     }
 
-
                 }
                 toolbar.setTitle(thisRestaurant.getUsername());
                 Log.d("VANGOGH",""+thisRestaurant.getUid());
@@ -777,10 +784,9 @@ public class RestaurantView extends AppCompatActivity {
         final int set = session;
         final DatabaseReference database = FirebaseDatabase.getInstance().getReference();
         DatabaseReference ref = database.child("restaurantsMenu").child(reName);
-        ref.addValueEventListener(new ValueEventListener() {
+        ref.addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-                int i = 0;
                 cards = new ArrayList<>();
                 for (DataSnapshot ds : dataSnapshot.getChildren()) {
                     for (DataSnapshot ds1 : ds.getChildren()) {
@@ -854,7 +860,7 @@ public class RestaurantView extends AppCompatActivity {
         final int set = session;
         final DatabaseReference database = FirebaseDatabase.getInstance().getReference();
         DatabaseReference ref = database.child("reviews").child(reName);
-        ref.addValueEventListener(new ValueEventListener() {
+        ref.addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
                 if(set == session){
@@ -903,7 +909,7 @@ public class RestaurantView extends AppCompatActivity {
         final HashMap<String, String> usersWithImages = new HashMap<>();
         final DatabaseReference database = FirebaseDatabase.getInstance().getReference();
         DatabaseReference ref = database.child("endUsers");
-        ref.addValueEventListener(new ValueEventListener() {
+        ref.addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
                 if(set == session) {
@@ -1068,5 +1074,9 @@ public class RestaurantView extends AppCompatActivity {
         }
         storage.delete();
         storage = null;
+    }
+
+    public void collapseToolbar(){
+        appBarLayout.setExpanded(false);
     }
 }
