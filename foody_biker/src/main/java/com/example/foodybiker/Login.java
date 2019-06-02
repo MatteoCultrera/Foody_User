@@ -116,51 +116,6 @@ public class Login extends AppCompatActivity {
                         @Override
                         public void onComplete(@NonNull Task<AuthResult> task) {
                         if (task.isSuccessful()) {
-                            //Saving the image of the profile if there would be one
-                            final DatabaseReference database = FirebaseDatabase.getInstance().getReference().child("Bikers");
-                            Query query = database.child(firebaseAuth.getCurrentUser().getUid());
-                            query.addListenerForSingleValueEvent(new ValueEventListener() {
-                                @Override
-                                public void onDataChange(@NonNull final DataSnapshot dataSnapshot) {
-                                    Log.d("SWSW1", dataSnapshot.getKey());
-                                    String imagePath = dataSnapshot.child("info").child("path").getValue(String.class);
-                                    if(imagePath != null){
-                                        Log.d("SWSW1", imagePath);
-                                        File root = getExternalFilesDir(Environment.DIRECTORY_PICTURES);
-                                        storage = new File(root.getPath()+File.separator+PROFILE);
-                                        if(storage.exists()){
-                                            for(File f : storage.listFiles())
-                                                f.delete();
-                                            Log.d("SWSW1", "Deleted previous files");
-                                        }else{
-                                            storage.mkdirs();
-                                            Log.d("SWSW1", "created with path: "+storage.getPath());
-                                        }
-                                        File imageProfile = new File(storage.getPath()+
-                                                File.separator+firebaseAuth.getCurrentUser().getUid()+System.currentTimeMillis()+".jpg");
-                                        StorageReference mStorageRef = FirebaseStorage.getInstance().getReference();
-                                        mStorageRef.child(imagePath).getFile(imageProfile)
-                                                .addOnSuccessListener(new OnSuccessListener<FileDownloadTask.TaskSnapshot>() {
-                                                    @Override
-                                                    public void onSuccess(FileDownloadTask.TaskSnapshot taskSnapshot) {
-                                                        Log.d("SWSW1", "Profile image correctly saved");
-                                                    }
-                                                }).addOnFailureListener(new OnFailureListener() {
-                                            @Override
-                                            public void onFailure(@NonNull Exception e) {
-                                                storage.delete();
-                                                Log.d("SWSW1", "Storage deleted");
-                                            }
-                                        });
-                                    }
-                                }
-
-                                @Override
-                                public void onCancelled(@NonNull DatabaseError databaseError) {
-
-                                }
-                            });
-
                             Toast.makeText(getApplicationContext(), R.string.login_success, Toast.LENGTH_SHORT).show();
                             Intent intent = new Intent(Login.this, MainActivity.class);
                             intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK);

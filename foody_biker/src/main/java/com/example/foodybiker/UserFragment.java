@@ -218,13 +218,6 @@ public class UserFragment extends Fragment {
         logout.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                //Deleting the storage and the profile image
-                //File root = getActivity().getExternalFilesDir(Environment.DIRECTORY_PICTURES);
-                //storage = new File(root.getPath()+File.separator+PROFILE);
-                //for(File f : storage.listFiles())
-                //  f.delete();
-                //storage.delete();
-
                 firebaseAuth.signOut();
                 sharedPref.edit().clear().apply();
                 Intent intent = new Intent(getActivity(), Login.class);
