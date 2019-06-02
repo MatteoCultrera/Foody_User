@@ -86,10 +86,6 @@ public class ShowMenuFragment extends Fragment {
     public void removeCards(){
         Log.d("PROVA","removeCards with"+(recyclerMenu == null?"no Recycler":"Recycler"));
         this.cards = null;
-        if(recyclerMenu != null){
-            recyclerMenu.setVisibility(View.GONE);
-            loading.setVisibility(View.VISIBLE);
-        }
 
     }
 

@@ -31,6 +31,8 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.bumptech.glide.Glide;
+import com.bumptech.glide.request.RequestOptions;
+import com.bumptech.glide.signature.ObjectKey;
 import com.example.foody_library.UserInfo;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
@@ -76,11 +78,12 @@ public class Setup extends AppCompatActivity {
     private File storageDir;
     private AlertDialog dialogDism;
     private boolean unchanged, addressCheck, nameCheck, numberCheck, mailCheck;
+    String pathImage;
     private String dialogCode = "ok";
     private FirebaseAuth firebaseAuth;
     private SharedPreferences sharedPref;
     private SharedPreferences.Editor edit;
-    private String pathImage;
+    private final String MAIN_DIR = "user_utils";
 
     class Position {
         public String address;
@@ -104,7 +107,6 @@ public class Setup extends AppCompatActivity {
         firebaseAuth = FirebaseAuth.getInstance();
         storageDir = getExternalFilesDir(Environment.DIRECTORY_PICTURES);
         Bundle extras = getIntent().getExtras();
-        pathImage = extras.getString("imagePath", null);
         init();
         editImage.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -316,27 +318,23 @@ public class Setup extends AppCompatActivity {
         errorAddress.setText("");
         errorBio.setText("");
 
+        pathImage = null;
+        if(sharedPref.contains("imgLocale")){
+            pathImage = sharedPref.getString("imgLocale","");
+        }
+
         if(pathImage != null) {
-            StorageReference mStorageRef = FirebaseStorage.getInstance().getReference();
-            mStorageRef.child(pathImage).getDownloadUrl()
-                    .addOnSuccessListener(new OnSuccessListener<Uri>() {
-                        @Override
-                        public void onSuccess(Uri uri) {
-                            Glide
-                                    .with(profilePicture.getContext())
-                                    .load(uri)
-                                    .into(profilePicture);
-                        }
-                    })
-                    .addOnFailureListener(new OnFailureListener() {
-                        @Override
-                        public void onFailure(@NonNull Exception e) {
-                            Glide
-                                    .with(profilePicture.getContext())
-                                    .load(R.drawable.profile_placeholder)
-                                    .into(profilePicture);
-                        }
-                    });
+
+            File profileImage = new File(pathImage);
+            RequestOptions options = new RequestOptions();
+            options.signature(new ObjectKey(profileImage.getName()+" "+profileImage.lastModified()));
+
+            Glide
+                    .with(profilePicture.getContext())
+                    .setDefaultRequestOptions(options)
+                    .load(profileImage)
+                    .into(profilePicture);
+
         }else{
             Glide
                     .with(profilePicture.getContext())
@@ -685,7 +683,9 @@ public class Setup extends AppCompatActivity {
             BitmapFactory.Options bmOptions = new BitmapFactory.Options();
             Bitmap bitmap = BitmapFactory.decodeFile(f.getAbsolutePath(),bmOptions);
             pathImage = "images/users/"+user.getUid() + System.currentTimeMillis()+".jpeg";
-            File profile = new File(storageDir, PROFILE_IMAGE);
+            File root = getExternalFilesDir(Environment.DIRECTORY_DOCUMENTS);
+            final File directory = new File(root.getPath()+File.separator+MAIN_DIR);
+            final File profile = new File(sharedPref.getString("imgLocale",directory.getPath()+File.separator+firebaseAuth.getCurrentUser().getUid()+".jpg"));
             saveBitmap(bitmap, profile.getPath());
 
             FirebaseStorage storage;
@@ -694,11 +694,13 @@ public class Setup extends AppCompatActivity {
             storageReference = storage.getReference();
 
             StorageReference ref = storageReference.child(pathImage);
-            ref.putFile(Uri.fromFile(new File(storageDir, PROFILE_IMAGE)))
+            ref.putFile(Uri.fromFile(profile))
                     .addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
                         @Override
                         public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
-                            Log.d("SWSW", "success");
+                            sharedPref.edit().putString("imgLocale",profile.getPath()).apply();
+                            sharedPref.edit().putString("imgRemote",pathImage).apply();
+
                         }
                     })
                     .addOnFailureListener(new OnFailureListener() {
@@ -715,6 +717,13 @@ public class Setup extends AppCompatActivity {
         UserInfo info = new UserInfo(name.getText().toString(), email.getText().toString(), address.getText().toString(),
                 phoneNumber.getText().toString(), bio.getText().toString());
         info.setImagePath(pathImage);
+
+        sharedPref.edit().putString("name", info.getUsername()).apply();
+        sharedPref.edit().putString("email", info.getEmail()).apply();
+        sharedPref.edit().putString("address", info.getAddress()).apply();
+        sharedPref.edit().putString("phoneNumber", info.getNumberPhone()).apply();
+        sharedPref.edit().putString("bio", info.getBiography()).apply();
+
         child.put("info", info);
         database.updateChildren(child);
 

@@ -107,11 +107,7 @@ public class ShowReviewFragment extends Fragment {
     public void removeReviews(){
         Log.d("PROVA","removeCards with"+(recyclerMenu == null?"no Recycler":"Recycler"));
         this.reviews = null;
-        if(recyclerMenu != null){
-            recyclerMenu.setVisibility(View.GONE);
-            noReviews.setVisibility(View.GONE);
-            loading.setVisibility(View.VISIBLE);
-        }
+
     }
 
     public boolean notReady(){

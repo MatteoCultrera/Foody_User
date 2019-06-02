@@ -125,6 +125,7 @@ public class RestaurantView extends AppCompatActivity {
             }
         });
 
+        addReview.setVisibility(View.GONE);
 
         tabs.addOnTabSelectedListener(new TabLayout.OnTabSelectedListener() {
             @Override
@@ -247,16 +248,26 @@ public class RestaurantView extends AppCompatActivity {
                 ImageView image = (ImageView)dialog.findViewById(R.id.review_image);
                 TextView name = (TextView)dialog.findViewById(R.id.review_restaurant_name);
                 final RatingBar rating = (RatingBar)dialog.findViewById(R.id.review_rating);
+                final RatingBar ratingTwo = (RatingBar)dialog.findViewById(R.id.review_rating_two);
+                final RatingBar ratingThree = (RatingBar)dialog.findViewById(R.id.review_rating_three);
+                final TextView ratingText = (TextView)dialog.findViewById(R.id.review_points);
+                final TextView ratingTextTwo = (TextView)dialog.findViewById(R.id.review_points_two);
+                final TextView ratingTextThree = (TextView)dialog.findViewById(R.id.review_points_three);
+                final TextView ratingTextHint = (TextView)dialog.findViewById(R.id.review_rating_text);
+                final TextView ratingTextHintTwo = (TextView)dialog.findViewById(R.id.review_rating_text_two);
+                final TextView ratingTextHintThree = (TextView)dialog.findViewById(R.id.review_rating_text_three);
                 final ConstraintLayout mainLayout = (ConstraintLayout)dialog.findViewById(R.id.layout);
                 final ConstraintLayout imageLayout = (ConstraintLayout)dialog.findViewById(R.id.review_image_layout);
                 final MaterialButton button = (MaterialButton)dialog.findViewById(R.id.review_submit);
 
                 button.setVisibility(View.GONE);
-
                 edit.clearFocus();
-
+                ratingText.setVisibility(View.GONE);
+                ratingTextTwo.setVisibility(View.GONE);
+                ratingTextThree.setVisibility(View.GONE);
+                mainLayout.getLayoutTransition().enableTransitionType(LayoutTransition.CHANGING);
+                imageLayout.getLayoutTransition().enableTransitionType(LayoutTransition.CHANGING);
                 name.setText(thisRestaurant.getUsername());
-
                 File resim  = new File(thisRestaurant.getImagePath());
                 RequestOptions options = new RequestOptions();
                 options.signature(new ObjectKey(resim.getName()+" "+resim.lastModified()));
@@ -271,7 +282,6 @@ public class RestaurantView extends AppCompatActivity {
                     @Override
                     public boolean onKey(DialogInterface arg0, int keyCode,
                                          KeyEvent event) {
-                        // TODO Auto-generated method stub
                         if (keyCode == KeyEvent.KEYCODE_BACK) {
                             if(button.getVisibility() == View.VISIBLE){
                                 button.animate().translationY(-getResources().getDimensionPixelSize(R.dimen.short200)).withEndAction(new Runnable() {
@@ -329,23 +339,85 @@ public class RestaurantView extends AppCompatActivity {
                     }
                 });
 
+                rating.setOnTouchListener(new View.OnTouchListener() {
+                    @Override
+                    public boolean onTouch(View v, MotionEvent event) {
+                        if(ratingText.getVisibility() == View.GONE)
+                            ratingText.setVisibility(View.VISIBLE);
+
+                        ratingText.setText(String.format("%.1f",rating.getRating()));
+
+                        return false;
+                    }
+                });
+
+                ratingTwo.setOnTouchListener(new View.OnTouchListener() {
+                    @Override
+                    public boolean onTouch(View v, MotionEvent event) {
+                        if(ratingTextTwo.getVisibility() == View.GONE)
+                            ratingTextTwo.setVisibility(View.VISIBLE);
+                        ratingTextTwo.setText(String.format("%.1f",ratingTwo.getRating()));
+                        return false;
+                    }
+                });
+
+
+                ratingThree.setOnTouchListener(new View.OnTouchListener() {
+                    @Override
+                    public boolean onTouch(View v, MotionEvent event) {
+                        if(ratingTextThree.getVisibility() == View.GONE)
+                            ratingTextThree.setVisibility(View.VISIBLE);
+                        ratingTextThree.setText(String.format("%.1f",ratingThree.getRating()));
+                        return false;
+                    }
+                });
+
                 rating.setOnRatingBarChangeListener(new RatingBar.OnRatingBarChangeListener() {
                     @Override
                     public void onRatingChanged(RatingBar ratingBar, float rating, boolean fromUser) {
-                        button.setVisibility(View.VISIBLE);
-                        button.setY(-200);
-                        button.animate().translationY(0).start();
+                        if(button.getVisibility() == View.GONE && ratingTextTwo.getVisibility() == View.VISIBLE && ratingTextThree.getVisibility() == View.VISIBLE){
+                            button.setVisibility(View.VISIBLE);
+                            button.setY(-200);
+                            button.animate().translationY(0).start();
+                        }
+                    }
+                });
+
+                ratingTwo.setOnRatingBarChangeListener(new RatingBar.OnRatingBarChangeListener() {
+                    @Override
+                    public void onRatingChanged(RatingBar ratingBar, float rating, boolean fromUser) {
+                        if(button.getVisibility() == View.GONE && ratingText.getVisibility() == View.VISIBLE && ratingTextThree.getVisibility() == View.VISIBLE){
+                            button.setVisibility(View.VISIBLE);
+                            button.setY(-200);
+                            button.animate().translationY(0).start();
+                        }
+                    }
+                });
+
+                ratingThree.setOnRatingBarChangeListener(new RatingBar.OnRatingBarChangeListener() {
+                    @Override
+                    public void onRatingChanged(RatingBar ratingBar, float rating, boolean fromUser) {
+                        if(button.getVisibility() == View.GONE && ratingText.getVisibility() == View.VISIBLE && ratingTextTwo.getVisibility() == View.VISIBLE){
+                            button.setVisibility(View.VISIBLE);
+                            button.setY(-200);
+                            button.animate().translationY(0).start();
+                        }
                     }
                 });
 
                 WindowManager.LayoutParams lp = new WindowManager.LayoutParams();
                 lp.copyFrom(dialog.getWindow().getAttributes());
                 lp.width = WindowManager.LayoutParams.MATCH_PARENT;
-                lp.height = WindowManager.LayoutParams.WRAP_CONTENT;
+                lp.height = WindowManager.LayoutParams.MATCH_PARENT;
                 mainLayout.setY(getResources().getDimensionPixelSize(R.dimen.short800));
                 imageLayout.setY(getResources().getDimensionPixelSize(R.dimen.short800));
                 edit.setAlpha(0);
                 rating.setAlpha(0);
+                ratingTwo.setAlpha(0);
+                ratingThree.setAlpha(0);
+                ratingTextHint.setAlpha(0);
+                ratingTextHintTwo.setAlpha(0);
+                ratingTextHintThree.setAlpha(0);
                 dialog.show();
                 mainLayout.animate().translationY(0).setDuration(300).start();
                 imageLayout.animate().translationY(0).setDuration(400).withEndAction(new Runnable() {
@@ -353,13 +425,15 @@ public class RestaurantView extends AppCompatActivity {
                     public void run() {
                         edit.animate().alpha(1).setDuration(600).start();
                         rating.animate().alpha(1).setDuration(600).start();
+                        ratingTwo.animate().alpha(1).setDuration(600).start();
+                        ratingThree.animate().alpha(1).setDuration(600).start();
+                        ratingTextHint.animate().alpha(1).setDuration(600).start();
+                        ratingTextHintTwo.animate().alpha(1).setDuration(600).start();
+                        ratingTextHintThree.animate().alpha(1).setDuration(600).start();
                     }
                 });
                 dialog.getWindow().setAttributes(lp);
                 dialog.getWindow().setBackgroundDrawableResource(android.R.color.transparent);
-                WindowManager.LayoutParams layPam = dialog.getWindow().getAttributes();
-                layPam.dimAmount = 0.7f;
-                dialog.getWindow().addFlags(WindowManager.LayoutParams.FLAG_DIM_BEHIND);
             }
         });
     }
