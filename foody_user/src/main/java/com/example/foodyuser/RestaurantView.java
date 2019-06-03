@@ -749,12 +749,13 @@ public class RestaurantView extends AppCompatActivity {
                 toolbar.setNavigationOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
-                        for(Card c :cards){
+                        /*for(Card c :cards){
                             Log.d("MAD2",c.getTitle());
                             for(Dish d: c.getDishes()){
                                 Log.d("MAD2",String.format("\t %s ",d.getDishName())+(d.getOrderItem()==null?"none":d.getOrderItem().getPiecesString()));
                             }
-                        }
+                        }*/
+                        onBackPressed();
                     }
                 });
             }
