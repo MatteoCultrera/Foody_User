@@ -50,7 +50,12 @@ public class RVAdapterRestaurants  extends RecyclerView.Adapter<RVAdapterRestaur
 
         cardViewHolder.restaurantName.setText(restaurants.get(i).getUsername());
         cardViewHolder.restaurantDeliveryPrice.setText(restaurants.get(i).getDeliveryPriceString());
-        cardViewHolder.restaurantDistance.setText(restaurants.get(i).getDistanceString());
+
+        if(currentRes.getTotalMean() == -1)
+            cardViewHolder.restaurantReview.setText("?");
+        else
+            cardViewHolder.restaurantReview.setText(String.format("%.2f",currentRes.getTotalMean()));
+
         File imageFile = new File(currentRes.getImagePath());
         RequestOptions options = new RequestOptions();
         options.signature(new ObjectKey(currentRes.getImagePath()+" "+imageFile.lastModified()));
@@ -126,7 +131,7 @@ public class RVAdapterRestaurants  extends RecyclerView.Adapter<RVAdapterRestaur
         TextView restaurantDescription;
         TextView restaurantDeliveryPrice;
         CardView card;
-        TextView restaurantDistance;
+        TextView restaurantReview;
 
         CardViewHolder(View itemView) {
             super(itemView);
@@ -135,7 +140,7 @@ public class RVAdapterRestaurants  extends RecyclerView.Adapter<RVAdapterRestaur
             restaurantName = itemView.findViewById(R.id.restaurant_name);
             restaurantDescription = itemView.findViewById(R.id.restaurant_description);
             restaurantDeliveryPrice = itemView.findViewById(R.id.restaurant_delivery_price);
-            restaurantDistance = itemView.findViewById(R.id.restaurant_distance);
+            restaurantReview = itemView.findViewById(R.id.restaurant_review);
             card = itemView.findViewById(R.id.cv);
         }
     }

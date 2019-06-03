@@ -16,6 +16,10 @@ public class Restaurant {
     private boolean open;
     private String numberPhone;
     private String email;
+    private Double meanDeliveryTime;
+    private Double meanFoodQuality;
+    private Double meanRestaurantService;
+    private Double totalMean;
 
     public Restaurant() {}
 
@@ -28,6 +32,10 @@ public class Restaurant {
         this.imagePath = imagePath;
         this.numberPhone = numberPhone;
         this.email = email;
+        meanDeliveryTime = -1.d;
+        meanFoodQuality = -1.d;
+        meanRestaurantService = -1.d;
+        totalMean = -1.d;
     }
 
     public boolean isOpen() {
@@ -147,5 +155,37 @@ public class Restaurant {
 
     public void setNumberPhone(String numberPhone) {
         this.numberPhone = numberPhone;
+    }
+
+    public Double getMeanDeliveryTime() {
+        return meanDeliveryTime;
+    }
+
+    public void setMeanDeliveryTime(Double meanDeliveryTime) {
+        this.meanDeliveryTime = meanDeliveryTime;
+    }
+
+    public Double getMeanFoodQuality() {
+        return meanFoodQuality;
+    }
+
+    public void setMeanFoodQuality(Double meanFoodQuality) {
+        this.meanFoodQuality = meanFoodQuality;
+    }
+
+    public Double getMeanRestaurantService() {
+        return meanRestaurantService;
+    }
+
+    public void setMeanRestaurantService(Double meanRestaurantService) {
+        this.meanRestaurantService = meanRestaurantService;
+    }
+
+    public Double getTotalMean() {
+        return totalMean;
+    }
+
+    public void setTotalMean(Double totalMean) {
+        this.totalMean = totalMean;
     }
 }
