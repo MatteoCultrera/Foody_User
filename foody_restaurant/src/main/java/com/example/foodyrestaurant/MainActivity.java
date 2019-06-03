@@ -113,6 +113,10 @@ public class MainActivity extends AppCompatActivity {
         return null;
     }
 
+    public void clearHashMap(){
+        photosMap = new HashMap<>();
+    }
+
     public void setPhotoDish(String name, Uri photo){
         photosMap.put(name, photo);
     }

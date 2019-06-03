@@ -3,7 +3,6 @@ package com.example.foodyuser;
 import android.app.Dialog;
 import android.content.Intent;
 import android.content.SharedPreferences;
-import android.net.Uri;
 import android.os.Bundle;
 import android.os.Environment;
 import android.support.annotation.NonNull;
@@ -19,10 +18,8 @@ import android.view.View;
 import android.view.WindowManager;
 import android.widget.Toast;
 
-import com.bumptech.glide.Glide;
 import com.example.foody_library.UserInfo;
 import com.google.android.gms.tasks.OnCompleteListener;
-import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.AuthResult;
@@ -62,19 +59,20 @@ public class Login extends AppCompatActivity {
 
         firebaseAuth = FirebaseAuth.getInstance();
         if (firebaseAuth.getCurrentUser() != null) {
-            File root = getExternalFilesDir(Environment.DIRECTORY_DOCUMENTS);
-            File directory = new File(root.getPath()+File.separator+MAIN_DIR);
-            File image = new File(directory, firebaseAuth.getCurrentUser().getUid()+".jpg");
-            if(!image.exists()){
-                loginAppear();
-                fetchData();
-            }else{
-                Intent intent = new Intent(Login.this, MainActivity.class);
-                intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK);
-                intent.addFlags(Intent.FLAG_ACTIVITY_NO_ANIMATION);
-                startActivity(intent);
-                finish();
-            }
+                File root = getExternalFilesDir(Environment.DIRECTORY_DOCUMENTS);
+                final File directory = new File(root.getPath()+File.separator+MAIN_DIR);
+                final File image = new File(directory, firebaseAuth.getCurrentUser().getUid()+".jpg");
+                if(!image.exists()){
+                    loginAppear();
+                    fetchData();
+                }else{
+                    Intent intent = new Intent(Login.this, MainActivity.class);
+                    intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK);
+                    intent.addFlags(Intent.FLAG_ACTIVITY_NO_ANIMATION);
+                    startActivity(intent);
+                    finish();
+                }
+
         }
 
         setContentView(R.layout.login_layout);
@@ -152,9 +150,9 @@ public class Login extends AppCompatActivity {
         register.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-            Intent intent = new Intent(Login.this, RegisterActivity.class);
-            startActivity(intent);
-            finish();
+                Intent intent = new Intent(Login.this, RegisterActivity.class);
+                startActivity(intent);
+                finish();
             }
         });
 
@@ -293,9 +291,11 @@ public class Login extends AppCompatActivity {
             @Override
             public void onCancelled(@NonNull DatabaseError databaseError) {
                 Toast.makeText(getApplicationContext(), R.string.login_failure, Toast.LENGTH_SHORT).show();
+                prefs.edit().putBoolean("allFilesFetched",false).apply();
                 loginDisappear();
             }
         });
+
     }
 
     private void updateSave(){

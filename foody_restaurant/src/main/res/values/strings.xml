@@ -3,7 +3,7 @@
     <string name="timetable">Timetable</string>
     <string name="opening_time">Select opening time</string>
     <string name="closing_time">Select closing time</string>
-
+    <string name="delete_photo">Delete photo</string>
     <string name="placeholder_price">0,00 €</string>
     <string name="delivery_price">Delivery price</string>
     <string name="food_type">Select cuisines (max. 3)</string>
