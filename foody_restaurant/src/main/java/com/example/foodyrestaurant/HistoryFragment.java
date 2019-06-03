@@ -48,13 +48,17 @@ import java.util.TreeMap;
 
 public class HistoryFragment extends Fragment {
 
-    private TreeMap<String, Integer> dishes = new TreeMap<>();
+    private HashMap<String, Integer> dishes = new HashMap<>();
+    private TextView firstDish, firstDishNumber;
+    private TextView secondDish, secondDishNumber;
+    private TextView thirdDish, thirdDishNumber;
     private TextView income;
     private BarChart barChart;
     private PieChart pieChart;
     private HashMap<Integer, Integer> frequency = new HashMap<>();
     private Float amount;
     private Integer accepted, rejected;
+    private List<Map.Entry<String, Integer>> top3;
 
     public HistoryFragment() {}
 
@@ -232,6 +236,22 @@ public class HistoryFragment extends Fragment {
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_history, container, false);
 
+
+        return view;
+    }
+
+    @Override
+    public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
+        super.onViewCreated(view, savedInstanceState);
+
+        firstDish = view.findViewById(R.id.text_first);
+        firstDishNumber = view.findViewById(R.id.text_first_secondary);
+        secondDish = view.findViewById(R.id.text_second);
+        secondDishNumber = view.findViewById(R.id.text_second_secondary);
+        thirdDish = view.findViewById(R.id.text_third);
+        thirdDishNumber = view.findViewById(R.id.text_third_secondary);
+
+
         FirebaseAuth firebaseAuth = FirebaseAuth.getInstance();
         FirebaseUser firebaseUser = firebaseAuth.getCurrentUser();
 
@@ -249,30 +269,36 @@ public class HistoryFragment extends Fragment {
                     for (DataSnapshot ds : dataSnapshot.getChildren()) {
                         dishes.put(ds.getKey(), ds.getValue(Integer.class));
                     }
-                }
 
+                    if(dishes.size() > 2) {
+                        List<Map.Entry<String, Integer>> entryList = new ArrayList<>(dishes.entrySet());
+                        Collections.sort(entryList, new Comparator<Map.Entry<String, Integer>>() {
+                            @Override
+                            public int compare(Map.Entry<String, Integer> e1, Map.Entry<String, Integer> e2) {
+                                return e2.getValue() - e1.getValue(); // descending order
+                            }
+                        });
 
-                if(dishes.size() > 2) {
-                    List<Map.Entry<String, Integer>> entryList = new ArrayList<>(dishes.entrySet());
-                    Collections.sort(entryList, new Comparator<Map.Entry<String, Integer>>() {
-                        @Override
-                        public int compare(Map.Entry<String, Integer> e1, Map.Entry<String, Integer> e2) {
-                            return e2.getValue() - e1.getValue(); // descending order
+                        // now let's get the top 3
+                        top3 = new ArrayList<>(3);
+                        for (Map.Entry<String, Integer> e : entryList) {
+                            top3.add(e);
+                            if (top3.size() == 3) {
+                                break;
+                            }
                         }
-                    });
 
-                    // now let's get the top 3
-                    List<Map.Entry<String, Integer>> top3 = new ArrayList<>(3);
-                    for (Map.Entry<String, Integer> e : entryList) {
-                        top3.add(e);
-                        if (top3.size() == 3) {
-                            break;
-                        }
+                        Log.d("MADMAD", "1 : " + top3.get(0));
+                        Log.d("MADMAD", "2 : " + top3.get(1));
+                        Log.d("MADMAD", "3 : " + top3.get(2));
+
+                        firstDish.setText(top3.get(0).getKey());
+                        secondDish.setText(top3.get(1).getKey());
+                        thirdDish.setText(top3.get(2).getKey());
+                        firstDishNumber.setText(top3.get(0).getValue()+ " orders");
+                        secondDishNumber.setText(top3.get(1).getValue()+ " orders");
+                        thirdDishNumber.setText(top3.get(1).getValue()+ " orders");
                     }
-
-                    Log.d("MADMAD", "1 : " + top3.get(0));
-                    Log.d("MADMAD", "2 : " + top3.get(1));
-                    Log.d("MADMAD", "3 : " + top3.get(2));
                 }
             }
 
@@ -281,12 +307,7 @@ public class HistoryFragment extends Fragment {
 
             }
         });
-        return view;
-    }
 
-    @Override
-    public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
-        super.onViewCreated(view, savedInstanceState);
 
     }
 }
