@@ -1,8 +1,10 @@
 package com.example.foodybiker;
 
+import android.app.Dialog;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
+import android.os.Environment;
 import android.support.annotation.NonNull;
 import android.support.constraint.ConstraintLayout;
 import android.support.design.widget.FloatingActionButton;
@@ -12,6 +14,7 @@ import android.support.v7.app.AppCompatActivity;
 import android.text.Editable;
 import android.text.TextWatcher;
 import android.view.View;
+import android.view.WindowManager;
 import android.widget.Toast;
 
 import com.google.android.gms.tasks.OnCompleteListener;
@@ -22,6 +25,7 @@ import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 
+import java.io.File;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.regex.Pattern;
@@ -35,7 +39,8 @@ public class RegisterActivity extends AppCompatActivity {
     private ConstraintLayout login;
     private FloatingActionButton register;
     private SharedPreferences sharedPref;
-    private SharedPreferences.Editor edit;
+    private final String MAIN_DIR = "user_utils";
+    private Dialog dialog;
 
     @Override
     protected void onCreate(final Bundle savedInstanceState) {
@@ -43,7 +48,6 @@ public class RegisterActivity extends AppCompatActivity {
         setContentView(R.layout.register_layout);
 
         sharedPref = this.getSharedPreferences("myPreference", MODE_PRIVATE);
-        edit = sharedPref.edit();
         firebaseAuth = FirebaseAuth.getInstance();
         checkUser = false;
         checkEmail = false;
@@ -134,73 +138,104 @@ public class RegisterActivity extends AppCompatActivity {
         register.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                if (username.getText().toString().equals("")){
-                    usernameL.setError(getResources().getString(R.string.empty_password));
-                    if (email.getText().toString().equals("")) {
-                        emailL.setError(getResources().getString(R.string.empty_email));
-                    }
-                    if (password1.getText().toString().equals("")){
-                        password1L.setError(getResources().getString(R.string.empty_password));
-                    }
-                    if (password2.getText().toString().equals("")){
-                        password2L.setError(getResources().getString(R.string.empty_password));
-                    }
-                    return;
-                }
+            if (username.getText().toString().equals("")){
+                usernameL.setError(getResources().getString(R.string.empty_password));
                 if (email.getText().toString().equals("")) {
                     emailL.setError(getResources().getString(R.string.empty_email));
-                    if (password1.getText().toString().equals("")){
-                        password1L.setError(getResources().getString(R.string.empty_password));
-                    }
-                    if (password2.getText().toString().equals("")){
-                        password2L.setError(getResources().getString(R.string.empty_password));
-                    }
-                    return;
                 }
                 if (password1.getText().toString().equals("")){
                     password1L.setError(getResources().getString(R.string.empty_password));
-                    if (password2.getText().toString().equals("")){
-                        password2L.setError(getResources().getString(R.string.empty_password));
-                    }
-                    return;
                 }
                 if (password2.getText().toString().equals("")){
                     password2L.setError(getResources().getString(R.string.empty_password));
-                    return;
                 }
-                firebaseAuth.createUserWithEmailAndPassword(email.getText().toString(), password1.getText().toString())
-                        .addOnCompleteListener(new OnCompleteListener<AuthResult>() {
-                            @Override
-                            public void onComplete(@NonNull Task<AuthResult> task) {
-                                if (task.isSuccessful()) {
-                                    ArrayList<String> days = new ArrayList<>();
-                                    days.add(getResources().getString(R.string.free));
-                                    days.add(getResources().getString(R.string.free));
-                                    days.add(getResources().getString(R.string.free));
-                                    days.add(getResources().getString(R.string.free));
-                                    days.add(getResources().getString(R.string.free));
-                                    days.add(getResources().getString(R.string.free));
-                                    days.add(getResources().getString(R.string.free));
-                                    BikerInfo info = new BikerInfo(username.getText().toString(), email.getText().toString(), days);
-                                    FirebaseUser user = firebaseAuth.getCurrentUser();
-                                    DatabaseReference database = FirebaseDatabase.getInstance().getReference()
-                                            .child("Bikers/" + user.getUid());
-                                    HashMap<String, Object> child = new HashMap<>();
-                                    child.put("info", info);
-                                    database.updateChildren(child);
-                                    edit.apply();
-                                    Toast.makeText(getApplicationContext(), R.string.auth_success, Toast.LENGTH_SHORT).show();
-                                    Intent intent = new Intent(RegisterActivity.this, MainActivity.class);
-                                    intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK);
-                                    startActivity(intent);
-                                    finish();
-                                } else {
-                                    Toast.makeText(getApplicationContext(), R.string.auth_failure, Toast.LENGTH_SHORT).show();
-                                }
-                            }
-                        });
+                return;
+            }
+            if (email.getText().toString().equals("")) {
+                emailL.setError(getResources().getString(R.string.empty_email));
+                if (password1.getText().toString().equals("")){
+                    password1L.setError(getResources().getString(R.string.empty_password));
+                }
+                if (password2.getText().toString().equals("")){
+                    password2L.setError(getResources().getString(R.string.empty_password));
+                }
+                return;
+            }
+            if (password1.getText().toString().equals("")){
+                password1L.setError(getResources().getString(R.string.empty_password));
+                if (password2.getText().toString().equals("")){
+                    password2L.setError(getResources().getString(R.string.empty_password));
+                }
+                return;
+            }
+            if (password2.getText().toString().equals("")){
+                password2L.setError(getResources().getString(R.string.empty_password));
+                return;
+            }
+            loadingAppear();
+            firebaseAuth.createUserWithEmailAndPassword(email.getText().toString(), password1.getText().toString())
+                .addOnCompleteListener(new OnCompleteListener<AuthResult>() {
+                    @Override
+                    public void onComplete(@NonNull Task<AuthResult> task) {
+                    if (task.isSuccessful()) {
+                        ArrayList<String> days = new ArrayList<>();
+                        days.add(getResources().getString(R.string.free));
+                        days.add(getResources().getString(R.string.free));
+                        days.add(getResources().getString(R.string.free));
+                        days.add(getResources().getString(R.string.free));
+                        days.add(getResources().getString(R.string.free));
+                        days.add(getResources().getString(R.string.free));
+                        days.add(getResources().getString(R.string.free));
+                        BikerInfo info = new BikerInfo(username.getText().toString(), email.getText().toString(), days);
+                        FirebaseUser user = firebaseAuth.getCurrentUser();
+                        DatabaseReference database = FirebaseDatabase.getInstance().getReference()
+                                .child("Bikers/" + user.getUid());
+                        HashMap<String, Object> child = new HashMap<>();
+                        child.put("info", info);
+                        database.updateChildren(child);
+                        sharedPref.edit().putString("name",username.getText().toString()).apply();
+                        sharedPref.edit().putString("email",email.getText().toString()).apply();
+                        sharedPref.edit().putString("id",user.getUid()).apply();
+
+                        File root = getExternalFilesDir(Environment.DIRECTORY_DOCUMENTS);
+                        final File directory = new File(root.getPath()+File.separator+MAIN_DIR);
+                        if(directory.exists()){
+                            for(File f : directory.listFiles())
+                                f.delete();
+                            directory.delete();
+                        }
+                        directory.mkdirs();
+
+                        Toast.makeText(getApplicationContext(), R.string.auth_success, Toast.LENGTH_SHORT).show();
+                        Intent intent = new Intent(RegisterActivity.this, MainActivity.class);
+                        intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK);
+                        startActivity(intent);
+                        finish();
+                    } else {
+                        Toast.makeText(getApplicationContext(), R.string.auth_failure, Toast.LENGTH_SHORT).show();
+                        loadingDisappear();
+                    }
+                    }
+                });
             }
         });
+    }
+
+    private void loadingAppear(){
+        dialog = new Dialog(this);
+        dialog.setContentView(R.layout.loading_dialog);
+        WindowManager.LayoutParams lp = new WindowManager.LayoutParams();
+        lp.copyFrom(dialog.getWindow().getAttributes());
+        lp.width = WindowManager.LayoutParams.MATCH_PARENT;
+        lp.height = WindowManager.LayoutParams.MATCH_PARENT;
+        dialog.setCancelable(false);
+        dialog.show();
+        dialog.getWindow().setAttributes(lp);
+        dialog.getWindow().setBackgroundDrawableResource(android.R.color.transparent);
+    }
+
+    private void loadingDisappear(){
+        dialog.dismiss();
     }
 
     private void checkPasswordEqual() {

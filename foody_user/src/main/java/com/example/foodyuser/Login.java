@@ -62,20 +62,19 @@ public class Login extends AppCompatActivity {
 
         firebaseAuth = FirebaseAuth.getInstance();
         if (firebaseAuth.getCurrentUser() != null) {
-                File root = getExternalFilesDir(Environment.DIRECTORY_DOCUMENTS);
-                final File directory = new File(root.getPath()+File.separator+MAIN_DIR);
-                final File image = new File(directory, firebaseAuth.getCurrentUser().getUid()+".jpg");
-                if(!image.exists()){
-                    loginAppear();
-                    fetchData();
-                }else{
-                    Intent intent = new Intent(Login.this, MainActivity.class);
-                    intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK);
-                    intent.addFlags(Intent.FLAG_ACTIVITY_NO_ANIMATION);
-                    startActivity(intent);
-                    finish();
-                }
-
+            File root = getExternalFilesDir(Environment.DIRECTORY_DOCUMENTS);
+            File directory = new File(root.getPath()+File.separator+MAIN_DIR);
+            File image = new File(directory, firebaseAuth.getCurrentUser().getUid()+".jpg");
+            if(!image.exists()){
+                loginAppear();
+                fetchData();
+            }else{
+                Intent intent = new Intent(Login.this, MainActivity.class);
+                intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK);
+                intent.addFlags(Intent.FLAG_ACTIVITY_NO_ANIMATION);
+                startActivity(intent);
+                finish();
+            }
         }
 
         setContentView(R.layout.login_layout);
@@ -118,47 +117,49 @@ public class Login extends AppCompatActivity {
 
             }
         });
+
         login.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                if (email.getText().toString().equals("")) {
-                    emailL.setError(getResources().getString(R.string.empty_email));
-                    if (password.getText().toString().equals("")){
-                        passwordL.setError(getResources().getString(R.string.empty_password));
-                    }
-                    return;
-                }
+            if (email.getText().toString().equals("")) {
+                emailL.setError(getResources().getString(R.string.empty_email));
                 if (password.getText().toString().equals("")){
                     passwordL.setError(getResources().getString(R.string.empty_password));
-                    return;
                 }
-                loginAppear();
-                firebaseAuth.signInWithEmailAndPassword(email.getText().toString(), password.getText().toString())
-                        .addOnCompleteListener(new OnCompleteListener<AuthResult>() {
-                            @Override
-                            public void onComplete(@NonNull Task<AuthResult> task) {
-                                if (task.isSuccessful()) {
-                                    fetchData();
-                                } else {
-                                    Toast.makeText(getApplicationContext(), R.string.login_failure, Toast.LENGTH_SHORT).show();
-                                    loginDisappear();
-                                }
-                            }
-                        });
+                return;
+            }
+            if (password.getText().toString().equals("")){
+                passwordL.setError(getResources().getString(R.string.empty_password));
+                return;
+            }
+
+            loginAppear();
+            firebaseAuth.signInWithEmailAndPassword(email.getText().toString(), password.getText().toString())
+                .addOnCompleteListener(new OnCompleteListener<AuthResult>() {
+                    @Override
+                    public void onComplete(@NonNull Task<AuthResult> task) {
+                    if (task.isSuccessful()) {
+                        fetchData();
+                    } else {
+                        Toast.makeText(getApplicationContext(), R.string.login_failure, Toast.LENGTH_SHORT).show();
+                        loginDisappear();
+                    }
+                    }
+                });
             }
         });
+
         register.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Intent intent = new Intent(Login.this, RegisterActivity.class);
-                startActivity(intent);
-                finish();
+            Intent intent = new Intent(Login.this, RegisterActivity.class);
+            startActivity(intent);
+            finish();
             }
         });
 
         emailL.clearFocus();
         passwordL.clearFocus();
-
     }
 
     private void checkMail(){
@@ -176,7 +177,6 @@ public class Login extends AppCompatActivity {
     }
 
     private void loginAppear(){
-
         dialog = new Dialog(this);
         dialog.setContentView(R.layout.loading_dialog);
         WindowManager.LayoutParams lp = new WindowManager.LayoutParams();
@@ -187,12 +187,9 @@ public class Login extends AppCompatActivity {
         dialog.show();
         dialog.getWindow().setAttributes(lp);
         dialog.getWindow().setBackgroundDrawableResource(android.R.color.transparent);
-
-
     }
 
     private void loginDisappear(){
-
         dialog.dismiss();
     }
 
@@ -215,8 +212,6 @@ public class Login extends AppCompatActivity {
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
                 final UserInfo info = dataSnapshot.getValue(UserInfo.class);
-
-
 
                 if(info.getUsername() != null){
                     if(info.getUsername().length() > 0){
@@ -270,7 +265,6 @@ public class Login extends AppCompatActivity {
 
                 StorageReference mStorageRef = FirebaseStorage.getInstance().getReference();
 
-
                 if(info.getImagePath()!=null){
                     final File image = new File(directory, firebaseAuth.getCurrentUser().getUid()+".jpg");
                     mStorageRef.child(info.getImagePath()).getFile(image).addOnSuccessListener(new OnSuccessListener<FileDownloadTask.TaskSnapshot>() {
@@ -294,18 +288,14 @@ public class Login extends AppCompatActivity {
                     startActivity(intent);
                     finish();
                 }
-
-
             }
 
             @Override
             public void onCancelled(@NonNull DatabaseError databaseError) {
                 Toast.makeText(getApplicationContext(), R.string.login_failure, Toast.LENGTH_SHORT).show();
-                prefs.edit().putBoolean("allFilesFetched",false).apply();
                 loginDisappear();
             }
         });
-
     }
 
     private void updateSave(){
