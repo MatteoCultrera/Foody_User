@@ -68,4 +68,6 @@
     <string name="restaurant_service">Servizio del Ristorante:</string>
     <string name="delivery_time_hint">Tempo di consegna:</string>
 
+    <string name="orders_history">Storico Ordini</string>
+
 </resources>

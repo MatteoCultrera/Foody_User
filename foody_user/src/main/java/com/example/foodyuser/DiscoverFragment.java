@@ -11,6 +11,7 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
 import android.widget.ImageButton;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -87,6 +88,18 @@ public class DiscoverFragment extends Fragment {
                 addressActivity();
             }
         });
+
+        Button prova = view.findViewById(R.id.prova);
+
+        prova.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(getActivity(), historyMonthActivity.class);
+                startActivity(intent);
+
+            }
+        });
+
     }
 
     public void addressActivity() {
