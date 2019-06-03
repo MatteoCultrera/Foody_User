@@ -561,8 +561,10 @@ public class RestaurantView extends AppCompatActivity {
             }
         }
 
+        Float delivery_price = Float.valueOf(price.getText().toString());
+        total += delivery_price;
 
-        if (total > 0){
+        if (total > delivery_price){
             if(totalText.getText().length() > 0)
                 setTotalText(total);
             else
@@ -622,6 +624,7 @@ public class RestaurantView extends AppCompatActivity {
                 intent.putExtra("restaurantName", reUsername);
                 intent.putExtra("restaurantAddress", reAddress);
                 intent.putExtra("restaurantTime", time);
+                intent.putExtra("restaurantDeliveryPrice", Float.valueOf(price.getText().toString()));
 
                 startActivity(intent);
 
