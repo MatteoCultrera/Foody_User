@@ -5,6 +5,7 @@ import android.support.annotation.NonNull;
 import android.support.constraint.ConstraintLayout;
 import android.support.v7.widget.CardView;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -52,6 +53,7 @@ public class RVAdapterShowRestaurantReviews extends RecyclerView.Adapter<RVAdapt
         Context context = pvh.userName.getContext();
         Review current = reviews.get(i);
 
+
         pvh.userName.setText(current.getUserName());
         if(current.getImagePath()!=null){
             if(current.getImagePath().length() > 0){
@@ -71,6 +73,7 @@ public class RVAdapterShowRestaurantReviews extends RecyclerView.Adapter<RVAdapt
         }
         pvh.rating.setText(current.getRatingString());
         pvh.ratingBar.setRating(current.getRating());
+
         if(current.getNote()!=null){
             if(current.getNote().length() > 0){
                 pvh.notes.setText(current.getNote());

@@ -117,6 +117,8 @@ public class MenuEdit extends AppCompatActivity {
         }
         else{
             cards = jsonHandler.getCards(file);
+            String json = jsonHandler.toJSON(cards);
+            jsonHandler.saveStringToFile(json, fileTmp);
             unchanged = true;
         }
 

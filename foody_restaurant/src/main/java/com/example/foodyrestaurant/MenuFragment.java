@@ -165,6 +165,12 @@ public class MenuFragment extends Fragment {
                         }
                         RVAdapter adapter = new RVAdapter(cards, mySelf);
                         menu.setAdapter(adapter);
+                        final String JSON_PATH = "menuCopy.json";
+                        File file = new File(storageDir, JSON_PATH);
+                        if(cards != null){
+                            String json = jsonHandler.toJSON(cards);
+                            jsonHandler.saveStringToFile(json, file);
+                        }
                     }
 
                     @Override

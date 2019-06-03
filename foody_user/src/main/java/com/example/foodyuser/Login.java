@@ -115,35 +115,38 @@ public class Login extends AppCompatActivity {
 
             }
         });
+
         login.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                if (email.getText().toString().equals("")) {
-                    emailL.setError(getResources().getString(R.string.empty_email));
-                    if (password.getText().toString().equals("")){
-                        passwordL.setError(getResources().getString(R.string.empty_password));
-                    }
-                    return;
-                }
+            if (email.getText().toString().equals("")) {
+                emailL.setError(getResources().getString(R.string.empty_email));
                 if (password.getText().toString().equals("")){
                     passwordL.setError(getResources().getString(R.string.empty_password));
-                    return;
                 }
-                loginAppear();
-                firebaseAuth.signInWithEmailAndPassword(email.getText().toString(), password.getText().toString())
-                        .addOnCompleteListener(new OnCompleteListener<AuthResult>() {
-                            @Override
-                            public void onComplete(@NonNull Task<AuthResult> task) {
-                                if (task.isSuccessful()) {
-                                    fetchData();
-                                } else {
-                                    Toast.makeText(getApplicationContext(), R.string.login_failure, Toast.LENGTH_SHORT).show();
-                                    loginDisappear();
-                                }
-                            }
-                        });
+                return;
+            }
+            if (password.getText().toString().equals("")){
+                passwordL.setError(getResources().getString(R.string.empty_password));
+                return;
+            }
+
+            loginAppear();
+            firebaseAuth.signInWithEmailAndPassword(email.getText().toString(), password.getText().toString())
+                .addOnCompleteListener(new OnCompleteListener<AuthResult>() {
+                    @Override
+                    public void onComplete(@NonNull Task<AuthResult> task) {
+                    if (task.isSuccessful()) {
+                        fetchData();
+                    } else {
+                        Toast.makeText(getApplicationContext(), R.string.login_failure, Toast.LENGTH_SHORT).show();
+                        loginDisappear();
+                    }
+                    }
+                });
             }
         });
+
         register.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -155,7 +158,6 @@ public class Login extends AppCompatActivity {
 
         emailL.clearFocus();
         passwordL.clearFocus();
-
     }
 
     private void checkMail(){
@@ -208,6 +210,7 @@ public class Login extends AppCompatActivity {
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
                 final UserInfo info = dataSnapshot.getValue(UserInfo.class);
+
                 if(info.getUsername() != null){
                     if(info.getUsername().length() > 0){
                         prefs.edit().putString("name", info.getUsername()).apply();
@@ -260,7 +263,6 @@ public class Login extends AppCompatActivity {
 
                 StorageReference mStorageRef = FirebaseStorage.getInstance().getReference();
 
-
                 if(info.getImagePath()!=null){
                     final File image = new File(directory, firebaseAuth.getCurrentUser().getUid()+".jpg");
                     mStorageRef.child(info.getImagePath()).getFile(image).addOnSuccessListener(new OnSuccessListener<FileDownloadTask.TaskSnapshot>() {
@@ -284,8 +286,6 @@ public class Login extends AppCompatActivity {
                     startActivity(intent);
                     finish();
                 }
-
-
             }
 
             @Override

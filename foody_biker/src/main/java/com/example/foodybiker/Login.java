@@ -39,8 +39,6 @@ import java.util.regex.Pattern;
 
 public class Login extends AppCompatActivity {
 
-    private File storage;
-    private final String PROFILE = "profileImage";
     private TextInputEditText email, password;
     private TextInputLayout emailL, passwordL;
     private FirebaseAuth firebaseAuth;
@@ -60,12 +58,12 @@ public class Login extends AppCompatActivity {
         firebaseAuth = FirebaseAuth.getInstance();
         if (firebaseAuth.getCurrentUser() != null) {
             File root = getExternalFilesDir(Environment.DIRECTORY_DOCUMENTS);
-            final File directory = new File(root.getPath()+File.separator+MAIN_DIR);
-            final File image = new File(directory, firebaseAuth.getCurrentUser().getUid()+".jpg");
-            if(!image.exists()) {
+            File directory = new File(root.getPath()+File.separator+MAIN_DIR);
+            File image = new File(directory, firebaseAuth.getCurrentUser().getUid()+".jpg");
+            if(!image.exists()){
                 loginAppear();
                 fetchData();
-            }else {
+            }else{
                 Intent intent = new Intent(Login.this, MainActivity.class);
                 intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK);
                 intent.addFlags(Intent.FLAG_ACTIVITY_NO_ANIMATION);
@@ -73,127 +71,98 @@ public class Login extends AppCompatActivity {
                 finish();
             }
         }
-        else {
-            setContentView(R.layout.login_layout);
-            correctness = false;
-            email = findViewById(R.id.username_login);
-            emailL = findViewById(R.id.username_login_outer);
-            email.addTextChangedListener(new TextWatcher() {
-                @Override
-                public void beforeTextChanged(CharSequence charSequence, int i, int i1, int i2) {
-                }
 
-                @Override
-                public void onTextChanged(CharSequence charSequence, int i, int i1, int i2) {
-                    checkMail();
-                }
+        setContentView(R.layout.login_layout);
+        correctness = false;
+        email = findViewById(R.id.username_login);
+        emailL = findViewById(R.id.username_login_outer);
+        email.addTextChangedListener(new TextWatcher() {
+            @Override
+            public void beforeTextChanged(CharSequence charSequence, int i, int i1, int i2) {
+            }
 
-                @Override
-                public void afterTextChanged(Editable editable) {
-                }
-            });
-            password = findViewById(R.id.password_login);
-            passwordL = findViewById(R.id.password_login_outer);
-            login = findViewById(R.id.FAB_login);
-            ConstraintLayout register = findViewById(R.id.register_button);
-            password.addTextChangedListener(new TextWatcher() {
-                @Override
-                public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+            @Override
+            public void onTextChanged(CharSequence charSequence, int i, int i1, int i2) {
+                checkMail();
+            }
 
-                }
+            @Override
+            public void afterTextChanged(Editable editable) {
+            }
+        });
+        password = findViewById(R.id.password_login);
+        passwordL = findViewById(R.id.password_login_outer);
+        login = findViewById(R.id.FAB_login);
+        ConstraintLayout register = findViewById(R.id.register_button);
+        password.addTextChangedListener(new TextWatcher() {
+            @Override
+            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
 
-                @Override
-                public void onTextChanged(CharSequence s, int start, int before, int count) {
-                    if(password.getText().length() > 0)
-                        passwordL.setError(null);
-                }
+            }
 
-                @Override
-                public void afterTextChanged(Editable s) {
+            @Override
+            public void onTextChanged(CharSequence s, int start, int before, int count) {
+                if(password.getText().length() > 0)
+                    passwordL.setError(null);
+            }
 
-                }
-            });
-            login.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View view) {
-                if (email.getText().toString().equals("")) {
-                    emailL.setError(getResources().getString(R.string.empty_email));
-                    if (password.getText().toString().equals("")){
-                        passwordL.setError(getResources().getString(R.string.empty_password));
-                    }
-                    return;
-                }
+            @Override
+            public void afterTextChanged(Editable s) {
+
+            }
+        });
+        login.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+            if (email.getText().toString().equals("")) {
+                emailL.setError(getResources().getString(R.string.empty_email));
                 if (password.getText().toString().equals("")){
                     passwordL.setError(getResources().getString(R.string.empty_password));
-                    return;
                 }
-                loginAppear();
-                firebaseAuth.signInWithEmailAndPassword(email.getText().toString(), password.getText().toString())
-                    .addOnCompleteListener(new OnCompleteListener<AuthResult>() {
-                        @Override
-                        public void onComplete(@NonNull Task<AuthResult> task) {
-                        if (task.isSuccessful()) {
-                            //Saving the image of the profile if there would be one
-                            final DatabaseReference database = FirebaseDatabase.getInstance().getReference().child("Bikers");
-                            Query query = database.child(firebaseAuth.getCurrentUser().getUid());
-                            query.addListenerForSingleValueEvent(new ValueEventListener() {
-                                @Override
-                                public void onDataChange(@NonNull final DataSnapshot dataSnapshot) {
-                                    String imagePath = dataSnapshot.child("info").child("path").getValue(String.class);
-                                    if(imagePath != null){
-                                        File root = getExternalFilesDir(Environment.DIRECTORY_PICTURES);
-                                        storage = new File(root.getPath()+File.separator+PROFILE);
-                                        if(storage.exists()){
-                                            for(File f : storage.listFiles())
-                                                f.delete();
-                                        }else{
-                                            storage.mkdirs();
-                                        }
-                                        File imageProfile = new File(storage.getPath()+
-                                                File.separator+firebaseAuth.getCurrentUser().getUid()+System.currentTimeMillis()+".jpg");
-                                        StorageReference mStorageRef = FirebaseStorage.getInstance().getReference();
-                                        mStorageRef.child(imagePath).getFile(imageProfile)
-                                                .addOnSuccessListener(new OnSuccessListener<FileDownloadTask.TaskSnapshot>() {
-                                                    @Override
-                                                    public void onSuccess(FileDownloadTask.TaskSnapshot taskSnapshot) {
-                                                    }
-                                                }).addOnFailureListener(new OnFailureListener() {
-                                            @Override
-                                            public void onFailure(@NonNull Exception e) {
-                                                storage.delete();
-                                            }
-                                        });
-                                    }
-                                }
+                return;
+            }
+            if (password.getText().toString().equals("")){
+                passwordL.setError(getResources().getString(R.string.empty_password));
+                return;
+            }
 
-                                @Override
-                                public void onCancelled(@NonNull DatabaseError databaseError) {
+            loginAppear();
+            firebaseAuth.signInWithEmailAndPassword(email.getText().toString(), password.getText().toString())
+                .addOnCompleteListener(new OnCompleteListener<AuthResult>() {
+                    @Override
+                    public void onComplete(@NonNull Task<AuthResult> task) {
+                    if (task.isSuccessful()) {
+                        fetchData();
+                    } else {
+                        Toast.makeText(getApplicationContext(), R.string.login_failure, Toast.LENGTH_SHORT).show();
+                        loginDisappear();
+                    }
+                    }
+                });
+            }
+        });
+        register.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+            Intent intent = new Intent(Login.this, RegisterActivity.class);
+            startActivity(intent);
+            finish();
+            }
+        });
+    }
 
-                                }
-                            });
+    private void checkMail(){
+        String regexpEmail = "^[_A-Za-z0-9-+]+(\\.[_A-Za-z0-9-]+)*@" + "[A-Za-z0-9-]+(\\.[A-Za-z0-9]+)*(\\.[A-Za-z]{2,})$";
+        final String emailToCheck = email.getText().toString();
 
-                            Toast.makeText(getApplicationContext(), R.string.login_success, Toast.LENGTH_SHORT).show();
-                            Intent intent = new Intent(Login.this, MainActivity.class);
-                            intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK);
-                            startActivity(intent);
-                            finish();
-                        } else {
-                            Toast.makeText(getApplicationContext(), R.string.login_failure, Toast.LENGTH_SHORT).show();
-                            loginDisappear();
-                        }
-                        }
-                    });
-                }
-            });
-            register.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View view) {
-                    Intent intent = new Intent(Login.this, RegisterActivity.class);
-                    startActivity(intent);
-                    finish();
-                }
-            });
+        if(!Pattern.compile(regexpEmail).matcher(emailToCheck).matches()) {
+            emailL.setError(getResources().getString(R.string.error_email));
+            correctness = false;
+        }else{
+            correctness = true;
+            emailL.setError(null);
         }
+        updateSave();
     }
 
     private void loginAppear(){
@@ -209,12 +178,7 @@ public class Login extends AppCompatActivity {
         dialog.getWindow().setBackgroundDrawableResource(android.R.color.transparent);
     }
 
-    private void loginDisappear(){
-        dialog.dismiss();
-    }
-
     private void fetchData(){
-
         File root = getExternalFilesDir(Environment.DIRECTORY_DOCUMENTS);
         final File directory = new File(root.getPath()+File.separator+MAIN_DIR);
         if(directory.exists()){
@@ -232,97 +196,177 @@ public class Login extends AppCompatActivity {
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
                 final BikerInfo info = dataSnapshot.getValue(BikerInfo.class);
-                if(info.getUsername() != null){
-                    if(info.getUsername().length() > 0){
-                        prefs.edit().putString("name", info.getUsername()).apply();
+
+                if(info.getAddress()!=null){
+                    if(info.getAddress().length()>0)
+                        prefs.edit().putString("address",info.getAddress()).apply();
+                    else
+                        prefs.edit().remove("address").apply();
+                }else
+                    prefs.edit().remove("address").apply();
+
+                if(info.getDaysTime()!=null){
+                    if(info.getDaysTime().size() > 0){
+                        if(!info.getDaysTime().get(0).equals(getResources().getString(R.string.free))){
+                            prefs.edit().putBoolean("monState", true).apply();
+                            prefs.edit().putString("monTime", info.getDaysTime().get(0)).apply();
+                        }else{
+                            prefs.edit().remove("monState").apply();
+                            prefs.edit().remove("monTime").apply();
+                        }
+
+                        if(!info.getDaysTime().get(1).equals(getResources().getString(R.string.free))){
+                            prefs.edit().putBoolean("tueState", true).apply();
+                            prefs.edit().putString("tueTime", info.getDaysTime().get(1)).apply();
+                        }else{
+                            prefs.edit().remove("tueState").apply();
+                            prefs.edit().remove("tueTime").apply();
+                        }
+
+                        if(!info.getDaysTime().get(2).equals(getResources().getString(R.string.free))){
+                            prefs.edit().putBoolean("wedState", true).apply();
+                            prefs.edit().putString("wedTime", info.getDaysTime().get(2)).apply();
+                        }else{
+                            prefs.edit().remove("wedState").apply();
+                            prefs.edit().remove("wedTime").apply();
+                        }
+
+                        if(!info.getDaysTime().get(3).equals(getResources().getString(R.string.free))){
+                            prefs.edit().putBoolean("thuState", true).apply();
+                            prefs.edit().putString("thuTime", info.getDaysTime().get(3)).apply();
+                        }else{
+                            prefs.edit().remove("thuState").apply();
+                            prefs.edit().remove("thuTime").apply();
+                        }
+
+                        if(!info.getDaysTime().get(4).equals(getResources().getString(R.string.free))){
+                            prefs.edit().putBoolean("friState", true).apply();
+                            prefs.edit().putString("friTime", info.getDaysTime().get(4)).apply();
+                        }else{
+                            prefs.edit().remove("friState").apply();
+                            prefs.edit().remove("friTime").apply();
+                        }
+
+                        if(!info.getDaysTime().get(5).equals(getResources().getString(R.string.free))){
+                            prefs.edit().putBoolean("satState", true).apply();
+                            prefs.edit().putString("satTime", info.getDaysTime().get(5)).apply();
+                        }else{
+                            prefs.edit().remove("satState").apply();
+                            prefs.edit().remove("satTime").apply();
+                        }
+
+                        if(!info.getDaysTime().get(6).equals(getResources().getString(R.string.free))){
+                            prefs.edit().putBoolean("sunState", true).apply();
+                            prefs.edit().putString("sunTime", info.getDaysTime().get(6)).apply();
+                        }else{
+                            prefs.edit().remove("sunState").apply();
+                            prefs.edit().remove("sunTime").apply();
+                        }
                     }else{
-                        prefs.edit().remove("name").apply();
+                        prefs.edit().remove("monState").apply();
+                        prefs.edit().remove("monTime").apply();
+                        prefs.edit().remove("tueState").apply();
+                        prefs.edit().remove("tueTime").apply();
+                        prefs.edit().remove("wedState").apply();
+                        prefs.edit().remove("wedTime").apply();
+                        prefs.edit().remove("thuState").apply();
+                        prefs.edit().remove("thuTime").apply();
+                        prefs.edit().remove("friState").apply();
+                        prefs.edit().remove("friTime").apply();
+                        prefs.edit().remove("satState").apply();
+                        prefs.edit().remove("satTime").apply();
+                        prefs.edit().remove("sunState").apply();
+                        prefs.edit().remove("sunTime").apply();
                     }
-                }else {
-                    prefs.edit().remove("name").apply();
+                }else{
+                    prefs.edit().remove("monState").apply();
+                    prefs.edit().remove("monTime").apply();
+                    prefs.edit().remove("tueState").apply();
+                    prefs.edit().remove("tueTime").apply();
+                    prefs.edit().remove("wedState").apply();
+                    prefs.edit().remove("wedTime").apply();
+                    prefs.edit().remove("thuState").apply();
+                    prefs.edit().remove("thuTime").apply();
+                    prefs.edit().remove("friState").apply();
+                    prefs.edit().remove("friTime").apply();
+                    prefs.edit().remove("satState").apply();
+                    prefs.edit().remove("satTime").apply();
+                    prefs.edit().remove("sunState").apply();
+                    prefs.edit().remove("sunTime").apply();
                 }
 
                 if(info.getEmail()!=null){
-                    if(info.getEmail().length() > 0){
-                        prefs.edit().putString("email", info.getEmail()).apply();
-                    }else{
+                    if(info.getEmail().length() > 0)
+                        prefs.edit().putString("email",info.getEmail()).apply();
+                    else
                         prefs.edit().remove("email").apply();
-                    }
-                }else {
+                }else
                     prefs.edit().remove("email").apply();
-                }
-
-                if(info.getAddress()!=null){
-                    if(info.getAddress().length() > 0){
-                        prefs.edit().putString("address", info.getAddress()).apply();
-                    }else{
-                        prefs.edit().remove("address").apply();
-                    }
-                }else {
-                    prefs.edit().remove("address").apply();
-                }
 
                 if(info.getNumberPhone()!=null){
-                    if(info.getNumberPhone().length()>0){
-                        prefs.edit().putString("phoneNumber", info.getNumberPhone()).apply();
-                    }else {
+                    if(info.getNumberPhone().length() > 0)
+                        prefs.edit().putString("phoneNumber",info.getNumberPhone()).apply();
+                    else
                         prefs.edit().remove("phoneNumber").apply();
-                    }
-                }else {
+                }else
                     prefs.edit().remove("phoneNumber").apply();
-                }
 
-                StorageReference mStorageRef = FirebaseStorage.getInstance().getReference();
+                if(info.getUsername()!=null){
+                    if(info.getUsername().length() > 0)
+                        prefs.edit().putString("name", info.getUsername()).apply();
+                    else
+                        prefs.edit().remove("name").apply();
+                }else
+                    prefs.edit().remove("name").apply();
 
+                StorageReference storage = FirebaseStorage.getInstance().getReference();
                 if(info.getPath()!=null){
-                    final File image = new File(directory, firebaseAuth.getCurrentUser().getUid()+".jpg");
-                    mStorageRef.child(info.getPath()).getFile(image).addOnSuccessListener(new OnSuccessListener<FileDownloadTask.TaskSnapshot>() {
-                        @Override
-                        public void onSuccess(FileDownloadTask.TaskSnapshot taskSnapshot) {
-                            prefs.edit().putString("imgLocale",image.getPath()).apply();
-                            prefs.edit().putString("imgRemote",info.getPath()).apply();
-                            Toast.makeText(getApplicationContext(), R.string.login_success, Toast.LENGTH_SHORT).show();
-                            Intent intent = new Intent(Login.this, MainActivity.class);
-                            intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK);
-                            startActivity(intent);
-                            finish();
-                        }
-                    });
+                    if(info.getPath().length() > 0){
+                        final File profileImage = new File(directory, firebaseAuth.getCurrentUser().getUid()+".jpg");
+                        storage.child(info.getPath()).getFile(profileImage).addOnCompleteListener(new OnCompleteListener<FileDownloadTask.TaskSnapshot>() {
+                            @Override
+                            public void onComplete(@NonNull Task<FileDownloadTask.TaskSnapshot> task) {
+                                if(task.isSuccessful()){
+                                    prefs.edit().putString("imgRemote",info.getPath()).apply();
+                                    prefs.edit().putString("imgLocale",profileImage.getPath()).apply();
+                                    appEntered();
+                                }else{
+                                    prefs.edit().remove("imgLocale").apply();
+                                    prefs.edit().remove("imgRemote").apply();
+                                    appEntered();
+                                }
+                            }
+                        });
+                    }else{
+                        prefs.edit().remove("imgLocale").apply();
+                        prefs.edit().remove("imgRemote").apply();
+                        appEntered();
+                    }
                 }else{
                     prefs.edit().remove("imgLocale").apply();
                     prefs.edit().remove("imgRemote").apply();
-                    Toast.makeText(getApplicationContext(), R.string.login_success, Toast.LENGTH_SHORT).show();
-                    Intent intent = new Intent(Login.this, MainActivity.class);
-                    intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK);
-                    startActivity(intent);
-                    finish();
+                    appEntered();
                 }
-
-
             }
 
             @Override
             public void onCancelled(@NonNull DatabaseError databaseError) {
                 Toast.makeText(getApplicationContext(), R.string.login_failure, Toast.LENGTH_SHORT).show();
-                prefs.edit().putBoolean("allFilesFetched",false).apply();
                 loginDisappear();
             }
         });
-
     }
 
-    private void checkMail(){
-        String regexpEmail = "^[_A-Za-z0-9-+]+(\\.[_A-Za-z0-9-]+)*@" + "[A-Za-z0-9-]+(\\.[A-Za-z0-9]+)*(\\.[A-Za-z]{2,})$";
-        final String emailToCheck = email.getText().toString();
+    private void loginDisappear(){
+        dialog.dismiss();
+    }
 
-        if(!Pattern.compile(regexpEmail).matcher(emailToCheck).matches()) {
-            emailL.setError(getResources().getString(R.string.error_email));
-            correctness = false;
-        }else{
-            correctness = true;
-            emailL.setError(null);
-        }
-        updateSave();
+    private void appEntered(){
+        Toast.makeText(getApplicationContext(), R.string.login_success, Toast.LENGTH_SHORT).show();
+        Intent intent = new Intent(Login.this, MainActivity.class);
+        intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK);
+        startActivity(intent);
+        finish();
     }
 
     private void updateSave(){

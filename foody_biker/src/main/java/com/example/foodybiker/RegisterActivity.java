@@ -236,10 +236,8 @@ public class RegisterActivity extends AppCompatActivity {
     }
 
     private void loginDisappear(){
-
         dialog.dismiss();
     }
-
 
     private void checkPasswordEqual() {
         if(password1.getText().toString().equals(password2.getText().toString())){
