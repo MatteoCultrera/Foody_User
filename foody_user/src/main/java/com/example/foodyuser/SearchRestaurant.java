@@ -80,7 +80,6 @@ public class SearchRestaurant extends AppCompatActivity {
     private boolean clearFilter = false;
     private boolean firstTime = true;
     private AlertDialog foodChooseType;
-    private int width;
     private int height;
     private boolean allImages;
 
@@ -101,8 +100,6 @@ public class SearchRestaurant extends AppCompatActivity {
         DisplayMetrics displayMetrics = new DisplayMetrics();
         getWindowManager().getDefaultDisplay().getMetrics(displayMetrics);
         height = displayMetrics.heightPixels;
-        width = displayMetrics.widthPixels;
-
     }
 
     private void init(){
@@ -193,6 +190,7 @@ public class SearchRestaurant extends AppCompatActivity {
         }
     }
 
+
     private void fetchRestaurants(final Boolean hasImages){
 
         Calendar calendar = Calendar.getInstance(Locale.ITALY);
@@ -254,6 +252,27 @@ public class SearchRestaurant extends AppCompatActivity {
                             imageToFetch++;
                         }
 
+                        Long totalReviews = -1L;
+
+                        if(ds1.child("totalReviews").exists()){
+                            totalReviews = ds1.child("totalReviews").getValue(Long.class);
+                        }
+
+                        if(ds1.child("meanDeliveryTime").exists() && ds1.child("meanFoodQuality").exists() && ds1.child("meanRestaurantService").exists() && totalReviews!=-1){
+                            Double meanDeliveryTime = ds1.child("meanDeliveryTime").getValue(Double.class);
+                            Double meanFoodQuality = ds1.child("meanFoodQuality").getValue(Double.class);
+                            Double meanRestaurantService = ds1.child("meanRestaurantService").getValue(Double.class);
+                            restaurant.setMeanDeliveryTime(meanDeliveryTime/totalReviews);
+                            restaurant.setMeanDeliveryTime(meanFoodQuality/totalReviews);
+                            restaurant.setMeanDeliveryTime(meanRestaurantService/totalReviews);
+                            restaurant.setTotalMean((meanDeliveryTime + meanFoodQuality + meanRestaurantService)/(totalReviews*3));
+                        }else{
+                            restaurant.setMeanDeliveryTime(-1.d);
+                            restaurant.setMeanDeliveryTime(-1.d);
+                            restaurant.setMeanDeliveryTime(-1.d);
+                            restaurant.setTotalMean(-1.d);
+                        }
+
                         restaurants.add(restaurant);
                         restName.add(restaurant);
                         restCuisine.add(restaurant);
@@ -282,17 +301,7 @@ public class SearchRestaurant extends AppCompatActivity {
                     allImages = sharedPrefer.getBoolean("restaurantFetches",false);
 
                     if(allImages){
-                        Log.d("MADPROVA", "All the images");
-                        loading.setVisibility(View.GONE);
-                        adapter = new RVAdapterRestaurants(restaurants);
-                        scrollView.setAdapter(adapter);
-                        scrollView.setVisibility(View.VISIBLE);
-                        filterButton.setOnClickListener(new View.OnClickListener() {
-                            @Override
-                            public void onClick(View v) {
-                                showPickFood(filterButton);
-                            }
-                        });
+                        showList();
                     }
                 }else{
                     //Fetch All Images
@@ -316,6 +325,19 @@ public class SearchRestaurant extends AppCompatActivity {
 
     }
 
+    private void showList(){
+        loading.setVisibility(View.GONE);
+        adapter = new RVAdapterRestaurants(restaurants);
+        scrollView.setAdapter(adapter);
+        scrollView.setVisibility(View.VISIBLE);
+        filterButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                showPickFood(filterButton);
+            }
+        });
+    }
+
     private void fetchImages(final Restaurant restaurant){
 
         Log.d("MAD2", "Entering fetch Images with restaurant "+restaurant.getUsername());
@@ -332,19 +354,8 @@ public class SearchRestaurant extends AppCompatActivity {
                 imageFetched++;
                 Log.d("MADPROVA", "Restaurant "+restaurant.getUsername()+" "+imageToFetch+" "+imageFetched+" saved on "+file.getPath()+" ");
                 if(imageFetched == imageToFetch){
-                    Log.d("MADPROVA", "removing pause after finding all images");
-                    loading.setVisibility(View.GONE);
                     sharedPrefer.edit().putBoolean("restaurantFetches", true).apply();
-                    //Create RecyclerView
-                    adapter = new RVAdapterRestaurants(restaurants);
-                    scrollView.setAdapter(adapter);
-                    scrollView.setVisibility(View.VISIBLE);
-                    filterButton.setOnClickListener(new View.OnClickListener() {
-                        @Override
-                        public void onClick(View v) {
-                            showPickFood(filterButton);
-                        }
-                    });
+                    showList();
                 }
             }
         }).addOnFailureListener(new OnFailureListener() {
@@ -354,21 +365,8 @@ public class SearchRestaurant extends AppCompatActivity {
                 Log.d("MAD", "Restaurant "+restaurant.getUsername()+restaurant.getUsername()+" "+imageToFetch+" "+imageFetched+" not saved on "+file.getPath());
                 imageFetched++;
                 if(imageFetched == imageToFetch){
-                    Log.d("MADPROVA", "removing pause after finding all images");
-                    allImages = true;
                     sharedPrefer.edit().putBoolean("restaurantFetches", true).apply();
-                    loading.setVisibility(View.GONE);
-                    //Create RecyclerView
-                    adapter = new RVAdapterRestaurants(restaurants);
-
-                    scrollView.setAdapter(adapter);
-                    scrollView.setVisibility(View.VISIBLE);
-                    filterButton.setOnClickListener(new View.OnClickListener() {
-                        @Override
-                        public void onClick(View v) {
-                            showPickFood(filterButton);
-                        }
-                    });
+                    showList();
                 }
             }
         });
