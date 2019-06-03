@@ -32,12 +32,14 @@ import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.RatingBar;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.annotation.GlideOption;
 import com.bumptech.glide.request.RequestOptions;
 import com.bumptech.glide.signature.ObjectKey;
 import com.example.foody_library.Review;
+import com.github.ybq.android.spinkit.SpinKitView;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.firebase.database.DataSnapshot;
@@ -56,6 +58,8 @@ import java.util.Calendar;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Locale;
+import java.util.concurrent.TimeUnit;
 
 public class RestaurantView extends AppCompatActivity {
 
@@ -83,6 +87,12 @@ public class RestaurantView extends AppCompatActivity {
     private ConstraintLayout totalLayout, addReview;
     private final String RESTAURANT_IMAGES = "RestaurantImages";
     int session;
+    private boolean reviewAdded = false;
+    private SpinKitView addReviewLoading;
+    private TextView addReviewText;
+    private boolean isOnPause;
+    private Review localeReview;
+    private AppBarLayout appBarLayout;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -93,31 +103,30 @@ public class RestaurantView extends AppCompatActivity {
         viewPager = findViewById(R.id.htab_viewpager);
         toolbar = findViewById(R.id.htab_toolbar);
         background = findViewById(R.id.htab_header);
+        appBarLayout = findViewById(R.id.htab_appbar);
         totalText = findViewById(R.id.price_show_frag);
         totalLayout = findViewById(R.id.price_show_layout_frag);
         price = findViewById(R.id.restaurant_del_price_frag);
         addReview = findViewById(R.id.add_review);
+        addReviewLoading = findViewById(R.id.add_review_loading);
+        addReviewText = findViewById(R.id.add_review_text);
         showMenu = new ShowMenuFragment();
         showInfo = new ShowInfoFragment();
         showReview = new ShowReviewFragment();
         totalLayout.getLayoutTransition().enableTransitionType(LayoutTransition.CHANGING);
+        addReview.getLayoutTransition().enableTransitionType(LayoutTransition.CHANGING);
         session = 0;
+        localeReview = null;
+        Log.d("LIFECYCLE","OnCreate()");
     }
 
 
     private void init(){
-
         Log.d("PROVA","Into init");
-
-
         showMenu.setFather(this);
         showReview.setFather(this);
-
-
         setupViewPager(viewPager);
-
         viewPager.setOffscreenPageLimit(3);
-
         tabs.post(new Runnable() {
             @Override
             public void run() {
@@ -126,7 +135,6 @@ public class RestaurantView extends AppCompatActivity {
         });
 
         addReview.setVisibility(View.GONE);
-
         tabs.addOnTabSelectedListener(new TabLayout.OnTabSelectedListener() {
             @Override
             public void onTabSelected(TabLayout.Tab tab) {
@@ -180,7 +188,11 @@ public class RestaurantView extends AppCompatActivity {
 
         }
 
-        setAddReview(this);
+        if(showReview.notReady())
+            disableAddReview();
+        else
+            enableAddReview();
+
 
         File root = getExternalFilesDir(Environment.DIRECTORY_PICTURES);
         storage = new File(root.getPath()+File.separator+DIRECTORY_IMAGES);
@@ -193,8 +205,8 @@ public class RestaurantView extends AppCompatActivity {
             //Fetches the menu and automatically adds it to fragment
             fetchMenu();
             //Fetches the reviews and automatically adds them to fragment
+            Log.d("PROVATRE","called FetchReviews from init()");
             fetchReviews();
-
             updateTotal();
 
         }else{
@@ -207,15 +219,21 @@ public class RestaurantView extends AppCompatActivity {
                 showInfo.init(thisRestaurant);
             }
             cardsFromFile();
+            Log.d("PROVATRE","called reviewsFromFile from init()");
             reviewsFromFile();
             updateTotal();
-
         }
 
+        if(localeReview != null){
+            reviews.add(localeReview);
+            showReview.notifyAdded(reviews.size()-1);
+            localeReview = null;
+        }
 
     }
 
     public void cardsFromFile(){
+        Log.d("LIFECYCLE","CardsFromFile()");
         Log.d("MAD3","ON cards From File");
         final int set = session;
         File cardFile = new File(storage, CARDS);
@@ -230,35 +248,53 @@ public class RestaurantView extends AppCompatActivity {
 
     }
 
+    public void disableAddReview(){
+        addReview.setBackgroundResource(R.drawable.add_review_background_dis);
+        addReview.setClickable(false);
+        addReviewText.setVisibility(View.VISIBLE);
+        addReviewLoading.setVisibility(View.GONE);
+        addReview.setOnClickListener(null);
+    }
+
+    public void enableAddReview(){
+        addReview.setBackgroundResource(R.drawable.add_review_background);
+        addReview.setClickable(true);
+        addReviewText.setVisibility(View.VISIBLE);
+        addReviewLoading.setVisibility(View.GONE);
+        setAddReview(this);
+    }
+
+    public void loadAddReview(){
+        addReview.setBackgroundResource(R.drawable.add_review_background_dis);
+        addReview.setClickable(true);
+        addReviewText.setVisibility(View.GONE);
+        addReviewLoading.setVisibility(View.VISIBLE);
+        addReview.setOnClickListener(null);
+    }
+
     public void setAddReview(final Context context){
         addReview.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if(showReview.notReady())
-                    return;
-                if(showMenu.notReady())
-                    return;
-
-
 
                 final Dialog dialog = new Dialog(context);
                 dialog.setContentView(R.layout.review_dialog);
 
-                final EditText edit = (EditText)dialog.findViewById(R.id.review_comment);
-                ImageView image = (ImageView)dialog.findViewById(R.id.review_image);
-                TextView name = (TextView)dialog.findViewById(R.id.review_restaurant_name);
-                final RatingBar rating = (RatingBar)dialog.findViewById(R.id.review_rating);
-                final RatingBar ratingTwo = (RatingBar)dialog.findViewById(R.id.review_rating_two);
-                final RatingBar ratingThree = (RatingBar)dialog.findViewById(R.id.review_rating_three);
-                final TextView ratingText = (TextView)dialog.findViewById(R.id.review_points);
-                final TextView ratingTextTwo = (TextView)dialog.findViewById(R.id.review_points_two);
-                final TextView ratingTextThree = (TextView)dialog.findViewById(R.id.review_points_three);
-                final TextView ratingTextHint = (TextView)dialog.findViewById(R.id.review_rating_text);
-                final TextView ratingTextHintTwo = (TextView)dialog.findViewById(R.id.review_rating_text_two);
-                final TextView ratingTextHintThree = (TextView)dialog.findViewById(R.id.review_rating_text_three);
-                final ConstraintLayout mainLayout = (ConstraintLayout)dialog.findViewById(R.id.layout);
-                final ConstraintLayout imageLayout = (ConstraintLayout)dialog.findViewById(R.id.review_image_layout);
-                final MaterialButton button = (MaterialButton)dialog.findViewById(R.id.review_submit);
+                final EditText edit = dialog.findViewById(R.id.review_comment);
+                ImageView image = dialog.findViewById(R.id.review_image);
+                TextView name = dialog.findViewById(R.id.review_restaurant_name);
+                final RatingBar rating = dialog.findViewById(R.id.review_rating);
+                final RatingBar ratingTwo = dialog.findViewById(R.id.review_rating_two);
+                final RatingBar ratingThree = dialog.findViewById(R.id.review_rating_three);
+                final TextView ratingText = dialog.findViewById(R.id.review_points);
+                final TextView ratingTextTwo = dialog.findViewById(R.id.review_points_two);
+                final TextView ratingTextThree = dialog.findViewById(R.id.review_points_three);
+                final TextView ratingTextHint = dialog.findViewById(R.id.review_rating_text);
+                final TextView ratingTextHintTwo = dialog.findViewById(R.id.review_rating_text_two);
+                final TextView ratingTextHintThree = dialog.findViewById(R.id.review_rating_text_three);
+                final ConstraintLayout mainLayout = dialog.findViewById(R.id.layout);
+                final ConstraintLayout imageLayout = dialog.findViewById(R.id.review_image_layout);
+                final MaterialButton button = dialog.findViewById(R.id.review_submit);
 
                 button.setVisibility(View.GONE);
                 edit.clearFocus();
@@ -319,6 +355,61 @@ public class RestaurantView extends AppCompatActivity {
                 button.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
+
+                        loadAddReview();
+
+                        String localePath = null;
+                        String remotePath = null;
+                        String notes = null;
+                        if(edit.getText().toString().length() > 0)
+                            notes = edit.getText().toString();
+
+                        float meanPoints = (rating.getRating()+ratingTwo.getRating()+ratingThree.getRating())/3;
+
+
+                        if(shared.contains("imgLocale"))
+                            localePath = shared.getString("imgLocale","");
+                        if(shared.contains("imgRemote"))
+                            remotePath = shared.getString("imgRemote","");
+
+                        final String identifier = shared.getString("id","") + System.currentTimeMillis();
+
+                        localeReview = new Review(identifier,
+                                shared.getString("id",""),
+                                shared.getString("name",""),
+                                localePath, notes, meanPoints);
+
+                        Review remoteReview = new Review(identifier,
+                                shared.getString("id",""),
+                                shared.getString("name",""),
+                                remotePath, notes, meanPoints);
+
+                        DatabaseReference databaseRest = FirebaseDatabase.getInstance().getReference()
+                                .child("reviews").child(thisRestaurant.getUid());
+                        HashMap<String, Object> childReviews = new HashMap<>();
+                        childReviews.put(identifier, remoteReview);
+                        databaseRest.updateChildren(childReviews).addOnSuccessListener(new OnSuccessListener<Void>() {
+                            @Override
+                            public void onSuccess(Void aVoid) {
+                                Log.d("PROVADUE","Main On Success");
+
+                                if(!isOnPause){
+                                    Log.d("PROVATRE","Adding localeReview");
+                                    enableAddReview();
+                                    reviews.add(localeReview);
+                                    showReview.notifyAdded(reviews.size()-1);
+                                    localeReview = null;
+                                }
+                            }
+                        }).addOnFailureListener(new OnFailureListener() {
+                            @Override
+                            public void onFailure(@NonNull Exception e) {
+                                Toast.makeText(getApplicationContext(),"Error Adding Review",Toast.LENGTH_SHORT);
+                                enableAddReview();
+                                localeReview = null;
+                            }
+                        });
+
 
                         button.animate().translationY(-getResources().getDimensionPixelSize(R.dimen.short200)).withEndAction(new Runnable() {
                             @Override
@@ -438,7 +529,6 @@ public class RestaurantView extends AppCompatActivity {
         });
     }
 
-
     public void reviewsFromFile(){
         final int set = session;
         File reviewsFile = new File(storage, REVIEWS);
@@ -446,6 +536,7 @@ public class RestaurantView extends AppCompatActivity {
 
         if(set == session){
             reviews = handler.getReviews(reviewsFile);
+            Log.d("PROVATRE","called init from reviewsFromFile()");
             showReview.init(reviews);
         }
     }
@@ -548,12 +639,9 @@ public class RestaurantView extends AppCompatActivity {
     }
 
     private void setupImagesDirectory(){
-
         File root = getExternalFilesDir(Environment.DIRECTORY_PICTURES);
         storage = new File(root.getPath()+File.separator+DIRECTORY_IMAGES);
-
         storage.mkdirs();
-
     }
 
     private void addOrders(){
@@ -581,8 +669,6 @@ public class RestaurantView extends AppCompatActivity {
     }
 
     private void setupViewPager(ViewPager viewPager) {
-
-
         ViewPagerAdapter adapter = new ViewPagerAdapter(
                 getSupportFragmentManager());
         adapter.addFrag(showMenu, getResources().getString(R.string.menu));
@@ -655,7 +741,6 @@ public class RestaurantView extends AppCompatActivity {
                                 .into(background);
                     }
 
-
                 }
                 toolbar.setTitle(thisRestaurant.getUsername());
                 Log.d("VANGOGH",""+thisRestaurant.getUid());
@@ -687,10 +772,9 @@ public class RestaurantView extends AppCompatActivity {
         final int set = session;
         final DatabaseReference database = FirebaseDatabase.getInstance().getReference();
         DatabaseReference ref = database.child("restaurantsMenu").child(reName);
-        ref.addValueEventListener(new ValueEventListener() {
+        ref.addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-                int i = 0;
                 cards = new ArrayList<>();
                 for (DataSnapshot ds : dataSnapshot.getChildren()) {
                     for (DataSnapshot ds1 : ds.getChildren()) {
@@ -764,31 +848,40 @@ public class RestaurantView extends AppCompatActivity {
         final int set = session;
         final DatabaseReference database = FirebaseDatabase.getInstance().getReference();
         DatabaseReference ref = database.child("reviews").child(reName);
-        ref.addValueEventListener(new ValueEventListener() {
+        ref.addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
                 if(set == session){
+                    Log.d("PROVATRE","reviews = new arrayList on fetchReviews()");
                     reviews = new ArrayList<>();
                     for (DataSnapshot ds : dataSnapshot.getChildren()) {
                         String reviewID = ds.getKey();
                         String userId = ds.child("userID").getValue(String.class);
-                        String notes = ds.child("notes").getValue(String.class);
+                        String note = ds.child("note").getValue(String.class);
                         Float rating = ds.child("rating").getValue(Float.class);
 
-                        if(notes != null)
-                            if(notes.length() == 0)
-                                notes = null;
+                        Log.d("PROVATRE",note+" "+userId);
+                        if(note != null)
+                            if(note.length() == 0)
+                                note = null;
 
-                        Review review = new Review(reviewID, userId, notes,rating);
-
+                        Review review = new Review(reviewID, userId, note,rating);
+                        Log.d("PROVATRE","added review "+review.getUserName()+" "+review.getNote()+" from fetchReviews");
                         reviews.add(review);
 
                     }
 
-                    if(reviews.size() > 0)
+
+
+                    if(reviews.size() > 0){
+                        Log.d("PROVATRE","called fetchUsers from init()");
                         fetchUsers(set);
-                    else
+                    }
+                    else{
+                        Log.d("PROVATRE","called showReview from init()");
                         showReview.init(reviews);
+                    }
+
                 }
             }
             @Override
@@ -799,31 +892,46 @@ public class RestaurantView extends AppCompatActivity {
     }
 
     private void fetchUsers(final int num){
+        Log.d("PROVATRE","into FetchUsers");
         final int set = num;
         final HashMap<String, String> usersWithImages = new HashMap<>();
         final DatabaseReference database = FirebaseDatabase.getInstance().getReference();
         DatabaseReference ref = database.child("endUsers");
-        ref.addValueEventListener(new ValueEventListener() {
+        ref.addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
                 if(set == session) {
                     for (Review r : reviews) {
-                        String username = dataSnapshot.child(r.getUserID()).child("info").child("username").getValue(String.class);
-                        String imagePath = dataSnapshot.child(r.getUserID()).child("info").child("imagePath").getValue(String.class);
-                        if (imagePath != null) {
-                            if (imagePath.length() > 0) {
-                                usersWithImages.put(r.getUserID(), imagePath);
-                                r.setImagePath(storage.getPath() + File.separator + r.getUserID() + ".jpg");
-                            }
-                        }
+                        if(!r.getUserID().equals(shared.getString("id",""))){
+                            String username = dataSnapshot.child(r.getUserID()).child("info").child("username").getValue(String.class);
+                            String imagePath = dataSnapshot.child(r.getUserID()).child("info").child("imagePath").getValue(String.class);
+                            if (imagePath != null) {
+                                File imageLocale = new File(storage, r.getUserID()+".jpg");
+                                if (imagePath.length() > 0 && !imageLocale.exists()) {
+                                    usersWithImages.put(r.getUserID(), imagePath);
+                                    r.setImagePath(storage.getPath() + File.separator + r.getUserID() + ".jpg");
 
-                        r.setUserName(username);
+                                    Log.d("PROVATRE","added image pats to "+username+" remote");
+                                } else{
+                                    r.setImagePath(imageLocale.getPath());
+                                }
+                            }
+
+                            r.setUserName(username);
+                            Log.d("PROVATRE","added username to "+r.getUserName()+" remote");
+                        }else{
+                            r.setUserName(shared.getString("name",""));
+                            r.setImagePath(shared.getString("imgLocale",""));
+                            Log.d("PROVATRE","added username to "+r.getUserName()+" locale");
+
+                        }
                     }
 
                     if (!usersWithImages.isEmpty()) {
                         setUserImages(usersWithImages, set);
                     } else {
                         if (set == session)
+                            Log.d("PROVATRE","Called init from fetchUsers");
                             showReview.init(reviews);
                     }
                 }
@@ -837,7 +945,7 @@ public class RestaurantView extends AppCompatActivity {
     }
 
     private void setUserImages(final HashMap<String, String> images, int num){
-        Log.d("TESTFETCH","Into Set User Image");
+        Log.d("PROVATRE","Into Set User Image");
         final int set = num;
         if(set == session){
             reviewsImageToFetch = images.size();
@@ -857,8 +965,10 @@ public class RestaurantView extends AppCompatActivity {
                     Log.d("TESTFETCH", "Saved Image "+reviewsImageToFetch+" "+reviewsImageFetched+" "+s+" "+images.get(s));
                     reviewsImageFetched++;
                     if(reviewsImageFetched == reviewsImageToFetch){
-                        if(set == session)
+                        if(set == session){
+                            Log.d("PROVATRE","called init from setUserImage");
                             showReview.init(reviews);
+                        }
                     }
                 }
             }).addOnFailureListener(new OnFailureListener() {
@@ -868,8 +978,10 @@ public class RestaurantView extends AppCompatActivity {
                     reviewsImageFetched++;
                     if(reviewsImageFetched == reviewsImageToFetch){
                         Log.d("MAD","called init set "+set+" session "+session);
-                        if(set == session)
+                        if(set == session){
+                            Log.d("PROVATRE","called init from setUserImage");
                             showReview.init(reviews);
+                        }
                     }
                 }
             });
@@ -879,7 +991,9 @@ public class RestaurantView extends AppCompatActivity {
 
     @Override
     protected void onPause() {
+        Log.d("LIFECYCLE","OnPause()");
         super.onPause();
+        isOnPause = true;
         session++;
         if(session > 2000)
             session = 0;
@@ -889,7 +1003,10 @@ public class RestaurantView extends AppCompatActivity {
             if(storage.exists())
                 removeStorage();
             showMenu.removeCards();
-            showReview.removeReviews();
+
+            Log.d("PROVATRE","removedReviews storage not completed onPause");
+            //showReview.removeReviews();
+            reviews = null;
         }else{
             JsonHandler handler = new JsonHandler();
             String cJson = handler.toJSON(cards);
@@ -901,7 +1018,10 @@ public class RestaurantView extends AppCompatActivity {
             File m2 = new File(storage, REVIEWS);
             handler.saveStringToFile(reviewsToJson, m2);
             showMenu.removeCards();
-            showReview.removeReviews();
+
+            Log.d("PROVATRE","removedReviews after saving them onPause");
+            //showReview.removeReviews();
+            reviews = null;
         }
 
         /*
@@ -930,7 +1050,9 @@ public class RestaurantView extends AppCompatActivity {
 
     @Override
     protected void onResume() {
+        Log.d("LIFECYCLE","OnResume()");
         super.onResume();
+        isOnPause = false;
         init();
     }
 
@@ -940,5 +1062,9 @@ public class RestaurantView extends AppCompatActivity {
         }
         storage.delete();
         storage = null;
+    }
+
+    public void collapseToolbar(){
+        appBarLayout.setExpanded(false);
     }
 }

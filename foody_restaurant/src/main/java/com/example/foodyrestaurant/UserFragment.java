@@ -49,8 +49,13 @@ public class UserFragment extends Fragment {
     private MaterialButton logout;
     private String imagePath;
     private RestaurantInfo info;
+    private MainActivity father;
 
     public UserFragment() {}
+
+    public void setFather(MainActivity father){
+        this.father = father;
+    }
 
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
@@ -60,6 +65,7 @@ public class UserFragment extends Fragment {
     @Override
     public void onViewCreated(@NonNull View view, Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
+        init(view);
     }
 
     private void init(View view) {
@@ -84,6 +90,68 @@ public class UserFragment extends Fragment {
         sunTime = view.findViewById(R.id.sunTime);
         delivPrice = view.findViewById(R.id.delivery);
         foodType = view.findViewById(R.id.food_type);
+
+        Uri photoProfile = father.getPhotoProfile();
+        if (photoProfile == null) {
+            final DatabaseReference databaseI = FirebaseDatabase.getInstance().getReference().child("restaurantsInfo");
+            Query query = databaseI.child(firebaseAuth.getCurrentUser().getUid()).child("info");
+            query.addListenerForSingleValueEvent(new ValueEventListener() {
+                @Override
+                public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                    RestaurantInfo info = dataSnapshot.getValue(RestaurantInfo.class);
+                    StorageReference mStorageRef = FirebaseStorage.getInstance().getReference();
+                    if(info.getImagePath() != null) {
+                        mStorageRef.child(info.getImagePath()).getDownloadUrl().addOnSuccessListener(new OnSuccessListener<Uri>() {
+                            @Override
+                            public void onSuccess(Uri uri) {
+                                father.setPhotoProfile(uri);
+                                Glide
+                                        .with(profilePicture.getContext())
+                                        .load(uri)
+                                        .into(profilePicture);
+                                Glide
+                                        .with(profileShadow.getContext())
+                                        .load(R.drawable.shadow)
+                                        .into(profileShadow);
+                            }
+                        }).addOnFailureListener(new OnFailureListener() {
+                            @Override
+                            public void onFailure(@NonNull Exception e) {
+                                Glide
+                                        .with(profilePicture.getContext())
+                                        .load(R.drawable.profile_placeholder)
+                                        .into(profilePicture);
+                                Glide
+                                        .with(profileShadow.getContext())
+                                        .load(R.drawable.shadow)
+                                        .into(profileShadow);
+                            }
+                        });
+                    }
+                }
+
+                @Override
+                public void onCancelled(@NonNull DatabaseError databaseError) {
+                    Glide
+                            .with(profilePicture.getContext())
+                            .load(R.drawable.profile_placeholder)
+                            .into(profilePicture);
+                    Glide
+                            .with(profileShadow.getContext())
+                            .load(R.drawable.shadow)
+                            .into(profileShadow);
+                }
+            });
+        }else{
+            Glide
+                    .with(profilePicture.getContext())
+                    .load(photoProfile)
+                    .into(profilePicture);
+            Glide
+                    .with(profileShadow.getContext())
+                    .load(R.drawable.shadow)
+                    .into(profileShadow);
+        }
 
         //setup of the Shared Preferences to save value in (key, value) format
         new Thread(new Runnable() {
@@ -191,45 +259,6 @@ public class UserFragment extends Fragment {
                             edit.putBoolean("sunState", true);
                         }
 
-                        StorageReference mStorageRef = FirebaseStorage.getInstance().getReference();
-                        if (imagePath != null) {
-                            mStorageRef.child(imagePath).getDownloadUrl()
-                                .addOnSuccessListener(new OnSuccessListener<Uri>() {
-                                    @Override
-                                    public void onSuccess(Uri uri) {
-                                        Glide
-                                                .with(profilePicture.getContext())
-                                                .load(uri)
-                                                .into(profilePicture);
-                                        Glide
-                                                .with(profileShadow.getContext())
-                                                .load(R.drawable.shadow)
-                                                .into(profileShadow);
-                                    }
-                                })
-                                .addOnFailureListener(new OnFailureListener() {
-                                    @Override
-                                    public void onFailure(@NonNull Exception e) {
-                                        Glide
-                                                .with(profilePicture.getContext())
-                                                .load(R.drawable.profile_placeholder)
-                                                .into(profilePicture);
-                                        Glide
-                                                .with(profileShadow.getContext())
-                                                .load(R.drawable.shadow)
-                                                .into(profileShadow);
-                                    }
-                            });
-                        } else {
-                            Glide
-                                    .with(profilePicture.getContext())
-                                    .load(R.drawable.profile_placeholder)
-                                    .into(profilePicture);
-                            Glide
-                                    .with(profileShadow.getContext())
-                                    .load(R.drawable.shadow)
-                                    .into(profileShadow);
-                        }
                         edit.putString("monTime", info.getDaysTime().get(0));
                         edit.putString("tueTime", info.getDaysTime().get(1));
                         edit.putString("wedTime", info.getDaysTime().get(2));
@@ -291,7 +320,5 @@ public class UserFragment extends Fragment {
         Context context = Objects.requireNonNull(getActivity()).getApplicationContext();
         sharedPref = context.getSharedPreferences("myPreference", MODE_PRIVATE);
         storageDir = getActivity().getExternalFilesDir(Environment.DIRECTORY_PICTURES);
-
-        init(Objects.requireNonNull(getView()));
     }
 }
