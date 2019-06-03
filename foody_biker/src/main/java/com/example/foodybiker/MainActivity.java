@@ -40,6 +40,7 @@ public class MainActivity extends AppCompatActivity {
     private Fragment map;
     private Fragment reservations;
     private Fragment user;
+    private Fragment history;
     private final FragmentManager fm = getSupportFragmentManager();
     private Fragment active;
     private SharedPreferences sharedPref;
@@ -88,6 +89,8 @@ public class MainActivity extends AppCompatActivity {
         reservations = new ReservationFragment();
         ((ReservationFragment) reservations).setFather(this);
         user = new UserFragment();
+        history = new HistoryFragment();
+        fm.beginTransaction().add(R.id.mainFrame, history, "4").hide(history).commit();
         fm.beginTransaction().add(R.id.mainFrame, user, "3").hide(user).commit();
         fm.beginTransaction().add(R.id.mainFrame, reservations, "2").hide(reservations).commit();
         fm.beginTransaction().add(R.id.mainFrame, map, "1").show(map).commit();
@@ -154,7 +157,7 @@ public class MainActivity extends AppCompatActivity {
                         FragmentTransaction transaction =fm.beginTransaction();
                         transaction.setCustomAnimations(R.anim.enter_from_right,R.anim.exit_to_left);
                         transaction.hide(active).show(reservations).commit();
-                    }else if(active == user) {
+                    }else {
                         FragmentTransaction transaction = fm.beginTransaction();
                         transaction.setCustomAnimations(R.anim.enter_from_left, R.anim.exit_to_right);
                         transaction.hide(active).show(reservations).commit();
@@ -163,10 +166,22 @@ public class MainActivity extends AppCompatActivity {
                     return true;
                 }else if(id == R.id.prof && active != user){
                     clearNotification(2);
+                    if(active == reservations || active == map){
+                        FragmentTransaction transaction = fm.beginTransaction();
+                        transaction.setCustomAnimations(R.anim.enter_from_right,R.anim.exit_to_left);
+                        transaction.hide(active).show(user).commit();
+                    } else {
+                        FragmentTransaction transaction = fm.beginTransaction();
+                        transaction.setCustomAnimations(R.anim.enter_from_left,R.anim.exit_to_right);
+                        transaction.hide(active).show(user).commit();
+                    }
+                    active = user;
+                    return true;
+                }else if(id == R.id.history && active != history){
                     FragmentTransaction transaction = fm.beginTransaction();
                     transaction.setCustomAnimations(R.anim.enter_from_right,R.anim.exit_to_left);
-                    transaction.hide(active).show(user).commit();
-                    active = user;
+                    transaction.hide(active).show(history).commit();
+                    active = history;
                     return true;
                 }
                 return false;

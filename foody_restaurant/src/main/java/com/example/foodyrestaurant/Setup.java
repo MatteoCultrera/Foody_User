@@ -893,6 +893,7 @@ public class Setup extends AppCompatActivity {
             Bitmap bitmap = BitmapFactory.decodeFile(f.getAbsolutePath(),bmOptions);
             pathImage = "images/restaurants/"+user.getUid() + System.currentTimeMillis()+".jpeg";
             edit.putString("profileSignature", String.valueOf(System.currentTimeMillis()));
+            edit.putBoolean("changedPicture", true);
             File profile = new File(storageDir, PROFILE_IMAGE);
             saveBitmap(bitmap, profile.getPath());
             FirebaseStorage storage;
@@ -904,6 +905,7 @@ public class Setup extends AppCompatActivity {
                     .addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
                         @Override
                         public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
+
                         }
                     })
                     .addOnFailureListener(new OnFailureListener() {

@@ -40,4 +40,7 @@ dependencies {
 
     //Library for circular images
     implementation 'de.hdodenhof:circleimageview:2.1.0'
+
+    //Loading Animations
+    implementation 'com.github.ybq:Android-SpinKit:1.2.0'
 }

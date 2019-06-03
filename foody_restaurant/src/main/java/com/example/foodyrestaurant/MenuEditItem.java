@@ -544,8 +544,9 @@ public class MenuEditItem extends AppCompatActivity {
                                 if(!toDelete.delete()){
                                     System.out.println("Cannot delete the file.");
                                 }
-                        }else
+                        }else {
                             dishes.get(posToChange).setEditImage(true);
+                        }
                         dishes.get(posToChange).setImage(imageURi);
                         dishes.get(posToChange).setPathDB("images/" + firebaseAuth.getCurrentUser().getUid() + "/"
                                 + imageFileName + ".jpeg");

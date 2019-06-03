@@ -9,6 +9,7 @@ public class Reservation {
     private boolean accepted;
     private String userPhone;
     private String restPhone;
+    private Double distance;
 
     public Reservation(String restaurantName, String restaurantAddress, String restaurantPickupTime, String userName, String userAddress, String userDeliveryTime, String restaurantID, String notes, boolean accepted) {
         this.restaurantName = restaurantName;
@@ -116,5 +117,13 @@ public class Reservation {
 
     public void setRestPhone(String restPhone) {
         this.restPhone = restPhone;
+    }
+
+    public Double getDistance() {
+        return distance;
+    }
+
+    public void setDistance(Double distance) {
+        this.distance = distance;
     }
 }

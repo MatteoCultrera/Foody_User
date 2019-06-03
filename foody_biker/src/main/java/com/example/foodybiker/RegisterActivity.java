@@ -1,8 +1,10 @@
 package com.example.foodybiker;
 
+import android.app.Dialog;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
+import android.os.Environment;
 import android.support.annotation.NonNull;
 import android.support.constraint.ConstraintLayout;
 import android.support.design.widget.FloatingActionButton;
@@ -12,6 +14,7 @@ import android.support.v7.app.AppCompatActivity;
 import android.text.Editable;
 import android.text.TextWatcher;
 import android.view.View;
+import android.view.WindowManager;
 import android.widget.Toast;
 
 import com.google.android.gms.tasks.OnCompleteListener;
@@ -22,6 +25,7 @@ import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 
+import java.io.File;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.regex.Pattern;
@@ -36,6 +40,8 @@ public class RegisterActivity extends AppCompatActivity {
     private FloatingActionButton register;
     private SharedPreferences sharedPref;
     private SharedPreferences.Editor edit;
+    private final String MAIN_DIR = "user_utils";
+    private Dialog dialog;
 
     @Override
     protected void onCreate(final Bundle savedInstanceState) {
@@ -168,6 +174,7 @@ public class RegisterActivity extends AppCompatActivity {
                     password2L.setError(getResources().getString(R.string.empty_password));
                     return;
                 }
+                loginAppear();
                 firebaseAuth.createUserWithEmailAndPassword(email.getText().toString(), password1.getText().toString())
                         .addOnCompleteListener(new OnCompleteListener<AuthResult>() {
                             @Override
@@ -187,6 +194,17 @@ public class RegisterActivity extends AppCompatActivity {
                                             .child("Bikers/" + user.getUid());
                                     HashMap<String, Object> child = new HashMap<>();
                                     child.put("info", info);
+                                    sharedPref.edit().putString("name", info.getUsername()).apply();
+                                    sharedPref.edit().putString("email", info.getEmail()).apply();
+                                    sharedPref.edit().putString("id", firebaseAuth.getCurrentUser().getUid()).apply();
+                                    File root = getExternalFilesDir(Environment.DIRECTORY_DOCUMENTS);
+                                    final File directory = new File(root.getPath()+File.separator+MAIN_DIR);
+                                    if(directory.exists()){
+                                        for(File f : directory.listFiles())
+                                            f.delete();
+                                        directory.delete();
+                                    }
+                                    directory.mkdirs();
                                     database.updateChildren(child);
                                     edit.apply();
                                     Toast.makeText(getApplicationContext(), R.string.auth_success, Toast.LENGTH_SHORT).show();
@@ -196,12 +214,32 @@ public class RegisterActivity extends AppCompatActivity {
                                     finish();
                                 } else {
                                     Toast.makeText(getApplicationContext(), R.string.auth_failure, Toast.LENGTH_SHORT).show();
+                                    loginDisappear();
                                 }
                             }
                         });
             }
         });
     }
+
+    private void loginAppear(){
+        dialog = new Dialog(this);
+        dialog.setContentView(R.layout.loading_dialog);
+        WindowManager.LayoutParams lp = new WindowManager.LayoutParams();
+        lp.copyFrom(dialog.getWindow().getAttributes());
+        lp.width = WindowManager.LayoutParams.MATCH_PARENT;
+        lp.height = WindowManager.LayoutParams.MATCH_PARENT;
+        dialog.setCancelable(false);
+        dialog.show();
+        dialog.getWindow().setAttributes(lp);
+        dialog.getWindow().setBackgroundDrawableResource(android.R.color.transparent);
+    }
+
+    private void loginDisappear(){
+
+        dialog.dismiss();
+    }
+
 
     private void checkPasswordEqual() {
         if(password1.getText().toString().equals(password2.getText().toString())){

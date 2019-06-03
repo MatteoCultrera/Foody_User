@@ -3,7 +3,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    tools:context="com.example.foodyrestaurant.HistoryFragment">
+    tools:context="com.example.foodybiker.HistoryFragment">
 
     <ScrollView
         android:layout_width="match_parent"
@@ -28,27 +28,27 @@
                 android:layout_marginTop="16dp"/>
 
             <TextView
-                android:id="@+id/money"
+                android:id="@+id/km_text"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginStart="16dp"
                 android:layout_marginTop="16dp"
-                android:text="Incasso totale"
+                android:text="km percorsi"
                 app:layout_constraintEnd_toEndOf="@id/constraintLayout"
                 app:layout_constraintHorizontal_bias="0.0"
                 app:layout_constraintStart_toStartOf="@id/constraintLayout"
                 app:layout_constraintTop_toBottomOf="@id/title" />
 
             <TextView
-                android:id="@+id/tot_income"
+                android:id="@+id/distance_biker"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="16dp"
                 android:layout_marginStart="8dp"
                 android:layout_marginEnd="16dp"
-                android:hint="€ incassati"
+                android:hint="km percorsi"
                 app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintStart_toEndOf="@+id/money"
+                app:layout_constraintStart_toEndOf="@+id/km_text"
                 app:layout_constraintTop_toBottomOf="@+id/title" />
 
             <com.github.mikephil.charting.charts.BarChart
@@ -59,7 +59,7 @@
                 android:layout_marginStart="16dp"
                 android:layout_marginEnd="16dp"
                 app:layout_constraintStart_toStartOf="@id/constraintLayout"
-                app:layout_constraintTop_toBottomOf="@id/money"
+                app:layout_constraintTop_toBottomOf="@id/km_text"
                 app:layout_constraintEnd_toEndOf="@id/constraintLayout"
                 app:layout_constraintBottom_toTopOf="@id/pieChart"
                 />
@@ -76,6 +76,7 @@
                 app:layout_constraintEnd_toEndOf="@id/constraintLayout"
                 app:layout_constraintBottom_toBottomOf="parent"
                 />
+
 
         </android.support.constraint.ConstraintLayout>
     </ScrollView>

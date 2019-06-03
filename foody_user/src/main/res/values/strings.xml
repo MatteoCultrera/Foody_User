@@ -60,5 +60,21 @@
     <string name="reviews">Reviews</string>
     <string name="info">Info</string>
 
+    <string name="reviews_whoops">Whoops</string>
+    <string name="reviews_no_review_one">Looks Like There Are No Reviews Here. Don\'t Worry Though, Our Best Man Is On The Case</string>
+    <string name="reviews_no_reviews_two">Meanwhile, Why don\'t you add one?</string>
+
+    <string name="add_review">Add Review</string>
+
+    <string name="add_comment">ADD A COMMENT?</string>
+    <string name="submit_rating">Submit Rating</string>
+    <string name="rate_restaurant_hint">Rate this Restaurant</string>
+
+    <!-- TODO: Remove or change this placeholder text -->
+    <string name="hello_blank_fragment">Hello blank fragment</string>
+
+    <string name="food_quality">Food Quality:</string>
+    <string name="restaurant_service">Restaurant Service:</string>
+    <string name="delivery_time_hint">Delivery Time:</string>
 
 </resources>

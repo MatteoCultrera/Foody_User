@@ -196,6 +196,30 @@ public class RVAdapterBiker extends RecyclerView.Adapter<RVAdapterBiker.CardView
                                 }
                             });
 
+                            final DatabaseReference databaseAmount = FirebaseDatabase.getInstance().getReference()
+                                    .child("archive").child("restaurant").child(firebaseUser.getUid()).child("amount");
+                            databaseAmount.addListenerForSingleValueEvent(new ValueEventListener() {
+                                @Override
+                                public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                                    if(dataSnapshot.exists()) {
+                                        Float amount = dataSnapshot.getValue(Float.class);
+                                        String[] price = reservation.getTotalPrice().split("\\s+");
+                                        Float toAdd = Float.parseFloat(price[0]);
+                                        amount += toAdd;
+                                        databaseAmount.setValue(amount);
+                                    } else {
+                                        String[] price = reservation.getTotalPrice().split("\\s+");
+                                        Float amount = Float.parseFloat(price[0]);
+                                        databaseAmount.setValue(amount);
+                                    }
+                                }
+
+                                @Override
+                                public void onCancelled(@NonNull DatabaseError databaseError) {
+
+                                }
+                            });
+
                             DatabaseReference databaseDelete = FirebaseDatabase.getInstance().getReference()
                                     .child("reservations").child("restaurant").child(firebaseUser.getUid()).child(orderID);
                             databaseDelete.removeValue();

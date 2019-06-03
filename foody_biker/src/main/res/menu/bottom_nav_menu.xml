@@ -13,4 +13,9 @@
         android:id="@+id/prof"
         android:icon="@drawable/name_black"
         android:title="@string/profile" />
+    <item
+        android:id="@+id/history"
+        android:icon="@drawable/history_black"
+        android:title="@string/history" />
+
 </menu>
