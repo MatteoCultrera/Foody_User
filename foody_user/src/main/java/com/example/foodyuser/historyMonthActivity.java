@@ -1,11 +1,12 @@
 package com.example.foodyuser;
 
 import android.app.Activity;
+import android.content.Context;
 import android.content.SharedPreferences;
 import android.support.annotation.NonNull;
-import android.support.design.button.MaterialButton;
-import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.support.constraint.ConstraintLayout;
+import android.support.design.button.MaterialButton;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -26,13 +27,13 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
-import java.util.zip.Inflater;
 
 public class historyMonthActivity extends Activity {
 
     private ImageButton back;
     private LinearLayout monthsLayout;
     private SharedPreferences shared;
+    private Context context;
 
     Map<String, ArrayList<String>> calendar;
 
@@ -45,6 +46,7 @@ public class historyMonthActivity extends Activity {
         monthsLayout = findViewById(R.id.layout_calendar);
         shared = getSharedPreferences("myPreference", MODE_PRIVATE);
         calendar = new HashMap<>();
+        context = this;
 
         init();
     }
@@ -89,76 +91,231 @@ public class historyMonthActivity extends Activity {
                 if(calendar.keySet().size() == 0){
                     Log.d("PROVA","NO History");
                     //NO History
-                    LayoutInflater inflater = LayoutInflater.from(getApplicationContext());
+                    LayoutInflater inflater = LayoutInflater.from(context);
                     View v = inflater.inflate(R.layout.calendar_layout, monthsLayout, false);
+
                     TextView year = v.findViewById(R.id.calendar_year);
                     int thisYear = Calendar.getInstance().get(Calendar.YEAR);
                     year.setText(String.format("%d",thisYear));
-                    MaterialButton jan = v.findViewById(R.id.calendar_jan);
-                    MaterialButton feb = v.findViewById(R.id.calendar_feb);
-                    MaterialButton mar = v.findViewById(R.id.calendar_mar);
-                    MaterialButton apr = v.findViewById(R.id.calendar_apr);
-                    MaterialButton may = v.findViewById(R.id.calendar_may);
-                    MaterialButton jun = v.findViewById(R.id.calendar_jun);
-                    MaterialButton jul = v.findViewById(R.id.calendar_jul);
-                    MaterialButton aug = v.findViewById(R.id.calendar_aug);
-                    MaterialButton sep = v.findViewById(R.id.calendar_sep);
-                    MaterialButton oct = v.findViewById(R.id.calendar_oct);
-                    MaterialButton nov = v.findViewById(R.id.calendar_nov);
-                    MaterialButton dec = v.findViewById(R.id.calendar_dec);
+                    ConstraintLayout jan = v.findViewById(R.id.calendar_jan);
+                    ConstraintLayout feb = v.findViewById(R.id.calendar_feb);
+                    ConstraintLayout mar = v.findViewById(R.id.calendar_mar);
+                    ConstraintLayout apr = v.findViewById(R.id.calendar_apr);
+                    ConstraintLayout may = v.findViewById(R.id.calendar_may);
+                    ConstraintLayout jun = v.findViewById(R.id.calendar_jun);
+                    ConstraintLayout jul = v.findViewById(R.id.calendar_jul);
+                    ConstraintLayout aug = v.findViewById(R.id.calendar_aug);
+                    ConstraintLayout sep = v.findViewById(R.id.calendar_sep);
+                    ConstraintLayout oct = v.findViewById(R.id.calendar_oct);
+                    ConstraintLayout nov = v.findViewById(R.id.calendar_nov);
+                    ConstraintLayout dec = v.findViewById(R.id.calendar_dec);
 
-                    jan.setClickable(false);
+                    jan.setOnClickListener(null);
                     jan.setBackgroundResource(R.drawable.calendar_disabled_background);
                     jan.setElevation(0);
 
-                    feb.setClickable(false);
+                    feb.setOnClickListener(null);
                     feb.setBackgroundResource(R.drawable.calendar_disabled_background);
                     feb.setElevation(0);
 
-                    mar.setClickable(false);
+                    mar.setOnClickListener(null);
                     mar.setBackgroundResource(R.drawable.calendar_disabled_background);
                     mar.setElevation(0);
 
-                    apr.setClickable(false);
+                    apr.setOnClickListener(null);
                     apr.setBackgroundResource(R.drawable.calendar_disabled_background);
                     apr.setElevation(0);
 
-                    may.setClickable(false);
+                    may.setOnClickListener(null);
                     may.setBackgroundResource(R.drawable.calendar_disabled_background);
                     may.setElevation(0);
 
-                    jun.setClickable(false);
+                    jun.setOnClickListener(null);
                     jun.setBackgroundResource(R.drawable.calendar_disabled_background);
                     jun.setElevation(0);
 
-                    jul.setClickable(false);
+                    jul.setOnClickListener(null);
                     jul.setBackgroundResource(R.drawable.calendar_disabled_background);
                     jul.setElevation(0);
 
-                    aug.setClickable(false);
+                    aug.setOnClickListener(null);
                     aug.setBackgroundResource(R.drawable.calendar_disabled_background);
                     aug.setElevation(0);
 
-                    sep.setClickable(false);
+                    sep.setOnClickListener(null);
                     sep.setBackgroundResource(R.drawable.calendar_disabled_background);
                     sep.setElevation(0);
 
-                    oct.setClickable(false);
+                    oct.setOnClickListener(null);
                     oct.setBackgroundResource(R.drawable.calendar_disabled_background);
                     oct.setElevation(0);
 
-                    nov.setClickable(false);
+                    nov.setOnClickListener(null);
                     nov.setBackgroundResource(R.drawable.calendar_disabled_background);
                     nov.setElevation(0);
 
-                    dec.setClickable(false);
+                    dec.setOnClickListener(null);
                     dec.setBackgroundResource(R.drawable.calendar_disabled_background);
                     dec.setElevation(0);
 
                     monthsLayout.addView(v);
                 }else{
+                    for(String s : calendar.keySet()){
+                        LayoutInflater inflater = LayoutInflater.from(context);
+                        View v = inflater.inflate(R.layout.calendar_layout, monthsLayout, false);
 
+                        TextView year = v.findViewById(R.id.calendar_year);
+                        year.setText(s);
+                        ConstraintLayout jan = v.findViewById(R.id.calendar_jan);
+                        ConstraintLayout feb = v.findViewById(R.id.calendar_feb);
+                        ConstraintLayout mar = v.findViewById(R.id.calendar_mar);
+                        ConstraintLayout apr = v.findViewById(R.id.calendar_apr);
+                        ConstraintLayout may = v.findViewById(R.id.calendar_may);
+                        ConstraintLayout jun = v.findViewById(R.id.calendar_jun);
+                        ConstraintLayout jul = v.findViewById(R.id.calendar_jul);
+                        ConstraintLayout aug = v.findViewById(R.id.calendar_aug);
+                        ConstraintLayout sep = v.findViewById(R.id.calendar_sep);
+                        ConstraintLayout oct = v.findViewById(R.id.calendar_oct);
+                        ConstraintLayout nov = v.findViewById(R.id.calendar_nov);
+                        ConstraintLayout dec = v.findViewById(R.id.calendar_dec);
+
+                        if(calendar.get(s).contains("1")){
+                            jan.setOnClickListener(null);
+                            jan.setBackgroundResource(R.drawable.calendar_enabled_background);
+                            jan.setElevation(getResources().getDimensionPixelSize(R.dimen.short10));
+                        }else{
+                            jan.setOnClickListener(null);
+                            jan.setBackgroundResource(R.drawable.calendar_disabled_background);
+                            jan.setElevation(0);
+                        }
+
+
+
+                        if(calendar.get(s).contains("2")){
+                            feb.setOnClickListener(null);
+                            feb.setBackgroundResource(R.drawable.calendar_enabled_background);
+                            feb.setElevation(getResources().getDimensionPixelSize(R.dimen.short10));
+                        }else{
+                            feb.setOnClickListener(null);
+                            feb.setBackgroundResource(R.drawable.calendar_disabled_background);
+                            feb.setElevation(0);
+                        }
+
+                        if(calendar.get(s).contains("3")){
+                            mar.setOnClickListener(null);
+                            mar.setBackgroundResource(R.drawable.calendar_enabled_background);
+                            mar.setElevation(getResources().getDimensionPixelSize(R.dimen.short10));
+                        }else{
+                            mar.setOnClickListener(null);
+                            mar.setBackgroundResource(R.drawable.calendar_disabled_background);
+                            mar.setElevation(0);
+                        }
+
+
+                        if(calendar.get(s).contains("4")){
+                            apr.setOnClickListener(null);
+                            apr.setBackgroundResource(R.drawable.calendar_enabled_background);
+                            apr.setElevation(getResources().getDimensionPixelSize(R.dimen.short10));
+                        }else{
+                            apr.setOnClickListener(null);
+                            apr.setBackgroundResource(R.drawable.calendar_disabled_background);
+                            apr.setElevation(0);
+                        }
+
+
+                        if(calendar.get(s).contains("5")){
+                            may.setOnClickListener(null);
+                            may.setBackgroundResource(R.drawable.calendar_enabled_background);
+                            may.setElevation(getResources().getDimensionPixelSize(R.dimen.short10));
+                        }else{
+                            may.setOnClickListener(null);
+                            may.setBackgroundResource(R.drawable.calendar_disabled_background);
+                            may.setElevation(0);
+                        }
+
+
+                        if(calendar.get(s).contains("6")){
+                            jun.setOnClickListener(null);
+                            jun.setBackgroundResource(R.drawable.calendar_enabled_background);
+                            jun.setElevation(getResources().getDimensionPixelSize(R.dimen.short10));
+                        }else{
+                            jun.setOnClickListener(null);
+                            jun.setBackgroundResource(R.drawable.calendar_disabled_background);
+                            jun.setElevation(0);
+                        }
+
+
+                        if(calendar.get(s).contains("7")){
+                            jul.setOnClickListener(null);
+                            jul.setBackgroundResource(R.drawable.calendar_enabled_background);
+                            jul.setElevation(getResources().getDimensionPixelSize(R.dimen.short10));
+                        }else{
+                            jul.setOnClickListener(null);
+                            jul.setBackgroundResource(R.drawable.calendar_disabled_background);
+                            jul.setElevation(0);
+                        }
+
+                        if(calendar.get(s).contains("8")){
+                            aug.setOnClickListener(null);
+                            aug.setBackgroundResource(R.drawable.calendar_enabled_background);
+                            aug.setElevation(getResources().getDimensionPixelSize(R.dimen.short10));
+                        }else{
+                            aug.setOnClickListener(null);
+                            aug.setBackgroundResource(R.drawable.calendar_disabled_background);
+                            aug.setElevation(0);
+                        }
+
+
+                        if(calendar.get(s).contains("9")){
+                            sep.setOnClickListener(null);
+                            sep.setBackgroundResource(R.drawable.calendar_enabled_background);
+                            sep.setElevation(getResources().getDimensionPixelSize(R.dimen.short10));
+                        }else{
+                            sep.setOnClickListener(null);
+                            sep.setBackgroundResource(R.drawable.calendar_disabled_background);
+                            sep.setElevation(0);
+                        }
+
+
+                        if(calendar.get(s).contains("10")){
+                            oct.setOnClickListener(null);
+                            oct.setBackgroundResource(R.drawable.calendar_enabled_background);
+                            oct.setElevation(getResources().getDimensionPixelSize(R.dimen.short10));
+                        }else{
+                            oct.setOnClickListener(null);
+                            oct.setBackgroundResource(R.drawable.calendar_disabled_background);
+                            oct.setElevation(0);
+                        }
+
+
+                        if(calendar.get(s).contains("11")){
+                            nov.setOnClickListener(null);
+                            nov.setBackgroundResource(R.drawable.calendar_enabled_background);
+                            nov.setElevation(getResources().getDimensionPixelSize(R.dimen.short10));
+                        }else{
+                            nov.setOnClickListener(null);
+                            nov.setBackgroundResource(R.drawable.calendar_disabled_background);
+                            nov.setElevation(0);
+                        }
+
+
+                        if(calendar.get(s).contains("12")){
+                            dec.setOnClickListener(null);
+                            dec.setBackgroundResource(R.drawable.calendar_enabled_background);
+                            dec.setElevation(getResources().getDimensionPixelSize(R.dimen.short10));
+                        }else{
+                            dec.setOnClickListener(null);
+                            dec.setBackgroundResource(R.drawable.calendar_disabled_background);
+                            dec.setElevation(0);
+                        }
+
+                        monthsLayout.addView(v);
+
+
+                    }
                 }
+
+
 
                 for(String s : calendar.keySet()){
                     Log.d("PROVA",""+s);
