@@ -1,7 +1,10 @@
 package com.example.foodyrestaurant;
 
+import android.app.Dialog;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Bundle;
+import android.os.Environment;
 import android.support.annotation.NonNull;
 import android.support.constraint.ConstraintLayout;
 import android.support.design.widget.FloatingActionButton;
@@ -10,14 +13,27 @@ import android.support.design.widget.TextInputLayout;
 import android.support.v7.app.AppCompatActivity;
 import android.text.Editable;
 import android.text.TextWatcher;
+import android.util.Log;
 import android.view.View;
+import android.view.WindowManager;
 import android.widget.Toast;
 
 import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.Query;
+import com.google.firebase.database.ValueEventListener;
+import com.google.firebase.storage.FileDownloadTask;
+import com.google.firebase.storage.FirebaseStorage;
+import com.google.firebase.storage.StorageReference;
 
+import java.io.File;
 import java.util.regex.Pattern;
 
 public class Login extends AppCompatActivity {
@@ -27,19 +43,32 @@ public class Login extends AppCompatActivity {
     private FirebaseAuth firebaseAuth;
     private FloatingActionButton login;
     private boolean correctness;
+    private Dialog dialog;
+    private SharedPreferences prefs;
+    private final String MAIN_DIR = "user_utils";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         setTheme(R.style.AppTheme);
         super.onCreate(savedInstanceState);
 
+        prefs = this.getSharedPreferences("myPreference", MODE_PRIVATE);
+
         firebaseAuth = FirebaseAuth.getInstance();
         if (firebaseAuth.getCurrentUser() != null) {
-            Intent intent = new Intent(Login.this, MainActivity.class);
-            intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK);
-            intent.addFlags(Intent.FLAG_ACTIVITY_NO_ANIMATION);
-            startActivity(intent);
-            finish();
+            File root = getExternalFilesDir(Environment.DIRECTORY_DOCUMENTS);
+            final File directory = new File(root.getPath()+File.separator+MAIN_DIR);
+            final File image = new File(directory, firebaseAuth.getCurrentUser().getUid()+".jpg");
+            if(!image.exists()) {
+                loginAppear();
+                fetchData();
+            }else {
+                Intent intent = new Intent(Login.this, MainActivity.class);
+                intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK);
+                intent.addFlags(Intent.FLAG_ACTIVITY_NO_ANIMATION);
+                startActivity(intent);
+                finish();
+            }
         }
         else {
             setContentView(R.layout.login_layout);
@@ -95,6 +124,7 @@ public class Login extends AppCompatActivity {
                         passwordL.setError(getResources().getString(R.string.empty_password));
                         return;
                     }
+                    loginAppear();
                     firebaseAuth.signInWithEmailAndPassword(email.getText().toString(), password.getText().toString())
                             .addOnCompleteListener(new OnCompleteListener<AuthResult>() {
                                 @Override
@@ -107,6 +137,7 @@ public class Login extends AppCompatActivity {
                                         finish();
                                     } else {
                                         Toast.makeText(getApplicationContext(), R.string.login_failure, Toast.LENGTH_SHORT).show();
+                                        loginDisappear();
                                     }
                                 }
                             });
@@ -121,6 +152,122 @@ public class Login extends AppCompatActivity {
                 }
             });
         }
+    }
+
+    private void loginAppear(){
+        dialog = new Dialog(this);
+        dialog.setContentView(R.layout.loading_dialog);
+        WindowManager.LayoutParams lp = new WindowManager.LayoutParams();
+        lp.copyFrom(dialog.getWindow().getAttributes());
+        lp.width = WindowManager.LayoutParams.MATCH_PARENT;
+        lp.height = WindowManager.LayoutParams.MATCH_PARENT;
+        dialog.setCancelable(false);
+        dialog.show();
+        dialog.getWindow().setAttributes(lp);
+        dialog.getWindow().setBackgroundDrawableResource(android.R.color.transparent);
+    }
+
+    private void loginDisappear(){
+        dialog.dismiss();
+    }
+
+    private void fetchData(){
+
+        File root = getExternalFilesDir(Environment.DIRECTORY_DOCUMENTS);
+        final File directory = new File(root.getPath()+File.separator+MAIN_DIR);
+        if(directory.exists()){
+            for(File f : directory.listFiles())
+                f.delete();
+            directory.delete();
+        }
+        directory.mkdirs();
+
+        prefs.edit().putString("id", firebaseAuth.getCurrentUser().getUid()).apply();
+
+        final DatabaseReference database = FirebaseDatabase.getInstance().getReference().child("restaurantsInfo");
+        Query query = database.child(firebaseAuth.getCurrentUser().getUid()).child("info");
+        query.addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                final RestaurantInfo info = dataSnapshot.getValue(RestaurantInfo.class);
+                if(info.getUsername() != null){
+                    if(info.getUsername().length() > 0){
+                        prefs.edit().putString("name", info.getUsername()).apply();
+                    }else{
+                        prefs.edit().remove("name").apply();
+                    }
+                }else {
+                    prefs.edit().remove("name").apply();
+                }
+
+                if(info.getEmail()!=null){
+                    if(info.getEmail().length() > 0){
+                        prefs.edit().putString("email", info.getEmail()).apply();
+                    }else{
+                        prefs.edit().remove("email").apply();
+                    }
+                }else {
+                    prefs.edit().remove("email").apply();
+                }
+
+                if(info.getAddress()!=null){
+                    if(info.getAddress().length() > 0){
+                        prefs.edit().putString("address", info.getAddress()).apply();
+                    }else{
+                        prefs.edit().remove("address").apply();
+                    }
+                }else {
+                    prefs.edit().remove("address").apply();
+                }
+
+                if(info.getNumberPhone()!=null){
+                    if(info.getNumberPhone().length()>0){
+                        prefs.edit().putString("phoneNumber", info.getNumberPhone()).apply();
+                    }else {
+                        prefs.edit().remove("phoneNumber").apply();
+                    }
+                }else {
+                    prefs.edit().remove("phoneNumber").apply();
+                }
+
+                StorageReference mStorageRef = FirebaseStorage.getInstance().getReference();
+
+
+                if(info.getImagePath()!=null){
+                    final File image = new File(directory, firebaseAuth.getCurrentUser().getUid()+".jpg");
+                    mStorageRef.child(info.getImagePath()).getFile(image).addOnSuccessListener(new OnSuccessListener<FileDownloadTask.TaskSnapshot>() {
+                        @Override
+                        public void onSuccess(FileDownloadTask.TaskSnapshot taskSnapshot) {
+                            prefs.edit().putString("imgLocale",image.getPath()).apply();
+                            prefs.edit().putString("imgRemote",info.getImagePath()).apply();
+                            Toast.makeText(getApplicationContext(), R.string.login_success, Toast.LENGTH_SHORT).show();
+                            Intent intent = new Intent(Login.this, MainActivity.class);
+                            intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK);
+                            startActivity(intent);
+                            finish();
+                        }
+                    });
+                }else{
+                    prefs.edit().remove("imgLocale").apply();
+                    prefs.edit().remove("imgRemote").apply();
+                    Toast.makeText(getApplicationContext(), R.string.login_success, Toast.LENGTH_SHORT).show();
+                    Intent intent = new Intent(Login.this, MainActivity.class);
+                    intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK);
+                    startActivity(intent);
+                    finish();
+                }
+
+
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError databaseError) {
+                Toast.makeText(getApplicationContext(), R.string.login_failure, Toast.LENGTH_SHORT).show();
+                prefs.edit().putBoolean("allFilesFetched",false).apply();
+                loginDisappear();
+            }
+        });
+
     }
 
     private void checkMail(){

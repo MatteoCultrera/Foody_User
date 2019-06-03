@@ -139,7 +139,6 @@ public class RestaurantView extends AppCompatActivity {
                 tabs.setupWithViewPager(viewPager);
             }
         });
-
         addReview.setVisibility(View.GONE);
         tabs.addOnTabSelectedListener(new TabLayout.OnTabSelectedListener() {
             @Override
@@ -241,7 +240,6 @@ public class RestaurantView extends AppCompatActivity {
     }
 
     public void cardsFromFile(){
-        Log.d("LIFECYCLE","CardsFromFile()");
         Log.d("MAD3","ON cards From File");
         final int set = session;
         File cardFile = new File(storage, CARDS);
@@ -698,7 +696,6 @@ public class RestaurantView extends AppCompatActivity {
 
         if(set == session){
             reviews = handler.getReviews(reviewsFile);
-            Log.d("PROVATRE","called init from reviewsFromFile()");
             showReview.init(reviews);
         }
     }
@@ -1014,7 +1011,6 @@ public class RestaurantView extends AppCompatActivity {
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
                 if(set == session){
-                    Log.d("PROVATRE","reviews = new arrayList on fetchReviews()");
                     reviews = new ArrayList<>();
                     for (DataSnapshot ds : dataSnapshot.getChildren()) {
                         String reviewID = ds.getKey();
