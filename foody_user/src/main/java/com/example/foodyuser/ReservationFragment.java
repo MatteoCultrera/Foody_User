@@ -7,9 +7,11 @@ import android.support.annotation.NonNull;
 import android.support.v4.app.Fragment;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
 
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
@@ -22,7 +24,9 @@ import com.google.firebase.database.ValueEventListener;
 
 import java.io.File;
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.Comparator;
+import java.util.HashMap;
 import java.util.Objects;
 
 import static android.content.Context.MODE_PRIVATE;
@@ -39,9 +43,11 @@ public class ReservationFragment extends Fragment {
     private SharedPreferences sharedPreferences;
     private View thisView;
     private MainActivity father;
+    private Button button;
     private int pending;
     private int doing;
     private int done;
+    private RVAdapterRes adapter;
 
     public ReservationFragment() {
     }
@@ -54,6 +60,7 @@ public class ReservationFragment extends Fragment {
     public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_reservation, container, false);
         reservationRecycler = view.findViewById(R.id.user_reservation_order_list);
+        button = view.findViewById(R.id.button);
         return view;
     }
 
@@ -78,6 +85,12 @@ public class ReservationFragment extends Fragment {
         firebaseAuth = FirebaseAuth.getInstance();
         firebaseUser = firebaseAuth.getCurrentUser();
         storageDir = Objects.requireNonNull(getActivity()).getExternalFilesDir(Environment.DIRECTORY_DOCUMENTS);
+        button.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                removeRejected();
+            }
+        });
 
         LinearLayoutManager llm = new LinearLayoutManager(view.getContext());
         reservationRecycler.setLayoutManager(llm);
@@ -130,12 +143,11 @@ public class ReservationFragment extends Fragment {
                         reservations.sort(new Comparator<Reservation>() {
                             @Override
                             public int compare(Reservation o1, Reservation o2) {
-
                                 return o1.getOrderTime().compareTo(o2.getOrderTime());
                             }
                         });
 
-                        final RVAdapterRes adapter = new RVAdapterRes(reservations);
+                        adapter = new RVAdapterRes(reservations);
                         reservationRecycler.setAdapter(adapter);
 
                         database.child(firebaseUser.getUid()).addValueEventListener(new ValueEventListener() {
@@ -238,5 +250,50 @@ public class ReservationFragment extends Fragment {
     @Override
     public void onResume() {
         super.onResume();
+    }
+
+    public void removeOrder(String Id){
+        int index = 0;
+        for(Reservation r : reservations){
+            if (Id.contains(r.getReservationID())) {
+                reservations.remove(r);
+                adapter.notifyItemRemoved(index);
+                adapter.notifyItemRangeChanged(index, reservations.size());
+                break;
+            }
+            index++;
+        }
+    }
+
+    public void removeRejected(){
+        Log.d("SWSW", "ho cliccato");
+        int index = 0;
+        for(Reservation r : reservations){
+            if(r.getPreparationStatusString().equals("Rejected")){
+                reservations.remove(r);
+                adapter.notifyItemRemoved(index);
+                adapter.notifyItemRangeChanged(index, reservations.size());
+
+                Calendar calendar = Calendar.getInstance();
+                String monthYear = calendar.get(Calendar.MONTH) + "-" + calendar.get(Calendar.YEAR);
+                DatabaseReference databaseArc = FirebaseDatabase.getInstance().getReference()
+                        .child("archive").child("user").child(firebaseUser.getUid()).child(monthYear);
+                String orderId = firebaseUser.getUid() + r.getReservationID();
+                ArrayList<OrderItem> dishes = new ArrayList<>();
+                for(Dish d : r.getDishesOrdered()){
+                    OrderItem dish = new OrderItem();
+                    dish.setPieces(d.getQuantity());
+                    dish.setOrderName(d.getDishName());
+                    dish.setPrice(d.getPrice());
+                    dishes.add(dish);
+                }
+                ReservationDBUser reservationDBUser = new ReservationDBUser(orderId, r.getRestaurantID(), dishes,
+                        false, r.getResNote(), r.getOrderTime(), r.getPreparationStatusString(), r.getTotalCost());
+                HashMap<String, Object> childSelf = new HashMap<>();
+                childSelf.put(orderId, reservationDBUser);
+                databaseArc.updateChildren(childSelf);
+            }
+            index++;
+        }
     }
 }

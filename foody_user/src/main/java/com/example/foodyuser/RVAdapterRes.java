@@ -125,6 +125,7 @@ public class RVAdapterRes extends RecyclerView.Adapter<RVAdapterRes.CardViewHold
                 break;
             case("rejected"):
                 status = resources.getString(R.string.rejected);
+                break;
             default:
                 status = "";
                 break;
