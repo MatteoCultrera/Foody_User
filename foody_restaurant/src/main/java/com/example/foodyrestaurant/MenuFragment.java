@@ -9,6 +9,7 @@ import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.Fragment;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -24,6 +25,7 @@ import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.Query;
 import com.google.firebase.database.ValueEventListener;
+import com.google.firebase.storage.FileDownloadTask;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
 
@@ -39,8 +41,13 @@ public class MenuFragment extends Fragment {
     private final JsonHandler jsonHandler = new JsonHandler();
     private ArrayList<Card> cards;
     private FirebaseUser user;
+    private MainActivity father;
 
     public MenuFragment() {}
+
+    public void setFather(MainActivity father){
+        this.father = father;
+    }
 
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
@@ -79,70 +86,71 @@ public class MenuFragment extends Fragment {
         final ImageView profileImage = view.findViewById(R.id.mainImage);
         final ImageView profileShadow = view.findViewById(R.id.shadow);
 
+        Uri photoProfile = father.getPhotoProfile();
+        if (photoProfile == null) {
+            final DatabaseReference databaseI = FirebaseDatabase.getInstance().getReference().child("restaurantsInfo");
+            Query query = databaseI.child(firebaseAuth.getCurrentUser().getUid()).child("info");
+            query.addListenerForSingleValueEvent(new ValueEventListener() {
+                @Override
+                public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                    RestaurantInfo info = dataSnapshot.getValue(RestaurantInfo.class);
+                    StorageReference mStorageRef = FirebaseStorage.getInstance().getReference();
+                    if(info.getImagePath() != null) {
+                        mStorageRef.child(info.getImagePath()).getDownloadUrl().addOnSuccessListener(new OnSuccessListener<Uri>() {
+                            @Override
+                            public void onSuccess(Uri uri) {
+                                father.setPhotoProfile(uri);
+                                Glide
+                                        .with(profileImage.getContext())
+                                        .load(uri)
+                                        .into(profileImage);
+                                Glide
+                                        .with(profileShadow.getContext())
+                                        .load(R.drawable.shadow)
+                                        .into(profileShadow);
+                            }
+                        }).addOnFailureListener(new OnFailureListener() {
+                            @Override
+                            public void onFailure(@NonNull Exception e) {
+                                Glide
+                                        .with(profileImage.getContext())
+                                        .load(R.drawable.profile_placeholder)
+                                        .into(profileImage);
+                                Glide
+                                        .with(profileShadow.getContext())
+                                        .load(R.drawable.shadow)
+                                        .into(profileShadow);
+                            }
+                        });
+                    }
+                }
+
+                @Override
+                public void onCancelled(@NonNull DatabaseError databaseError) {
+                    Glide
+                            .with(profileImage.getContext())
+                            .load(R.drawable.profile_placeholder)
+                            .into(profileImage);
+                    Glide
+                            .with(profileShadow.getContext())
+                            .load(R.drawable.shadow)
+                            .into(profileShadow);
+                }
+            });
+        }else{
+            Glide
+                    .with(profileImage.getContext())
+                    .load(photoProfile)
+                    .into(profileImage);
+            Glide
+                    .with(profileShadow.getContext())
+                    .load(R.drawable.shadow)
+                    .into(profileShadow);
+        }
+
         new Thread(new Runnable() {
             @Override
             public void run() {
-                final DatabaseReference databaseI = FirebaseDatabase.getInstance().getReference().child("restaurantsInfo");
-                Query query = databaseI.child(firebaseAuth.getCurrentUser().getUid()).child("info");
-                query.addListenerForSingleValueEvent(new ValueEventListener() {
-                    @Override
-                    public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-                        RestaurantInfo info = dataSnapshot.getValue(RestaurantInfo.class);
-                        StorageReference mStorageRef = FirebaseStorage.getInstance().getReference();
-                        if(info.getImagePath() != null) {
-                            mStorageRef.child(info.getImagePath()).getDownloadUrl()
-                                    .addOnSuccessListener(new OnSuccessListener<Uri>() {
-                                        @Override
-                                        public void onSuccess(Uri uri) {
-                                            Glide
-                                                    .with(profileImage.getContext())
-                                                    .load(uri)
-                                                    .into(profileImage);
-                                            Glide
-                                                    .with(profileShadow.getContext())
-                                                    .load(R.drawable.shadow)
-                                                    .into(profileShadow);
-                                        }
-                                    })
-                                    .addOnFailureListener(new OnFailureListener() {
-                                        @Override
-                                        public void onFailure(@NonNull Exception e) {
-                                            Glide
-                                                    .with(profileImage.getContext())
-                                                    .load(R.drawable.profile_placeholder)
-                                                    .into(profileImage);
-                                            Glide
-                                                    .with(profileShadow.getContext())
-                                                    .load(R.drawable.shadow)
-                                                    .into(profileShadow);
-                                        }
-                                    });
-                        }else{
-                            Glide
-                                    .with(profileImage.getContext())
-                                    .load(R.drawable.profile_placeholder)
-                                    .into(profileImage);
-                            Glide
-                                    .with(profileShadow.getContext())
-                                    .load(R.drawable.shadow)
-                                    .into(profileShadow);
-                        }
-                    }
-
-                    @Override
-                    public void onCancelled(@NonNull DatabaseError databaseError) {
-                        Glide
-                                .with(profileImage.getContext())
-                                .load(R.drawable.profile_placeholder)
-                                .into(profileImage);
-                        Glide
-                                .with(profileShadow.getContext())
-                                .load(R.drawable.shadow)
-                                .into(profileShadow);
-                    }
-                });
-
-
                 DatabaseReference database = FirebaseDatabase.getInstance().getReference();
                 DatabaseReference ref = database.child("restaurantsMenu").child(user.getUid());
                 ref.addValueEventListener(new ValueEventListener() {
@@ -157,6 +165,12 @@ public class MenuFragment extends Fragment {
                         }
                         RVAdapter adapter = new RVAdapter(cards, mySelf);
                         menu.setAdapter(adapter);
+                        final String JSON_PATH = "menuCopy.json";
+                        File file = new File(storageDir, JSON_PATH);
+                        if(cards != null){
+                            String json = jsonHandler.toJSON(cards);
+                            jsonHandler.saveStringToFile(json, file);
+                        }
                     }
 
                     @Override
@@ -167,6 +181,7 @@ public class MenuFragment extends Fragment {
                     @Override
                     public void onClick(View v) {
                         Intent intent = new Intent(getActivity(), MenuEdit.class);
+                        father.clearHashMap();
                         startActivity(intent);
                     }
                 });
@@ -188,5 +203,13 @@ public class MenuFragment extends Fragment {
                 child.put(Integer.toString(i), cards.get(i));
         }
         database.updateChildren(child);
+    }
+
+    public Uri getPhotoDish(String name){
+        return father.getPhotoDish(name);
+    }
+
+    public void setPhotoDish(String name, Uri photo){
+        father.setPhotoDish(name, photo);
     }
 }

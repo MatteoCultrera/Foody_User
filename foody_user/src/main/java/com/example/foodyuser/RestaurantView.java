@@ -9,6 +9,7 @@ import android.content.SharedPreferences;
 import android.net.Uri;
 import android.os.Environment;
 import android.support.annotation.NonNull;
+import android.support.annotation.Nullable;
 import android.support.constraint.ConstraintLayout;
 import android.support.design.button.MaterialButton;
 import android.support.design.widget.AppBarLayout;
@@ -32,19 +33,23 @@ import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.RatingBar;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.annotation.GlideOption;
 import com.bumptech.glide.request.RequestOptions;
 import com.bumptech.glide.signature.ObjectKey;
 import com.example.foody_library.Review;
+import com.github.ybq.android.spinkit.SpinKitView;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.MutableData;
 import com.google.firebase.database.Query;
+import com.google.firebase.database.Transaction;
 import com.google.firebase.database.ValueEventListener;
 import com.google.firebase.storage.FileDownloadTask;
 import com.google.firebase.storage.FirebaseStorage;
@@ -56,6 +61,9 @@ import java.util.Calendar;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Locale;
+import java.util.concurrent.TimeUnit;
+import java.util.concurrent.atomic.AtomicInteger;
 
 public class RestaurantView extends AppCompatActivity {
 
@@ -83,6 +91,13 @@ public class RestaurantView extends AppCompatActivity {
     private ConstraintLayout totalLayout, addReview;
     private final String RESTAURANT_IMAGES = "RestaurantImages";
     int session;
+    private boolean reviewAdded = false;
+    private SpinKitView addReviewLoading;
+    private TextView addReviewText;
+    private boolean isOnPause;
+    private Review localeReview;
+    private AppBarLayout appBarLayout;
+    private AtomicInteger counter;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -93,39 +108,38 @@ public class RestaurantView extends AppCompatActivity {
         viewPager = findViewById(R.id.htab_viewpager);
         toolbar = findViewById(R.id.htab_toolbar);
         background = findViewById(R.id.htab_header);
+        appBarLayout = findViewById(R.id.htab_appbar);
         totalText = findViewById(R.id.price_show_frag);
         totalLayout = findViewById(R.id.price_show_layout_frag);
         price = findViewById(R.id.restaurant_del_price_frag);
         addReview = findViewById(R.id.add_review);
+        addReviewLoading = findViewById(R.id.add_review_loading);
+        addReviewText = findViewById(R.id.add_review_text);
         showMenu = new ShowMenuFragment();
         showInfo = new ShowInfoFragment();
         showReview = new ShowReviewFragment();
         totalLayout.getLayoutTransition().enableTransitionType(LayoutTransition.CHANGING);
+        addReview.getLayoutTransition().enableTransitionType(LayoutTransition.CHANGING);
         session = 0;
+        localeReview = null;
+        counter = new AtomicInteger();
+        Log.d("LIFECYCLE","OnCreate()");
     }
 
 
     private void init(){
-
         Log.d("PROVA","Into init");
-
-
         showMenu.setFather(this);
         showReview.setFather(this);
-
-
         setupViewPager(viewPager);
-
         viewPager.setOffscreenPageLimit(3);
-
         tabs.post(new Runnable() {
             @Override
             public void run() {
                 tabs.setupWithViewPager(viewPager);
             }
         });
-
-
+        addReview.setVisibility(View.GONE);
         tabs.addOnTabSelectedListener(new TabLayout.OnTabSelectedListener() {
             @Override
             public void onTabSelected(TabLayout.Tab tab) {
@@ -179,7 +193,11 @@ public class RestaurantView extends AppCompatActivity {
 
         }
 
-        setAddReview(this);
+        if(showReview.notReady())
+            disableAddReview();
+        else
+            enableAddReview();
+
 
         File root = getExternalFilesDir(Environment.DIRECTORY_PICTURES);
         storage = new File(root.getPath()+File.separator+DIRECTORY_IMAGES);
@@ -192,8 +210,8 @@ public class RestaurantView extends AppCompatActivity {
             //Fetches the menu and automatically adds it to fragment
             fetchMenu();
             //Fetches the reviews and automatically adds them to fragment
+            Log.d("PROVATRE","called FetchReviews from init()");
             fetchReviews();
-
             updateTotal();
 
         }else{
@@ -206,11 +224,18 @@ public class RestaurantView extends AppCompatActivity {
                 showInfo.init(thisRestaurant);
             }
             cardsFromFile();
+            Log.d("PROVATRE","called reviewsFromFile from init()");
             reviewsFromFile();
             updateTotal();
-
         }
 
+
+        if(counter.intValue() == 5 && !isOnPause && localeReview != null){
+            enableAddReview();
+            reviews.add(localeReview);
+            showReview.notifyAdded(reviews.size()-1);
+            localeReview = null;
+        }
 
     }
 
@@ -229,34 +254,62 @@ public class RestaurantView extends AppCompatActivity {
 
     }
 
+    public void disableAddReview(){
+        addReview.setBackgroundResource(R.drawable.add_review_background_dis);
+        addReview.setClickable(false);
+        addReviewText.setVisibility(View.VISIBLE);
+        addReviewLoading.setVisibility(View.GONE);
+        addReview.setOnClickListener(null);
+    }
+
+    public void enableAddReview(){
+        addReview.setBackgroundResource(R.drawable.add_review_background);
+        addReview.setClickable(true);
+        addReviewText.setVisibility(View.VISIBLE);
+        addReviewLoading.setVisibility(View.GONE);
+        setAddReview(this);
+    }
+
+    public void loadAddReview(){
+        addReview.setBackgroundResource(R.drawable.add_review_background_dis);
+        addReview.setClickable(true);
+        addReviewText.setVisibility(View.GONE);
+        addReviewLoading.setVisibility(View.VISIBLE);
+        addReview.setOnClickListener(null);
+    }
+
     public void setAddReview(final Context context){
         addReview.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if(showReview.notReady())
-                    return;
-                if(showMenu.notReady())
-                    return;
-
-
 
                 final Dialog dialog = new Dialog(context);
                 dialog.setContentView(R.layout.review_dialog);
 
-                final EditText edit = (EditText)dialog.findViewById(R.id.review_comment);
-                ImageView image = (ImageView)dialog.findViewById(R.id.review_image);
-                TextView name = (TextView)dialog.findViewById(R.id.review_restaurant_name);
-                final RatingBar rating = (RatingBar)dialog.findViewById(R.id.review_rating);
-                final ConstraintLayout mainLayout = (ConstraintLayout)dialog.findViewById(R.id.layout);
-                final ConstraintLayout imageLayout = (ConstraintLayout)dialog.findViewById(R.id.review_image_layout);
-                final MaterialButton button = (MaterialButton)dialog.findViewById(R.id.review_submit);
+                final EditText edit = dialog.findViewById(R.id.review_comment);
+                ImageView image = dialog.findViewById(R.id.review_image);
+                TextView name = dialog.findViewById(R.id.review_restaurant_name);
+                final RatingBar rating = dialog.findViewById(R.id.review_rating);
+                final RatingBar ratingTwo = dialog.findViewById(R.id.review_rating_two);
+                final RatingBar ratingThree = dialog.findViewById(R.id.review_rating_three);
+                final TextView ratingText = dialog.findViewById(R.id.review_points);
+                final TextView ratingTextTwo = dialog.findViewById(R.id.review_points_two);
+                final TextView ratingTextThree = dialog.findViewById(R.id.review_points_three);
+                final TextView ratingTextHint = dialog.findViewById(R.id.review_rating_text);
+                final TextView ratingTextHintTwo = dialog.findViewById(R.id.review_rating_text_two);
+                final TextView ratingTextHintThree = dialog.findViewById(R.id.review_rating_text_three);
+                final ConstraintLayout mainLayout = dialog.findViewById(R.id.layout);
+                final ConstraintLayout imageLayout = dialog.findViewById(R.id.review_image_layout);
+                final MaterialButton button = dialog.findViewById(R.id.review_submit);
 
                 button.setVisibility(View.GONE);
-
                 edit.clearFocus();
-
+                ratingText.setVisibility(View.GONE);
+                ratingTextTwo.setVisibility(View.GONE);
+                ratingTextThree.setVisibility(View.GONE);
+                mainLayout.getLayoutTransition().enableTransitionType(LayoutTransition.CHANGING);
+                imageLayout.getLayoutTransition().enableTransitionType(LayoutTransition.CHANGING);
                 name.setText(thisRestaurant.getUsername());
-
                 File resim  = new File(thisRestaurant.getImagePath());
                 RequestOptions options = new RequestOptions();
                 options.signature(new ObjectKey(resim.getName()+" "+resim.lastModified()));
@@ -271,7 +324,6 @@ public class RestaurantView extends AppCompatActivity {
                     @Override
                     public boolean onKey(DialogInterface arg0, int keyCode,
                                          KeyEvent event) {
-                        // TODO Auto-generated method stub
                         if (keyCode == KeyEvent.KEYCODE_BACK) {
                             if(button.getVisibility() == View.VISIBLE){
                                 button.animate().translationY(-getResources().getDimensionPixelSize(R.dimen.short200)).withEndAction(new Runnable() {
@@ -310,6 +362,215 @@ public class RestaurantView extends AppCompatActivity {
                     @Override
                     public void onClick(View v) {
 
+                        counter.set(0);
+
+                        loadAddReview();
+
+                        String localePath = null;
+                        String remotePath = null;
+                        String notes = null;
+                        if(edit.getText().toString().length() > 0)
+                            notes = edit.getText().toString();
+
+                        float meanPoints = (rating.getRating()+ratingTwo.getRating()+ratingThree.getRating())/3;
+
+
+                        if(shared.contains("imgLocale"))
+                            localePath = shared.getString("imgLocale","");
+                        if(shared.contains("imgRemote"))
+                            remotePath = shared.getString("imgRemote","");
+
+                        final String identifier = shared.getString("id","") + System.currentTimeMillis();
+
+                        localeReview = new Review(identifier,
+                                shared.getString("id",""),
+                                shared.getString("name",""),
+                                localePath, notes, meanPoints);
+
+                        Review remoteReview = new Review(identifier,
+                                shared.getString("id",""),
+                                shared.getString("name",""),
+                                remotePath, notes, meanPoints);
+
+                        final DatabaseReference meanFoodQuality = FirebaseDatabase.getInstance().getReference()
+                                .child("restaurantsInfo").child(thisRestaurant.getUid()).child("info").child("meanFoodQuality");
+
+                        final DatabaseReference meanRestaurantService = FirebaseDatabase.getInstance().getReference()
+                                .child("restaurantsInfo").child(thisRestaurant.getUid()).child("info").child("meanRestaurantService");
+
+
+                        final DatabaseReference meanDeliveryTime = FirebaseDatabase.getInstance().getReference()
+                                .child("restaurantsInfo").child(thisRestaurant.getUid()).child("info").child("meanDeliveryTime");
+
+
+                        final DatabaseReference totalReviews = FirebaseDatabase.getInstance().getReference()
+                                .child("restaurantsInfo").child(thisRestaurant.getUid()).child("info").child("totalReviews");
+
+
+                        meanFoodQuality.runTransaction(new Transaction.Handler() {
+                            @NonNull
+                            @Override
+                            public Transaction.Result doTransaction(@NonNull MutableData mutableData) {
+                                float toAdd = rating.getRating();
+
+                                if(mutableData.getValue() == null)
+                                    mutableData.setValue(toAdd);
+                                else {
+                                    Double mutValue = Double.valueOf(mutableData.getValue().toString());
+                                    mutableData.setValue(mutValue+toAdd);
+
+                                }
+
+                                return Transaction.success(mutableData);
+                            }
+
+                            @Override
+                            public void onComplete(@Nullable DatabaseError databaseError, boolean b, @Nullable DataSnapshot dataSnapshot) {
+
+                                if(!b){
+                                    Log.d("PROVAPROVA","Error meanFoodQuality"+databaseError.getMessage()+" "+databaseError.getDetails());
+                                }
+
+                                counter.getAndIncrement();
+                                if(counter.intValue() == 5 && !isOnPause){
+                                    enableAddReview();
+                                    reviews.add(localeReview);
+                                    showReview.notifyAdded(reviews.size()-1);
+                                    localeReview = null;
+                                }
+                            }
+                        });
+
+                        meanRestaurantService.runTransaction(new Transaction.Handler() {
+                            @NonNull
+                            @Override
+                            public Transaction.Result doTransaction(@NonNull MutableData mutableData) {
+                                float toAdd = ratingTwo.getRating();
+
+                                if(mutableData.getValue() == null)
+                                    mutableData.setValue(toAdd);
+                                else {
+                                    Double mutValue = Double.valueOf(mutableData.getValue().toString());
+                                    mutableData.setValue(mutValue+toAdd);
+
+                                }
+
+                                return Transaction.success(mutableData);
+                            }
+
+                            @Override
+                            public void onComplete(@Nullable DatabaseError databaseError, boolean b, @Nullable DataSnapshot dataSnapshot) {
+
+                                if(!b){
+                                    Log.d("PROVAPROVA","Error meanRestaurantService"+databaseError.getMessage()+" "+databaseError.getDetails());
+                                }
+
+                                counter.getAndIncrement();
+                                if(counter.intValue() == 5 && !isOnPause){
+                                    enableAddReview();
+                                    reviews.add(localeReview);
+                                    showReview.notifyAdded(reviews.size()-1);
+                                    localeReview = null;
+                                }
+                            }
+                        });
+
+                        meanDeliveryTime.runTransaction(new Transaction.Handler() {
+                            @NonNull
+                            @Override
+                            public Transaction.Result doTransaction(@NonNull MutableData mutableData) {
+                                float toAdd = ratingThree.getRating();
+
+                                if(mutableData.getValue() == null)
+                                    mutableData.setValue(toAdd);
+                                else {
+                                    Double mutValue = Double.valueOf(mutableData.getValue().toString());
+                                    mutableData.setValue(mutValue+toAdd);
+
+                                }
+
+                                return Transaction.success(mutableData);
+                            }
+
+                            @Override
+                            public void onComplete(@Nullable DatabaseError databaseError, boolean b, @Nullable DataSnapshot dataSnapshot) {
+
+                                if(!b){
+                                    Log.d("PROVAPROVA","Error meanDeliveryTime"+databaseError.getMessage()+" "+databaseError.getDetails());
+                                }
+
+                                counter.getAndIncrement();
+                                if(counter.intValue() == 5 && !isOnPause){
+                                    enableAddReview();
+                                    reviews.add(localeReview);
+                                    showReview.notifyAdded(reviews.size()-1);
+                                    localeReview = null;
+                                }
+                            }
+                        });
+
+                        totalReviews.runTransaction(new Transaction.Handler() {
+                            @NonNull
+                            @Override
+                            public Transaction.Result doTransaction(@NonNull MutableData mutableData) {
+
+                                if(mutableData.getValue() == null)
+                                    mutableData.setValue(1);
+                                else {
+                                    mutableData.setValue((Long)mutableData.getValue() + 1);
+
+                                }
+
+                                return Transaction.success(mutableData);
+                            }
+
+                            @Override
+                            public void onComplete(@Nullable DatabaseError databaseError, boolean b, @Nullable DataSnapshot dataSnapshot) {
+
+                                if(!b){
+                                    Log.d("PROVAPROVA","Error "+databaseError.getMessage()+" "+databaseError.getDetails());
+                                }
+
+                                counter.getAndIncrement();
+                                if(counter.intValue() == 5 && !isOnPause){
+                                    enableAddReview();
+                                    reviews.add(localeReview);
+                                    showReview.notifyAdded(reviews.size()-1);
+                                    localeReview = null;
+                                }
+                            }
+                        });
+
+                        DatabaseReference databaseRest = FirebaseDatabase.getInstance().getReference()
+                                .child("reviews").child(thisRestaurant.getUid());
+                        HashMap<String, Object> childReviews = new HashMap<>();
+                        childReviews.put(identifier, remoteReview);
+                        databaseRest.updateChildren(childReviews).addOnSuccessListener(new OnSuccessListener<Void>() {
+                            @Override
+                            public void onSuccess(Void aVoid) {
+                                counter.getAndIncrement();
+                                if(counter.intValue() == 5 && !isOnPause){
+                                    enableAddReview();
+                                    reviews.add(localeReview);
+                                    showReview.notifyAdded(reviews.size()-1);
+                                    localeReview = null;
+                                }
+                            }
+                        }).addOnFailureListener(new OnFailureListener() {
+                            @Override
+                            public void onFailure(@NonNull Exception e) {
+                                Toast.makeText(getApplicationContext(),"Error Adding Review",Toast.LENGTH_SHORT);
+                                counter.getAndIncrement();
+                                if(counter.intValue() == 5 && !isOnPause){
+                                    enableAddReview();
+                                    reviews.add(localeReview);
+                                    showReview.notifyAdded(reviews.size()-1);
+                                    localeReview = null;
+                                }
+                            }
+                        });
+
+
                         button.animate().translationY(-getResources().getDimensionPixelSize(R.dimen.short200)).withEndAction(new Runnable() {
                             @Override
                             public void run() {
@@ -329,23 +590,85 @@ public class RestaurantView extends AppCompatActivity {
                     }
                 });
 
+                rating.setOnTouchListener(new View.OnTouchListener() {
+                    @Override
+                    public boolean onTouch(View v, MotionEvent event) {
+                        if(ratingText.getVisibility() == View.GONE)
+                            ratingText.setVisibility(View.VISIBLE);
+
+                        ratingText.setText(String.format("%.1f",rating.getRating()));
+
+                        return false;
+                    }
+                });
+
+                ratingTwo.setOnTouchListener(new View.OnTouchListener() {
+                    @Override
+                    public boolean onTouch(View v, MotionEvent event) {
+                        if(ratingTextTwo.getVisibility() == View.GONE)
+                            ratingTextTwo.setVisibility(View.VISIBLE);
+                        ratingTextTwo.setText(String.format("%.1f",ratingTwo.getRating()));
+                        return false;
+                    }
+                });
+
+
+                ratingThree.setOnTouchListener(new View.OnTouchListener() {
+                    @Override
+                    public boolean onTouch(View v, MotionEvent event) {
+                        if(ratingTextThree.getVisibility() == View.GONE)
+                            ratingTextThree.setVisibility(View.VISIBLE);
+                        ratingTextThree.setText(String.format("%.1f",ratingThree.getRating()));
+                        return false;
+                    }
+                });
+
                 rating.setOnRatingBarChangeListener(new RatingBar.OnRatingBarChangeListener() {
                     @Override
                     public void onRatingChanged(RatingBar ratingBar, float rating, boolean fromUser) {
-                        button.setVisibility(View.VISIBLE);
-                        button.setY(-200);
-                        button.animate().translationY(0).start();
+                        if(button.getVisibility() == View.GONE && ratingTextTwo.getVisibility() == View.VISIBLE && ratingTextThree.getVisibility() == View.VISIBLE){
+                            button.setVisibility(View.VISIBLE);
+                            button.setY(-200);
+                            button.animate().translationY(0).start();
+                        }
+                    }
+                });
+
+                ratingTwo.setOnRatingBarChangeListener(new RatingBar.OnRatingBarChangeListener() {
+                    @Override
+                    public void onRatingChanged(RatingBar ratingBar, float rating, boolean fromUser) {
+                        if(button.getVisibility() == View.GONE && ratingText.getVisibility() == View.VISIBLE && ratingTextThree.getVisibility() == View.VISIBLE){
+                            button.setVisibility(View.VISIBLE);
+                            button.setY(-200);
+                            button.animate().translationY(0).start();
+                        }
+                    }
+                });
+
+                ratingThree.setOnRatingBarChangeListener(new RatingBar.OnRatingBarChangeListener() {
+                    @Override
+                    public void onRatingChanged(RatingBar ratingBar, float rating, boolean fromUser) {
+                        if(button.getVisibility() == View.GONE && ratingText.getVisibility() == View.VISIBLE && ratingTextTwo.getVisibility() == View.VISIBLE){
+                            button.setVisibility(View.VISIBLE);
+                            button.setY(-200);
+                            button.animate().translationY(0).start();
+                        }
                     }
                 });
 
                 WindowManager.LayoutParams lp = new WindowManager.LayoutParams();
                 lp.copyFrom(dialog.getWindow().getAttributes());
                 lp.width = WindowManager.LayoutParams.MATCH_PARENT;
-                lp.height = WindowManager.LayoutParams.WRAP_CONTENT;
+                lp.height = WindowManager.LayoutParams.MATCH_PARENT;
                 mainLayout.setY(getResources().getDimensionPixelSize(R.dimen.short800));
                 imageLayout.setY(getResources().getDimensionPixelSize(R.dimen.short800));
                 edit.setAlpha(0);
                 rating.setAlpha(0);
+                ratingTwo.setAlpha(0);
+                ratingThree.setAlpha(0);
+                ratingTextHint.setAlpha(0);
+                ratingTextHintTwo.setAlpha(0);
+                ratingTextHintThree.setAlpha(0);
                 dialog.show();
                 mainLayout.animate().translationY(0).setDuration(300).start();
                 imageLayout.animate().translationY(0).setDuration(400).withEndAction(new Runnable() {
@@ -353,17 +676,18 @@ public class RestaurantView extends AppCompatActivity {
                     public void run() {
                         edit.animate().alpha(1).setDuration(600).start();
                         rating.animate().alpha(1).setDuration(600).start();
+                        ratingTwo.animate().alpha(1).setDuration(600).start();
+                        ratingThree.animate().alpha(1).setDuration(600).start();
+                        ratingTextHint.animate().alpha(1).setDuration(600).start();
+                        ratingTextHintTwo.animate().alpha(1).setDuration(600).start();
+                        ratingTextHintThree.animate().alpha(1).setDuration(600).start();
                     }
                 });
                 dialog.getWindow().setAttributes(lp);
                 dialog.getWindow().setBackgroundDrawableResource(android.R.color.transparent);
-                WindowManager.LayoutParams layPam = dialog.getWindow().getAttributes();
-                layPam.dimAmount = 0.7f;
-                dialog.getWindow().addFlags(WindowManager.LayoutParams.FLAG_DIM_BEHIND);
             }
         });
     }
-
 
     public void reviewsFromFile(){
         final int set = session;
@@ -474,12 +798,9 @@ public class RestaurantView extends AppCompatActivity {
     }
 
     private void setupImagesDirectory(){
-
         File root = getExternalFilesDir(Environment.DIRECTORY_PICTURES);
         storage = new File(root.getPath()+File.separator+DIRECTORY_IMAGES);
-
         storage.mkdirs();
-
     }
 
     private void addOrders(){
@@ -507,8 +828,6 @@ public class RestaurantView extends AppCompatActivity {
     }
 
     private void setupViewPager(ViewPager viewPager) {
-
-
         ViewPagerAdapter adapter = new ViewPagerAdapter(
                 getSupportFragmentManager());
         adapter.addFrag(showMenu, getResources().getString(R.string.menu));
@@ -581,7 +900,6 @@ public class RestaurantView extends AppCompatActivity {
                                 .into(background);
                     }
 
-
                 }
                 toolbar.setTitle(thisRestaurant.getUsername());
                 Log.d("VANGOGH",""+thisRestaurant.getUid());
@@ -590,12 +908,13 @@ public class RestaurantView extends AppCompatActivity {
                 toolbar.setNavigationOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
-                        for(Card c :cards){
+                        /*for(Card c :cards){
                             Log.d("MAD2",c.getTitle());
                             for(Dish d: c.getDishes()){
                                 Log.d("MAD2",String.format("\t %s ",d.getDishName())+(d.getOrderItem()==null?"none":d.getOrderItem().getPiecesString()));
                             }
-                        }
+                        }*/
+                        onBackPressed();
                     }
                 });
             }
@@ -612,10 +931,9 @@ public class RestaurantView extends AppCompatActivity {
         final int set = session;
         final DatabaseReference database = FirebaseDatabase.getInstance().getReference();
         DatabaseReference ref = database.child("restaurantsMenu").child(reName);
-        ref.addValueEventListener(new ValueEventListener() {
+        ref.addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-                int i = 0;
                 cards = new ArrayList<>();
                 for (DataSnapshot ds : dataSnapshot.getChildren()) {
                     for (DataSnapshot ds1 : ds.getChildren()) {
@@ -689,7 +1007,7 @@ public class RestaurantView extends AppCompatActivity {
         final int set = session;
         final DatabaseReference database = FirebaseDatabase.getInstance().getReference();
         DatabaseReference ref = database.child("reviews").child(reName);
-        ref.addValueEventListener(new ValueEventListener() {
+        ref.addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
                 if(set == session){
@@ -697,23 +1015,31 @@ public class RestaurantView extends AppCompatActivity {
                     for (DataSnapshot ds : dataSnapshot.getChildren()) {
                         String reviewID = ds.getKey();
                         String userId = ds.child("userID").getValue(String.class);
-                        String notes = ds.child("notes").getValue(String.class);
+                        String note = ds.child("note").getValue(String.class);
                         Float rating = ds.child("rating").getValue(Float.class);
 
-                        if(notes != null)
-                            if(notes.length() == 0)
-                                notes = null;
+                        Log.d("PROVATRE",note+" "+userId);
+                        if(note != null)
+                            if(note.length() == 0)
+                                note = null;
 
-                        Review review = new Review(reviewID, userId, notes,rating);
-
+                        Review review = new Review(reviewID, userId, note,rating);
+                        Log.d("PROVATRE","added review "+review.getUserName()+" "+review.getNote()+" from fetchReviews");
                         reviews.add(review);
 
                     }
 
-                    if(reviews.size() > 0)
+
+
+                    if(reviews.size() > 0){
+                        Log.d("PROVATRE","called fetchUsers from init()");
                         fetchUsers(set);
-                    else
+                    }
+                    else{
+                        Log.d("PROVATRE","called showReview from init()");
                         showReview.init(reviews);
+                    }
+
                 }
             }
             @Override
@@ -724,31 +1050,46 @@ public class RestaurantView extends AppCompatActivity {
     }
 
     private void fetchUsers(final int num){
+        Log.d("PROVATRE","into FetchUsers");
         final int set = num;
         final HashMap<String, String> usersWithImages = new HashMap<>();
         final DatabaseReference database = FirebaseDatabase.getInstance().getReference();
         DatabaseReference ref = database.child("endUsers");
-        ref.addValueEventListener(new ValueEventListener() {
+        ref.addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
                 if(set == session) {
                     for (Review r : reviews) {
-                        String username = dataSnapshot.child(r.getUserID()).child("info").child("username").getValue(String.class);
-                        String imagePath = dataSnapshot.child(r.getUserID()).child("info").child("imagePath").getValue(String.class);
-                        if (imagePath != null) {
-                            if (imagePath.length() > 0) {
-                                usersWithImages.put(r.getUserID(), imagePath);
-                                r.setImagePath(storage.getPath() + File.separator + r.getUserID() + ".jpg");
-                            }
-                        }
+                        if(!r.getUserID().equals(shared.getString("id",""))){
+                            String username = dataSnapshot.child(r.getUserID()).child("info").child("username").getValue(String.class);
+                            String imagePath = dataSnapshot.child(r.getUserID()).child("info").child("imagePath").getValue(String.class);
+                            if (imagePath != null) {
+                                File imageLocale = new File(storage, r.getUserID()+".jpg");
+                                if (imagePath.length() > 0 && !imageLocale.exists()) {
+                                    usersWithImages.put(r.getUserID(), imagePath);
+                                    r.setImagePath(storage.getPath() + File.separator + r.getUserID() + ".jpg");
 
-                        r.setUserName(username);
+                                    Log.d("PROVATRE","added image pats to "+username+" remote");
+                                } else{
+                                    r.setImagePath(imageLocale.getPath());
+                                }
+                            }
+
+                            r.setUserName(username);
+                            Log.d("PROVATRE","added username to "+r.getUserName()+" remote");
+                        }else{
+                            r.setUserName(shared.getString("name",""));
+                            r.setImagePath(shared.getString("imgLocale",""));
+                            Log.d("PROVATRE","added username to "+r.getUserName()+" locale");
+
+                        }
                     }
 
                     if (!usersWithImages.isEmpty()) {
                         setUserImages(usersWithImages, set);
                     } else {
                         if (set == session)
+                            Log.d("PROVATRE","Called init from fetchUsers");
                             showReview.init(reviews);
                     }
                 }
@@ -762,7 +1103,7 @@ public class RestaurantView extends AppCompatActivity {
     }
 
     private void setUserImages(final HashMap<String, String> images, int num){
-        Log.d("TESTFETCH","Into Set User Image");
+        Log.d("PROVATRE","Into Set User Image");
         final int set = num;
         if(set == session){
             reviewsImageToFetch = images.size();
@@ -782,8 +1123,10 @@ public class RestaurantView extends AppCompatActivity {
                     Log.d("TESTFETCH", "Saved Image "+reviewsImageToFetch+" "+reviewsImageFetched+" "+s+" "+images.get(s));
                     reviewsImageFetched++;
                     if(reviewsImageFetched == reviewsImageToFetch){
-                        if(set == session)
+                        if(set == session){
+                            Log.d("PROVATRE","called init from setUserImage");
                             showReview.init(reviews);
+                        }
                     }
                 }
             }).addOnFailureListener(new OnFailureListener() {
@@ -793,8 +1136,10 @@ public class RestaurantView extends AppCompatActivity {
                     reviewsImageFetched++;
                     if(reviewsImageFetched == reviewsImageToFetch){
                         Log.d("MAD","called init set "+set+" session "+session);
-                        if(set == session)
+                        if(set == session){
+                            Log.d("PROVATRE","called init from setUserImage");
                             showReview.init(reviews);
+                        }
                     }
                 }
             });
@@ -804,7 +1149,9 @@ public class RestaurantView extends AppCompatActivity {
 
     @Override
     protected void onPause() {
+        Log.d("LIFECYCLE","OnPause()");
         super.onPause();
+        isOnPause = true;
         session++;
         if(session > 2000)
             session = 0;
@@ -814,7 +1161,10 @@ public class RestaurantView extends AppCompatActivity {
             if(storage.exists())
                 removeStorage();
             showMenu.removeCards();
-            showReview.removeReviews();
+
+            Log.d("PROVATRE","removedReviews storage not completed onPause");
+            //showReview.removeReviews();
+            reviews = null;
         }else{
             JsonHandler handler = new JsonHandler();
             String cJson = handler.toJSON(cards);
@@ -826,7 +1176,10 @@ public class RestaurantView extends AppCompatActivity {
             File m2 = new File(storage, REVIEWS);
             handler.saveStringToFile(reviewsToJson, m2);
             showMenu.removeCards();
-            showReview.removeReviews();
+
+            Log.d("PROVATRE","removedReviews after saving them onPause");
+            //showReview.removeReviews();
+            reviews = null;
         }
 
         /*
@@ -855,7 +1208,9 @@ public class RestaurantView extends AppCompatActivity {
 
     @Override
     protected void onResume() {
+        Log.d("LIFECYCLE","OnResume()");
         super.onResume();
+        isOnPause = false;
         init();
     }
 
@@ -865,5 +1220,9 @@ public class RestaurantView extends AppCompatActivity {
         }
         storage.delete();
         storage = null;
+    }
+
+    public void collapseToolbar(){
+        appBarLayout.setExpanded(false);
     }
 }

@@ -1,7 +1,7 @@
 package com.example.foodyrestaurant;
 
-import android.content.Intent;
 import android.content.SharedPreferences;
+import android.net.Uri;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
@@ -17,7 +17,6 @@ import android.view.MenuItem;
 import android.view.View;
 
 import com.example.foody_library.NetworkCheck;
-import com.example.foody_library.NoInternetActivity;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.ChildEventListener;
@@ -26,6 +25,7 @@ import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 
+import java.util.HashMap;
 import java.util.concurrent.ExecutionException;
 
 public class MainActivity extends AppCompatActivity {
@@ -41,6 +41,8 @@ public class MainActivity extends AppCompatActivity {
     private Fragment active;
     private SharedPreferences sharedPref;
     private Boolean bool = true;
+    private Uri photoProfile;
+    private HashMap<String, Uri> photosMap = new HashMap<>();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -80,9 +82,11 @@ public class MainActivity extends AppCompatActivity {
             return;
         }
         menu = new MenuFragment();
+        ((MenuFragment) menu).setFather(this);
         reservations = new ReservationFragment();
         ((ReservationFragment) reservations).setFather(this);
         user = new UserFragment();
+        ((UserFragment) user).setFather(this);
         biker = new BikerFragment();
         ((BikerFragment) biker).setFather(this);
         history = new HistoryFragment();
@@ -93,6 +97,28 @@ public class MainActivity extends AppCompatActivity {
         fm.beginTransaction().add(R.id.mainFrame, menu, "1").show(menu).commit();
         active = menu;
         init();
+    }
+
+    public Uri getPhotoProfile(){
+        return photoProfile;
+    }
+
+    public void setPhotoProfile(Uri photoProfile){
+        this.photoProfile = photoProfile;
+    }
+
+    public Uri getPhotoDish(String name){
+        if (photosMap.containsKey(name))
+            return photosMap.get(name);
+        return null;
+    }
+
+    public void clearHashMap(){
+        photosMap = new HashMap<>();
+    }
+
+    public void setPhotoDish(String name, Uri photo){
+        photosMap.put(name, photo);
     }
 
     @Override

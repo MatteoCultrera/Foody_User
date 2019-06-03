@@ -49,8 +49,13 @@ public class UserFragment extends Fragment {
     private MaterialButton logout;
     private String imagePath;
     private RestaurantInfo info;
+    private MainActivity father;
 
     public UserFragment() {}
+
+    public void setFather(MainActivity father){
+        this.father = father;
+    }
 
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
@@ -60,6 +65,7 @@ public class UserFragment extends Fragment {
     @Override
     public void onViewCreated(@NonNull View view, Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
+        init(view);
     }
 
     private void init(View view) {
@@ -85,181 +91,228 @@ public class UserFragment extends Fragment {
         delivPrice = view.findViewById(R.id.delivery);
         foodType = view.findViewById(R.id.food_type);
 
-        //setup of the Shared Preferences to save value in (key, value) format
-        new Thread(new Runnable() {
-            @Override
-            public void run() {
-                final DatabaseReference database = FirebaseDatabase.getInstance().getReference().child("restaurantsInfo");
-                Query query = database.child(firebaseAuth.getCurrentUser().getUid()).child("info");
-                query.addListenerForSingleValueEvent(new ValueEventListener() {
-                    @Override
-                    public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-                        Float latitude, longitude;
-                        if(dataSnapshot.child("latitude").exists() && dataSnapshot.child("longitude").exists()) {
-                            latitude = dataSnapshot.child("latitude").getValue(Float.class);
-                            longitude = dataSnapshot.child("longitude").getValue(Float.class);
-                            edit.putFloat("latitude", latitude);
-                            edit.putFloat("longitude", longitude);
-                        }
+        Uri photoProfile;
+        if(sharedPref.getBoolean("changedPicture", false)){
+            photoProfile = Uri.fromFile(new File(storageDir, PROFILE_IMAGE));
+            sharedPref.edit().putBoolean("changedPicture", false).apply();
+            father.setPhotoProfile(photoProfile);
+        } else {
+            photoProfile = father.getPhotoProfile();
+        }
 
-                        info = dataSnapshot.getValue(RestaurantInfo.class);
-                        name.setText(info.getUsername());
-                        email.setText(info.getEmail());
-                        address.setText(info.getAddress());
-                        phoneNumber.setText(info.getNumberPhone());
-                        int deliveryPrice;
-                        deliveryPrice = info.getDeliveryPrice();
-                        double price = 0.5 * deliveryPrice;
-                        String text = String.format(Locale.UK, "%.2f", price) + getResources().getString(R.string.value);
-                        delivPrice.setText(text);
-                        String[] foodCategories = getResources().getStringArray(R.array.foodcategory_array);
-                        ArrayList<Integer> cuisine = info.getCuisineTypes();
-                        imagePath = info.getImagePath();
-                        String cuisineText = "";
-                        if (cuisine != null) {
-                            for (int i = 0; i < cuisine.size(); i++) {
-                                cuisineText += foodCategories[cuisine.get(i)];
-                                if (i != cuisine.size() - 1)
-                                    cuisineText += ", ";
+        if (photoProfile == null) {
+            final DatabaseReference databaseI = FirebaseDatabase.getInstance().getReference().child("restaurantsInfo");
+            Query query = databaseI.child(firebaseAuth.getCurrentUser().getUid()).child("info");
+            query.addListenerForSingleValueEvent(new ValueEventListener() {
+                @Override
+                public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                    RestaurantInfo info = dataSnapshot.getValue(RestaurantInfo.class);
+                    StorageReference mStorageRef = FirebaseStorage.getInstance().getReference();
+                    if(info.getImagePath() != null) {
+                        mStorageRef.child(info.getImagePath()).getDownloadUrl().addOnSuccessListener(new OnSuccessListener<Uri>() {
+                            @Override
+                            public void onSuccess(Uri uri) {
+                                father.setPhotoProfile(uri);
+                                Glide
+                                        .with(profilePicture.getContext())
+                                        .load(uri)
+                                        .into(profilePicture);
+                                Glide
+                                        .with(profileShadow.getContext())
+                                        .load(R.drawable.shadow)
+                                        .into(profileShadow);
                             }
-                        }
-
-                        int lung = 0;
-                        if(cuisine != null)
-                            lung = cuisine.size();
-                        switch (lung) {
-                            case 0:
-                                break;
-                            case 1: {
-                                edit.putInt("foodIndexOne", cuisine.get(0));
-                                edit.putInt("foodIndexTwo", -1);
-                                edit.putInt("foodIndexThree", -1);
-                                break;
+                        }).addOnFailureListener(new OnFailureListener() {
+                            @Override
+                            public void onFailure(@NonNull Exception e) {
+                                Glide
+                                        .with(profilePicture.getContext())
+                                        .load(R.drawable.profile_placeholder)
+                                        .into(profilePicture);
+                                Glide
+                                        .with(profileShadow.getContext())
+                                        .load(R.drawable.shadow)
+                                        .into(profileShadow);
                             }
-                            case 2: {
-                                edit.putInt("foodIndexOne", cuisine.get(0));
-                                edit.putInt("foodIndexTwo", cuisine.get(1));
-                                edit.putInt("foodIndexThree", -1);
-                                break;
-                            }
-                            case 3: {
-                                edit.putInt("foodIndexOne", cuisine.get(0));
-                                edit.putInt("foodIndexTwo", cuisine.get(1));
-                                edit.putInt("foodIndexThree", cuisine.get(2));
-                                break;
-                            }
-                            default:
-                                break;
-                        }
-
-                        foodType.setText(cuisineText);
-                        ArrayList<String> days = info.getDaysTime();
-                        monTime.setText(days.get(0));
-                        tueTime.setText(days.get(1));
-                        wedTime.setText(days.get(2));
-                        thuTime.setText(days.get(3));
-                        friTime.setText(days.get(4));
-                        satTime.setText(days.get(5));
-                        sunTime.setText(days.get(6));
-                        edit.putString("name", info.getUsername());
-                        edit.putString("email", info.getEmail());
-                        edit.putString("foodType", cuisineText);
-                        edit.putInt("delivPrice", info.getDeliveryPrice());
-                        if (!address.getText().toString().equals(getResources().getString(R.string.address_hint)))
-                            edit.putString("address", info.getAddress());
-                        if (!phoneNumber.getText().toString().equals(getResources().getString(R.string.phone_hint)))
-                            edit.putString("phoneNumber", info.getNumberPhone());
-                        if (!info.getDaysTime().get(0).equals(getResources().getString(R.string.Closed))) {
-                            edit.putBoolean("monState", true);
-                        }
-                        if (!info.getDaysTime().get(1).equals(getResources().getString(R.string.Closed))) {
-                            edit.putBoolean("tueState", true);
-                        }
-                        if (!info.getDaysTime().get(2).equals(getResources().getString(R.string.Closed))) {
-                            edit.putBoolean("wedState", true);
-                        }
-                        if (!info.getDaysTime().get(3).equals(getResources().getString(R.string.Closed))) {
-                            edit.putBoolean("thuState", true);
-                        }
-                        if (!info.getDaysTime().get(4).equals(getResources().getString(R.string.Closed))) {
-                            edit.putBoolean("friState", true);
-                        }
-                        if (!info.getDaysTime().get(5).equals(getResources().getString(R.string.Closed))) {
-                            edit.putBoolean("satState", true);
-                        }
-                        if (!info.getDaysTime().get(6).equals(getResources().getString(R.string.Closed))) {
-                            edit.putBoolean("sunState", true);
-                        }
-
-                        StorageReference mStorageRef = FirebaseStorage.getInstance().getReference();
-                        if (imagePath != null) {
-                            mStorageRef.child(imagePath).getDownloadUrl()
-                                .addOnSuccessListener(new OnSuccessListener<Uri>() {
-                                    @Override
-                                    public void onSuccess(Uri uri) {
-                                        Glide
-                                                .with(profilePicture.getContext())
-                                                .load(uri)
-                                                .into(profilePicture);
-                                        Glide
-                                                .with(profileShadow.getContext())
-                                                .load(R.drawable.shadow)
-                                                .into(profileShadow);
-                                    }
-                                })
-                                .addOnFailureListener(new OnFailureListener() {
-                                    @Override
-                                    public void onFailure(@NonNull Exception e) {
-                                        Glide
-                                                .with(profilePicture.getContext())
-                                                .load(R.drawable.profile_placeholder)
-                                                .into(profilePicture);
-                                        Glide
-                                                .with(profileShadow.getContext())
-                                                .load(R.drawable.shadow)
-                                                .into(profileShadow);
-                                    }
-                            });
-                        } else {
-                            Glide
-                                    .with(profilePicture.getContext())
-                                    .load(R.drawable.profile_placeholder)
-                                    .into(profilePicture);
-                            Glide
-                                    .with(profileShadow.getContext())
-                                    .load(R.drawable.shadow)
-                                    .into(profileShadow);
-                        }
-                        edit.putString("monTime", info.getDaysTime().get(0));
-                        edit.putString("tueTime", info.getDaysTime().get(1));
-                        edit.putString("wedTime", info.getDaysTime().get(2));
-                        edit.putString("thuTime", info.getDaysTime().get(3));
-                        edit.putString("friTime", info.getDaysTime().get(4));
-                        edit.putString("satTime", info.getDaysTime().get(5));
-                        edit.putString("sunTime", info.getDaysTime().get(6));
-                        edit.putString("Path", imagePath);
-                        edit.apply();
+                        });
                     }
+                }
 
-                    @Override
-                    public void onCancelled(@NonNull DatabaseError databaseError) {
-                        name.setText(sharedPref.getString("name", getResources().getString(R.string.name_hint)));
-                        email.setText(sharedPref.getString("email", getResources().getString(R.string.email_hint)));
-                        address.setText(sharedPref.getString("address", getResources().getString(R.string.address_hint)));
-                        phoneNumber.setText(sharedPref.getString("phoneNumber", getResources().getString(R.string.phone_hint)));
-                        delivPrice.setText(sharedPref.getInt("delivPrice", 5));
-                        foodType.setText(sharedPref.getString("foodType", ""));
-                        monTime.setText(sharedPref.getString("monTime", getResources().getString(R.string.Closed)));
-                        tueTime.setText(sharedPref.getString("tueTime", getResources().getString(R.string.Closed)));
-                        wedTime.setText(sharedPref.getString("wedTime", getResources().getString(R.string.Closed)));
-                        thuTime.setText(sharedPref.getString("thuTime", getResources().getString(R.string.Closed)));
-                        friTime.setText(sharedPref.getString("friTime", getResources().getString(R.string.Closed)));
-                        satTime.setText(sharedPref.getString("satTime", getResources().getString(R.string.Closed)));
-                        sunTime.setText(sharedPref.getString("sunTime", getResources().getString(R.string.Closed)));
-                    }
-                });
-            }
-        }).start();
+                @Override
+                public void onCancelled(@NonNull DatabaseError databaseError) {
+                    Glide
+                            .with(profilePicture.getContext())
+                            .load(R.drawable.profile_placeholder)
+                            .into(profilePicture);
+                    Glide
+                            .with(profileShadow.getContext())
+                            .load(R.drawable.shadow)
+                            .into(profileShadow);
+                }
+            });
+        }else{
+            Glide
+                    .with(profilePicture.getContext())
+                    .load(photoProfile)
+                    .into(profilePicture);
+            Glide
+                    .with(profileShadow.getContext())
+                    .load(R.drawable.shadow)
+                    .into(profileShadow);
+        }
+
+        if(name.getText().toString().compareTo("") != 0){
+            name.setText(sharedPref.getString("name", getResources().getString(R.string.name_hint)));
+            email.setText(sharedPref.getString("email", getResources().getString(R.string.email_hint)));
+            address.setText(sharedPref.getString("address", getResources().getString(R.string.address_hint)));
+            phoneNumber.setText(sharedPref.getString("phoneNumber", getResources().getString(R.string.phone_hint)));
+            delivPrice.setText(sharedPref.getInt("delivPrice", 5));
+            foodType.setText(sharedPref.getString("foodType", ""));
+            monTime.setText(sharedPref.getString("monTime", getResources().getString(R.string.Closed)));
+            tueTime.setText(sharedPref.getString("tueTime", getResources().getString(R.string.Closed)));
+            wedTime.setText(sharedPref.getString("wedTime", getResources().getString(R.string.Closed)));
+            thuTime.setText(sharedPref.getString("thuTime", getResources().getString(R.string.Closed)));
+            friTime.setText(sharedPref.getString("friTime", getResources().getString(R.string.Closed)));
+            satTime.setText(sharedPref.getString("satTime", getResources().getString(R.string.Closed)));
+            sunTime.setText(sharedPref.getString("sunTime", getResources().getString(R.string.Closed)));
+        }else {
+            //setup of the Shared Preferences to save value in (key, value) format
+            new Thread(new Runnable() {
+                @Override
+                public void run() {
+                    final DatabaseReference database = FirebaseDatabase.getInstance().getReference().child("restaurantsInfo");
+                    Query query = database.child(firebaseAuth.getCurrentUser().getUid()).child("info");
+                    query.addListenerForSingleValueEvent(new ValueEventListener() {
+                        @Override
+                        public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                            Float latitude, longitude;
+                            if (dataSnapshot.child("latitude").exists() && dataSnapshot.child("longitude").exists()) {
+                                latitude = dataSnapshot.child("latitude").getValue(Float.class);
+                                longitude = dataSnapshot.child("longitude").getValue(Float.class);
+                                edit.putFloat("latitude", latitude);
+                                edit.putFloat("longitude", longitude);
+                            }
+
+                            info = dataSnapshot.getValue(RestaurantInfo.class);
+                            name.setText(info.getUsername());
+                            email.setText(info.getEmail());
+                            address.setText(info.getAddress());
+                            phoneNumber.setText(info.getNumberPhone());
+                            int deliveryPrice;
+                            deliveryPrice = info.getDeliveryPrice();
+                            double price = 0.5 * deliveryPrice;
+                            String text = String.format(Locale.UK, "%.2f", price) + getResources().getString(R.string.value);
+                            delivPrice.setText(text);
+                            String[] foodCategories = getResources().getStringArray(R.array.foodcategory_array);
+                            ArrayList<Integer> cuisine = info.getCuisineTypes();
+                            imagePath = info.getImagePath();
+                            String cuisineText = "";
+                            if (cuisine != null) {
+                                for (int i = 0; i < cuisine.size(); i++) {
+                                    cuisineText += foodCategories[cuisine.get(i)];
+                                    if (i != cuisine.size() - 1)
+                                        cuisineText += ", ";
+                                }
+                            }
+
+                            int lung = 0;
+                            if (cuisine != null)
+                                lung = cuisine.size();
+                            switch (lung) {
+                                case 0:
+                                    break;
+                                case 1: {
+                                    edit.putInt("foodIndexOne", cuisine.get(0));
+                                    edit.putInt("foodIndexTwo", -1);
+                                    edit.putInt("foodIndexThree", -1);
+                                    break;
+                                }
+                                case 2: {
+                                    edit.putInt("foodIndexOne", cuisine.get(0));
+                                    edit.putInt("foodIndexTwo", cuisine.get(1));
+                                    edit.putInt("foodIndexThree", -1);
+                                    break;
+                                }
+                                case 3: {
+                                    edit.putInt("foodIndexOne", cuisine.get(0));
+                                    edit.putInt("foodIndexTwo", cuisine.get(1));
+                                    edit.putInt("foodIndexThree", cuisine.get(2));
+                                    break;
+                                }
+                                default:
+                                    break;
+                            }
+
+                            foodType.setText(cuisineText);
+                            ArrayList<String> days = info.getDaysTime();
+                            monTime.setText(days.get(0));
+                            tueTime.setText(days.get(1));
+                            wedTime.setText(days.get(2));
+                            thuTime.setText(days.get(3));
+                            friTime.setText(days.get(4));
+                            satTime.setText(days.get(5));
+                            sunTime.setText(days.get(6));
+                            edit.putString("name", info.getUsername());
+                            edit.putString("email", info.getEmail());
+                            edit.putString("foodType", cuisineText);
+                            edit.putInt("delivPrice", info.getDeliveryPrice());
+                            if (!address.getText().toString().equals(getResources().getString(R.string.address_hint)))
+                                edit.putString("address", info.getAddress());
+                            if (!phoneNumber.getText().toString().equals(getResources().getString(R.string.phone_hint)))
+                                edit.putString("phoneNumber", info.getNumberPhone());
+                            if (!info.getDaysTime().get(0).equals(getResources().getString(R.string.Closed))) {
+                                edit.putBoolean("monState", true);
+                            }
+                            if (!info.getDaysTime().get(1).equals(getResources().getString(R.string.Closed))) {
+                                edit.putBoolean("tueState", true);
+                            }
+                            if (!info.getDaysTime().get(2).equals(getResources().getString(R.string.Closed))) {
+                                edit.putBoolean("wedState", true);
+                            }
+                            if (!info.getDaysTime().get(3).equals(getResources().getString(R.string.Closed))) {
+                                edit.putBoolean("thuState", true);
+                            }
+                            if (!info.getDaysTime().get(4).equals(getResources().getString(R.string.Closed))) {
+                                edit.putBoolean("friState", true);
+                            }
+                            if (!info.getDaysTime().get(5).equals(getResources().getString(R.string.Closed))) {
+                                edit.putBoolean("satState", true);
+                            }
+                            if (!info.getDaysTime().get(6).equals(getResources().getString(R.string.Closed))) {
+                                edit.putBoolean("sunState", true);
+                            }
+
+                            edit.putString("monTime", info.getDaysTime().get(0));
+                            edit.putString("tueTime", info.getDaysTime().get(1));
+                            edit.putString("wedTime", info.getDaysTime().get(2));
+                            edit.putString("thuTime", info.getDaysTime().get(3));
+                            edit.putString("friTime", info.getDaysTime().get(4));
+                            edit.putString("satTime", info.getDaysTime().get(5));
+                            edit.putString("sunTime", info.getDaysTime().get(6));
+                            edit.putString("Path", imagePath);
+                            edit.apply();
+                        }
+
+                        @Override
+                        public void onCancelled(@NonNull DatabaseError databaseError) {
+                            name.setText(sharedPref.getString("name", getResources().getString(R.string.name_hint)));
+                            email.setText(sharedPref.getString("email", getResources().getString(R.string.email_hint)));
+                            address.setText(sharedPref.getString("address", getResources().getString(R.string.address_hint)));
+                            phoneNumber.setText(sharedPref.getString("phoneNumber", getResources().getString(R.string.phone_hint)));
+                            delivPrice.setText(sharedPref.getInt("delivPrice", 5));
+                            foodType.setText(sharedPref.getString("foodType", ""));
+                            monTime.setText(sharedPref.getString("monTime", getResources().getString(R.string.Closed)));
+                            tueTime.setText(sharedPref.getString("tueTime", getResources().getString(R.string.Closed)));
+                            wedTime.setText(sharedPref.getString("wedTime", getResources().getString(R.string.Closed)));
+                            thuTime.setText(sharedPref.getString("thuTime", getResources().getString(R.string.Closed)));
+                            friTime.setText(sharedPref.getString("friTime", getResources().getString(R.string.Closed)));
+                            satTime.setText(sharedPref.getString("satTime", getResources().getString(R.string.Closed)));
+                            sunTime.setText(sharedPref.getString("sunTime", getResources().getString(R.string.Closed)));
+                        }
+                    });
+                }
+            }).start();
+        }
         editMode.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -291,7 +344,5 @@ public class UserFragment extends Fragment {
         Context context = Objects.requireNonNull(getActivity()).getApplicationContext();
         sharedPref = context.getSharedPreferences("myPreference", MODE_PRIVATE);
         storageDir = getActivity().getExternalFilesDir(Environment.DIRECTORY_PICTURES);
-
-        init(Objects.requireNonNull(getView()));
     }
 }

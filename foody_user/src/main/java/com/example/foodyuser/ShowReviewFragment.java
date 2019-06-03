@@ -49,6 +49,7 @@ public class ShowReviewFragment extends Fragment {
         LinearLayoutManager llm = new LinearLayoutManager(currentView.getContext());
         recyclerMenu.setLayoutManager(llm);
         if(reviews!=null && reviews.size() > 0){
+            father.enableAddReview();
             Log.d("MAD","Reviews Initialised on createVIew()");
             recyclerMenu.setVisibility(View.VISIBLE);
             loading.setVisibility(View.GONE);
@@ -56,9 +57,12 @@ public class ShowReviewFragment extends Fragment {
             show = new RVAdapterShowRestaurantReviews(reviews, father);
             recyclerMenu.setAdapter(show);
         }else if(reviews != null && reviews.size() == 0){
+            father.enableAddReview();
             loading.setVisibility(View.GONE);
             recyclerMenu.setVisibility(View.GONE);
             noReviews.setVisibility(View.VISIBLE);
+            show = new RVAdapterShowRestaurantReviews(reviews, father);
+            recyclerMenu.setAdapter(show);
         } else{
             recyclerMenu.setVisibility(View.GONE);
             loading.setVisibility(View.VISIBLE);
@@ -75,9 +79,7 @@ public class ShowReviewFragment extends Fragment {
 
         this.reviews = reviews;
 
-        Log.d("PROVA","Init with"+(recyclerMenu == null?"no Recycler":"Recycler"));
-
-
+        father.enableAddReview();
         show = new RVAdapterShowRestaurantReviews(reviews, father);
         if(recyclerMenu != null && reviews.size() > 0){
             recyclerMenu.setVisibility(View.VISIBLE);
@@ -89,29 +91,26 @@ public class ShowReviewFragment extends Fragment {
             loading.setVisibility(View.GONE);
             noReviews.setVisibility(View.VISIBLE);
             recyclerMenu.setVisibility(View.GONE);
+            recyclerMenu.setAdapter(show);
         }
     }
 
-    public void addReview(Review review){
-
-        reviews.add(0, review);
-        show.notifyItemInserted(0);
-        show.notifyItemRangeChanged(0, reviews.size());
-
+    public void notifyAdded(int position){
         if(noReviews.getVisibility() == View.VISIBLE){
             noReviews.setVisibility(View.GONE);
             recyclerMenu.setVisibility(View.VISIBLE);
         }
+
+        show.notifyItemInserted(position);
+        show.notifyItemRangeChanged(position, reviews.size());
+        father.collapseToolbar();
+        recyclerMenu.scrollToPosition(reviews.size()-1);
+
     }
 
     public void removeReviews(){
         Log.d("PROVA","removeCards with"+(recyclerMenu == null?"no Recycler":"Recycler"));
         this.reviews = null;
-        if(recyclerMenu != null){
-            recyclerMenu.setVisibility(View.GONE);
-            noReviews.setVisibility(View.GONE);
-            loading.setVisibility(View.VISIBLE);
-        }
     }
 
     public boolean notReady(){

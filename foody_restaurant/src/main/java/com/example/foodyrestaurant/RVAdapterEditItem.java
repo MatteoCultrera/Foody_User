@@ -122,14 +122,12 @@ public class RVAdapterEditItem extends RecyclerView.Adapter<RVAdapterEditItem.Di
         });
         final RequestOptions options = new RequestOptions().fitCenter();
         if(dishes.get(i).getPathDB() == null){
-            Log.d("SWSW", "if");
             Glide
                     .with(dishViewHolder.dishPicture.getContext())
                     .load(R.drawable.placeholder_plate)
                     .apply(options)
                     .into(dishViewHolder.dishPicture);
         }else{
-            Log.d("SWSW", "else");
             StorageReference mStorageRef = FirebaseStorage.getInstance().getReference();
             mStorageRef.child(dishes.get(i).getPathDB()).getDownloadUrl()
                     .addOnSuccessListener(new OnSuccessListener<Uri>() {

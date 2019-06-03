@@ -31,6 +31,8 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.bumptech.glide.Glide;
+import com.bumptech.glide.request.RequestOptions;
+import com.bumptech.glide.signature.ObjectKey;
 import com.example.foody_library.UserInfo;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
@@ -76,11 +78,12 @@ public class Setup extends AppCompatActivity {
     private File storageDir;
     private AlertDialog dialogDism;
     private boolean unchanged, addressCheck, nameCheck, numberCheck, mailCheck;
+    String pathImage;
     private String dialogCode = "ok";
     private FirebaseAuth firebaseAuth;
     private SharedPreferences sharedPref;
     private SharedPreferences.Editor edit;
-    private String pathImage;
+    private final String MAIN_DIR = "user_utils";
 
     class Position {
         public String address;
@@ -103,8 +106,6 @@ public class Setup extends AppCompatActivity {
         setContentView(R.layout.activity_setup);
         firebaseAuth = FirebaseAuth.getInstance();
         storageDir = getExternalFilesDir(Environment.DIRECTORY_PICTURES);
-        Bundle extras = getIntent().getExtras();
-        pathImage = extras.getString("imagePath", null);
         init();
         editImage.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -160,7 +161,6 @@ public class Setup extends AppCompatActivity {
     }
 
     private void updateSave(){
-
         if(addressCheck && nameCheck && mailCheck && numberCheck){
             save.setImageResource(R.drawable.save_white);
             save.setEnabled(true);
@@ -170,7 +170,6 @@ public class Setup extends AppCompatActivity {
             save.setEnabled(false);
             save.setClickable(false);
         }
-
     }
 
     private void checkName(){
@@ -263,7 +262,6 @@ public class Setup extends AppCompatActivity {
         String[] mimeTypes = {"image/jpeg", "image/png"};
         intent.putExtra(Intent.EXTRA_MIME_TYPES,mimeTypes);
         startActivityForResult(intent,GALLERY_REQUEST_CODE);
-
     }
 
     private void pickFromCamera(){
@@ -316,27 +314,23 @@ public class Setup extends AppCompatActivity {
         errorAddress.setText("");
         errorBio.setText("");
 
+        pathImage = null;
+        if(sharedPref.contains("imgLocale")){
+            pathImage = sharedPref.getString("imgLocale","");
+        }
+
         if(pathImage != null) {
-            StorageReference mStorageRef = FirebaseStorage.getInstance().getReference();
-            mStorageRef.child(pathImage).getDownloadUrl()
-                    .addOnSuccessListener(new OnSuccessListener<Uri>() {
-                        @Override
-                        public void onSuccess(Uri uri) {
-                            Glide
-                                    .with(profilePicture.getContext())
-                                    .load(uri)
-                                    .into(profilePicture);
-                        }
-                    })
-                    .addOnFailureListener(new OnFailureListener() {
-                        @Override
-                        public void onFailure(@NonNull Exception e) {
-                            Glide
-                                    .with(profilePicture.getContext())
-                                    .load(R.drawable.profile_placeholder)
-                                    .into(profilePicture);
-                        }
-                    });
+
+            File profileImage = new File(pathImage);
+            RequestOptions options = new RequestOptions();
+            options.signature(new ObjectKey(profileImage.getName()+" "+profileImage.lastModified()));
+
+            Glide
+                    .with(profilePicture.getContext())
+                    .setDefaultRequestOptions(options)
+                    .load(profileImage)
+                    .into(profilePicture);
+
         }else{
             Glide
                     .with(profilePicture.getContext())
@@ -467,7 +461,6 @@ public class Setup extends AppCompatActivity {
                 addressActivity();
             }
         });
-
 
         updateSave();
     }
@@ -685,28 +678,26 @@ public class Setup extends AppCompatActivity {
             BitmapFactory.Options bmOptions = new BitmapFactory.Options();
             Bitmap bitmap = BitmapFactory.decodeFile(f.getAbsolutePath(),bmOptions);
             pathImage = "images/users/"+user.getUid() + System.currentTimeMillis()+".jpeg";
-            File profile = new File(storageDir, PROFILE_IMAGE);
+            File root = getExternalFilesDir(Environment.DIRECTORY_DOCUMENTS);
+            final File directory = new File(root.getPath()+File.separator+MAIN_DIR);
+            final File profile = new File(sharedPref.getString("imgLocale",directory.getPath()+File.separator+firebaseAuth.getCurrentUser().getUid()+".jpg"));
             saveBitmap(bitmap, profile.getPath());
 
-            FirebaseStorage storage;
-            StorageReference storageReference;
-            storage = FirebaseStorage.getInstance();
-            storageReference = storage.getReference();
-
-            StorageReference ref = storageReference.child(pathImage);
-            ref.putFile(Uri.fromFile(new File(storageDir, PROFILE_IMAGE)))
-                    .addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
-                        @Override
-                        public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
-                            Log.d("SWSW", "success");
-                        }
-                    })
-                    .addOnFailureListener(new OnFailureListener() {
-                        @Override
-                        public void onFailure(@NonNull Exception e) {
-                            Toast.makeText(getApplicationContext(), "Failed "+e.getMessage(), Toast.LENGTH_SHORT).show();
-                        }
-                    });
+            StorageReference ref = FirebaseStorage.getInstance().getReference().child(pathImage);
+            ref.putFile(Uri.fromFile(profile))
+                .addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
+                    @Override
+                    public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
+                        sharedPref.edit().putString("imgLocale",profile.getPath()).apply();
+                        sharedPref.edit().putString("imgRemote",pathImage).apply();
+                    }
+                })
+                .addOnFailureListener(new OnFailureListener() {
+                    @Override
+                    public void onFailure(@NonNull Exception e) {
+                        Toast.makeText(getApplicationContext(), "Failed "+e.getMessage(), Toast.LENGTH_SHORT).show();
+                    }
+                });
         }
 
         DatabaseReference database = FirebaseDatabase.getInstance().getReference()
@@ -715,6 +706,13 @@ public class Setup extends AppCompatActivity {
         UserInfo info = new UserInfo(name.getText().toString(), email.getText().toString(), address.getText().toString(),
                 phoneNumber.getText().toString(), bio.getText().toString());
         info.setImagePath(pathImage);
+
+        sharedPref.edit().putString("name", info.getUsername()).apply();
+        sharedPref.edit().putString("email", info.getEmail()).apply();
+        sharedPref.edit().putString("address", info.getAddress()).apply();
+        sharedPref.edit().putString("phoneNumber", info.getNumberPhone()).apply();
+        sharedPref.edit().putString("bio", info.getBiography()).apply();
+
         child.put("info", info);
         database.updateChildren(child);
 
@@ -726,13 +724,6 @@ public class Setup extends AppCompatActivity {
             childLoc.put("longitude", pos.longitude);
             databaseLoc.updateChildren(childLoc);
         }
-
-        edit.putString("name", name.getText().toString());
-        edit.putString("email", email.getText().toString());
-        edit.putString("address", address.getText().toString());
-        edit.putString("phoneNumber", phoneNumber.getText().toString());
-        edit.putString("bio", bio.getText().toString());
-        edit.apply();
 
         Toast.makeText(getApplicationContext(), R.string.save, Toast.LENGTH_SHORT).show();
         unchanged = true;
@@ -761,5 +752,4 @@ public class Setup extends AppCompatActivity {
             }
         }
     }
-
 }
