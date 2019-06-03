@@ -1,5 +1,4 @@
 package com.example.foodybiker;
-
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
@@ -16,6 +15,8 @@ import android.view.ViewGroup;
 import android.widget.TextView;
 
 import com.bumptech.glide.Glide;
+import com.bumptech.glide.request.RequestOptions;
+import com.bumptech.glide.signature.ObjectKey;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.firebase.auth.FirebaseAuth;
@@ -85,8 +86,35 @@ public class UserFragment extends Fragment {
         satTime = view.findViewById(R.id.satTime);
         sunTime = view.findViewById(R.id.sunTime);
 
+        name.setText(sharedPref.getString("name",getResources().getString(R.string.name_hint)));
+        email.setText(sharedPref.getString("email",getResources().getString(R.string.email_hint)));
+        phoneNumber.setText(sharedPref.getString("phoneNumber", getResources().getString(R.string.phone_hint)));
+        address.setText(sharedPref.getString("address", getResources().getString(R.string.address_hint)));
+        monTime.setText(sharedPref.getString("monTime", getResources().getString(R.string.free)));
+        tueTime.setText(sharedPref.getString("tueTime", getResources().getString(R.string.free)));
+        wedTime.setText(sharedPref.getString("wedTime", getResources().getString(R.string.free)));
+        thuTime.setText(sharedPref.getString("thuTime", getResources().getString(R.string.free)));
+        friTime.setText(sharedPref.getString("friTime", getResources().getString(R.string.free)));
+        satTime.setText(sharedPref.getString("satTime", getResources().getString(R.string.free)));
+        sunTime.setText(sharedPref.getString("sunTime", getResources().getString(R.string.free)));
+
+        File profileImage = new File(sharedPref.getString("imgLocale", ""));
+        if(profileImage.exists()){
+            RequestOptions options = new RequestOptions();
+            options.signature(new ObjectKey(profileImage.getName()+" "+profileImage.lastModified()));
+            Glide
+                    .with(view)
+                    .setDefaultRequestOptions(options)
+                    .load(profileImage.getPath())
+                    .into(profilePicture);
+        }else{
+            Glide
+                    .with(profilePicture.getContext())
+                    .load(R.drawable.profile_placeholder)
+                    .into(profilePicture);
+        }
         //setup of the Shared Preferences to save value in (key, value) format
-        if (!email.getText().toString().equals("email")) {
+        /*if (!email.getText().toString().equals("email")) {
             new Thread(new Runnable() {
                 @Override
                 public void run() {
@@ -201,7 +229,7 @@ public class UserFragment extends Fragment {
                 });
             }
             }).run();
-            }
+            }*/
 
         editMode.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -218,13 +246,6 @@ public class UserFragment extends Fragment {
         logout.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                //Deleting the storage and the profile image
-                //File root = getActivity().getExternalFilesDir(Environment.DIRECTORY_PICTURES);
-                //storage = new File(root.getPath()+File.separator+PROFILE);
-                //for(File f : storage.listFiles())
-                //  f.delete();
-                //storage.delete();
-
                 firebaseAuth.signOut();
                 sharedPref.edit().clear().apply();
                 Intent intent = new Intent(getActivity(), Login.class);

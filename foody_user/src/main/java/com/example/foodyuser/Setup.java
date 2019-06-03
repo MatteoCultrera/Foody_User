@@ -106,7 +106,6 @@ public class Setup extends AppCompatActivity {
         setContentView(R.layout.activity_setup);
         firebaseAuth = FirebaseAuth.getInstance();
         storageDir = getExternalFilesDir(Environment.DIRECTORY_PICTURES);
-        Bundle extras = getIntent().getExtras();
         init();
         editImage.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -162,7 +161,6 @@ public class Setup extends AppCompatActivity {
     }
 
     private void updateSave(){
-
         if(addressCheck && nameCheck && mailCheck && numberCheck){
             save.setImageResource(R.drawable.save_white);
             save.setEnabled(true);
@@ -172,7 +170,6 @@ public class Setup extends AppCompatActivity {
             save.setEnabled(false);
             save.setClickable(false);
         }
-
     }
 
     private void checkName(){
@@ -265,7 +262,6 @@ public class Setup extends AppCompatActivity {
         String[] mimeTypes = {"image/jpeg", "image/png"};
         intent.putExtra(Intent.EXTRA_MIME_TYPES,mimeTypes);
         startActivityForResult(intent,GALLERY_REQUEST_CODE);
-
     }
 
     private void pickFromCamera(){
@@ -465,7 +461,6 @@ public class Setup extends AppCompatActivity {
                 addressActivity();
             }
         });
-
 
         updateSave();
     }
@@ -688,27 +683,21 @@ public class Setup extends AppCompatActivity {
             final File profile = new File(sharedPref.getString("imgLocale",directory.getPath()+File.separator+firebaseAuth.getCurrentUser().getUid()+".jpg"));
             saveBitmap(bitmap, profile.getPath());
 
-            FirebaseStorage storage;
-            StorageReference storageReference;
-            storage = FirebaseStorage.getInstance();
-            storageReference = storage.getReference();
-
-            StorageReference ref = storageReference.child(pathImage);
+            StorageReference ref = FirebaseStorage.getInstance().getReference().child(pathImage);
             ref.putFile(Uri.fromFile(profile))
-                    .addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
-                        @Override
-                        public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
-                            sharedPref.edit().putString("imgLocale",profile.getPath()).apply();
-                            sharedPref.edit().putString("imgRemote",pathImage).apply();
-
-                        }
-                    })
-                    .addOnFailureListener(new OnFailureListener() {
-                        @Override
-                        public void onFailure(@NonNull Exception e) {
-                            Toast.makeText(getApplicationContext(), "Failed "+e.getMessage(), Toast.LENGTH_SHORT).show();
-                        }
-                    });
+                .addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
+                    @Override
+                    public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
+                        sharedPref.edit().putString("imgLocale",profile.getPath()).apply();
+                        sharedPref.edit().putString("imgRemote",pathImage).apply();
+                    }
+                })
+                .addOnFailureListener(new OnFailureListener() {
+                    @Override
+                    public void onFailure(@NonNull Exception e) {
+                        Toast.makeText(getApplicationContext(), "Failed "+e.getMessage(), Toast.LENGTH_SHORT).show();
+                    }
+                });
         }
 
         DatabaseReference database = FirebaseDatabase.getInstance().getReference()
@@ -735,13 +724,6 @@ public class Setup extends AppCompatActivity {
             childLoc.put("longitude", pos.longitude);
             databaseLoc.updateChildren(childLoc);
         }
-
-        edit.putString("name", name.getText().toString());
-        edit.putString("email", email.getText().toString());
-        edit.putString("address", address.getText().toString());
-        edit.putString("phoneNumber", phoneNumber.getText().toString());
-        edit.putString("bio", bio.getText().toString());
-        edit.apply();
 
         Toast.makeText(getApplicationContext(), R.string.save, Toast.LENGTH_SHORT).show();
         unchanged = true;
@@ -770,5 +752,4 @@ public class Setup extends AppCompatActivity {
             }
         }
     }
-
 }

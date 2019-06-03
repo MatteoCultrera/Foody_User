@@ -136,81 +136,82 @@ public class RegisterActivity extends AppCompatActivity {
         register.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                if (username.getText().toString().equals("")){
-                    usernameL.setError(getResources().getString(R.string.empty_password));
-                    if (email.getText().toString().equals("")) {
-                        emailL.setError(getResources().getString(R.string.empty_email));
-                    }
-                    if (password1.getText().toString().equals("")){
-                        password1L.setError(getResources().getString(R.string.empty_password));
-                    }
-                    if (password2.getText().toString().equals("")){
-                        password2L.setError(getResources().getString(R.string.empty_password));
-                    }
-                    return;
-                }
+            if (username.getText().toString().equals("")){
+                usernameL.setError(getResources().getString(R.string.empty_password));
                 if (email.getText().toString().equals("")) {
                     emailL.setError(getResources().getString(R.string.empty_email));
-                    if (password1.getText().toString().equals("")){
-                        password1L.setError(getResources().getString(R.string.empty_password));
-                    }
-                    if (password2.getText().toString().equals("")){
-                        password2L.setError(getResources().getString(R.string.empty_password));
-                    }
-                    return;
                 }
                 if (password1.getText().toString().equals("")){
                     password1L.setError(getResources().getString(R.string.empty_password));
-                    if (password2.getText().toString().equals("")){
-                        password2L.setError(getResources().getString(R.string.empty_password));
-                    }
-                    return;
                 }
                 if (password2.getText().toString().equals("")){
                     password2L.setError(getResources().getString(R.string.empty_password));
-                    return;
                 }
-                loginAppear();
-                firebaseAuth.createUserWithEmailAndPassword(email.getText().toString(), password1.getText().toString())
-                        .addOnCompleteListener(new OnCompleteListener<AuthResult>() {
-                            @Override
-                            public void onComplete(@NonNull Task<AuthResult> task) {
-                                if (task.isSuccessful()) {
-                                    UserInfo info = new UserInfo(username.getText().toString(), email.getText().toString());
-                                    FirebaseUser user = firebaseAuth.getCurrentUser();
-                                    DatabaseReference database = FirebaseDatabase.getInstance().getReference()
-                                            .child("endUsers/" + user.getUid());
-                                    HashMap<String, Object> child = new HashMap<>();
-                                    child.put("info", info);
-                                    database.updateChildren(child);
-                                    sharedPref.edit().putString("name", info.getUsername()).apply();
-                                    sharedPref.edit().putString("email", info.getEmail()).apply();
-                                    sharedPref.edit().putString("id", firebaseAuth.getCurrentUser().getUid()).apply();
-                                    File root = getExternalFilesDir(Environment.DIRECTORY_DOCUMENTS);
-                                    final File directory = new File(root.getPath()+File.separator+MAIN_DIR);
-                                    if(directory.exists()){
-                                        for(File f : directory.listFiles())
-                                            f.delete();
-                                        directory.delete();
-                                    }
-                                    directory.mkdirs();
-                                    Toast.makeText(getApplicationContext(), R.string.auth_success, Toast.LENGTH_SHORT).show();
-                                    Intent intent = new Intent(RegisterActivity.this, MainActivity.class);
-                                    intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK);
-                                    startActivity(intent);
-                                    finish();
-                                } else {
-                                    Toast.makeText(getApplicationContext(), R.string.auth_failure, Toast.LENGTH_SHORT).show();
-                                    loginDisappear();
-                                }
-                            }
-                        });
+                return;
+            }
+            if (email.getText().toString().equals("")) {
+                emailL.setError(getResources().getString(R.string.empty_email));
+                if (password1.getText().toString().equals("")){
+                    password1L.setError(getResources().getString(R.string.empty_password));
+                }
+                if (password2.getText().toString().equals("")){
+                    password2L.setError(getResources().getString(R.string.empty_password));
+                }
+                return;
+            }
+            if (password1.getText().toString().equals("")){
+                password1L.setError(getResources().getString(R.string.empty_password));
+                if (password2.getText().toString().equals("")){
+                    password2L.setError(getResources().getString(R.string.empty_password));
+                }
+                return;
+            }
+            if (password2.getText().toString().equals("")){
+                password2L.setError(getResources().getString(R.string.empty_password));
+                return;
+            }
+            loginAppear();
+            firebaseAuth.createUserWithEmailAndPassword(email.getText().toString(), password1.getText().toString())
+                .addOnCompleteListener(new OnCompleteListener<AuthResult>() {
+                    @Override
+                    public void onComplete(@NonNull Task<AuthResult> task) {
+                    if (task.isSuccessful()) {
+                        UserInfo info = new UserInfo(username.getText().toString(), email.getText().toString());
+                        FirebaseUser user = firebaseAuth.getCurrentUser();
+                        DatabaseReference database = FirebaseDatabase.getInstance().getReference()
+                                .child("endUsers/" + user.getUid());
+                        HashMap<String, Object> child = new HashMap<>();
+                        child.put("info", info);
+                        database.updateChildren(child);
+                        sharedPref.edit().putString("name", info.getUsername()).apply();
+                        sharedPref.edit().putString("email", info.getEmail()).apply();
+                        sharedPref.edit().putString("id", user.getUid()).apply();
+
+                        File root = getExternalFilesDir(Environment.DIRECTORY_DOCUMENTS);
+                        final File directory = new File(root.getPath()+File.separator+MAIN_DIR);
+                        if(directory.exists()){
+                            for(File f : directory.listFiles())
+                                f.delete();
+                            directory.delete();
+                        }
+                        directory.mkdirs();
+
+                        Toast.makeText(getApplicationContext(), R.string.auth_success, Toast.LENGTH_SHORT).show();
+                        Intent intent = new Intent(RegisterActivity.this, MainActivity.class);
+                        intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK);
+                        startActivity(intent);
+                        finish();
+                    } else {
+                        Toast.makeText(getApplicationContext(), R.string.auth_failure, Toast.LENGTH_SHORT).show();
+                        loginDisappear();
+                    }
+                    }
+                });
             }
         });
     }
 
     private void loginAppear(){
-
         dialog = new Dialog(this);
         dialog.setContentView(R.layout.loading_dialog);
         WindowManager.LayoutParams lp = new WindowManager.LayoutParams();
@@ -221,12 +222,9 @@ public class RegisterActivity extends AppCompatActivity {
         dialog.show();
         dialog.getWindow().setAttributes(lp);
         dialog.getWindow().setBackgroundDrawableResource(android.R.color.transparent);
-
-
     }
 
     private void loginDisappear(){
-
         dialog.dismiss();
     }
 
