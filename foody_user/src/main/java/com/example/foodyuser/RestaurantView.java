@@ -9,6 +9,7 @@ import android.content.SharedPreferences;
 import android.net.Uri;
 import android.os.Environment;
 import android.support.annotation.NonNull;
+import android.support.annotation.Nullable;
 import android.support.constraint.ConstraintLayout;
 import android.support.design.button.MaterialButton;
 import android.support.design.widget.AppBarLayout;
@@ -46,7 +47,9 @@ import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.MutableData;
 import com.google.firebase.database.Query;
+import com.google.firebase.database.Transaction;
 import com.google.firebase.database.ValueEventListener;
 import com.google.firebase.storage.FileDownloadTask;
 import com.google.firebase.storage.FirebaseStorage;
@@ -60,6 +63,7 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Locale;
 import java.util.concurrent.TimeUnit;
+import java.util.concurrent.atomic.AtomicInteger;
 
 public class RestaurantView extends AppCompatActivity {
 
@@ -93,6 +97,7 @@ public class RestaurantView extends AppCompatActivity {
     private boolean isOnPause;
     private Review localeReview;
     private AppBarLayout appBarLayout;
+    private AtomicInteger counter;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -117,6 +122,7 @@ public class RestaurantView extends AppCompatActivity {
         addReview.getLayoutTransition().enableTransitionType(LayoutTransition.CHANGING);
         session = 0;
         localeReview = null;
+        counter = new AtomicInteger();
         Log.d("LIFECYCLE","OnCreate()");
     }
 
@@ -223,7 +229,9 @@ public class RestaurantView extends AppCompatActivity {
             updateTotal();
         }
 
-        if(localeReview != null){
+
+        if(counter.intValue() == 5 && !isOnPause && localeReview != null){
+            enableAddReview();
             reviews.add(localeReview);
             showReview.notifyAdded(reviews.size()-1);
             localeReview = null;
@@ -354,6 +362,8 @@ public class RestaurantView extends AppCompatActivity {
                     @Override
                     public void onClick(View v) {
 
+                        counter.set(0);
+
                         loadAddReview();
 
                         String localePath = null;
@@ -382,6 +392,155 @@ public class RestaurantView extends AppCompatActivity {
                                 shared.getString("name",""),
                                 remotePath, notes, meanPoints);
 
+                        final DatabaseReference meanFoodQuality = FirebaseDatabase.getInstance().getReference()
+                                .child("restaurantsInfo").child(thisRestaurant.getUid()).child("info").child("meanFoodQuality");
+
+                        final DatabaseReference meanRestaurantService = FirebaseDatabase.getInstance().getReference()
+                                .child("restaurantsInfo").child(thisRestaurant.getUid()).child("info").child("meanRestaurantService");
+
+
+                        final DatabaseReference meanDeliveryTime = FirebaseDatabase.getInstance().getReference()
+                                .child("restaurantsInfo").child(thisRestaurant.getUid()).child("info").child("meanDeliveryTime");
+
+
+                        final DatabaseReference totalReviews = FirebaseDatabase.getInstance().getReference()
+                                .child("restaurantsInfo").child(thisRestaurant.getUid()).child("info").child("totalReviews");
+
+
+                        meanFoodQuality.runTransaction(new Transaction.Handler() {
+                            @NonNull
+                            @Override
+                            public Transaction.Result doTransaction(@NonNull MutableData mutableData) {
+                                float toAdd = rating.getRating();
+
+                                if(mutableData.getValue() == null)
+                                    mutableData.setValue(toAdd);
+                                else {
+                                    Double mutValue = Double.valueOf(mutableData.getValue().toString());
+                                    mutableData.setValue(mutValue+toAdd);
+
+                                }
+
+                                return Transaction.success(mutableData);
+                            }
+
+                            @Override
+                            public void onComplete(@Nullable DatabaseError databaseError, boolean b, @Nullable DataSnapshot dataSnapshot) {
+
+                                if(!b){
+                                    Log.d("PROVAPROVA","Error meanFoodQuality"+databaseError.getMessage()+" "+databaseError.getDetails());
+                                }
+
+                                counter.getAndIncrement();
+                                if(counter.intValue() == 5 && !isOnPause){
+                                    enableAddReview();
+                                    reviews.add(localeReview);
+                                    showReview.notifyAdded(reviews.size()-1);
+                                    localeReview = null;
+                                }
+                            }
+                        });
+
+                        meanRestaurantService.runTransaction(new Transaction.Handler() {
+                            @NonNull
+                            @Override
+                            public Transaction.Result doTransaction(@NonNull MutableData mutableData) {
+                                float toAdd = ratingTwo.getRating();
+
+                                if(mutableData.getValue() == null)
+                                    mutableData.setValue(toAdd);
+                                else {
+                                    Double mutValue = Double.valueOf(mutableData.getValue().toString());
+                                    mutableData.setValue(mutValue+toAdd);
+
+                                }
+
+                                return Transaction.success(mutableData);
+                            }
+
+                            @Override
+                            public void onComplete(@Nullable DatabaseError databaseError, boolean b, @Nullable DataSnapshot dataSnapshot) {
+
+                                if(!b){
+                                    Log.d("PROVAPROVA","Error meanRestaurantService"+databaseError.getMessage()+" "+databaseError.getDetails());
+                                }
+
+                                counter.getAndIncrement();
+                                if(counter.intValue() == 5 && !isOnPause){
+                                    enableAddReview();
+                                    reviews.add(localeReview);
+                                    showReview.notifyAdded(reviews.size()-1);
+                                    localeReview = null;
+                                }
+                            }
+                        });
+
+                        meanDeliveryTime.runTransaction(new Transaction.Handler() {
+                            @NonNull
+                            @Override
+                            public Transaction.Result doTransaction(@NonNull MutableData mutableData) {
+                                float toAdd = ratingThree.getRating();
+
+                                if(mutableData.getValue() == null)
+                                    mutableData.setValue(toAdd);
+                                else {
+                                    Double mutValue = Double.valueOf(mutableData.getValue().toString());
+                                    mutableData.setValue(mutValue+toAdd);
+
+                                }
+
+                                return Transaction.success(mutableData);
+                            }
+
+                            @Override
+                            public void onComplete(@Nullable DatabaseError databaseError, boolean b, @Nullable DataSnapshot dataSnapshot) {
+
+                                if(!b){
+                                    Log.d("PROVAPROVA","Error meanDeliveryTime"+databaseError.getMessage()+" "+databaseError.getDetails());
+                                }
+
+                                counter.getAndIncrement();
+                                if(counter.intValue() == 5 && !isOnPause){
+                                    enableAddReview();
+                                    reviews.add(localeReview);
+                                    showReview.notifyAdded(reviews.size()-1);
+                                    localeReview = null;
+                                }
+                            }
+                        });
+
+                        totalReviews.runTransaction(new Transaction.Handler() {
+                            @NonNull
+                            @Override
+                            public Transaction.Result doTransaction(@NonNull MutableData mutableData) {
+
+                                if(mutableData.getValue() == null)
+                                    mutableData.setValue(1);
+                                else {
+                                    mutableData.setValue((Long)mutableData.getValue() + 1);
+
+                                }
+
+                                return Transaction.success(mutableData);
+                            }
+
+                            @Override
+                            public void onComplete(@Nullable DatabaseError databaseError, boolean b, @Nullable DataSnapshot dataSnapshot) {
+
+                                if(!b){
+                                    Log.d("PROVAPROVA","Error "+databaseError.getMessage()+" "+databaseError.getDetails());
+                                }
+
+                                counter.getAndIncrement();
+                                if(counter.intValue() == 5 && !isOnPause){
+                                    enableAddReview();
+                                    reviews.add(localeReview);
+                                    showReview.notifyAdded(reviews.size()-1);
+                                    localeReview = null;
+                                }
+                            }
+                        });
+
                         DatabaseReference databaseRest = FirebaseDatabase.getInstance().getReference()
                                 .child("reviews").child(thisRestaurant.getUid());
                         HashMap<String, Object> childReviews = new HashMap<>();
@@ -389,10 +548,8 @@ public class RestaurantView extends AppCompatActivity {
                         databaseRest.updateChildren(childReviews).addOnSuccessListener(new OnSuccessListener<Void>() {
                             @Override
                             public void onSuccess(Void aVoid) {
-                                Log.d("PROVADUE","Main On Success");
-
-                                if(!isOnPause){
-                                    Log.d("PROVATRE","Adding localeReview");
+                                counter.getAndIncrement();
+                                if(counter.intValue() == 5 && !isOnPause){
                                     enableAddReview();
                                     reviews.add(localeReview);
                                     showReview.notifyAdded(reviews.size()-1);
@@ -403,8 +560,13 @@ public class RestaurantView extends AppCompatActivity {
                             @Override
                             public void onFailure(@NonNull Exception e) {
                                 Toast.makeText(getApplicationContext(),"Error Adding Review",Toast.LENGTH_SHORT);
-                                enableAddReview();
-                                localeReview = null;
+                                counter.getAndIncrement();
+                                if(counter.intValue() == 5 && !isOnPause){
+                                    enableAddReview();
+                                    reviews.add(localeReview);
+                                    showReview.notifyAdded(reviews.size()-1);
+                                    localeReview = null;
+                                }
                             }
                         });
 
