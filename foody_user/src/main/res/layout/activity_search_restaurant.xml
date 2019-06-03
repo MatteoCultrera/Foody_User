@@ -8,6 +8,17 @@
     android:background="@color/dark_white_background"
     >
 
+    <View
+        android:layout_width="10dp"
+        android:layout_height="10dp"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintBottom_toBottomOf="parent"
+        android:background="@android:color/transparent"
+        android:focusable="true"
+        android:focusableInTouchMode="true"/>
+
     <EditText
         android:id="@+id/search_restaurant"
         android:layout_width="match_parent"
