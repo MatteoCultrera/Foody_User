@@ -83,6 +83,9 @@ class Reservation {
             case DOING:
                 ret = "Doing";
                 break;
+            case REJECTED:
+                ret = "Rejected";
+                break;
             default:
                 ret = "Status Unknown";
                 break;
