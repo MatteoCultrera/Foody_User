@@ -1,0 +1,449 @@
+<?xml version="1.0" encoding="utf-8"?>
+<android.support.constraint.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+
+    <TextView
+        android:id="@+id/calendar_year"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="2019"
+        android:textSize="25sp"
+        android:fontFamily="@font/roboto_regular"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        android:layout_marginStart="27dp"
+        android:layout_marginTop="21dp"/>
+
+    <View
+        android:id="@+id/calendar_divider"
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        android:background="@color/divider"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/calendar_year"
+        android:layout_marginTop="6.5dp"
+        android:layout_marginStart="16.5dp"
+        android:layout_marginEnd="16.5dp"/>
+
+    <LinearLayout
+        android:id="@+id/calendar_first"
+        android:layout_width="match_parent"
+        android:layout_height="80dp"
+        android:orientation="horizontal"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/calendar_divider"
+        android:layout_marginTop="18.5dp"
+        android:layout_marginStart="16.5dp"
+        android:layout_marginEnd="16.5dp">
+
+        <android.support.constraint.ConstraintLayout
+            android:layout_weight="1"
+            android:layout_width="64dp"
+            android:layout_height="match_parent"
+            android:background="@color/whiteText">
+
+            <android.support.constraint.ConstraintLayout
+                android:id="@+id/calendar_jan"
+                android:layout_width="64dp"
+                android:layout_height="64dp"
+                android:background="@drawable/calendar_enabled_background"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintTop_toTopOf="parent"
+                android:clickable="true">
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:fontFamily="@font/roboto_bold"
+                    android:textSize="20dp"
+                    android:textColor="@color/whiteText"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintTop_toTopOf="parent"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    android:text="@string/jan"/>
+            </android.support.constraint.ConstraintLayout>
+
+        </android.support.constraint.ConstraintLayout>
+
+        <android.support.constraint.ConstraintLayout
+            android:layout_width="64dp"
+            android:layout_weight="1"
+            android:layout_height="match_parent"
+            android:background="@color/whiteText">
+
+
+            <android.support.constraint.ConstraintLayout
+                android:id="@+id/calendar_feb"
+                android:layout_width="64dp"
+                android:layout_height="64dp"
+                android:background="@drawable/calendar_enabled_background"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintTop_toTopOf="parent"
+                android:clickable="true">
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:fontFamily="@font/roboto_bold"
+                    android:textSize="20dp"
+                    android:textColor="@color/whiteText"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintTop_toTopOf="parent"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    android:text="@string/feb"/>
+            </android.support.constraint.ConstraintLayout>
+
+
+        </android.support.constraint.ConstraintLayout>
+
+        <android.support.constraint.ConstraintLayout
+            android:layout_width="64dp"
+            android:layout_weight="1"
+            android:layout_height="match_parent"
+            android:background="@color/whiteText">
+
+            <android.support.constraint.ConstraintLayout
+                android:id="@+id/calendar_mar"
+                android:layout_width="64dp"
+                android:layout_height="64dp"
+                android:background="@drawable/calendar_enabled_background"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintTop_toTopOf="parent"
+                android:clickable="true">
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:fontFamily="@font/roboto_bold"
+                    android:textSize="20dp"
+                    android:textColor="@color/whiteText"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintTop_toTopOf="parent"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    android:text="@string/mar"/>
+            </android.support.constraint.ConstraintLayout>
+
+        </android.support.constraint.ConstraintLayout>
+
+        <android.support.constraint.ConstraintLayout
+            android:layout_width="64dp"
+            android:layout_weight="1"
+            android:layout_height="match_parent"
+            android:background="@color/whiteText">
+
+            <android.support.constraint.ConstraintLayout
+                android:id="@+id/calendar_apr"
+                android:layout_width="64dp"
+                android:layout_height="64dp"
+                android:background="@drawable/calendar_enabled_background"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintTop_toTopOf="parent"
+                android:clickable="true">
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:fontFamily="@font/roboto_bold"
+                    android:textSize="20dp"
+                    android:textColor="@color/whiteText"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintTop_toTopOf="parent"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    android:text="@string/apr"/>
+            </android.support.constraint.ConstraintLayout>
+        </android.support.constraint.ConstraintLayout>
+
+
+    </LinearLayout>
+
+    <LinearLayout
+        android:id="@+id/calendar_second"
+        android:layout_width="match_parent"
+        android:layout_height="80dp"
+        android:orientation="horizontal"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/calendar_first"
+        android:layout_marginStart="16.5dp"
+        android:layout_marginEnd="16.5dp">
+
+        <android.support.constraint.ConstraintLayout
+            android:layout_weight="1"
+            android:layout_width="64dp"
+            android:layout_height="match_parent"
+            android:background="@color/whiteText">
+
+            <android.support.constraint.ConstraintLayout
+                android:id="@+id/calendar_may"
+                android:layout_width="64dp"
+                android:layout_height="64dp"
+                android:background="@drawable/calendar_enabled_background"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintTop_toTopOf="parent"
+                android:clickable="true">
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:fontFamily="@font/roboto_bold"
+                    android:textSize="20dp"
+                    android:textColor="@color/whiteText"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintTop_toTopOf="parent"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    android:text="@string/may"/>
+            </android.support.constraint.ConstraintLayout>
+
+        </android.support.constraint.ConstraintLayout>
+
+        <android.support.constraint.ConstraintLayout
+            android:layout_width="64dp"
+            android:layout_weight="1"
+            android:layout_height="match_parent"
+            android:background="@color/whiteText">
+
+
+            <android.support.constraint.ConstraintLayout
+                android:id="@+id/calendar_jun"
+                android:layout_width="64dp"
+                android:layout_height="64dp"
+                android:background="@drawable/calendar_enabled_background"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintTop_toTopOf="parent"
+                android:clickable="true">
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:fontFamily="@font/roboto_bold"
+                    android:textSize="20dp"
+                    android:textColor="@color/whiteText"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintTop_toTopOf="parent"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    android:text="@string/jun"/>
+            </android.support.constraint.ConstraintLayout>
+
+
+        </android.support.constraint.ConstraintLayout>
+
+        <android.support.constraint.ConstraintLayout
+            android:layout_width="64dp"
+            android:layout_weight="1"
+            android:layout_height="match_parent"
+            android:background="@color/whiteText">
+
+            <android.support.constraint.ConstraintLayout
+                android:id="@+id/calendar_jul"
+                android:layout_width="64dp"
+                android:layout_height="64dp"
+                android:background="@drawable/calendar_enabled_background"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintTop_toTopOf="parent"
+                android:clickable="true">
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:fontFamily="@font/roboto_bold"
+                    android:textSize="20dp"
+                    android:textColor="@color/whiteText"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintTop_toTopOf="parent"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    android:text="@string/jul"/>
+            </android.support.constraint.ConstraintLayout>
+
+        </android.support.constraint.ConstraintLayout>
+
+        <android.support.constraint.ConstraintLayout
+            android:layout_width="64dp"
+            android:layout_weight="1"
+            android:layout_height="match_parent"
+            android:background="@color/whiteText">
+
+            <android.support.constraint.ConstraintLayout
+                android:id="@+id/calendar_aug"
+                android:layout_width="64dp"
+                android:layout_height="64dp"
+                android:background="@drawable/calendar_enabled_background"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintTop_toTopOf="parent"
+                android:clickable="true">
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:fontFamily="@font/roboto_bold"
+                    android:textSize="20dp"
+                    android:textColor="@color/whiteText"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintTop_toTopOf="parent"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    android:text="@string/aug"/>
+            </android.support.constraint.ConstraintLayout>
+        </android.support.constraint.ConstraintLayout>
+
+
+    </LinearLayout>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="80dp"
+        android:orientation="horizontal"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/calendar_second"
+        android:layout_marginStart="16.5dp"
+        android:layout_marginEnd="16.5dp">
+
+        <android.support.constraint.ConstraintLayout
+            android:layout_weight="1"
+            android:layout_width="64dp"
+            android:layout_height="match_parent"
+            android:background="@color/whiteText">
+
+            <android.support.constraint.ConstraintLayout
+                android:id="@+id/calendar_sep"
+                android:layout_width="64dp"
+                android:layout_height="64dp"
+                android:background="@drawable/calendar_enabled_background"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintTop_toTopOf="parent"
+                android:clickable="true">
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:fontFamily="@font/roboto_bold"
+                    android:textSize="20dp"
+                    android:textColor="@color/whiteText"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintTop_toTopOf="parent"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    android:text="@string/sep"/>
+            </android.support.constraint.ConstraintLayout>
+
+        </android.support.constraint.ConstraintLayout>
+
+        <android.support.constraint.ConstraintLayout
+            android:layout_width="64dp"
+            android:layout_weight="1"
+            android:layout_height="match_parent"
+            android:background="@color/whiteText">
+
+
+            <android.support.constraint.ConstraintLayout
+                android:id="@+id/calendar_oct"
+                android:layout_width="64dp"
+                android:layout_height="64dp"
+                android:background="@drawable/calendar_enabled_background"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintTop_toTopOf="parent"
+                android:clickable="true">
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:fontFamily="@font/roboto_bold"
+                    android:textSize="20dp"
+                    android:textColor="@color/whiteText"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintTop_toTopOf="parent"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    android:text="@string/oct"/>
+            </android.support.constraint.ConstraintLayout>
+
+
+        </android.support.constraint.ConstraintLayout>
+
+        <android.support.constraint.ConstraintLayout
+            android:layout_width="64dp"
+            android:layout_weight="1"
+            android:layout_height="match_parent"
+            android:background="@color/whiteText">
+
+            <android.support.constraint.ConstraintLayout
+                android:id="@+id/calendar_nov"
+                android:layout_width="64dp"
+                android:layout_height="64dp"
+                android:background="@drawable/calendar_enabled_background"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintTop_toTopOf="parent"
+                android:clickable="true">
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:fontFamily="@font/roboto_bold"
+                    android:textSize="20dp"
+                    android:textColor="@color/whiteText"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintTop_toTopOf="parent"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    android:text="@string/nov"/>
+            </android.support.constraint.ConstraintLayout>
+
+        </android.support.constraint.ConstraintLayout>
+
+        <android.support.constraint.ConstraintLayout
+            android:layout_width="64dp"
+            android:layout_weight="1"
+            android:layout_height="match_parent"
+            android:background="@color/whiteText">
+
+            <android.support.constraint.ConstraintLayout
+                android:id="@+id/calendar_dec"
+                android:layout_width="64dp"
+                android:layout_height="64dp"
+                android:background="@drawable/calendar_enabled_background"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintTop_toTopOf="parent"
+                android:clickable="true">
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:fontFamily="@font/roboto_bold"
+                    android:textSize="20dp"
+                    android:textColor="@color/whiteText"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintTop_toTopOf="parent"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    android:text="@string/dec"/>
+            </android.support.constraint.ConstraintLayout>
+        </android.support.constraint.ConstraintLayout>
+
+
+    </LinearLayout>
+
+
+</android.support.constraint.ConstraintLayout>

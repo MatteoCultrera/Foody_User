@@ -54,7 +54,7 @@ public class RVAdapterRestaurants  extends RecyclerView.Adapter<RVAdapterRestaur
         if(currentRes.getTotalMean() == -1)
             cardViewHolder.restaurantReview.setText("?");
         else
-            cardViewHolder.restaurantReview.setText(String.format("%.2f",currentRes.getTotalMean()));
+            cardViewHolder.restaurantReview.setText(String.format("%.1f",currentRes.getTotalMean()));
 
         File imageFile = new File(currentRes.getImagePath());
         RequestOptions options = new RequestOptions();

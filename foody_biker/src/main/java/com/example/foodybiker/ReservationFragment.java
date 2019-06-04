@@ -294,7 +294,6 @@ public class ReservationFragment extends Fragment {
                             activeReservation.getRestaurantAddress(), activeReservation.getUserAddress(),
                             activeReservation.getRestaurantID(), distance);
                     reservation.setStatus("delivered");
-
                     HashMap<String, Object> childSelf = new HashMap<>();
                     childSelf.put(activeReservation.getReservationID(), reservation);
                     databaseRest.updateChildren(childSelf).addOnFailureListener(new OnFailureListener() {
@@ -308,16 +307,24 @@ public class ReservationFragment extends Fragment {
                             DatabaseReference databaseDelete = FirebaseDatabase.getInstance().getReference()
                                     .child("reservations").child("Bikers").child(firebaseUser.getUid())
                                     .child(activeReservation.getReservationID());
-                            databaseDelete.removeValue();
-                            father.noActiveReservation(activeReservation);
-                            setInterface(false);
-                            canClick = false;
-                            setActiveReservation(null);
-                            adapter.setOrderActive(false);
-                            orderDelivered.setText("");
-                            updateTitles();
+                            databaseDelete.removeValue().addOnCompleteListener(new OnCompleteListener<Void>() {
+                                @Override
+                                public void onComplete(@NonNull Task<Void> task) {
+                                    father.noActiveReservation(activeReservation);
+                                    setInterface(false);
+                                    canClick = false;
+                                    setActiveReservation(null);
+                                    adapter.setOrderActive(false);
+                                    orderDelivered.setText("");
+                                    updateTitles();
+                                }
+                            });
                         }
                     });
+                    String userUID = reservation.getReservationID().substring(0, 28);
+                    DatabaseReference databaseUser = FirebaseDatabase.getInstance().getReference()
+                            .child("reservations").child("users").child(userUID).child(reservation.getReservationID());
+                    databaseUser.child("delivered").setValue(true);
 
                     final DatabaseReference databaseDelivered = FirebaseDatabase.getInstance().getReference()
                             .child("archive").child("Bikers").child(firebaseUser.getUid()).child("delivered");

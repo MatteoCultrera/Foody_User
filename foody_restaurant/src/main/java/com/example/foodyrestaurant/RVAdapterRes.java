@@ -263,7 +263,7 @@ public class RVAdapterRes extends RecyclerView.Adapter<RVAdapterRes.CardViewHold
                                     for (int i = 0; i < dishes.size(); i++) {
                                         if(frequencies.containsKey(dishes.get(i).getOrderName())){
                                             Integer count = (Integer) frequencies.get(dishes.get(i).getOrderName());
-                                            count ++;
+                                            count += dishes.get(i).getPieces();
                                             frequencies.put(dishes.get(i).getOrderName(), count);
                                         }
                                     }

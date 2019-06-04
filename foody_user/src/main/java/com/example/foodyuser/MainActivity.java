@@ -1,6 +1,5 @@
 package com.example.foodyuser;
 
-import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
@@ -18,7 +17,6 @@ import android.view.MenuItem;
 import android.view.View;
 
 import com.example.foody_library.NetworkCheck;
-import com.example.foody_library.NoInternetActivity;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.ChildEventListener;
@@ -27,6 +25,8 @@ import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 
+import java.util.Calendar;
+import java.util.HashMap;
 import java.util.concurrent.ExecutionException;
 
 public class MainActivity extends AppCompatActivity {
@@ -251,8 +251,8 @@ public class MainActivity extends AppCompatActivity {
     }
 
     public void notification(){
-        FirebaseAuth firebaseAuth = FirebaseAuth.getInstance();
-        FirebaseUser firebaseUser = firebaseAuth.getCurrentUser();
+        final FirebaseAuth firebaseAuth = FirebaseAuth.getInstance();
+        final FirebaseUser firebaseUser = firebaseAuth.getCurrentUser();
         DatabaseReference restaurantBikers = FirebaseDatabase.getInstance().getReference().child("reservations")
                 .child("users").child(firebaseUser.getUid());
         restaurantBikers.addChildEventListener(new ChildEventListener() {
@@ -271,6 +271,28 @@ public class MainActivity extends AppCompatActivity {
                 if(!dataSnapshot.child("accepted").getValue(boolean.class) &&
                         dataSnapshot.child("status").getValue(String.class).compareTo("Done") == 0) {
                         setNotification(1);
+                }
+
+                if(dataSnapshot.child("delivered").exists()){
+                    if(dataSnapshot.child("delivered").getValue(boolean.class)){
+                        final ReservationDBUser reservationDBUser = dataSnapshot.getValue(ReservationDBUser.class);
+                        DatabaseReference databaseRest = FirebaseDatabase.getInstance().getReference()
+                                .child("reservations").child("users").child(firebaseUser.getUid())
+                                .child(reservationDBUser.getReservationID());
+                        databaseRest.removeValue(new DatabaseReference.CompletionListener() {
+                            @Override
+                            public void onComplete(@Nullable DatabaseError databaseError, @NonNull DatabaseReference databaseReference) {
+                                Calendar calendar = Calendar.getInstance();
+                                String monthYear = calendar.get(Calendar.MONTH) + "-" + calendar.get(Calendar.YEAR);
+                                DatabaseReference databaseArc = FirebaseDatabase.getInstance().getReference()
+                                        .child("archive").child("user").child(firebaseUser.getUid()).child(monthYear);
+                                HashMap<String, Object> childSelf = new HashMap<>();
+                                childSelf.put(reservationDBUser.getReservationID(), reservationDBUser);
+                                databaseArc.updateChildren(childSelf);
+                                ((ReservationFragment) reservations).removeOrder(reservationDBUser.getReservationID());
+                            }
+                        });
+                    }
                 }
             }
 

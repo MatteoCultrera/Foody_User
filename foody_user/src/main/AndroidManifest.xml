@@ -21,8 +21,8 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
-        <activity android:name=".SearchRestaurant">
-        </activity>
+        <activity android:name=".historyMonthActivity"></activity>
+        <activity android:name=".SearchRestaurant"></activity>
         <activity android:name=".RestaurantView" />
         <activity
             android:name=".Login"
@@ -38,7 +38,7 @@
         <activity
             android:name=".RegisterActivity"
             android:screenOrientation="portrait"
-            android:windowSoftInputMode="adjustResize"/>
+            android:windowSoftInputMode="adjustResize" />
         <activity
             android:name=".Order"
             android:screenOrientation="portrait" />
@@ -56,11 +56,10 @@
         <activity
             android:name=".MainActivity"
             android:hardwareAccelerated="true"
-            android:screenOrientation="portrait"/>
-
-        <activity android:name="com.example.foody_library.NoInternetActivity"
-            android:screenOrientation="portrait"/>
-
+            android:screenOrientation="portrait" />
+        <activity
+            android:name="com.example.foody_library.NoInternetActivity"
+            android:screenOrientation="portrait" />
         <activity
             android:name="com.yalantis.ucrop.UCropActivity"
             android:theme="@style/Theme.AppCompat.Light.NoActionBar" />
