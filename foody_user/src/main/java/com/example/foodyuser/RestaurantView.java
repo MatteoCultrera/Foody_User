@@ -41,8 +41,12 @@ import com.bumptech.glide.request.RequestOptions;
 import com.bumptech.glide.signature.ObjectKey;
 import com.example.foody_library.Review;
 import com.github.ybq.android.spinkit.SpinKitView;
+import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
+import com.google.android.gms.tasks.Task;
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
@@ -88,7 +92,7 @@ public class RestaurantView extends AppCompatActivity {
     private int reviewsImageToFetch;
     private int reviewsImageFetched;
     private TextView totalText, price;
-    private ConstraintLayout totalLayout, addReview;
+    private ConstraintLayout totalLayout, addReview, favouriteLayout;
     private final String RESTAURANT_IMAGES = "RestaurantImages";
     int session;
     private boolean reviewAdded = false;
@@ -98,6 +102,8 @@ public class RestaurantView extends AppCompatActivity {
     private Review localeReview;
     private AppBarLayout appBarLayout;
     private AtomicInteger counter;
+    private boolean hasDownloaded;
+    private boolean isFavourite;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -111,6 +117,7 @@ public class RestaurantView extends AppCompatActivity {
         appBarLayout = findViewById(R.id.htab_appbar);
         totalText = findViewById(R.id.price_show_frag);
         totalLayout = findViewById(R.id.price_show_layout_frag);
+        favouriteLayout = findViewById(R.id.favourite_add_layout);
         price = findViewById(R.id.restaurant_del_price_frag);
         addReview = findViewById(R.id.add_review);
         addReviewLoading = findViewById(R.id.add_review_loading);
@@ -120,6 +127,8 @@ public class RestaurantView extends AppCompatActivity {
         showReview = new ShowReviewFragment();
         totalLayout.getLayoutTransition().enableTransitionType(LayoutTransition.CHANGING);
         addReview.getLayoutTransition().enableTransitionType(LayoutTransition.CHANGING);
+        hasDownloaded = false;
+        isFavourite = false;
         session = 0;
         localeReview = null;
         counter = new AtomicInteger();
@@ -129,6 +138,23 @@ public class RestaurantView extends AppCompatActivity {
 
     private void init(){
         Log.d("PROVA","Into init");
+        final FirebaseAuth firebaseAuth = FirebaseAuth.getInstance();
+        final FirebaseUser firebaseUser = firebaseAuth.getCurrentUser();
+        DatabaseReference databaseReference = FirebaseDatabase.getInstance().getReference().child("endUsers")
+                .child(firebaseUser.getUid()).child("favourites");
+        databaseReference.addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                Log.d("SWSW", "download");
+                isFavourite = dataSnapshot.child(reName).exists();
+                hasDownloaded = true;
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError databaseError) {
+                hasDownloaded = false;
+            }
+        });
         showMenu.setFather(this);
         showReview.setFather(this);
         setupViewPager(viewPager);
@@ -147,14 +173,17 @@ public class RestaurantView extends AppCompatActivity {
                 switch (tab.getPosition()){
                     case 0:
                         totalLayout.setVisibility(View.VISIBLE);
+                        favouriteLayout.setVisibility(View.VISIBLE);
                         addReview.setVisibility(View.GONE);
                         break;
                     case 1:
                         totalLayout.setVisibility(View.GONE);
+                        favouriteLayout.setVisibility(View.GONE);
                         addReview.setVisibility(View.VISIBLE);
                         break;
                     default:
                         totalLayout.setVisibility(View.GONE);
+                        favouriteLayout.setVisibility(View.GONE);
                         addReview.setVisibility(View.GONE);
                         break;
                 }
@@ -176,6 +205,48 @@ public class RestaurantView extends AppCompatActivity {
         reName = extras.getString("restaurant_id","");
         reUsername = extras.getString("restaurant_name", null);
         reAddress = extras.getString("restaurant_address", null);
+
+        favouriteLayout.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                if (hasDownloaded) {
+                    hasDownloaded = false;
+                    DatabaseReference databaseFav = FirebaseDatabase.getInstance().getReference().child("endUsers")
+                            .child(firebaseUser.getUid()).child("favourites");
+                    if (!isFavourite) {
+                        Log.d("SWSW", "add favourite");
+                        databaseFav.child(reName).setValue(true).addOnCompleteListener(new OnCompleteListener<Void>() {
+                            @Override
+                            public void onComplete(@NonNull Task<Void> task) {
+                                isFavourite = true;
+                                hasDownloaded = true;
+                            }
+                        }).addOnFailureListener(new OnFailureListener() {
+                            @Override
+                            public void onFailure(@NonNull Exception e) {
+                                isFavourite = false;
+                                hasDownloaded = true;
+                            }
+                        });
+                    } else {
+                        Log.d("SWSW", "remove favourite");
+                        databaseFav.child(reName).removeValue().addOnCompleteListener(new OnCompleteListener<Void>() {
+                            @Override
+                            public void onComplete(@NonNull Task<Void> task) {
+                                isFavourite = false;
+                                hasDownloaded = true;
+                            }
+                        }).addOnFailureListener(new OnFailureListener() {
+                            @Override
+                            public void onFailure(@NonNull Exception e) {
+                                isFavourite = true;
+                                hasDownloaded = true;
+                            }
+                        });
+                    }
+                }
+            }
+        });
 
         if(!shared.contains("selectedTime")){
             Calendar now = Calendar.getInstance();
