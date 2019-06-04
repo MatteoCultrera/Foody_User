@@ -1,10 +1,7 @@
 package com.example.foodyrestaurant;
 
 import android.graphics.Color;
-import android.graphics.Typeface;
-import android.location.Location;
 import android.os.Bundle;
-import android.provider.ContactsContract;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
@@ -17,8 +14,6 @@ import android.widget.TextView;
 import com.github.mikephil.charting.charts.BarChart;
 import com.github.mikephil.charting.charts.PieChart;
 import com.github.mikephil.charting.components.Description;
-import com.github.mikephil.charting.components.IMarker;
-import com.github.mikephil.charting.components.Legend;
 import com.github.mikephil.charting.components.XAxis;
 import com.github.mikephil.charting.components.YAxis;
 import com.github.mikephil.charting.data.BarData;
@@ -28,7 +23,6 @@ import com.github.mikephil.charting.data.PieData;
 import com.github.mikephil.charting.data.PieDataSet;
 import com.github.mikephil.charting.data.PieEntry;
 import com.github.mikephil.charting.formatter.PercentFormatter;
-import com.github.mikephil.charting.utils.ColorTemplate;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.DataSnapshot;
@@ -36,9 +30,6 @@ import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
-
-import org.jetbrains.annotations.NotNull;
-
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
@@ -47,7 +38,6 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
-import java.util.TreeMap;
 
 public class HistoryFragment extends Fragment {
 
@@ -69,8 +59,6 @@ public class HistoryFragment extends Fragment {
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_history, container, false);
-
-
         return view;
     }
 
@@ -262,8 +250,7 @@ public class HistoryFragment extends Fragment {
         dataSet.setSliceSpace(5f);
         dataSet.setSelectionShift(5f);
 
-        pieChart.getLegend().setEnabled(true);
-
+        pieChart.getLegend().setEnabled(false);
 
         data.setValueTextSize(14f);
         data.setValueTextColor(Color.BLACK);
@@ -271,6 +258,5 @@ public class HistoryFragment extends Fragment {
         pieChart.setNoDataText("NO ORDERS IN ARCHIVE RIGHT NOW");
         pieChart.animateXY(3000, 3000);
     }
-
 
 }
