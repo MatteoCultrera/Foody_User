@@ -112,4 +112,17 @@
     <string name="nov">Nov</string>
     <string name="dec">Dec</string>
 
+    <string name="all_orders">All orders</string>
+    <string name="enter_orders_history">Enter the history</string>
+    <string name="total_distance">Total distance</string>
+    <string name="working_hours">Frequent working Hours</string>
+    <string name="orders_number">Total number of orders</string>
+    <string name="kilometers" translatable="false">km</string>
+    <string name="currency" translatable="false">€</string>
+    <string name="total_spent">Total spent</string>
+    <string name="most_ordered_dishes">Most ordered dishes</string>
+    <string name="one" translatable="false">1</string>
+    <string name="two" translatable="false">2</string>
+    <string name="three" translatable="false">3</string>
+    <string name="total_income">Total income</string>
 </resources>

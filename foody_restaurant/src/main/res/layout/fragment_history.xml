@@ -1,474 +1,463 @@
-<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     tools:context="com.example.foodyrestaurant.HistoryFragment">
 
-    <ScrollView
+    <android.support.constraint.ConstraintLayout
+        android:id="@+id/constraintLayout1"
         android:layout_width="match_parent"
-        android:layout_height="match_parent">
+        android:layout_height="wrap_content">
 
-        <android.support.constraint.ConstraintLayout
-            android:id="@+id/constraintLayout1"
+        <TextView
+            android:id="@+id/title"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="16dp"
+            android:fontFamily="@font/roboto_bold"
+            android:text="@string/most_ordered_dishes"
+            android:textSize="25sp"
+            android:textColor="@color/colorPrimaryDark"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
+
+        <LinearLayout
+            android:id="@+id/linearLayout"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content">
+            android:layout_height="wrap_content"
+            android:layout_marginStart="8dp"
+            android:layout_marginEnd="8dp"
+            android:orientation="horizontal"
+            android:baselineAligned="false"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/title"
+            android:layout_marginTop="16dp">
 
-            <TextView
-                android:id="@+id/title"
-                android:layout_width="wrap_content"
+            <android.support.constraint.ConstraintLayout
+                android:id="@+id/second"
+                android:layout_width="0dp"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="16dp"
-                android:fontFamily="@font/roboto_bold"
-                android:text="Most ordered dishes"
-                android:textSize="25sp"
-                android:textColor="@color/colorPrimaryDark"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toTopOf="parent" />
+                android:layout_gravity="bottom"
+                android:layout_weight="1"
+                android:orientation="vertical">
 
-            <LinearLayout
-                android:id="@+id/linearLayout"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginStart="8dp"
-                android:layout_marginEnd="8dp"
-                android:orientation="horizontal"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@id/title"
-                android:layout_marginTop="16dp">
-
-                <android.support.constraint.ConstraintLayout
-                    android:id="@+id/second"
-                    android:layout_width="0dp"
-                    android:layout_height="wrap_content"
-                    android:layout_gravity="bottom"
-                    android:layout_weight="1"
-                    android:orientation="vertical">
-
-                    <View
-                        android:id="@+id/whiteTop"
-                        android:layout_width="80dp"
-                        android:layout_height="6dp"
-                        android:background="@android:color/transparent"
-                        app:layout_constraintBottom_toTopOf="@id/secondBar"
-                        app:layout_constraintEnd_toEndOf="parent"
-                        app:layout_constraintStart_toStartOf="parent"
-                        app:layout_constraintTop_toTopOf="parent"
-                        app:layout_constraintVertical_bias="1.0"
-                        />
-
-                    <View
-                        android:id="@+id/secondBar"
-                        android:layout_width="80dp"
-                        android:layout_height="115dp"
-                        android:background="#F06200"
-                        app:layout_constraintBottom_toBottomOf="parent"
-                        app:layout_constraintEnd_toEndOf="parent"
-                        app:layout_constraintStart_toStartOf="parent"
-                        app:layout_constraintVertical_bias="1.0" />
-
-                    <TextView
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:text="2"
-                        android:textColor="@color/whiteText"
-                        android:textSize="25sp"
-                        android:fontFamily="@font/roboto_bold"
-                        app:layout_constraintStart_toStartOf="@id/secondBar"
-                        app:layout_constraintTop_toTopOf="@id/secondBar"
-                        app:layout_constraintEnd_toEndOf="@id/secondBar"
-                        app:layout_constraintBottom_toBottomOf="@id/secondBar"
-                        android:layout_marginTop="16dp"/>
-
-                    <ImageView
-                        android:id="@+id/second_medal"
-                        android:layout_width="35dp"
-                        android:layout_height="wrap_content"
-                        android:layout_gravity="center_horizontal"
-                        android:adjustViewBounds="true"
-                        android:contentDescription="@null"
-                        android:scaleType="fitCenter"
-                        android:src="@drawable/second_medal"
-                        app:layout_constraintEnd_toEndOf="parent"
-                        app:layout_constraintStart_toStartOf="parent"
-                        app:layout_constraintTop_toTopOf="@id/whiteTop"
-                        app:layout_constraintVertical_bias="0.0"
-                        app:layout_constraintVertical_weight="1" />
-
-
-                </android.support.constraint.ConstraintLayout>
-
-                <android.support.constraint.ConstraintLayout
-                    android:id="@+id/first"
-                    android:layout_width="0dp"
-                    android:layout_height="wrap_content"
-                    android:layout_gravity="bottom"
-                    android:layout_weight="1"
-                    android:orientation="vertical">
-
-                    <ImageView
-                        android:id="@+id/cup"
-                        android:layout_width="70dp"
-                        android:layout_height="wrap_content"
-                        android:layout_gravity="center_horizontal"
-                        android:adjustViewBounds="true"
-                        android:contentDescription="@null"
-                        android:scaleType="fitCenter"
-                        android:src="@drawable/first_cup"
-                        app:layout_constraintEnd_toEndOf="parent"
-                        app:layout_constraintStart_toStartOf="parent"
-                        app:layout_constraintTop_toTopOf="parent"
-                        app:layout_constraintVertical_weight="1" />
-
-                    <View
-                        android:id="@+id/cupView"
-                        android:layout_width="80dp"
-                        android:layout_height="145dp"
-                        android:layout_gravity="center"
-                        android:background="#FFC100"
-                        app:layout_constraintBottom_toBottomOf="parent"
-                        app:layout_constraintEnd_toEndOf="parent"
-                        app:layout_constraintStart_toStartOf="parent"
-                        app:layout_constraintTop_toBottomOf="@id/cup"
-                        app:layout_constraintVertical_bias="0.0"
-                        app:layout_constraintVertical_weight="2" />
-
-                    <TextView
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:text="1"
-                        android:textColor="@color/whiteText"
-                        android:textSize="25sp"
-                        android:fontFamily="@font/roboto_bold"
-                        app:layout_constraintStart_toStartOf="@id/cupView"
-                        app:layout_constraintTop_toTopOf="@id/cupView"
-                        app:layout_constraintEnd_toEndOf="@id/cupView"
-                        app:layout_constraintBottom_toBottomOf="@id/cupView"/>
-
-
-                </android.support.constraint.ConstraintLayout>
-
-                <android.support.constraint.ConstraintLayout
-                    android:id="@+id/third"
-                    android:layout_width="0dp"
-                    android:layout_height="wrap_content"
-                    android:layout_gravity="center|bottom"
-                    android:layout_weight="1"
-                    android:orientation="vertical">
-
-                    <View
-                        android:id="@+id/whiteTop1"
-                        android:layout_width="80dp"
-                        android:layout_height="6dp"
-                        android:background="@android:color/transparent"
-                        app:layout_constraintBottom_toTopOf="@id/thirdBar"
-                        app:layout_constraintEnd_toEndOf="parent"
-                        app:layout_constraintStart_toStartOf="parent"
-                        app:layout_constraintTop_toTopOf="parent"
-                        app:layout_constraintVertical_bias="1.0"
-                        />
-
-                    <View
-                        android:id="@+id/thirdBar"
-                        android:layout_width="80dp"
-                        android:layout_height="90dp"
-                        android:background="#00B3B0"
-                        app:layout_constraintBottom_toBottomOf="parent"
-                        app:layout_constraintEnd_toEndOf="parent"
-                        app:layout_constraintStart_toStartOf="parent"
-                        app:layout_constraintVertical_bias="1.0" />
-
-                    <TextView
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:text="3"
-                        android:textColor="@color/whiteText"
-                        android:textSize="25sp"
-                        android:fontFamily="@font/roboto_bold"
-                        app:layout_constraintStart_toStartOf="@id/thirdBar"
-                        app:layout_constraintTop_toTopOf="@id/thirdBar"
-                        app:layout_constraintEnd_toEndOf="@id/thirdBar"
-                        app:layout_constraintBottom_toBottomOf="@id/thirdBar"
-                        android:layout_marginTop="30dp"/>
-
-                    <ImageView
-                        android:id="@+id/third_medal"
-                        android:layout_width="35dp"
-                        android:layout_height="wrap_content"
-                        android:layout_gravity="center_horizontal"
-                        android:layout_marginBottom="44dp"
-                        android:adjustViewBounds="true"
-                        android:contentDescription="@null"
-                        android:scaleType="fitCenter"
-                        android:src="@drawable/third_medal"
-                        app:layout_constraintBottom_toBottomOf="parent"
-                        app:layout_constraintEnd_toEndOf="parent"
-                        app:layout_constraintStart_toStartOf="parent"
-                        app:layout_constraintTop_toTopOf="parent"
-                        app:layout_constraintVertical_bias="0.0"
-                        app:layout_constraintVertical_weight="1" />
-
-
-                </android.support.constraint.ConstraintLayout>
-
-            </LinearLayout>
-
-            <LinearLayout
-                android:id="@+id/dish_name"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginStart="8dp"
-                android:layout_marginEnd="8dp"
-                android:layout_marginTop="4dp"
-                android:orientation="horizontal"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@id/linearLayout">
-
-                <android.support.constraint.ConstraintLayout
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_weight="1">
-
-                    <TextView
-                        android:id="@+id/text_second"
-                        android:layout_width="0dp"
-                        android:layout_height="wrap_content"
-                        android:fontFamily="@font/roboto_bold"
-                        android:text="Tandoori plater"
-                        android:gravity="center"
-                        android:textColor="@color/primaryText"
-                        android:textSize="16sp"
-                        app:layout_constraintEnd_toEndOf="parent"
-                        app:layout_constraintStart_toStartOf="parent"
-                        app:layout_constraintTop_toTopOf="parent"
-                        android:layout_marginStart="16dp"
-                        android:layout_marginEnd="16dp"
-                        />
-
-                    <TextView
-                        android:id="@+id/text_second_secondary"
-                        android:layout_width="0dp"
-                        android:layout_height="wrap_content"
-                        android:text="120 orders"
-                        android:textColor="@color/secondaryText"
-                        android:textSize="14sp"
-                        android:textAlignment="center"
-                        app:layout_constraintEnd_toEndOf="parent"
-                        app:layout_constraintStart_toStartOf="parent"
-                        app:layout_constraintTop_toBottomOf="@id/text_second"
-                        android:layout_marginStart="16dp"
-                        android:layout_marginEnd="16dp"/>
-
-                </android.support.constraint.ConstraintLayout>
-
-                <android.support.constraint.ConstraintLayout
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_weight="1">
-
-                    <TextView
-                        android:id="@+id/text_first"
-                        android:layout_width="0dp"
-                        android:layout_height="wrap_content"
-                        android:text="Tandoori plater"
-                        android:gravity="center"
-                        android:fontFamily="@font/roboto_bold"
-                        android:textSize="16sp"
-                        android:textColor="@color/primaryText"
-                        app:layout_constraintEnd_toEndOf="parent"
-                        app:layout_constraintStart_toStartOf="parent"
-                        app:layout_constraintTop_toTopOf="parent"
-                        android:layout_marginStart="16dp"
-                        android:layout_marginEnd="16dp"
-                        />
-
-                    <TextView
-                        android:id="@+id/text_first_secondary"
-                        android:layout_width="0dp"
-                        android:layout_height="wrap_content"
-                        android:text="156 orders"
-                        android:fontFamily="@font/roboto_regular"
-                        android:textSize="14sp"
-                        android:textColor="@color/secondaryText"
-                        app:layout_constraintEnd_toEndOf="parent"
-                        app:layout_constraintStart_toStartOf="parent"
-                        app:layout_constraintTop_toBottomOf="@id/text_first"
-                        android:layout_marginStart="16dp"
-                        android:layout_marginEnd="16dp"
-                        android:textAlignment="center"/>
-
-                </android.support.constraint.ConstraintLayout>
-
-                <android.support.constraint.ConstraintLayout
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_weight="1">
-
-                    <TextView
-                        android:id="@+id/text_third"
-                        android:layout_width="0dp"
-                        android:layout_height="wrap_content"
-                        android:text="Tandoori plater"
-                        android:gravity="center"
-                        android:fontFamily="@font/roboto_bold"
-                        android:textSize="16sp"
-                        android:textColor="@color/primaryText"
-                        app:layout_constraintEnd_toEndOf="parent"
-                        app:layout_constraintStart_toStartOf="parent"
-                        app:layout_constraintTop_toTopOf="parent"
-                        android:layout_marginStart="16dp"
-                        android:layout_marginEnd="16dp"
-                        />
-
-                    <TextView
-                        android:id="@+id/text_third_secondary"
-                        android:layout_width="0dp"
-                        android:layout_height="wrap_content"
-                        android:text="72 orders"
-                        android:fontFamily="@font/roboto_regular"
-                        android:textSize="14sp"
-                        app:layout_constraintEnd_toEndOf="parent"
-                        app:layout_constraintStart_toStartOf="parent"
-                        app:layout_constraintTop_toBottomOf="@id/text_third"
-                        android:layout_marginStart="16dp"
-                        android:layout_marginEnd="16dp"
-                        android:textAlignment="center"/>
-
-                </android.support.constraint.ConstraintLayout>
-
-            </LinearLayout>
-
-            <TextView
-                android:id="@+id/allOrders"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="16dp"
-                android:fontFamily="@font/roboto_bold"
-                android:text="All Orders"
-                android:textSize="25sp"
-                android:textColor="@color/colorPrimaryDark"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@id/dish_name" />
-
-            <android.support.design.button.MaterialButton
-                android:id="@+id/enter_order_history"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="Enter order history"
-                app:cornerRadius="25dp"
-                android:paddingTop="13dp"
-                android:paddingBottom="13dp"
-                android:paddingStart="30dp"
-                android:paddingEnd="30dp"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintTop_toBottomOf="@id/allOrders"
-                android:layout_marginTop="16dp" />
-
-            <LinearLayout
-                android:id="@+id/layout_income"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintTop_toBottomOf="@id/enter_order_history"
-                android:orientation="horizontal"
-                android:layout_marginTop="16dp">
-
-                <TextView
-                    android:id="@+id/income"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:fontFamily="@font/roboto_bold"
-                    android:text="Total Income"
-                    android:textSize="25sp"
-                    android:textColor="@color/colorPrimaryDark"
-                    android:layout_marginStart="24dp"
-                    android:layout_weight="0.75"/>
-
-                <TextView
-                    android:layout_width="0dp"
-                    android:layout_height="wrap_content"
-                    android:layout_weight="0.2"
-                    android:text="€"
-                    android:gravity="end"
-                    android:layout_marginEnd="8dp"
-                    android:fontFamily="@font/roboto_bold"
-                    android:textColor="@color/secondaryText"
-                    android:textSize="21sp"/>
-
-                <TextView
-                    android:id="@+id/total_income"
-                    android:layout_width="0dp"
-                    android:layout_height="wrap_content"
-                    android:text="250"
-                    android:gravity="start"
-                    android:textSize="23sp"
-                    android:fontFamily="@font/roboto_bold"
-                    android:textColor="@color/colorPrimaryDark"
-                    android:layout_weight="1"
-                    android:layout_marginEnd="24dp"
+                <View
+                    android:id="@+id/whiteTop"
+                    android:layout_width="80dp"
+                    android:layout_height="6dp"
+                    android:background="@android:color/transparent"
+                    app:layout_constraintBottom_toTopOf="@id/secondBar"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toTopOf="parent"
+                    app:layout_constraintVertical_bias="1.0"
                     />
 
-            </LinearLayout>
+                <View
+                    android:id="@+id/secondBar"
+                    android:layout_width="80dp"
+                    android:layout_height="115dp"
+                    android:background="#F06200"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintVertical_bias="1.0" />
 
-            <TextView
-                android:id="@+id/working_hours"
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/two"
+                    android:textColor="@color/whiteText"
+                    android:textSize="25sp"
+                    android:fontFamily="@font/roboto_bold"
+                    app:layout_constraintStart_toStartOf="@id/secondBar"
+                    app:layout_constraintTop_toTopOf="@id/secondBar"
+                    app:layout_constraintEnd_toEndOf="@id/secondBar"
+                    app:layout_constraintBottom_toBottomOf="@id/secondBar"
+                    android:layout_marginTop="16dp"/>
+
+                <ImageView
+                    android:id="@+id/second_medal"
+                    android:layout_width="35dp"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center_horizontal"
+                    android:adjustViewBounds="true"
+                    android:contentDescription="@null"
+                    android:scaleType="fitCenter"
+                    android:src="@drawable/second_medal"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toTopOf="@id/whiteTop"
+                    app:layout_constraintVertical_bias="0.0"
+                    app:layout_constraintVertical_weight="1" />
+
+
+            </android.support.constraint.ConstraintLayout>
+
+            <android.support.constraint.ConstraintLayout
+                android:id="@+id/first"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_gravity="bottom"
+                android:layout_weight="1"
+                android:orientation="vertical">
+
+                <ImageView
+                    android:id="@+id/cup"
+                    android:layout_width="70dp"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center_horizontal"
+                    android:adjustViewBounds="true"
+                    android:contentDescription="@null"
+                    android:scaleType="fitCenter"
+                    android:src="@drawable/first_cup"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toTopOf="parent"
+                    app:layout_constraintVertical_weight="1" />
+
+                <View
+                    android:id="@+id/cupView"
+                    android:layout_width="80dp"
+                    android:layout_height="145dp"
+                    android:layout_gravity="center"
+                    android:background="#FFC100"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toBottomOf="@id/cup"
+                    app:layout_constraintVertical_bias="0.0"
+                    app:layout_constraintVertical_weight="2" />
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/one"
+                    android:textColor="@color/whiteText"
+                    android:textSize="25sp"
+                    android:fontFamily="@font/roboto_bold"
+                    app:layout_constraintStart_toStartOf="@id/cupView"
+                    app:layout_constraintTop_toTopOf="@id/cupView"
+                    app:layout_constraintEnd_toEndOf="@id/cupView"
+                    app:layout_constraintBottom_toBottomOf="@id/cupView"/>
+
+
+            </android.support.constraint.ConstraintLayout>
+
+            <android.support.constraint.ConstraintLayout
+                android:id="@+id/third"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center|bottom"
+                android:layout_weight="1"
+                android:orientation="vertical">
+
+                <View
+                    android:id="@+id/whiteTop1"
+                    android:layout_width="80dp"
+                    android:layout_height="6dp"
+                    android:background="@android:color/transparent"
+                    app:layout_constraintBottom_toTopOf="@id/thirdBar"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toTopOf="parent"
+                    app:layout_constraintVertical_bias="1.0"
+                    />
+
+                <View
+                    android:id="@+id/thirdBar"
+                    android:layout_width="80dp"
+                    android:layout_height="90dp"
+                    android:background="#00B3B0"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintVertical_bias="1.0" />
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/three"
+                    android:textColor="@color/whiteText"
+                    android:textSize="25sp"
+                    android:fontFamily="@font/roboto_bold"
+                    app:layout_constraintStart_toStartOf="@id/thirdBar"
+                    app:layout_constraintTop_toTopOf="@id/thirdBar"
+                    app:layout_constraintEnd_toEndOf="@id/thirdBar"
+                    app:layout_constraintBottom_toBottomOf="@id/thirdBar"
+                    android:layout_marginTop="30dp"/>
+
+                <ImageView
+                    android:id="@+id/third_medal"
+                    android:layout_width="35dp"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center_horizontal"
+                    android:layout_marginBottom="44dp"
+                    android:adjustViewBounds="true"
+                    android:contentDescription="@null"
+                    android:scaleType="fitCenter"
+                    android:src="@drawable/third_medal"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toTopOf="parent"
+                    app:layout_constraintVertical_bias="0.0"
+                    app:layout_constraintVertical_weight="1" />
+
+
+            </android.support.constraint.ConstraintLayout>
+
+        </LinearLayout>
+
+        <LinearLayout
+            android:id="@+id/dish_name"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="8dp"
+            android:layout_marginEnd="8dp"
+            android:layout_marginTop="4dp"
+            android:orientation="horizontal"
+            android:baselineAligned="false"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/linearLayout">
+
+            <android.support.constraint.ConstraintLayout
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="16dp"
-                android:fontFamily="@font/roboto_bold"
-                android:text="Working Hours"
-                android:textSize="25sp"
-                android:textColor="@color/colorPrimaryDark"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@id/layout_income" />
+                android:layout_weight="1">
 
-            <com.github.mikephil.charting.charts.BarChart
-                android:id="@+id/barChart"
-                android:layout_width="match_parent"
-                android:layout_height="200dp"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@id/working_hours"
-                android:layout_marginTop="16dp"
-                android:layout_marginStart="8dp"
-                android:layout_marginEnd="8dp"
-                />
+                <TextView
+                    android:id="@+id/text_second"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:fontFamily="@font/roboto_bold"
+                    android:gravity="center"
+                    android:textColor="@color/primaryText"
+                    android:textSize="16sp"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toTopOf="parent"
+                    android:layout_marginStart="16dp"
+                    android:layout_marginEnd="16dp"
+                    />
 
-            <TextView
-                android:id="@+id/total_orders"
+                <TextView
+                    android:id="@+id/text_second_secondary"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:textColor="@color/secondaryText"
+                    android:textSize="14sp"
+                    android:textAlignment="center"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toBottomOf="@id/text_second"
+                    android:layout_marginStart="16dp"
+                    android:layout_marginEnd="16dp"/>
+
+            </android.support.constraint.ConstraintLayout>
+
+            <android.support.constraint.ConstraintLayout
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="16dp"
+                android:layout_weight="1">
+
+                <TextView
+                    android:id="@+id/text_first"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:gravity="center"
+                    android:fontFamily="@font/roboto_bold"
+                    android:textSize="16sp"
+                    android:textColor="@color/primaryText"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toTopOf="parent"
+                    android:layout_marginStart="16dp"
+                    android:layout_marginEnd="16dp"
+                    />
+
+                <TextView
+                    android:id="@+id/text_first_secondary"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:fontFamily="@font/roboto_regular"
+                    android:textSize="14sp"
+                    android:textColor="@color/secondaryText"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toBottomOf="@id/text_first"
+                    android:layout_marginStart="16dp"
+                    android:layout_marginEnd="16dp"
+                    android:textAlignment="center"/>
+
+            </android.support.constraint.ConstraintLayout>
+
+            <android.support.constraint.ConstraintLayout
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_weight="1">
+
+                <TextView
+                    android:id="@+id/text_third"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:gravity="center"
+                    android:fontFamily="@font/roboto_bold"
+                    android:textSize="16sp"
+                    android:textColor="@color/primaryText"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toTopOf="parent"
+                    android:layout_marginStart="16dp"
+                    android:layout_marginEnd="16dp"
+                    />
+
+                <TextView
+                    android:id="@+id/text_third_secondary"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:fontFamily="@font/roboto_regular"
+                    android:textSize="14sp"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toBottomOf="@id/text_third"
+                    android:layout_marginStart="16dp"
+                    android:layout_marginEnd="16dp"
+                    android:textAlignment="center"/>
+
+            </android.support.constraint.ConstraintLayout>
+
+        </LinearLayout>
+
+        <TextView
+            android:id="@+id/allOrders"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="16dp"
+            android:fontFamily="@font/roboto_bold"
+            android:text="@string/all_orders"
+            android:textSize="25sp"
+            android:textColor="@color/colorPrimaryDark"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/dish_name" />
+
+        <android.support.design.button.MaterialButton
+            android:id="@+id/enter_order_history"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/enter_orders_history"
+            app:cornerRadius="25dp"
+            android:paddingTop="13dp"
+            android:paddingBottom="13dp"
+            android:paddingStart="30dp"
+            android:paddingEnd="30dp"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/allOrders"
+            android:layout_marginTop="16dp" />
+
+        <LinearLayout
+            android:id="@+id/layout_income"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/enter_order_history"
+            android:orientation="horizontal"
+            android:layout_marginTop="16dp">
+
+            <TextView
+                android:id="@+id/income"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
                 android:fontFamily="@font/roboto_bold"
-                android:text="Total Number Orders"
+                android:text="@string/total_income"
                 android:textSize="25sp"
                 android:textColor="@color/colorPrimaryDark"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@id/barChart"/>
+                android:layout_marginStart="24dp"
+                android:layout_weight="0.75"/>
 
-            <com.github.mikephil.charting.charts.PieChart
-                android:id="@+id/pieChart"
-                android:layout_width="match_parent"
-                android:layout_height="300dp"
-                android:layout_marginTop="16dp"
-                android:layout_marginStart="8dp"
+            <TextView
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="0.2"
+                android:text="@string/currency"
+                android:gravity="end"
                 android:layout_marginEnd="8dp"
-                android:layout_marginBottom="16dp"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@id/total_orders"
+                android:fontFamily="@font/roboto_bold"
+                android:textColor="@color/secondaryText"
+                android:textSize="21sp"/>
+
+            <TextView
+                android:id="@+id/total_income"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:gravity="start"
+                android:textSize="23sp"
+                android:fontFamily="@font/roboto_bold"
+                android:textColor="@color/colorPrimaryDark"
+                android:layout_weight="1"
+                android:layout_marginEnd="24dp"
                 />
 
-        </android.support.constraint.ConstraintLayout>
+        </LinearLayout>
 
-    </ScrollView>
+        <TextView
+            android:id="@+id/working_hours"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="16dp"
+            android:fontFamily="@font/roboto_bold"
+            android:text="@string/working_hours"
+            android:textSize="25sp"
+            android:textColor="@color/colorPrimaryDark"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/layout_income" />
 
-</FrameLayout>
+        <com.github.mikephil.charting.charts.BarChart
+            android:id="@+id/barChart"
+            android:layout_width="match_parent"
+            android:layout_height="200dp"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/working_hours"
+            android:layout_marginTop="16dp"
+            android:layout_marginStart="8dp"
+            android:layout_marginEnd="8dp"
+            />
+
+        <TextView
+            android:id="@+id/total_orders"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="16dp"
+            android:fontFamily="@font/roboto_bold"
+            android:text="@string/orders_number"
+            android:textSize="25sp"
+            android:textColor="@color/colorPrimaryDark"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/barChart"/>
+
+        <com.github.mikephil.charting.charts.PieChart
+            android:id="@+id/pieChart"
+            android:layout_width="match_parent"
+            android:layout_height="300dp"
+            android:layout_marginTop="16dp"
+            android:layout_marginStart="8dp"
+            android:layout_marginEnd="8dp"
+            android:layout_marginBottom="16dp"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/total_orders"
+            />
+
+    </android.support.constraint.ConstraintLayout>
+
+</ScrollView>
