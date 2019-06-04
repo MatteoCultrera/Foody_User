@@ -266,7 +266,6 @@ public class ReservationFragment extends Fragment {
     }
 
     public void removeRejected(){
-        Log.d("SWSW", "ho cliccato");
         int index = 0;
         for(Reservation r : reservations){
             if(r.getPreparationStatusString().equals("Rejected")){
@@ -292,6 +291,10 @@ public class ReservationFragment extends Fragment {
                 HashMap<String, Object> childSelf = new HashMap<>();
                 childSelf.put(orderId, reservationDBUser);
                 databaseArc.updateChildren(childSelf);
+
+                DatabaseReference databaseRemove = FirebaseDatabase.getInstance().getReference()
+                        .child("reservations").child("users").child(firebaseUser.getUid());
+                databaseRemove.child(orderId).removeValue();
             }
             index++;
         }
