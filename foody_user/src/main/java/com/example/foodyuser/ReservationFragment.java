@@ -266,7 +266,6 @@ public class ReservationFragment extends Fragment {
     }
 
     public void removeRejected(){
-        Log.d("SWSW", "ho cliccato");
         int index = 0;
         for(Reservation r : reservations){
             if(r.getPreparationStatusString().equals("Rejected")){
