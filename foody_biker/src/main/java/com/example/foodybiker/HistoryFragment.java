@@ -1,6 +1,5 @@
 package com.example.foodybiker;
 
-import android.content.Intent;
 import android.graphics.Color;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
@@ -15,7 +14,6 @@ import android.widget.TextView;
 import com.github.mikephil.charting.charts.BarChart;
 import com.github.mikephil.charting.charts.PieChart;
 import com.github.mikephil.charting.components.Description;
-import com.github.mikephil.charting.components.Legend;
 import com.github.mikephil.charting.components.XAxis;
 import com.github.mikephil.charting.components.YAxis;
 import com.github.mikephil.charting.data.BarData;
@@ -24,7 +22,7 @@ import com.github.mikephil.charting.data.BarEntry;
 import com.github.mikephil.charting.data.PieData;
 import com.github.mikephil.charting.data.PieDataSet;
 import com.github.mikephil.charting.data.PieEntry;
-import com.github.mikephil.charting.utils.ColorTemplate;
+import com.github.mikephil.charting.formatter.PercentFormatter;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.DataSnapshot;
@@ -34,7 +32,6 @@ import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 
 import java.util.ArrayList;
-import java.util.Calendar;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
@@ -60,7 +57,14 @@ public class HistoryFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_history, container, false);
-        distance = view.findViewById(R.id.distance_biker);
+        return view;
+    }
+
+    @Override
+    public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
+        super.onViewCreated(view, savedInstanceState);
+
+        distance = view.findViewById(R.id.total_distance);
         barChart = view.findViewById(R.id.barChart);
         pieChart = view.findViewById(R.id.pieChart);
         for(int i = 0; i < 24; i++){
@@ -68,12 +72,6 @@ public class HistoryFragment extends Fragment {
         }
         delivered = 0;
         rejected = 0;
-        return view;
-    }
-
-    @Override
-    public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
-        super.onViewCreated(view, savedInstanceState);
 
         FirebaseAuth firebaseAuth = FirebaseAuth.getInstance();
         FirebaseUser firebaseUser = firebaseAuth.getCurrentUser();
@@ -133,7 +131,7 @@ public class HistoryFragment extends Fragment {
                         dbDistance = ds.getValue(Double.class);
                     }
                 }
-                distance.setText(String.format("%.2f km", dbDistance));
+                distance.setText(String.format("%.2f", dbDistance));
             }
 
             @Override
@@ -142,6 +140,83 @@ public class HistoryFragment extends Fragment {
         });
     }
 
+    public void drawChart() {
+        barChart.setDrawBarShadow(false);
+        barChart.setTouchEnabled(true);
+        Description description = new Description();
+        description.setText("");
+        barChart.setDescription(description);
+        barChart.setMaxVisibleValueCount(50);
+        barChart.setPinchZoom(false);
+        barChart.setDrawGridBackground(false);
+
+        XAxis xl = barChart.getXAxis();
+        xl.setGranularity(1f);
+        xl.setPosition(XAxis.XAxisPosition.BOTTOM);
+        xl.setAxisMinimum(0f);
+        xl.setDrawGridLines(false);
+
+        YAxis leftAxis = barChart.getAxisLeft();
+        leftAxis.setAxisMinimum(0f);
+        leftAxis.setEnabled(false);
+        leftAxis.setDrawGridLines(false);
+        barChart.getAxisRight().setEnabled(false);
+
+        List<BarEntry> yVals1 = new ArrayList<>();
+
+        Iterator it = frequency.entrySet().iterator();
+        while(it.hasNext()){
+            Map.Entry<Integer, Integer> pair = (Map.Entry) it.next();
+            yVals1.add(new BarEntry(pair.getKey(), pair.getValue()));
+        }
+
+        BarDataSet set = new BarDataSet(yVals1, null);
+        set.setColor((Color.rgb(132,171,241)));
+        BarData data = new BarData(set);
+        data.setDrawValues(false);
+        data.setBarWidth(0.8f);
+        barChart.setData(data);
+        barChart.getLegend().setEnabled(false);
+        barChart.setFitBars(true);
+        barChart.setNoDataText("NO FREQUENCY IN ARCHIVE RIGHT NOW");
+        barChart.setDrawValueAboveBar(true);
+        barChart.animateY(3000);
+
+    }
+
+    public void drawPieCharts() {
+        pieChart.setHighlightPerTapEnabled(true);
+        pieChart.getDescription().setEnabled(false);
+
+        ArrayList<PieEntry> entries = new ArrayList<>();
+        entries.add(new PieEntry(delivered));
+        entries.add(new PieEntry(rejected));
+
+        PieDataSet dataSet = new PieDataSet(entries, "Orders Results");
+        int[] colors = {getResources().getColor(R.color.accept, getActivity().getTheme()),
+                getResources().getColor(R.color.errorColor, getActivity().getTheme())};
+        dataSet.setColors(colors);
+
+        pieChart.setUsePercentValues(true);
+        dataSet.setValueFormatter(new PercentFormatter(pieChart));
+
+        PieData data = new PieData(dataSet);
+        pieChart.setData(data);
+
+        dataSet.setSliceSpace(5f);
+        dataSet.setSelectionShift(5f);
+
+        pieChart.getLegend().setEnabled(false);
+
+        data.setValueTextSize(14f);
+        data.setValueTextColor(Color.BLACK);
+        Log.d("SRSRSR", "rejected: "+ rejected + " accepted: " + delivered);
+        pieChart.setNoDataText("NO ORDERS IN ARCHIVE RIGHT NOW");
+        pieChart.animateXY(3000, 3000);
+    }
+
+
+    /*
     public void drawPieCharts() {
         //pieChart.setUsePercentValues(true);
         pieChart.getDescription().setEnabled(false);
@@ -238,4 +313,5 @@ public class HistoryFragment extends Fragment {
         barChart.setFitBars(true);
         barChart.invalidate();
     }
+    */
 }

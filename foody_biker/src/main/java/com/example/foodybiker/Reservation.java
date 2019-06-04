@@ -3,7 +3,7 @@ package com.example.foodybiker;
 public class Reservation {
 
     private String restaurantName, restaurantAddress,
-            restaurantPickupTime, userName,
+            restaurantPickupTime, userName, userId,
             userAddress, userDeliveryTime,
             reservationID, restaurantID, notes;
     private boolean accepted;
@@ -53,6 +53,14 @@ public class Reservation {
 
     public void setReservationID(String reservationID) {
         this.reservationID = reservationID;
+    }
+
+    public void setUserId(){
+        this.userId = reservationID.substring(0,28);
+    }
+
+    public String getUserId(){
+        return userId;
     }
 
     public String getRestaurantName() {

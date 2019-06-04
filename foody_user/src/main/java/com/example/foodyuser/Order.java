@@ -57,6 +57,7 @@ public class Order extends AppCompatActivity {
     private SharedPreferences sharedPref;
     private String delivAddress;
     private boolean hasNote;
+    private float delivery_price;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -87,6 +88,7 @@ public class Order extends AppCompatActivity {
         File root = getExternalFilesDir(Environment.DIRECTORY_DOCUMENTS);
         File orderFile = new File(root, getString(R.string.order_file_name));
         Bundle extras = getIntent().getExtras();
+        delivery_price = extras.getFloat("restaurantDeliveryPrice");
         final String restID = extras.getString("restaurantID","");
         final String restName = extras.getString("restaurantName", "");
         final String restAddress = extras.getString("restaurantAddress", null);
@@ -98,62 +100,62 @@ public class Order extends AppCompatActivity {
         placeOrder.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                //Inserting the reservation inside the user reservation DB
-                final DatabaseReference database = FirebaseDatabase.getInstance().getReference()
-                        .child("reservations").child("users").child(firebaseUser.getUid());
-                HashMap<String, Object> child = new HashMap<>();
-                copyOrders = orders;
-                final String identifier = firebaseUser.getUid() + System.currentTimeMillis();
-                String deliveryTime = sharedPref.getString("selectedTime","");
+            //Inserting the reservation inside the user reservation DB
+            final DatabaseReference database = FirebaseDatabase.getInstance().getReference()
+                    .child("reservations").child("users").child(firebaseUser.getUid());
+            HashMap<String, Object> child = new HashMap<>();
+            copyOrders = orders;
+            final String identifier = firebaseUser.getUid() + System.currentTimeMillis();
+            String deliveryTime = sharedPref.getString("selectedTime","");
 
-                String biker[] = deliveryTime.split(":");
-                int hours = Integer.valueOf(biker[0]);
-                int mins = Integer.valueOf(biker[1]);
+            String biker[] = deliveryTime.split(":");
+            int hours = Integer.valueOf(biker[0]);
+            int mins = Integer.valueOf(biker[1]);
 
-                if(mins >= 20){
-                    mins -=20;
-                }else{
-                    hours--;
-                    mins+=40;
+            if(mins >= 20){
+                mins -=20;
+            }else{
+                hours--;
+                mins+=40;
+            }
+
+            String bikerTime = String.format("%02d:%02d",hours,mins);
+            String notes;
+            if(sharedPref.contains("notes"))
+                notes = sharedPref.getString("notes","");
+            else
+                notes = null;
+            final ReservationDBUser reservation = new ReservationDBUser(identifier, restID, copyOrders, false, notes,
+                    deliveryTime, "Pending", total.getText().toString());
+            reservation.setRestaurantName(restName);
+            reservation.setRestaurantAddress(restAddress);
+            child.put(identifier, reservation);
+            database.updateChildren(child).addOnFailureListener(new OnFailureListener() {
+                @Override
+                public void onFailure(@NonNull Exception e) {
+                    Toast.makeText(getApplicationContext(), R.string.error_order, Toast.LENGTH_SHORT).show();
                 }
+            });
 
-                String bikerTime = String.format("%02d:%02d",hours,mins);
-                String notes;
-                if(sharedPref.contains("notes"))
-                    notes = sharedPref.getString("notes","");
-                else
-                    notes = null;
-                final ReservationDBUser reservation = new ReservationDBUser(identifier, restID, copyOrders, false, notes,
-                        deliveryTime, "Pending", total.getText().toString());
-                reservation.setRestaurantName(restName);
-                reservation.setRestaurantAddress(restAddress);
-                child.put(identifier, reservation);
-                database.updateChildren(child).addOnFailureListener(new OnFailureListener() {
-                    @Override
-                    public void onFailure(@NonNull Exception e) {
-                        Toast.makeText(getApplicationContext(), R.string.error_order, Toast.LENGTH_SHORT).show();
-                    }
-                });
+            //Inserting the new reservation inside the restaurant reservations DB
+            DatabaseReference databaseRest = FirebaseDatabase.getInstance().getReference()
+                    .child("reservations").child("restaurant").child(restID);
+            HashMap<String, Object> childRest = new HashMap<>();
+            ReservationDBRestaurant reservationRest = new ReservationDBRestaurant(identifier, "", copyOrders, false,
+                    notes, sharedPref.getString("phoneNumber", null),
+                    sharedPref.getString("name", null), deliveryTime, bikerTime, "Pending",
+                    delivAddress, total.getText().toString());
+            childRest.put(identifier, reservationRest);
+            databaseRest.updateChildren(childRest).addOnFailureListener(new OnFailureListener() {
+                @Override
+                public void onFailure(@NonNull Exception e) {
+                    Toast.makeText(getApplicationContext(), R.string.error_order, Toast.LENGTH_SHORT).show();
+                }
+            });
 
-                //Inserting the new reservation inside the restaurant reservations DB
-                DatabaseReference databaseRest = FirebaseDatabase.getInstance().getReference()
-                        .child("reservations").child("restaurant").child(restID);
-                HashMap<String, Object> childRest = new HashMap<>();
-                ReservationDBRestaurant reservationRest = new ReservationDBRestaurant(identifier, "", copyOrders, false,
-                        notes, sharedPref.getString("phoneNumber", null),
-                        sharedPref.getString("name", null), deliveryTime, bikerTime, "Pending",
-                        delivAddress, total.getText().toString());
-                childRest.put(identifier, reservationRest);
-                databaseRest.updateChildren(childRest).addOnFailureListener(new OnFailureListener() {
-                    @Override
-                    public void onFailure(@NonNull Exception e) {
-                        Toast.makeText(getApplicationContext(), R.string.error_order, Toast.LENGTH_SHORT).show();
-                    }
-                });
-
-                orders.clear();
-                sharedPref.edit().remove("notes").apply();
-                closeActivity();
+            orders.clear();
+            sharedPref.edit().remove("notes").apply();
+            closeActivity();
             }
         });
 
@@ -179,7 +181,6 @@ public class Order extends AppCompatActivity {
             hasNote = false;
             deleteNote();
         }
-
 
         deleteButton.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -348,6 +349,7 @@ public class Order extends AppCompatActivity {
             tp += orders.get(i).getTotal();
 
         tp+=RestaurantShow.getRestDeliveryPrice()*0.5;
+        tp+=delivery_price;
         total.setText(String.format(Locale.UK, "%.2f €", tp));
     }
 }

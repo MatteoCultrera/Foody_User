@@ -12,6 +12,7 @@ import android.location.Geocoder;
 import android.location.Location;
 import android.net.Uri;
 import android.os.Bundle;
+import android.os.Environment;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.constraint.ConstraintLayout;
@@ -29,6 +30,9 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.bumptech.glide.Glide;
+import com.bumptech.glide.request.RequestOptions;
+import com.bumptech.glide.signature.ObjectKey;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnFailureListener;
@@ -43,13 +47,18 @@ import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.Query;
 import com.google.firebase.database.ValueEventListener;
+import com.google.firebase.storage.FileDownloadTask;
+import com.google.firebase.storage.FirebaseStorage;
 
+import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
+
+import de.hdodenhof.circleimageview.CircleImageView;
 
 import static android.content.Context.MODE_PRIVATE;
 
@@ -58,6 +67,7 @@ public class ReservationFragment extends Fragment {
     TextView restaurantName, restaurantAddress, userName,
             userAddress, notes, orderDelivered, primaryText, secondaryText, pickupTime, deliveryTime;
     ConstraintLayout orderDeliveredLayout, mainLayout, noteLayout;
+    private CircleImageView deliverImage;
     boolean canClick;
     CardView card;
     private ArrayList<Reservation> reservations;
@@ -77,6 +87,8 @@ public class ReservationFragment extends Fragment {
     Double totalDistance = 0.0;
     Double currLatitude = 0.0;
     Double currLongitude = 0.0;
+    private File storageDir;
+    private String MAIN_DIR = "user_utils";
 
     public ReservationFragment() {
     }
@@ -100,6 +112,7 @@ public class ReservationFragment extends Fragment {
     public void init(final View view) {
         final ReservationFragment ref = this;
         toAdd = true;
+        storageDir = getActivity().getExternalFilesDir(Environment.DIRECTORY_DOCUMENTS);
         sharedPreferences = view.getContext().getSharedPreferences("myPreference", MODE_PRIVATE);
         pending = sharedPreferences.getInt("pending", 0);
         firebaseAuth = FirebaseAuth.getInstance();
@@ -119,6 +132,7 @@ public class ReservationFragment extends Fragment {
                                 reservationDB.getOrderTimeBiker(), reservationDB.getUserName(), reservationDB.getUserAddress(),
                                 reservationDB.getOrderTime(), reservationDB.getRestaurantID(), reservationDB.getNotes(), false);
                         reservation.setReservationID(ds.getKey());
+                        reservation.setUserId();
                         reservation.setUserPhone(reservationDB.getUserPhone());
                         reservation.setRestPhone(reservationDB.getRestPhone());
                         reservations.add(reservation);
@@ -127,6 +141,7 @@ public class ReservationFragment extends Fragment {
                                 reservationDB.getOrderTimeBiker(), reservationDB.getUserName(), reservationDB.getUserAddress(),
                                 reservationDB.getOrderTime(), reservationDB.getRestaurantID(), reservationDB.getNotes(), true);
                         reservation.setReservationID(ds.getKey());
+                        reservation.setUserId();
                         reservation.setUserPhone(reservationDB.getUserPhone());
                         reservation.setRestPhone(reservationDB.getRestPhone());
                         activeReservation = reservation;
@@ -162,6 +177,7 @@ public class ReservationFragment extends Fragment {
                                         reservationDB.getOrderTimeBiker(), reservationDB.getUserName(), reservationDB.getUserAddress(),
                                         reservationDB.getOrderTime(), reservationDB.getRestaurantID(), reservationDB.getNotes(), false);
                                 reservation.setReservationID(dataSnapshot.getKey());
+                                reservation.setUserId();
                                 reservation.setUserPhone(reservationDB.getUserPhone());
                                 reservation.setRestPhone(reservationDB.getRestPhone());
 
@@ -227,7 +243,7 @@ public class ReservationFragment extends Fragment {
         callUser = view.findViewById(R.id.call_user);
         navigationRest = view.findViewById(R.id.navigation_to_rest);
         navigationUser = view.findViewById(R.id.navigation_to_user);
-
+        deliverImage = view.findViewById(R.id.deliver_image);
         orderDeliveredLayout.getLayoutTransition().enableTransitionType(LayoutTransition.CHANGING);
 
         canClick = false;
@@ -247,6 +263,14 @@ public class ReservationFragment extends Fragment {
                     orderDelivered.setText(getString(R.string.order_delivered));
                     canClick = true;
                 } else if (card.getVisibility() == View.VISIBLE) {
+                    //Deleting the user picture of the order just delivered
+                    if(sharedPreferences.contains("customerProfileImage")){
+                        File profileImage = new File(sharedPreferences.getString("customerProfileImage",""));
+                        profileImage.delete();
+                        sharedPreferences.edit().remove("customerProfileImage").apply();
+                        Log.d("PROVAIMAGE", "l'immagine è stata rimossa");
+                    }
+
                     DatabaseReference databaseB = FirebaseDatabase.getInstance().getReference()
                             .child("Bikers").child(firebaseUser.getUid());
                     HashMap<String, Object> childB = new HashMap<>();
@@ -459,6 +483,47 @@ public class ReservationFragment extends Fragment {
             for (int i = 0; i < reservations.size(); i++) {
                 adapter.notifyItemChanged(i);
             }
+
+            //Saving the image of the customer to which deliver the order
+            DatabaseReference ref = FirebaseDatabase.getInstance().getReference().child("endUsers");
+            Query query = ref.child(activeReservation.getUserId()).child("info");
+            query.addListenerForSingleValueEvent(new ValueEventListener() {
+                @Override
+                public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                    String imagePath = dataSnapshot.child("imagePath").getValue(String.class);
+                    Log.d("PROVAIMAGE", imagePath);
+                    if(imagePath != null){
+                        if(imagePath.length() > 0){
+                            Log.d("PROVAIMAGE", "Sorpassati i controlli");
+                            File directory = new File(storageDir.getPath()+File.separator+MAIN_DIR);
+                            if(!directory.exists()){
+                                directory.mkdirs();
+                                Log.d("PROVAIMAGE", "Creata la cartella di destinazione");
+                            }
+                            final File customerProfileImage = new File(directory,activeReservation.getUserId()+".jpg");
+                            sharedPreferences.edit().putString("customerProfileImage",customerProfileImage.getPath()).apply();
+                            FirebaseStorage.getInstance().getReference().child(imagePath).getFile(customerProfileImage)
+                                    .addOnCompleteListener(new OnCompleteListener<FileDownloadTask.TaskSnapshot>() {
+                                        @Override
+                                        public void onComplete(@NonNull Task<FileDownloadTask.TaskSnapshot> task) {
+                                            if(task.isSuccessful())
+                                                setImage();
+                                            else
+                                                sharedPreferences.edit().remove("customerProfileImage").apply();
+                                        }
+                                    });
+                        }else
+                            sharedPreferences.edit().remove("customerProfileImage").apply();
+                    }else
+                        sharedPreferences.edit().remove("customerProfileImage").apply();
+                }
+
+                @Override
+                public void onCancelled(@NonNull DatabaseError databaseError) {
+                    sharedPreferences.edit().remove("customerProfileImage").apply();
+                }
+            });
+
             restaurantName.setText(activeReservation.getRestaurantName());
             restaurantAddress.setText(activeReservation.getRestaurantAddress());
             userName.setText(activeReservation.getUserName());
@@ -475,6 +540,28 @@ public class ReservationFragment extends Fragment {
             setInterface(true);
 
             father.thereisActive(activeReservation);
+        }
+    }
+
+    private void setImage(){
+        Log.d("PROVAIMAGE", "sto per fare il controllo se l'immagine è stata scaricata o no");
+        File customerImage = new File(sharedPreferences.getString("customerProfileImage", storageDir.getPath()+ File.separator+MAIN_DIR+activeReservation.getUserId()+".jpg"));
+        if(customerImage.exists()){
+            Log.d("PROVAIMAGE", "Sto settando l'immagine");
+            RequestOptions options = new RequestOptions();
+            options.signature(new ObjectKey(customerImage.getName()+" "+customerImage.lastModified()));
+            Glide
+                    .with(deliverImage.getContext())
+                    .setDefaultRequestOptions(options)
+                    .load(customerImage.getPath())
+                    .into(deliverImage);
+        }else{
+            Log.d("PROVAIMAGE", "L'immagine non è stata trovata");
+            sharedPreferences.edit().remove("customerProfileImage").apply();
+            Glide
+                    .with(deliverImage.getContext())
+                    .load(R.drawable.profile_placeholder)
+                    .into(deliverImage);
         }
     }
 
