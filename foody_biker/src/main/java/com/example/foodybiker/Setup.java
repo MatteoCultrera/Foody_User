@@ -760,7 +760,7 @@ public class Setup extends AppCompatActivity {
             saveBitmap(bitmap, profile.getPath());
 
             StorageReference ref = FirebaseStorage.getInstance().getReference().child(pathImage);
-            ref.putFile(Uri.fromFile(new File(storageDir, PROFILE_IMAGE)))
+            ref.putFile(Uri.fromFile(profile))
                 .addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
                     @Override
                     public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {

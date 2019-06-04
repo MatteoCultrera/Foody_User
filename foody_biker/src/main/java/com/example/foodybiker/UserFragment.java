@@ -2,7 +2,6 @@ package com.example.foodybiker;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
-import android.net.Uri;
 import android.os.Bundle;
 import android.os.Environment;
 import android.support.annotation.NonNull;
@@ -17,17 +16,7 @@ import android.widget.TextView;
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.request.RequestOptions;
 import com.bumptech.glide.signature.ObjectKey;
-import com.google.android.gms.tasks.OnFailureListener;
-import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.firebase.auth.FirebaseAuth;
-import com.google.firebase.database.DataSnapshot;
-import com.google.firebase.database.DatabaseError;
-import com.google.firebase.database.DatabaseReference;
-import com.google.firebase.database.FirebaseDatabase;
-import com.google.firebase.database.Query;
-import com.google.firebase.database.ValueEventListener;
-import com.google.firebase.storage.FirebaseStorage;
-import com.google.firebase.storage.StorageReference;
 
 import java.io.File;
 import java.util.Objects;
@@ -113,123 +102,6 @@ public class UserFragment extends Fragment {
                     .load(R.drawable.profile_placeholder)
                     .into(profilePicture);
         }
-        //setup of the Shared Preferences to save value in (key, value) format
-        /*if (!email.getText().toString().equals("email")) {
-            new Thread(new Runnable() {
-                @Override
-                public void run() {
-                final DatabaseReference database = FirebaseDatabase.getInstance().getReference().child("Bikers");
-                Query query = database.child(firebaseAuth.getCurrentUser().getUid()).child("info");
-                query.addListenerForSingleValueEvent(new ValueEventListener() {
-                    @Override
-                    public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-                        BikerInfo info = dataSnapshot.getValue(BikerInfo.class);
-                        name.setText(info.getUsername());
-                        email.setText(info.getEmail());
-                        address.setText(info.getAddress());
-                        phoneNumber.setText(info.getNumberPhone());
-                        imagePath = info.getPath();
-                        monTime.setText(info.getDaysTime().get(0));
-                        tueTime.setText(info.getDaysTime().get(1));
-                        wedTime.setText(info.getDaysTime().get(2));
-                        thuTime.setText(info.getDaysTime().get(3));
-                        friTime.setText(info.getDaysTime().get(4));
-                        satTime.setText(info.getDaysTime().get(5));
-                        sunTime.setText(info.getDaysTime().get(6));
-                        edit.putString("name", info.getUsername());
-                        edit.putString("email", info.getEmail());
-                        if (!address.getText().toString().equals(getResources().getString(R.string.address_hint)))
-                            edit.putString("address", info.getAddress());
-                        if (!phoneNumber.getText().toString().equals(getResources().getString(R.string.phone_hint)))
-                            edit.putString("phoneNumber", info.getNumberPhone());
-                        if (!info.getDaysTime().get(0).equals(getResources().getString(R.string.free))){
-                            edit.putBoolean("monState", true);
-                        }
-                        if (!info.getDaysTime().get(1).equals(getResources().getString(R.string.free))){
-                            edit.putBoolean("tueState", true);
-                        }
-                        if (!info.getDaysTime().get(2).equals(getResources().getString(R.string.free))){
-                            edit.putBoolean("wedState", true);
-                        }
-                        if (!info.getDaysTime().get(3).equals(getResources().getString(R.string.free))){
-                            edit.putBoolean("thuState", true);
-                        }
-                        if (!info.getDaysTime().get(4).equals(getResources().getString(R.string.free))){
-                            edit.putBoolean("friState", true);
-                        }
-                        if (!info.getDaysTime().get(5).equals(getResources().getString(R.string.free))){
-                            edit.putBoolean("satState", true);
-                        }
-                        if (!info.getDaysTime().get(6).equals(getResources().getString(R.string.free))){
-                            edit.putBoolean("sunState", true);
-                        }
-
-                        StorageReference mStorageRef = FirebaseStorage.getInstance().getReference();
-
-                        if(imagePath!=null){
-                            if(imagePath.length()!=0){
-                            mStorageRef.child(imagePath).getDownloadUrl()
-                                .addOnSuccessListener(new OnSuccessListener<Uri>() {
-                                    @Override
-                                    public void onSuccess(Uri uri) {
-                                    if(profilePicture.getContext() != null) {
-                                        Glide
-                                                .with(profilePicture.getContext())
-                                                .load(uri)
-                                                .into(profilePicture);
-                                    }
-                                    }
-                                }).addOnFailureListener(new OnFailureListener() {
-                                    @Override
-                                    public void onFailure(@NonNull Exception e) {
-                                            Glide
-                                                    .with(profilePicture.getContext())
-                                                    .load(R.drawable.profile_placeholder)
-                                                    .into(profilePicture);
-                                    }
-                                });
-                            }else{
-                                Glide
-                                        .with(profilePicture.getContext())
-                                        .load(R.drawable.profile_placeholder)
-                                        .into(profilePicture);
-                            }
-                        }else{
-                            Glide
-                                    .with(profilePicture.getContext())
-                                    .load(R.drawable.profile_placeholder)
-                                    .into(profilePicture);
-                        }
-                        edit.putString("monTime", info.getDaysTime().get(0));
-                        edit.putString("tueTime", info.getDaysTime().get(1));
-                        edit.putString("wedTime", info.getDaysTime().get(2));
-                        edit.putString("thuTime", info.getDaysTime().get(3));
-                        edit.putString("friTime", info.getDaysTime().get(4));
-                        edit.putString("satTime", info.getDaysTime().get(5));
-                        edit.putString("sunTime", info.getDaysTime().get(6));
-                        edit.putString("Path", imagePath);
-
-                        edit.apply();
-                    }
-
-                    @Override
-                    public void onCancelled(@NonNull DatabaseError databaseError) {
-                        name.setText(sharedPref.getString("name", getResources().getString(R.string.name_hint)));
-                        email.setText(sharedPref.getString("email", getResources().getString(R.string.email_hint)));
-                        address.setText(sharedPref.getString("address", getResources().getString(R.string.address_hint)));
-                        phoneNumber.setText(sharedPref.getString("phoneNumber", getResources().getString(R.string.phone_hint)));
-                        monTime.setText(sharedPref.getString("monTime", getResources().getString(R.string.free)));
-                        tueTime.setText(sharedPref.getString("tueTime", getResources().getString(R.string.free)));
-                        wedTime.setText(sharedPref.getString("wedTime", getResources().getString(R.string.free)));
-                        thuTime.setText(sharedPref.getString("thuTime", getResources().getString(R.string.free)));
-                        friTime.setText(sharedPref.getString("friTime", getResources().getString(R.string.free)));
-                        satTime.setText(sharedPref.getString("satTime", getResources().getString(R.string.free)));
-                        sunTime.setText(sharedPref.getString("sunTime", getResources().getString(R.string.free)));
-                    }
-                });
-            }
-            }).run();
-            }*/
 
         editMode.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -247,6 +119,9 @@ public class UserFragment extends Fragment {
             @Override
             public void onClick(View v) {
                 firebaseAuth.signOut();
+                File profile = new File(sharedPref.getString("imgLocale",""));
+                if(profile.exists())
+                    profile.delete();
                 sharedPref.edit().clear().apply();
                 Intent intent = new Intent(getActivity(), Login.class);
                 startActivity(intent);
