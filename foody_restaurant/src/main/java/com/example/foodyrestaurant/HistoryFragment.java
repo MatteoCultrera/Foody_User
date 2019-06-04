@@ -22,6 +22,7 @@ import com.github.mikephil.charting.data.BarEntry;
 import com.github.mikephil.charting.data.PieData;
 import com.github.mikephil.charting.data.PieDataSet;
 import com.github.mikephil.charting.data.PieEntry;
+import com.github.mikephil.charting.formatter.DefaultValueFormatter;
 import com.github.mikephil.charting.formatter.PercentFormatter;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
@@ -193,11 +194,15 @@ public class HistoryFragment extends Fragment {
         barChart.setMaxVisibleValueCount(50);
         barChart.setPinchZoom(false);
         barChart.setDrawGridBackground(false);
+        barChart.setDrawValueAboveBar(true);
 
         XAxis xl = barChart.getXAxis();
         xl.setGranularity(1f);
         xl.setPosition(XAxis.XAxisPosition.BOTTOM);
         xl.setAxisMinimum(0f);
+        xl.setAxisMaximum(24f);
+        xl.setLabelCount(9, true);
+
         xl.setDrawGridLines(false);
 
         YAxis leftAxis = barChart.getAxisLeft();
@@ -211,19 +216,21 @@ public class HistoryFragment extends Fragment {
         Iterator it = frequency.entrySet().iterator();
         while(it.hasNext()){
             Map.Entry<Integer, Integer> pair = (Map.Entry) it.next();
-            yVals1.add(new BarEntry(pair.getKey(), pair.getValue()));
+            if(pair.getValue() != 0)
+                yVals1.add(new BarEntry(pair.getKey(), pair.getValue()));
         }
 
-        BarDataSet set = new BarDataSet(yVals1, null);
+        BarDataSet set = new BarDataSet(yVals1, "BarDataSet");
         set.setColor((Color.rgb(132,171,241)));
+        set.setValueFormatter(new DefaultValueFormatter(0));
+        set.setValueTextSize(10f);
         BarData data = new BarData(set);
-        data.setDrawValues(false);
-        data.setBarWidth(0.8f);
+        data.setDrawValues(true);
+        data.setBarWidth(0.9f);
         barChart.setData(data);
         barChart.getLegend().setEnabled(false);
         barChart.setFitBars(true);
         barChart.setNoDataText("NO FREQUENCY IN ARCHIVE RIGHT NOW");
-        barChart.setDrawValueAboveBar(true);
         barChart.animateY(3000);
 
     }

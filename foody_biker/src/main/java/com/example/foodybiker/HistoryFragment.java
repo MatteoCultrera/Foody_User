@@ -71,7 +71,7 @@ public class HistoryFragment extends Fragment {
         pieChart = view.findViewById(R.id.pieChart);
         delivered = 0;
         rejected = 0;
-        for(int i = 0; i < 24; i++){
+        for (int i = 0; i < 24; i++) {
             frequency.put(i, 0);
         }
 
@@ -86,14 +86,14 @@ public class HistoryFragment extends Fragment {
         databaseReference.addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-                for(DataSnapshot ds : dataSnapshot.getChildren()) {
-                    if(ds.getKey().compareTo("delivered") == 0) {
+                for (DataSnapshot ds : dataSnapshot.getChildren()) {
+                    if (ds.getKey().compareTo("delivered") == 0) {
                         delivered = ds.getValue(Integer.class);
                     }
-                    if(ds.getKey().compareTo("rejected") == 0) {
+                    if (ds.getKey().compareTo("rejected") == 0) {
                         rejected = ds.getValue(Integer.class);
                     }
-                    if(ds.getKey().compareTo("totalDistance") == 0) {
+                    if (ds.getKey().compareTo("totalDistance") == 0) {
                         dbDistance = ds.getValue(Double.class);
                     }
                 }
@@ -114,7 +114,7 @@ public class HistoryFragment extends Fragment {
                         frequency.put(Integer.parseInt(ds.getKey()), ds.getValue(Integer.class));
                     }
                 } else {
-                    for (int i = 0; i < 24; i ++){
+                    for (int i = 0; i < 24; i++) {
                         frequency.put(i, 0);
                     }
                 }
@@ -158,14 +158,14 @@ public class HistoryFragment extends Fragment {
         List<BarEntry> yVals1 = new ArrayList<>();
 
         Iterator it = frequency.entrySet().iterator();
-        while(it.hasNext()){
+        while (it.hasNext()) {
             Map.Entry<Integer, Integer> pair = (Map.Entry) it.next();
-            if(pair.getValue() != 0)
+            if (pair.getValue() != 0)
                 yVals1.add(new BarEntry(pair.getKey(), pair.getValue()));
         }
 
         BarDataSet set = new BarDataSet(yVals1, "BarDataSet");
-        set.setColor((Color.rgb(132,171,241)));
+        set.setColor((Color.rgb(132, 171, 241)));
         set.setValueFormatter(new DefaultValueFormatter(0));
         set.setValueTextSize(10f);
         BarData data = new BarData(set);
@@ -205,11 +205,12 @@ public class HistoryFragment extends Fragment {
 
         data.setValueTextSize(14f);
         data.setValueTextColor(Color.BLACK);
-        Log.d("SRSRSR", "rejected: "+ rejected + " accepted: " + delivered);
+        Log.d("SRSRSR", "rejected: " + rejected + " accepted: " + delivered);
         pieChart.setNoDataText("NO ORDERS IN ARCHIVE RIGHT NOW");
         pieChart.animateXY(3000, 3000);
     }
 
+}
 
     /*
     public void drawPieCharts() {
@@ -309,4 +310,3 @@ public class HistoryFragment extends Fragment {
         barChart.invalidate();
     }
     */
-}
