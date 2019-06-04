@@ -22,6 +22,7 @@ import com.github.mikephil.charting.data.BarEntry;
 import com.github.mikephil.charting.data.PieData;
 import com.github.mikephil.charting.data.PieDataSet;
 import com.github.mikephil.charting.data.PieEntry;
+import com.github.mikephil.charting.formatter.DefaultValueFormatter;
 import com.github.mikephil.charting.formatter.PercentFormatter;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
@@ -48,6 +49,7 @@ public class HistoryFragment extends Fragment {
     private HashMap<Integer, Integer> frequency = new HashMap<>();
     private Integer count;
     private Integer delivered, rejected;
+    private Double dbDistance;
 
     public HistoryFragment() {
     }
@@ -67,17 +69,21 @@ public class HistoryFragment extends Fragment {
         distance = view.findViewById(R.id.total_distance);
         barChart = view.findViewById(R.id.barChart);
         pieChart = view.findViewById(R.id.pieChart);
+        delivered = 0;
+        rejected = 0;
         for(int i = 0; i < 24; i++){
             frequency.put(i, 0);
         }
-        delivered = 0;
-        rejected = 0;
 
         FirebaseAuth firebaseAuth = FirebaseAuth.getInstance();
         FirebaseUser firebaseUser = firebaseAuth.getCurrentUser();
-        DatabaseReference databaseAccRej = FirebaseDatabase.getInstance().getReference()
-                .child("archive").child("Bikers").child(firebaseUser.getUid());
-        databaseAccRej.addListenerForSingleValueEvent(new ValueEventListener() {
+
+        DatabaseReference databaseReference = FirebaseDatabase.getInstance().getReference().child("archive")
+                .child("Bikers").child(firebaseUser.getUid());
+
+        DatabaseReference databaseFrequency = databaseReference.child("frequency");
+
+        databaseReference.addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
                 for(DataSnapshot ds : dataSnapshot.getChildren()) {
@@ -87,7 +93,11 @@ public class HistoryFragment extends Fragment {
                     if(ds.getKey().compareTo("rejected") == 0) {
                         rejected = ds.getValue(Integer.class);
                     }
+                    if(ds.getKey().compareTo("totalDistance") == 0) {
+                        dbDistance = ds.getValue(Double.class);
+                    }
                 }
+                distance.setText(String.format("%.2f", dbDistance));
                 drawPieCharts();
             }
 
@@ -96,18 +106,16 @@ public class HistoryFragment extends Fragment {
             }
         });
 
-        DatabaseReference databaseReference = FirebaseDatabase.getInstance().getReference().child("archive")
-                .child("Bikers").child(firebaseUser.getUid());
-        Log.d("BIKERLOG", "" + firebaseUser.getUid());
-        databaseReference.addListenerForSingleValueEvent(new ValueEventListener() {
+        databaseFrequency.addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-                for(DataSnapshot ds : dataSnapshot.getChildren()){
-                    for(DataSnapshot ds2 : ds.getChildren()) {
-                        Log.d("SRSRSR", "time: " + ds2.child("orderTime"));
-                        Integer time = Integer.parseInt(ds2.child("orderTime").getValue(String.class).split(":")[0]);
-                        count = frequency.get(time) + 1;
-                        frequency.put(time, count);
+                if (dataSnapshot.exists()) {
+                    for (DataSnapshot ds : dataSnapshot.getChildren()) {
+                        frequency.put(Integer.parseInt(ds.getKey()), ds.getValue(Integer.class));
+                    }
+                } else {
+                    for (int i = 0; i < 24; i ++){
+                        frequency.put(i, 0);
                     }
                 }
 
@@ -117,25 +125,6 @@ public class HistoryFragment extends Fragment {
             @Override
             public void onCancelled(@NonNull DatabaseError databaseError) {
 
-            }
-        });
-
-        DatabaseReference databaseDistance = FirebaseDatabase.getInstance().getReference().
-                child("archive").child("Bikers").child(firebaseUser.getUid());
-        databaseDistance.addValueEventListener(new ValueEventListener() {
-            @Override
-            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-                Double dbDistance = 0.0;
-                for(DataSnapshot ds : dataSnapshot.getChildren()){
-                    if (ds.getKey().compareTo("totalDistance") == 0) {
-                        dbDistance = ds.getValue(Double.class);
-                    }
-                }
-                distance.setText(String.format("%.2f", dbDistance));
-            }
-
-            @Override
-            public void onCancelled(@NonNull DatabaseError databaseError) {
             }
         });
     }
@@ -149,11 +138,15 @@ public class HistoryFragment extends Fragment {
         barChart.setMaxVisibleValueCount(50);
         barChart.setPinchZoom(false);
         barChart.setDrawGridBackground(false);
+        barChart.setDrawValueAboveBar(true);
 
         XAxis xl = barChart.getXAxis();
         xl.setGranularity(1f);
         xl.setPosition(XAxis.XAxisPosition.BOTTOM);
         xl.setAxisMinimum(0f);
+        xl.setAxisMaximum(24f);
+        xl.setLabelCount(9, true);
+
         xl.setDrawGridLines(false);
 
         YAxis leftAxis = barChart.getAxisLeft();
@@ -167,19 +160,21 @@ public class HistoryFragment extends Fragment {
         Iterator it = frequency.entrySet().iterator();
         while(it.hasNext()){
             Map.Entry<Integer, Integer> pair = (Map.Entry) it.next();
-            yVals1.add(new BarEntry(pair.getKey(), pair.getValue()));
+            if(pair.getValue() != 0)
+                yVals1.add(new BarEntry(pair.getKey(), pair.getValue()));
         }
 
-        BarDataSet set = new BarDataSet(yVals1, null);
+        BarDataSet set = new BarDataSet(yVals1, "BarDataSet");
         set.setColor((Color.rgb(132,171,241)));
+        set.setValueFormatter(new DefaultValueFormatter(0));
+        set.setValueTextSize(10f);
         BarData data = new BarData(set);
-        data.setDrawValues(false);
-        data.setBarWidth(0.8f);
+        data.setDrawValues(true);
+        data.setBarWidth(0.9f);
         barChart.setData(data);
         barChart.getLegend().setEnabled(false);
         barChart.setFitBars(true);
         barChart.setNoDataText("NO FREQUENCY IN ARCHIVE RIGHT NOW");
-        barChart.setDrawValueAboveBar(true);
         barChart.animateY(3000);
 
     }

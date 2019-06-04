@@ -97,7 +97,7 @@
     <string name="address_not_selected">Selezionare un indirizzo di consengna</string>
     <string name="click_address">Clicca per inserire l\'indirizzo</string>
 
-    <string name="history">Storico</string>
+    <string name="history">Statistiche</string>
 
     <string name="jan">Gen</string>
     <string name="feb">Feb</string>
@@ -111,4 +111,5 @@
     <string name="oct">Ott</string>
     <string name="nov">Nov</string>
     <string name="dec">Dic</string>
+
 </resources>

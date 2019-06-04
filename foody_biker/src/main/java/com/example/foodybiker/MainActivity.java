@@ -51,7 +51,7 @@ public class MainActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-
+        /*
         try {
             bool = new NetworkCheck().execute().get();
         } catch (ExecutionException e) {
@@ -59,7 +59,7 @@ public class MainActivity extends AppCompatActivity {
         } catch (InterruptedException i) {
             i.printStackTrace();
         }
-        /*
+
         if(!bool) {
             //No Internet
             Intent i = new Intent(getApplicationContext(), NoInternetActivity.class);

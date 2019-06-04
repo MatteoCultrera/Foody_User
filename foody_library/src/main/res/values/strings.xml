@@ -97,7 +97,7 @@
     <string name="address_not_selected">Select a delivery address</string>
     <string name="click_address">Click to insert address</string>
 
-    <string name="history">History</string>
+    <string name="history">Stats</string>
 
     <string name="jan">Jan</string>
     <string name="feb">Feb</string>
