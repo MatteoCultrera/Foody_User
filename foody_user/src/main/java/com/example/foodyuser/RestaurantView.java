@@ -145,7 +145,6 @@ public class RestaurantView extends AppCompatActivity {
         databaseReference.addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-                Log.d("SWSW", "download");
                 isFavourite = dataSnapshot.child(reName).exists();
                 hasDownloaded = true;
             }
@@ -214,7 +213,6 @@ public class RestaurantView extends AppCompatActivity {
                     DatabaseReference databaseFav = FirebaseDatabase.getInstance().getReference().child("endUsers")
                             .child(firebaseUser.getUid()).child("favourites");
                     if (!isFavourite) {
-                        Log.d("SWSW", "add favourite");
                         databaseFav.child(reName).setValue(true).addOnCompleteListener(new OnCompleteListener<Void>() {
                             @Override
                             public void onComplete(@NonNull Task<Void> task) {
@@ -229,7 +227,6 @@ public class RestaurantView extends AppCompatActivity {
                             }
                         });
                     } else {
-                        Log.d("SWSW", "remove favourite");
                         databaseFav.child(reName).removeValue().addOnCompleteListener(new OnCompleteListener<Void>() {
                             @Override
                             public void onComplete(@NonNull Task<Void> task) {
