@@ -1,10 +1,12 @@
 package com.example.foodyrestaurant;
 
 import android.graphics.Color;
+import android.graphics.Typeface;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
+import android.support.v4.content.res.ResourcesCompat;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -14,6 +16,7 @@ import android.widget.TextView;
 import com.github.mikephil.charting.charts.BarChart;
 import com.github.mikephil.charting.charts.PieChart;
 import com.github.mikephil.charting.components.Description;
+import com.github.mikephil.charting.components.Legend;
 import com.github.mikephil.charting.components.XAxis;
 import com.github.mikephil.charting.components.YAxis;
 import com.github.mikephil.charting.data.BarData;
@@ -185,6 +188,8 @@ public class HistoryFragment extends Fragment {
 
     }
 
+    //TODO: put string in xml
+
     public void drawChart() {
         barChart.setDrawBarShadow(false);
         barChart.setTouchEnabled(true);
@@ -214,16 +219,16 @@ public class HistoryFragment extends Fragment {
         List<BarEntry> yVals1 = new ArrayList<>();
 
         Iterator it = frequency.entrySet().iterator();
-        while(it.hasNext()){
+        while (it.hasNext()) {
             Map.Entry<Integer, Integer> pair = (Map.Entry) it.next();
-            if(pair.getValue() != 0)
+            if (pair.getValue() != 0)
                 yVals1.add(new BarEntry(pair.getKey(), pair.getValue()));
         }
 
         BarDataSet set = new BarDataSet(yVals1, "BarDataSet");
-        set.setColor((Color.rgb(132,171,241)));
+        set.setColor((Color.rgb(132, 171, 241)));
         set.setValueFormatter(new DefaultValueFormatter(0));
-        set.setValueTextSize(10f);
+        set.setValueTextSize(14f);
         BarData data = new BarData(set);
         data.setDrawValues(true);
         data.setBarWidth(0.9f);
@@ -240,8 +245,8 @@ public class HistoryFragment extends Fragment {
         pieChart.getDescription().setEnabled(false);
 
         ArrayList<PieEntry> entries = new ArrayList<>();
-        entries.add(new PieEntry(accepted));
-        entries.add(new PieEntry(rejected));
+        entries.add(new PieEntry(accepted, "Consegnati"));
+        entries.add(new PieEntry(rejected, "Rifiutati"));
 
         PieDataSet dataSet = new PieDataSet(entries, "Orders Results");
         int[] colors = {getResources().getColor(R.color.accept, getActivity().getTheme()),
@@ -249,6 +254,7 @@ public class HistoryFragment extends Fragment {
         dataSet.setColors(colors);
 
         pieChart.setUsePercentValues(true);
+        pieChart.setDrawEntryLabels(false);
         dataSet.setValueFormatter(new PercentFormatter(pieChart));
 
         PieData data = new PieData(dataSet);
@@ -257,13 +263,21 @@ public class HistoryFragment extends Fragment {
         dataSet.setSliceSpace(5f);
         dataSet.setSelectionShift(5f);
 
-        pieChart.getLegend().setEnabled(false);
+        Legend legend = pieChart.getLegend();
+        legend.setVerticalAlignment(Legend.LegendVerticalAlignment.BOTTOM);
+        legend.setHorizontalAlignment(Legend.LegendHorizontalAlignment.RIGHT);
+        legend.setOrientation(Legend.LegendOrientation.VERTICAL);
+        legend.setTextSize(14f);
+        legend.setForm(Legend.LegendForm.CIRCLE);
 
+        int total = accepted+rejected;
+        pieChart.setCenterText(total + "\n" + getResources().getString(R.string.text_orders));
+        pieChart.setCenterTextSize(22f);
         data.setValueTextSize(14f);
+        Typeface typeface = ResourcesCompat.getFont(pieChart.getContext(), R.font.roboto_bold);
+        data.setValueTypeface(typeface);
         data.setValueTextColor(Color.BLACK);
-        Log.d("SRSRSR", "rejected: "+ rejected + " accepted: " + accepted);
         pieChart.setNoDataText("NO ORDERS IN ARCHIVE RIGHT NOW");
         pieChart.animateXY(3000, 3000);
     }
-
 }

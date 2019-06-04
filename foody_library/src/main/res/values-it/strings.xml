@@ -120,4 +120,6 @@
     <string name="total_spent">Totale speso</string>
     <string name="most_ordered_dishes">Piatti più ordinati</string>
     <string name="total_income">Incasso totale</string>
+
+    <string name="text_orders">Ordini</string>
 </resources>
