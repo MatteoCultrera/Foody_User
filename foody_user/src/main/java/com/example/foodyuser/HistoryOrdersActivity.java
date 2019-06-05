@@ -88,6 +88,9 @@ public class HistoryOrdersActivity extends AppCompatActivity {
         File root = getExternalFilesDir(Environment.DIRECTORY_PICTURES);
         storage = new File(root.getPath()+File.separator+HISTORY_DIRECTORY);
 
+        if(!storage.exists())
+            storage.mkdir();
+
        fetchReservationsFromDB();
 
 
