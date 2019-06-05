@@ -4,6 +4,14 @@ import java.util.ArrayList;
 
 class Reservation {
 
+    public String getImagePathLocale() {
+        return imagePathLocale;
+    }
+
+    public void setImagePathLocale(String imagePathLocale) {
+        this.imagePathLocale = imagePathLocale;
+    }
+
     enum prepStatus {
         PENDING,
         DOING,
@@ -29,6 +37,7 @@ class Reservation {
     private String userUID;
     private int toBePrepared;
     private String totalCost;
+    private String imagePathLocale;
 
     Reservation(String identifier, ArrayList<Dish> dishes, prepStatus preparationStatus, boolean accepted,
                        String orderTime, String userName, String userPhone, String resNote, String userLevel,
