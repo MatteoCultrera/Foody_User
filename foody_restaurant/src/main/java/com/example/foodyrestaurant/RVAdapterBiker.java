@@ -76,7 +76,21 @@ public class RVAdapterBiker extends RecyclerView.Adapter<RVAdapterBiker.CardView
         final BikerFragment.ReservationBiker current = reservations.get(i);
         LayoutInflater inflater = LayoutInflater.from(pvh.idOrder.getContext());
 
-        pvh.idOrder.setText(current.getReservation().getReservationID());
+        String resId = reservations.get(i).getReservation().getUserUID();
+        String first2Letters = "";
+        for(char c : resId.toCharArray()){
+            if(first2Letters.length() == 2)
+                break;
+            else{
+                if(Character.isAlphabetic(c))
+                    first2Letters += c;
+            }
+        }
+        int id_size = reservations.get(i).getReservation().getReservationID().length();
+        String lastFour = reservations.get(i).getReservation().getReservationID().substring(id_size-4,id_size);
+        String orderId = (first2Letters + lastFour).toUpperCase();
+
+        pvh.idOrder.setText(orderId);
         pvh.time.setText(current.getReservation().getDeliveryTime());
         pvh.status.setText(current.getReservation().getPreparationStatusString());
         if(current.hasBiker()){
