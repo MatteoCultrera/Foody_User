@@ -292,7 +292,7 @@ public class ReservationFragment extends Fragment {
                             activeReservation.getUserDeliveryTime(), activeReservation.getRestaurantPickupTime(),
                             activeReservation.getRestaurantName(), activeReservation.getUserName(),
                             activeReservation.getRestaurantAddress(), activeReservation.getUserAddress(),
-                            activeReservation.getRestaurantID(), distance);
+                            activeReservation.getRestaurantID());
                     reservation.setStatus("delivered");
                     HashMap<String, Object> childSelf = new HashMap<>();
                     childSelf.put(activeReservation.getReservationID(), reservation);
@@ -343,6 +343,39 @@ public class ReservationFragment extends Fragment {
                         @Override
                         public void onCancelled(@NonNull DatabaseError databaseError) {
 
+                        }
+                    });
+
+                    final DatabaseReference databaseFreq = FirebaseDatabase.getInstance().getReference()
+                            .child("archive").child("Bikers").child(firebaseUser.getUid()).child("frequency");
+                    databaseFreq.addListenerForSingleValueEvent(new ValueEventListener() {
+                        @Override
+                        public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                            if (dataSnapshot.exists()) {
+                                HashMap<String, Object> frequencies = new HashMap<>();
+                                for (DataSnapshot ds : dataSnapshot.getChildren()) {
+                                    frequencies.put(ds.getKey(), ds.getValue(Integer.class));
+                                }
+
+                                String hour = activeReservation.getUserDeliveryTime().split(":")[0];
+                                Integer count = (Integer) frequencies.get(hour) + 1;
+                                frequencies.put(hour, count);
+                                databaseFreq.updateChildren(frequencies);
+                            } else {
+                                HashMap<String, Object> frequencies = new HashMap<>();
+                                for (int i = 0; i < 24; i ++){
+                                    frequencies.put(String.valueOf(i), 0);
+                                }
+
+                                String hour = activeReservation.getUserDeliveryTime().split(":")[0];
+                                Integer count = (Integer) frequencies.get(hour) + 1;
+                                frequencies.put(hour, count);
+                                databaseFreq.updateChildren(frequencies);
+                            }
+                        }
+
+                        @Override
+                        public void onCancelled(@NonNull DatabaseError databaseError) {
                         }
                     });
                 }
@@ -668,6 +701,7 @@ public class ReservationFragment extends Fragment {
 
                     }
                 });
+
             }
 
             @Override

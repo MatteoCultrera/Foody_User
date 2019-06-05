@@ -5,6 +5,7 @@
         android:id="@+id/menu"
         android:icon="@drawable/menu_black"
         android:title="@string/menu" />
+
     <item
         android:id="@+id/orders"
         android:icon="@drawable/reserv_black"
@@ -13,17 +14,15 @@
     <item
         android:id="@+id/delivery_biker"
         android:icon="@drawable/biker_black"
-        android:title="@string/biker_deliv"
-        />
+        android:title="@string/biker_deliv" />
 
     <item
         android:id="@+id/prof"
         android:icon="@drawable/name_black"
-        android:title="@string/profile"
-        />
+        android:title="@string/profile" />
 
     <item
         android:id="@+id/orders_done"
-        android:icon="@drawable/history_black"
-        android:title="@string/history_orders" />
+        android:icon="@drawable/graph_black"
+        android:title="@string/history" />
 </menu>
