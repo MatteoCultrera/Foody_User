@@ -186,8 +186,30 @@ public class HistoryPickMonth extends AppCompatActivity {
                         ConstraintLayout nov = v.findViewById(R.id.calendar_nov);
                         ConstraintLayout dec = v.findViewById(R.id.calendar_dec);
 
-                        if(calendar.get(s).contains("1")){
+                        if(calendar.get(s).contains("0")){
                             jan.setOnClickListener(new View.OnClickListener() {
+                                @Override
+                                public void onClick(View v) {
+                                    if(storage.exists()){
+                                        for(File f : storage.listFiles())
+                                            f.delete();
+                                        storage.delete();
+                                    }
+                                    Intent intent = new Intent(context, HistoryOrdersActivity.class);
+                                    intent.putExtra("date",String.format("%s-%s","0", s ));
+                                    startActivity(intent);
+                                }
+                            });
+                            jan.setBackgroundResource(R.drawable.calendar_enabled_background);
+                            jan.setElevation(getResources().getDimensionPixelSize(R.dimen.short10));
+                        }else{
+                            jan.setOnClickListener(null);
+                            jan.setBackgroundResource(R.drawable.calendar_disabled_background);
+                            jan.setElevation(0);
+                        }
+
+                        if(calendar.get(s).contains("1")){
+                            feb.setOnClickListener(new View.OnClickListener() {
                                 @Override
                                 public void onClick(View v) {
                                     if(storage.exists()){
@@ -200,16 +222,16 @@ public class HistoryPickMonth extends AppCompatActivity {
                                     startActivity(intent);
                                 }
                             });
-                            jan.setBackgroundResource(R.drawable.calendar_enabled_background);
-                            jan.setElevation(getResources().getDimensionPixelSize(R.dimen.short10));
+                            feb.setBackgroundResource(R.drawable.calendar_enabled_background);
+                            feb.setElevation(getResources().getDimensionPixelSize(R.dimen.short10));
                         }else{
-                            jan.setOnClickListener(null);
-                            jan.setBackgroundResource(R.drawable.calendar_disabled_background);
-                            jan.setElevation(0);
+                            feb.setOnClickListener(null);
+                            feb.setBackgroundResource(R.drawable.calendar_disabled_background);
+                            feb.setElevation(0);
                         }
 
                         if(calendar.get(s).contains("2")){
-                            feb.setOnClickListener(new View.OnClickListener() {
+                            mar.setOnClickListener(new View.OnClickListener() {
                                 @Override
                                 public void onClick(View v) {
                                     if(storage.exists()){
@@ -222,16 +244,17 @@ public class HistoryPickMonth extends AppCompatActivity {
                                     startActivity(intent);
                                 }
                             });
-                            feb.setBackgroundResource(R.drawable.calendar_enabled_background);
-                            feb.setElevation(getResources().getDimensionPixelSize(R.dimen.short10));
+                            mar.setBackgroundResource(R.drawable.calendar_enabled_background);
+                            mar.setElevation(getResources().getDimensionPixelSize(R.dimen.short10));
                         }else{
-                            feb.setOnClickListener(null);
-                            feb.setBackgroundResource(R.drawable.calendar_disabled_background);
-                            feb.setElevation(0);
+                            mar.setOnClickListener(null);
+                            mar.setBackgroundResource(R.drawable.calendar_disabled_background);
+                            mar.setElevation(0);
                         }
 
+
                         if(calendar.get(s).contains("3")){
-                            mar.setOnClickListener(new View.OnClickListener() {
+                            apr.setOnClickListener(new View.OnClickListener() {
                                 @Override
                                 public void onClick(View v) {
                                     if(storage.exists()){
@@ -244,17 +267,17 @@ public class HistoryPickMonth extends AppCompatActivity {
                                     startActivity(intent);
                                 }
                             });
-                            mar.setBackgroundResource(R.drawable.calendar_enabled_background);
-                            mar.setElevation(getResources().getDimensionPixelSize(R.dimen.short10));
+                            apr.setBackgroundResource(R.drawable.calendar_enabled_background);
+                            apr.setElevation(getResources().getDimensionPixelSize(R.dimen.short10));
                         }else{
-                            mar.setOnClickListener(null);
-                            mar.setBackgroundResource(R.drawable.calendar_disabled_background);
-                            mar.setElevation(0);
+                            apr.setOnClickListener(null);
+                            apr.setBackgroundResource(R.drawable.calendar_disabled_background);
+                            apr.setElevation(0);
                         }
 
 
                         if(calendar.get(s).contains("4")){
-                            apr.setOnClickListener(new View.OnClickListener() {
+                            may.setOnClickListener(new View.OnClickListener() {
                                 @Override
                                 public void onClick(View v) {
                                     if(storage.exists()){
@@ -267,17 +290,17 @@ public class HistoryPickMonth extends AppCompatActivity {
                                     startActivity(intent);
                                 }
                             });
-                            apr.setBackgroundResource(R.drawable.calendar_enabled_background);
-                            apr.setElevation(getResources().getDimensionPixelSize(R.dimen.short10));
+                            may.setBackgroundResource(R.drawable.calendar_enabled_background);
+                            may.setElevation(getResources().getDimensionPixelSize(R.dimen.short10));
                         }else{
-                            apr.setOnClickListener(null);
-                            apr.setBackgroundResource(R.drawable.calendar_disabled_background);
-                            apr.setElevation(0);
+                            may.setOnClickListener(null);
+                            may.setBackgroundResource(R.drawable.calendar_disabled_background);
+                            may.setElevation(0);
                         }
 
 
                         if(calendar.get(s).contains("5")){
-                            may.setOnClickListener(new View.OnClickListener() {
+                            jun.setOnClickListener(new View.OnClickListener() {
                                 @Override
                                 public void onClick(View v) {
                                     if(storage.exists()){
@@ -290,17 +313,17 @@ public class HistoryPickMonth extends AppCompatActivity {
                                     startActivity(intent);
                                 }
                             });
-                            may.setBackgroundResource(R.drawable.calendar_enabled_background);
-                            may.setElevation(getResources().getDimensionPixelSize(R.dimen.short10));
+                            jun.setBackgroundResource(R.drawable.calendar_enabled_background);
+                            jun.setElevation(getResources().getDimensionPixelSize(R.dimen.short10));
                         }else{
-                            may.setOnClickListener(null);
-                            may.setBackgroundResource(R.drawable.calendar_disabled_background);
-                            may.setElevation(0);
+                            jun.setOnClickListener(null);
+                            jun.setBackgroundResource(R.drawable.calendar_disabled_background);
+                            jun.setElevation(0);
                         }
 
 
                         if(calendar.get(s).contains("6")){
-                            jun.setOnClickListener(new View.OnClickListener() {
+                            jul.setOnClickListener(new View.OnClickListener() {
                                 @Override
                                 public void onClick(View v) {
                                     if(storage.exists()){
@@ -313,17 +336,16 @@ public class HistoryPickMonth extends AppCompatActivity {
                                     startActivity(intent);
                                 }
                             });
-                            jun.setBackgroundResource(R.drawable.calendar_enabled_background);
-                            jun.setElevation(getResources().getDimensionPixelSize(R.dimen.short10));
+                            jul.setBackgroundResource(R.drawable.calendar_enabled_background);
+                            jul.setElevation(getResources().getDimensionPixelSize(R.dimen.short10));
                         }else{
-                            jun.setOnClickListener(null);
-                            jun.setBackgroundResource(R.drawable.calendar_disabled_background);
-                            jun.setElevation(0);
+                            jul.setOnClickListener(null);
+                            jul.setBackgroundResource(R.drawable.calendar_disabled_background);
+                            jul.setElevation(0);
                         }
 
-
                         if(calendar.get(s).contains("7")){
-                            jul.setOnClickListener(new View.OnClickListener() {
+                            aug.setOnClickListener(new View.OnClickListener() {
                                 @Override
                                 public void onClick(View v) {
                                     if(storage.exists()){
@@ -336,16 +358,17 @@ public class HistoryPickMonth extends AppCompatActivity {
                                     startActivity(intent);
                                 }
                             });
-                            jul.setBackgroundResource(R.drawable.calendar_enabled_background);
-                            jul.setElevation(getResources().getDimensionPixelSize(R.dimen.short10));
+                            aug.setBackgroundResource(R.drawable.calendar_enabled_background);
+                            aug.setElevation(getResources().getDimensionPixelSize(R.dimen.short10));
                         }else{
-                            jul.setOnClickListener(null);
-                            jul.setBackgroundResource(R.drawable.calendar_disabled_background);
-                            jul.setElevation(0);
+                            aug.setOnClickListener(null);
+                            aug.setBackgroundResource(R.drawable.calendar_disabled_background);
+                            aug.setElevation(0);
                         }
 
+
                         if(calendar.get(s).contains("8")){
-                            aug.setOnClickListener(new View.OnClickListener() {
+                            sep.setOnClickListener(new View.OnClickListener() {
                                 @Override
                                 public void onClick(View v) {
                                     if(storage.exists()){
@@ -358,17 +381,17 @@ public class HistoryPickMonth extends AppCompatActivity {
                                     startActivity(intent);
                                 }
                             });
-                            aug.setBackgroundResource(R.drawable.calendar_enabled_background);
-                            aug.setElevation(getResources().getDimensionPixelSize(R.dimen.short10));
+                            sep.setBackgroundResource(R.drawable.calendar_enabled_background);
+                            sep.setElevation(getResources().getDimensionPixelSize(R.dimen.short10));
                         }else{
-                            aug.setOnClickListener(null);
-                            aug.setBackgroundResource(R.drawable.calendar_disabled_background);
-                            aug.setElevation(0);
+                            sep.setOnClickListener(null);
+                            sep.setBackgroundResource(R.drawable.calendar_disabled_background);
+                            sep.setElevation(0);
                         }
 
 
                         if(calendar.get(s).contains("9")){
-                            sep.setOnClickListener(new View.OnClickListener() {
+                            oct.setOnClickListener(new View.OnClickListener() {
                                 @Override
                                 public void onClick(View v) {
                                     if(storage.exists()){
@@ -381,17 +404,17 @@ public class HistoryPickMonth extends AppCompatActivity {
                                     startActivity(intent);
                                 }
                             });
-                            sep.setBackgroundResource(R.drawable.calendar_enabled_background);
-                            sep.setElevation(getResources().getDimensionPixelSize(R.dimen.short10));
+                            oct.setBackgroundResource(R.drawable.calendar_enabled_background);
+                            oct.setElevation(getResources().getDimensionPixelSize(R.dimen.short10));
                         }else{
-                            sep.setOnClickListener(null);
-                            sep.setBackgroundResource(R.drawable.calendar_disabled_background);
-                            sep.setElevation(0);
+                            oct.setOnClickListener(null);
+                            oct.setBackgroundResource(R.drawable.calendar_disabled_background);
+                            oct.setElevation(0);
                         }
 
 
                         if(calendar.get(s).contains("10")){
-                            oct.setOnClickListener(new View.OnClickListener() {
+                            nov.setOnClickListener(new View.OnClickListener() {
                                 @Override
                                 public void onClick(View v) {
                                     if(storage.exists()){
@@ -404,29 +427,6 @@ public class HistoryPickMonth extends AppCompatActivity {
                                     startActivity(intent);
                                 }
                             });
-                            oct.setBackgroundResource(R.drawable.calendar_enabled_background);
-                            oct.setElevation(getResources().getDimensionPixelSize(R.dimen.short10));
-                        }else{
-                            oct.setOnClickListener(null);
-                            oct.setBackgroundResource(R.drawable.calendar_disabled_background);
-                            oct.setElevation(0);
-                        }
-
-
-                        if(calendar.get(s).contains("11")){
-                            nov.setOnClickListener(new View.OnClickListener() {
-                                @Override
-                                public void onClick(View v) {
-                                    if(storage.exists()){
-                                        for(File f : storage.listFiles())
-                                            f.delete();
-                                        storage.delete();
-                                    }
-                                    Intent intent = new Intent(context, HistoryOrdersActivity.class);
-                                    intent.putExtra("date",String.format("%s-%s","11", s ));
-                                    startActivity(intent);
-                                }
-                            });
                             nov.setBackgroundResource(R.drawable.calendar_enabled_background);
                             nov.setElevation(getResources().getDimensionPixelSize(R.dimen.short10));
                         }else{
@@ -436,7 +436,7 @@ public class HistoryPickMonth extends AppCompatActivity {
                         }
 
 
-                        if(calendar.get(s).contains("12")){
+                        if(calendar.get(s).contains("11")){
                             dec.setOnClickListener(new View.OnClickListener() {
                                 @Override
                                 public void onClick(View v) {
@@ -446,7 +446,7 @@ public class HistoryPickMonth extends AppCompatActivity {
                                         storage.delete();
                                     }
                                     Intent intent = new Intent(context, HistoryOrdersActivity.class);
-                                    intent.putExtra("date",String.format("%s-%s","12", s ));
+                                    intent.putExtra("date",String.format("%s-%s","11", s ));
                                     startActivity(intent);
                                 }
                             });

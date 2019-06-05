@@ -6,6 +6,7 @@ import android.provider.ContactsContract;
 import android.support.annotation.NonNull;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.text.TextUtils;
 import android.util.Log;
@@ -47,6 +48,7 @@ public class HistoryOrdersActivity extends AppCompatActivity {
     private final String HISTORY_DIRECTORY= "historyDirectory";
     private ArrayList<Reservation> reservations;
     int imagesToFetch, imagesFetched;
+    private boolean addAfter;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -70,6 +72,7 @@ public class HistoryOrdersActivity extends AppCompatActivity {
         shared = getSharedPreferences("myPreference", MODE_PRIVATE);
         isReady = false;
 
+        addAfter = false;
     }
 
 
@@ -82,16 +85,30 @@ public class HistoryOrdersActivity extends AppCompatActivity {
             }
         });
 
-        loading.setVisibility(View.VISIBLE);
-        recyclerView.setVisibility(View.GONE);
+
+        LinearLayoutManager llm = new LinearLayoutManager(this);
+        recyclerView.setLayoutManager(llm);
 
         File root = getExternalFilesDir(Environment.DIRECTORY_PICTURES);
         storage = new File(root.getPath()+File.separator+HISTORY_DIRECTORY);
 
-        if(!storage.exists())
+        if(!storage.exists()){
             storage.mkdir();
+        }
+
 
        fetchReservationsFromDB();
+
+        if(!isReady){
+            loading.setVisibility(View.VISIBLE);
+            recyclerView.setVisibility(View.GONE);
+        }else if(addAfter){
+            loading.setVisibility(View.GONE);
+            recyclerView.setVisibility(View.VISIBLE);
+            RVAdapterHistory history = new RVAdapterHistory(reservations);
+            recyclerView.setAdapter(history);
+            addAfter = false;
+        }
 
 
     }
@@ -120,7 +137,9 @@ public class HistoryOrdersActivity extends AppCompatActivity {
                         status = Reservation.prepStatus.PENDING;
                     } else if (reservationDBUser.getStatus().toLowerCase().equals("doing")){
                         status = Reservation.prepStatus.DOING;
-                    } else{
+                    } else if(reservationDBUser.getStatus().toLowerCase().equals("rejected")){
+                        status = Reservation.prepStatus.REJECTED;
+                    }else{
                         status = Reservation.prepStatus.DONE;
                     }
                     Reservation reservation = new Reservation(orderID, dishes, status,
@@ -140,8 +159,15 @@ public class HistoryOrdersActivity extends AppCompatActivity {
 
                 }
 
-                if(isReady){
+                if(isReady && !isPaused){
                     //ALL SET UP
+                    RVAdapterHistory history = new RVAdapterHistory(reservations);
+                    recyclerView.setAdapter(history);
+                    loading.setVisibility(View.GONE);
+                    recyclerView.setVisibility(View.VISIBLE);
+                }else if(isPaused){
+                    addAfter = true;
+                    getRestaurantsDB(restaurantsWithImage);
                 }else{
                     //Fetch Images From DB
                     getRestaurantsDB(restaurantsWithImage);
@@ -166,13 +192,14 @@ public class HistoryOrdersActivity extends AppCompatActivity {
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
                 Map<String, String> restaurantsWithImages = new HashMap<>();
                 for(String s: restaurants.keySet()){
-                    if(dataSnapshot.child(s).child("imagePath").getValue(String.class)!=null){
-                        if(dataSnapshot.child(s).child("imagePath").getValue(String.class).length() > 0){
+                    if(dataSnapshot.child(s).child("info").child("imagePath").getValue(String.class)!=null){
+                        if(dataSnapshot.child(s).child("info").child("imagePath").getValue(String.class).length() > 0){
                             imagesToFetch++;
-                            restaurantsWithImages.put(s, dataSnapshot.child(s).child("imagePath").getValue(String.class));
+                            restaurantsWithImages.put(s, dataSnapshot.child(s).child("info").child("imagePath").getValue(String.class));
                         }
                     }
                 }
+
                 saveImagesRestaurants(restaurantsWithImages, imagesToFetch);
             }
             @Override
@@ -184,16 +211,22 @@ public class HistoryOrdersActivity extends AppCompatActivity {
 
     private void saveImagesRestaurants(final Map<String, String> restaurants, final int imagesToFetch){
         for(String s: restaurants.keySet()){
-            File image = new File(storage.getPath()+File.separator+s+".jpg");
+            final File image = new File(storage.getPath()+File.separator+s+".jpg");
             StorageReference mStorageRef = FirebaseStorage.getInstance().getReference();
             mStorageRef.child(restaurants.get(s)).getFile(image)
                     .addOnSuccessListener(new OnSuccessListener<FileDownloadTask.TaskSnapshot>() {
+
                         @Override
                         public void onSuccess(FileDownloadTask.TaskSnapshot taskSnapshot) {
                             imagesFetched++;
                             if(imagesFetched == imagesToFetch && !isPaused){
-                                //ALL Images ADDED
+                                RVAdapterHistory history = new RVAdapterHistory(reservations);
+                                recyclerView.setAdapter(history);
+                                loading.setVisibility(View.GONE);
+                                recyclerView.setVisibility(View.VISIBLE);
+                                isReady=true;
                             }else{
+                                addAfter = true;
                                 isReady = true;
                             }
                         }
@@ -203,7 +236,13 @@ public class HistoryOrdersActivity extends AppCompatActivity {
                     imagesFetched++;
                     if(imagesFetched == imagesToFetch && !isPaused){
                         //ALL Images Added
+                        RVAdapterHistory history = new RVAdapterHistory(reservations);
+                        recyclerView.setAdapter(history);
+                        loading.setVisibility(View.GONE);
+                        recyclerView.setVisibility(View.VISIBLE);
+                        isReady=true;
                     }else{
+                        addAfter = true;
                         isReady = true;
                     }
                 }
@@ -217,40 +256,40 @@ public class HistoryOrdersActivity extends AppCompatActivity {
     private String getMonthLong(String value){
         String toRet = null;
         switch (value){
-            case "1":
+            case "0":
                 toRet = getString(R.string.january);
                 break;
-            case "2":
+            case "1":
                 toRet = getString(R.string.february);
                 break;
-            case "3":
+            case "2":
                 toRet = getString(R.string.march);
                 break;
-            case "4":
+            case "3":
                 toRet = getString(R.string.april);
                 break;
-            case "5":
+            case "4":
                 toRet = getString(R.string.mayL);
                 break;
-            case "6":
+            case "5":
                 toRet = getString(R.string.june);
                 break;
-            case "7":
+            case "6":
                 toRet = getString(R.string.july);
                 break;
-            case "8":
+            case "7":
                 toRet = getString(R.string.august);
                 break;
-            case "9":
+            case "8":
                 toRet = getString(R.string.september);
                 break;
-            case "10":
+            case "9":
                 toRet = getString(R.string.october);
                 break;
-            case "11":
+            case "10":
                 toRet = getString(R.string.november);
                 break;
-            case "12":
+            case "11":
                 toRet = getString(R.string.december);
                 break;
 

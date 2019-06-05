@@ -45,7 +45,7 @@
             android:layout_weight="1"
             android:layout_width="64dp"
             android:layout_height="match_parent"
-            android:background="@color/whiteText">
+            android:background="@android:color/transparent">
 
             <android.support.constraint.ConstraintLayout
                 android:id="@+id/calendar_jan"
@@ -76,7 +76,7 @@
             android:layout_width="64dp"
             android:layout_weight="1"
             android:layout_height="match_parent"
-            android:background="@color/whiteText">
+            android:background="@android:color/transparent">
 
 
             <android.support.constraint.ConstraintLayout
@@ -109,7 +109,7 @@
             android:layout_width="64dp"
             android:layout_weight="1"
             android:layout_height="match_parent"
-            android:background="@color/whiteText">
+            android:background="@android:color/transparent">
 
             <android.support.constraint.ConstraintLayout
                 android:id="@+id/calendar_mar"
@@ -140,7 +140,7 @@
             android:layout_width="64dp"
             android:layout_weight="1"
             android:layout_height="match_parent"
-            android:background="@color/whiteText">
+            android:background="@android:color/transparent">
 
             <android.support.constraint.ConstraintLayout
                 android:id="@+id/calendar_apr"
@@ -184,7 +184,7 @@
             android:layout_weight="1"
             android:layout_width="64dp"
             android:layout_height="match_parent"
-            android:background="@color/whiteText">
+            android:background="@android:color/transparent">
 
             <android.support.constraint.ConstraintLayout
                 android:id="@+id/calendar_may"
@@ -215,7 +215,7 @@
             android:layout_width="64dp"
             android:layout_weight="1"
             android:layout_height="match_parent"
-            android:background="@color/whiteText">
+            android:background="@android:color/transparent">
 
 
             <android.support.constraint.ConstraintLayout
@@ -248,7 +248,7 @@
             android:layout_width="64dp"
             android:layout_weight="1"
             android:layout_height="match_parent"
-            android:background="@color/whiteText">
+            android:background="@android:color/transparent">
 
             <android.support.constraint.ConstraintLayout
                 android:id="@+id/calendar_jul"
@@ -279,7 +279,7 @@
             android:layout_width="64dp"
             android:layout_weight="1"
             android:layout_height="match_parent"
-            android:background="@color/whiteText">
+            android:background="@android:color/transparent">
 
             <android.support.constraint.ConstraintLayout
                 android:id="@+id/calendar_aug"
@@ -322,7 +322,7 @@
             android:layout_weight="1"
             android:layout_width="64dp"
             android:layout_height="match_parent"
-            android:background="@color/whiteText">
+            android:background="@android:color/transparent">
 
             <android.support.constraint.ConstraintLayout
                 android:id="@+id/calendar_sep"
@@ -353,7 +353,7 @@
             android:layout_width="64dp"
             android:layout_weight="1"
             android:layout_height="match_parent"
-            android:background="@color/whiteText">
+            android:background="@android:color/transparent">
 
 
             <android.support.constraint.ConstraintLayout
@@ -386,7 +386,7 @@
             android:layout_width="64dp"
             android:layout_weight="1"
             android:layout_height="match_parent"
-            android:background="@color/whiteText">
+            android:background="@android:color/transparent">
 
             <android.support.constraint.ConstraintLayout
                 android:id="@+id/calendar_nov"
@@ -417,7 +417,7 @@
             android:layout_width="64dp"
             android:layout_weight="1"
             android:layout_height="match_parent"
-            android:background="@color/whiteText">
+            android:background="@android:color/transparent">
 
             <android.support.constraint.ConstraintLayout
                 android:id="@+id/calendar_dec"
