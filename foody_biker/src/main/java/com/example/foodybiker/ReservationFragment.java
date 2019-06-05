@@ -110,6 +110,7 @@ public class ReservationFragment extends Fragment {
     }
 
     public void init(final View view) {
+        Log.d("CIAOCIAO","init()");
         final ReservationFragment ref = this;
         toAdd = true;
         storageDir = getActivity().getExternalFilesDir(Environment.DIRECTORY_DOCUMENTS);
@@ -476,9 +477,12 @@ public class ReservationFragment extends Fragment {
         updateTitles();
         int shortAnimationDuration = 600;
         if (deliveringOrder) {
+            orderList.clearAnimation();
+            card.clearAnimation();
+            orderList.setVisibility(View.VISIBLE);
+            card.setVisibility(View.VISIBLE);
             orderList.setAlpha(1f);
             card.setAlpha(0f);
-            card.setVisibility(View.VISIBLE);
             card.animate().alpha(1f)
                     .setDuration(shortAnimationDuration)
                     .setListener(null);
@@ -491,11 +495,26 @@ public class ReservationFragment extends Fragment {
                             orderList.setVisibility(View.GONE);
                         }
                     });
-            //orderList.setVisibility(View.GONE);
             orderDeliveredLayout.setBackgroundResource(R.drawable.order_delivered_background);
         } else {
-            card.setVisibility(View.GONE);
+            orderList.clearAnimation();
+            card.clearAnimation();
             orderList.setVisibility(View.VISIBLE);
+            card.setVisibility(View.VISIBLE);
+            card.setAlpha(1f);
+            orderList.setAlpha(0f);
+            orderList.animate().alpha(1f)
+                    .setDuration(shortAnimationDuration)
+                    .setListener(null);
+            card.animate()
+                    .alpha(0f)
+                    .setDuration(shortAnimationDuration)
+                    .setListener(new AnimatorListenerAdapter() {
+                        @Override
+                        public void onAnimationEnd(Animator animation) {
+                            card.setVisibility(View.GONE);
+                        }
+                    });
             orderDeliveredLayout.setBackgroundResource(R.drawable.order_delivered_background_dis);
         }
     }
