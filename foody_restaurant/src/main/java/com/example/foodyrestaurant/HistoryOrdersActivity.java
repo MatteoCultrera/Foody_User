@@ -1,4 +1,4 @@
-package com.example.foodybiker;
+package com.example.foodyrestaurant;
 
 import android.content.SharedPreferences;
 import android.os.Bundle;
@@ -95,11 +95,14 @@ public class HistoryOrdersActivity extends AppCompatActivity {
 
        fetchReservationsFromDB();
 
-        if(addAfter){
+        if(!isReady){
+            loading.setVisibility(View.VISIBLE);
+            recyclerView.setVisibility(View.GONE);
+        }else if(addAfter){
             loading.setVisibility(View.GONE);
             recyclerView.setVisibility(View.VISIBLE);
-            //RVAdapterHistory history = new RVAdapterHistory(reservations);
-            //recyclerView.setAdapter(history);
+            RVAdapterHistory history = new RVAdapterHistory(reservations);
+            recyclerView.setAdapter(history);
             addAfter = false;
         }
 
@@ -107,8 +110,9 @@ public class HistoryOrdersActivity extends AppCompatActivity {
     }
 
     private void fetchReservationsFromDB(){
+
         DatabaseReference database = FirebaseDatabase.getInstance().getReference();
-        Query query = database.child("archive").child("Bikers").child(shared.getString("id","")).child(date);
+        Query query = database.child("archive").child("restaurant").child(shared.getString("id","")).child(date);
         reservations = new ArrayList<>();
 
         query.addListenerForSingleValueEvent(new ValueEventListener() {
@@ -116,14 +120,35 @@ public class HistoryOrdersActivity extends AppCompatActivity {
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
 
                 for (DataSnapshot ds: dataSnapshot.getChildren()){
-                    ReservationDBBiker reservationDB = ds.getValue(ReservationDBBiker.class);
-                    Reservation reservation = new Reservation(reservationDB.getRestaurantName(), reservationDB.getRestaurantAddress(),
-                            reservationDB.getOrderTimeBiker(), reservationDB.getUserName(), reservationDB.getUserAddress(),
-                            reservationDB.getOrderTime(), reservationDB.getRestaurantID(), reservationDB.getNotes(), false);
-                    reservation.setReservationID(ds.getKey());
-                    reservation.setUserId();
-                    reservation.setUserPhone(reservationDB.getUserPhone());
-                    reservation.setRestPhone(reservationDB.getRestPhone());
+
+                    ReservationDBRestaurant reservationDB = ds.getValue(ReservationDBRestaurant.class);
+                    ArrayList<Dish> dishes = new ArrayList<>();
+                    for (OrderItem o : reservationDB.getDishesOrdered()) {
+                        Dish dish = new Dish();
+                        dish.setQuantity(o.getPieces());
+                        dish.setDishName(o.getOrderName());
+                        dish.setPrice(o.getPrice());
+                        dishes.add(dish);
+                    }
+                    Reservation.prepStatus status;
+                    if (reservationDB.getStatus().equals("Pending")) {
+                        status = Reservation.prepStatus.PENDING;
+                    } else if (reservationDB.getStatus().equals("Doing")) {
+                        status = Reservation.prepStatus.DOING;
+                    } else {
+                        status = Reservation.prepStatus.DONE;
+                    }
+
+                    String orderID = reservationDB.getReservationID().substring(28);
+                    Reservation reservation = new Reservation(orderID, dishes, status,
+                                                                    reservationDB.isAccepted(), reservationDB.getOrderTimeBiker(), reservationDB.getNameUser(),
+                                                                    reservationDB.getNumberPhone(), reservationDB.getResNote(), "",
+                                                                    shared.getString("email", ""), reservationDB.getUserAddress());
+                    reservation.setUserUID(reservationDB.getReservationID().substring(0, 28));
+                    reservation.setDeliveryTime(reservationDB.getOrderTime());
+                    reservation.setTotalPrice(reservationDB.getTotalCost());
+                    reservation.setRestaurantAddress(shared.getString("address", null));
+                    reservation.setRestaurantName(shared.getString("name", null));
                     reservations.add(reservation);
 
                 }
@@ -145,9 +170,7 @@ public class HistoryOrdersActivity extends AppCompatActivity {
             }
         });
 
-
     }
-
 
     private String getMonthLong(String value){
         String toRet = null;
