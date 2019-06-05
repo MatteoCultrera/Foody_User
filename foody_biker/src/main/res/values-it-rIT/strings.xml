@@ -26,4 +26,8 @@
 
     <string name="pick_time_text">Ritira alle</string>
     <string name="delivery_time_text">Consegna alle</string>
+
+
+    <string name="orders_history">Storico Ordini</string>
+
 </resources>
