@@ -89,17 +89,6 @@ public class DiscoverFragment extends Fragment {
             }
         });
 
-        Button prova = view.findViewById(R.id.prova);
-
-        prova.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Intent intent = new Intent(getActivity(), HistoryPickMonth.class);
-                startActivity(intent);
-
-            }
-        });
-
     }
 
     public void addressActivity() {
