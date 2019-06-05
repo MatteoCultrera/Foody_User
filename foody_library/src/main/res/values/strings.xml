@@ -112,6 +112,21 @@
     <string name="nov">Nov</string>
     <string name="dec">Dec</string>
 
+    <string name="january">January</string>
+    <string name="february">February</string>
+    <string name="march">March</string>
+    <string name="april">April</string>
+    <string name="mayL">May</string>
+    <string name="june">June</string>
+    <string name="july">July</string>
+    <string name="august">August</string>
+    <string name="september">September</string>
+    <string name="october">October</string>
+    <string name="november">November</string>
+    <string name="december">December</string>
+
+    <string name="your_orders">Your Orders</string>
+
     <string name="all_orders">All orders</string>
     <string name="enter_orders_history">Enter the history</string>
     <string name="total_distance">Total distance</string>

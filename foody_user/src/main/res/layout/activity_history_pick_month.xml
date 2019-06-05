@@ -4,7 +4,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context="com.example.foodyuser.historyMonthActivity">
+    tools:context="com.example.foodyuser.HistoryPickMonth">
 
     <android.support.constraint.ConstraintLayout
         android:id="@+id/constraint_calendar"
@@ -36,7 +36,7 @@
             android:id="@+id/calendar_back"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:src="@drawable/back_white"
+            android:src="@drawable/clear_white"
             android:background="@android:color/transparent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent"

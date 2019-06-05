@@ -21,8 +21,9 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
-        <activity android:name=".historyMonthActivity"></activity>
-        <activity android:name=".SearchRestaurant"></activity>
+        <activity android:name=".HistoryPickMonth"></activity>
+        <activity android:name=".HistoryOrdersActivity" />
+        <activity android:name=".SearchRestaurant" />
         <activity android:name=".RestaurantView" />
         <activity
             android:name=".Login"

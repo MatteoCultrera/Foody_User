@@ -94,7 +94,7 @@ public class DiscoverFragment extends Fragment {
         prova.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Intent intent = new Intent(getActivity(), historyMonthActivity.class);
+                Intent intent = new Intent(getActivity(), HistoryPickMonth.class);
                 startActivity(intent);
 
             }
