@@ -478,6 +478,7 @@ public class ReservationFragment extends Fragment {
         updateTitles();
         int shortAnimationDuration = 600;
         if (deliveringOrder) {
+            /*
             orderList.clearAnimation();
             card.clearAnimation();
             orderList.setVisibility(View.VISIBLE);
@@ -496,8 +497,12 @@ public class ReservationFragment extends Fragment {
                             orderList.setVisibility(View.GONE);
                         }
                     });
+            */
+            card.setVisibility(View.VISIBLE);
+            orderList.setVisibility(View.GONE);
             orderDeliveredLayout.setBackgroundResource(R.drawable.order_delivered_background);
         } else {
+            /*
             orderList.clearAnimation();
             card.clearAnimation();
             orderList.setVisibility(View.VISIBLE);
@@ -516,6 +521,9 @@ public class ReservationFragment extends Fragment {
                             card.setVisibility(View.GONE);
                         }
                     });
+            */
+            orderList.setVisibility(View.VISIBLE);
+            card.setVisibility(View.GONE);
             orderDeliveredLayout.setBackgroundResource(R.drawable.order_delivered_background_dis);
         }
     }
