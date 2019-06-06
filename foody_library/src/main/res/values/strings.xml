@@ -141,7 +141,7 @@
     <string name="two" translatable="false">2</string>
     <string name="three" translatable="false">3</string>
     <string name="total_income">Total income</string>
-    <string name="all_review">All the reviews</string>
+    <string name="all_review">All reviews</string>
     <string name="enter_review">Enter the reviews</string>
 
     <string name="text_orders">Orders</string>
