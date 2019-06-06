@@ -188,10 +188,6 @@ public class ReservationFragment extends Fragment {
                                         break;
                                 }
                                 reservations.add(index, reservation);
-                                Log.d("SWSW", "notifica " + index + reservations.size());
-                                for(Reservation r : reservations){
-                                    Log.d("SWSW", r.getReservationID());
-                                }
                                 adapter.notifyItemInserted(index);
                                 adapter.notifyItemRangeChanged(index, reservations.size());
                                 updateTitles();
