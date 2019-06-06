@@ -12,6 +12,7 @@ import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v7.app.AppCompatActivity;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.MenuItem;
 import android.view.View;
@@ -24,9 +25,14 @@ import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ValueEventListener;
 
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.HashMap;
-import java.util.concurrent.ExecutionException;
+import java.util.List;
+import java.util.Map;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -43,6 +49,11 @@ public class MainActivity extends AppCompatActivity {
     private Boolean bool = true;
     private Uri photoProfile;
     private HashMap<String, Uri> photosMap = new HashMap<>();
+    private HashMap<String, Integer> dishes = new HashMap<>();
+    private List<Map.Entry<String, Integer>> top3;
+    private HashMap<Integer, Integer> frequency = new HashMap<>();
+    private Float amount;
+    private Integer accepted, rejected;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -66,6 +77,7 @@ public class MainActivity extends AppCompatActivity {
         */
         //here there is an internet connection
         sharedPref = getSharedPreferences("myPreference", MODE_PRIVATE);
+
         setContentView(R.layout.bottom_bar);
         if (savedInstanceState != null) {
             String lastFragment = savedInstanceState.getString("lastFragment", null);
@@ -90,10 +102,11 @@ public class MainActivity extends AppCompatActivity {
         biker = new BikerFragment();
         ((BikerFragment) biker).setFather(this);
         history = new HistoryFragment();
-        fm.beginTransaction().add(R.id.mainFrame, history, "5").commit();
-        fm.beginTransaction().add(R.id.mainFrame, user, "4").commit();
-        fm.beginTransaction().add(R.id.mainFrame, biker, "3").commit();
-        fm.beginTransaction().add(R.id.mainFrame, reservations, "2").commit();
+        ((HistoryFragment) history).setFather(this);
+        fm.beginTransaction().add(R.id.mainFrame, history, "5").hide(history).commit();
+        fm.beginTransaction().add(R.id.mainFrame, user, "4").hide(user).commit();
+        fm.beginTransaction().add(R.id.mainFrame, biker, "3").hide(biker).commit();
+        fm.beginTransaction().add(R.id.mainFrame, reservations, "2").hide(reservations).commit();
         fm.beginTransaction().add(R.id.mainFrame, menu, "1").show(menu).commit();
         active = menu;
         init();
@@ -147,7 +160,7 @@ public class MainActivity extends AppCompatActivity {
                 if(id == R.id.menu && active != menu){
                     FragmentTransaction transaction = fm.beginTransaction();
                     transaction.setCustomAnimations(R.anim.enter_from_left,R.anim.exit_to_right);
-                    transaction.replace(R.id.mainFrame, menu).commit();
+                    transaction.hide(active).show(menu).commit();
                     active = menu;
                     return true;
                 }else if(id == R.id.orders && active != reservations){
@@ -155,11 +168,11 @@ public class MainActivity extends AppCompatActivity {
                     if(active == menu){
                         FragmentTransaction transaction =fm.beginTransaction();
                         transaction.setCustomAnimations(R.anim.enter_from_right,R.anim.exit_to_left);
-                        transaction.replace(R.id.mainFrame, reservations).commit();
+                        transaction.hide(active).show(reservations).commit();
                     }else{
                         FragmentTransaction transaction = fm.beginTransaction();
                         transaction.setCustomAnimations(R.anim.enter_from_left, R.anim.exit_to_right);
-                        transaction.replace(R.id.mainFrame, reservations).commit();
+                        transaction.hide(active).show(reservations).commit();
                     }
                     active = reservations;
                     return true;
@@ -168,11 +181,11 @@ public class MainActivity extends AppCompatActivity {
                     if(active == menu || active == reservations){
                         FragmentTransaction transaction = fm.beginTransaction();
                         transaction.setCustomAnimations(R.anim.enter_from_right, R.anim.exit_to_left);
-                        transaction.replace(R.id.mainFrame, biker).commit();
+                        transaction.hide(active).show(biker).commit();
                     }else{
                         FragmentTransaction transaction = fm.beginTransaction();
                         transaction.setCustomAnimations(R.anim.enter_from_left, R.anim.exit_to_right);
-                        transaction.replace(R.id.mainFrame, biker).commit();
+                        transaction.hide(active).show(biker).commit();
                     }
                     active = biker;
                     return true;
@@ -181,11 +194,11 @@ public class MainActivity extends AppCompatActivity {
                     if(active == history){
                         FragmentTransaction transaction = fm.beginTransaction();
                         transaction.setCustomAnimations(R.anim.enter_from_left,R.anim.exit_to_right);
-                        transaction.replace(R.id.mainFrame, user).commit();
+                        transaction.hide(active).show(user).commit();
                     }else{
                         FragmentTransaction transaction = fm.beginTransaction();
                         transaction.setCustomAnimations(R.anim.enter_from_right,R.anim.exit_to_left);
-                        transaction.replace(R.id.mainFrame, user).commit();
+                        transaction.hide(active).show(user).commit();
                     }
 
                     active = user;
@@ -193,7 +206,7 @@ public class MainActivity extends AppCompatActivity {
                 }else if(id == R.id.orders_done && active != history){
                     FragmentTransaction transaction = fm.beginTransaction();
                     transaction.setCustomAnimations(R.anim.enter_from_right, R.anim.exit_to_left);
-                    transaction.replace(R.id.mainFrame, history).commit();
+                    transaction.hide(active).show(history).commit();
                     active = history;
                     return true;
                 }
@@ -368,4 +381,43 @@ public class MainActivity extends AppCompatActivity {
 
     }
 
+    public List<Map.Entry<String, Integer>> getTop3() {
+        return top3;
+    }
+
+    public HashMap<Integer, Integer> getFrequency() {
+        return frequency;
+    }
+
+    public Float getAmount() {
+        return amount;
+    }
+
+    public Integer getAccepted() {
+        return accepted;
+    }
+
+    public Integer getRejected() {
+        return rejected;
+    }
+
+    public void setTop3(List<Map.Entry<String, Integer>> top3) {
+        this.top3 = top3;
+    }
+
+    public void setFrequency(HashMap<Integer, Integer> frequency) {
+        this.frequency = frequency;
+    }
+
+    public void setAmount(Float amount) {
+        this.amount = amount;
+    }
+
+    public void setAccepted(Integer accepted) {
+        this.accepted = accepted;
+    }
+
+    public void setRejected(Integer rejected) {
+        this.rejected = rejected;
+    }
 }
