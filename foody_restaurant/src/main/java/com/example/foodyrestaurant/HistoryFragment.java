@@ -56,16 +56,22 @@ public class HistoryFragment extends Fragment {
     private PieChart pieChart;
     private HashMap<Integer, Integer> frequency = new HashMap<>();
     private Float amount;
+    private MainActivity father;
     private Integer accepted, rejected;
     private List<Map.Entry<String, Integer>> top3;
     private MaterialButton button;
 
     public HistoryFragment() {}
 
+    public void setFather(MainActivity father) {this.father = father;}
+
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_history, container, false);
+        downloadTop();
+        downloadFrequency();
+        downloadStats();
         return view;
     }
 
@@ -98,106 +104,34 @@ public class HistoryFragment extends Fragment {
         accepted = 0;
         rejected = 0;
 
-        FirebaseAuth firebaseAuth = FirebaseAuth.getInstance();
-        FirebaseUser firebaseUser = firebaseAuth.getCurrentUser();
+        if(father.getTop3() == null){
+            downloadTop();
+        } else {
+            top3 = father.getTop3();
+            firstDish.setText(top3.get(0).getKey());
+            secondDish.setText(top3.get(1).getKey());
+            thirdDish.setText(top3.get(2).getKey());
+            firstDishNumber.setText(top3.get(0).getValue()+ " orders");
+            secondDishNumber.setText(top3.get(1).getValue()+ " orders");
+            thirdDishNumber.setText(top3.get(1).getValue()+ " orders");
+        }
 
-        DatabaseReference databaseReference = FirebaseDatabase.getInstance().getReference().child("archive")
-                .child("restaurant").child(firebaseUser.getUid());
+        if(father.getFrequency() == null){
+            downloadFrequency();
+        } else {
+            frequency = father.getFrequency();
+            drawChart();
+        }
 
-        DatabaseReference databaseFrequency = databaseReference.child("frequency");
-
-        DatabaseReference databaseDishes = databaseReference.child("dishesCount");
-
-        databaseDishes.addListenerForSingleValueEvent(new ValueEventListener() {
-            @Override
-            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-                if (dataSnapshot.exists()) {
-                    for (DataSnapshot ds : dataSnapshot.getChildren()) {
-                        dishes.put(ds.getKey(), ds.getValue(Integer.class));
-                    }
-
-                    if(dishes.size() > 2) {
-                        List<Map.Entry<String, Integer>> entryList = new ArrayList<>(dishes.entrySet());
-                        Collections.sort(entryList, new Comparator<Map.Entry<String, Integer>>() {
-                            @Override
-                            public int compare(Map.Entry<String, Integer> e1, Map.Entry<String, Integer> e2) {
-                                return e2.getValue() - e1.getValue(); // descending order
-                            }
-                        });
-
-                        // now let's get the top 3
-                        top3 = new ArrayList<>(3);
-                        for (Map.Entry<String, Integer> e : entryList) {
-                            top3.add(e);
-                            if (top3.size() == 3) {
-                                break;
-                            }
-                        }
-
-                        Log.d("MADMAD", "1 : " + top3.get(0));
-                        Log.d("MADMAD", "2 : " + top3.get(1));
-                        Log.d("MADMAD", "3 : " + top3.get(2));
-
-                        firstDish.setText(top3.get(0).getKey());
-                        secondDish.setText(top3.get(1).getKey());
-                        thirdDish.setText(top3.get(2).getKey());
-                        firstDishNumber.setText(top3.get(0).getValue()+ " orders");
-                        secondDishNumber.setText(top3.get(1).getValue()+ " orders");
-                        thirdDishNumber.setText(top3.get(1).getValue()+ " orders");
-                    }
-                }
-            }
-
-            @Override
-            public void onCancelled(@NonNull DatabaseError databaseError) {
-
-            }
-        });
-
-        databaseFrequency.addListenerForSingleValueEvent(new ValueEventListener() {
-            @Override
-            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-                if (dataSnapshot.exists()) {
-                    for (DataSnapshot ds : dataSnapshot.getChildren()) {
-                        frequency.put(Integer.parseInt(ds.getKey()), ds.getValue(Integer.class));
-                    }
-                } else {
-                    for (int i = 0; i < 24; i ++){
-                        frequency.put(i, 0);
-                    }
-                }
-
-                drawChart();
-            }
-
-            @Override
-            public void onCancelled(@NonNull DatabaseError databaseError) {
-
-            }
-        });
-
-        databaseReference.addListenerForSingleValueEvent(new ValueEventListener() {
-            @Override
-            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-                for(DataSnapshot ds : dataSnapshot.getChildren()) {
-                    if(ds.getKey().compareTo("amount") == 0) {
-                        amount = ds.getValue(Float.class);
-                    }
-                    if(ds.getKey().compareTo("accepted") == 0) {
-                        accepted = ds.getValue(Integer.class);
-                    }
-                    if(ds.getKey().compareTo("rejected") == 0) {
-                        rejected = ds.getValue(Integer.class);
-                    }
-                }
-                totalIncome.setText(String.format(Locale.getDefault(), "%.2f", amount));
-                drawPieCharts();
-            }
-
-            @Override
-            public void onCancelled(@NonNull DatabaseError databaseError) {
-            }
-        });
+        if(father.getAccepted() == null || father.getAmount() == null || father.getRejected() == null){
+            downloadStats();
+        } else {
+            accepted = father.getAccepted();
+            amount = father.getAmount();
+            rejected = father.getRejected();
+            totalIncome.setText(String.format(Locale.getDefault(), "%.2f", amount));
+            drawPieCharts();
+        }
 
     }
 
@@ -292,5 +226,118 @@ public class HistoryFragment extends Fragment {
         data.setValueTextColor(Color.BLACK);
         pieChart.setNoDataText("NO ORDERS IN ARCHIVE RIGHT NOW");
         pieChart.animateXY(3000, 3000);
+    }
+
+    private void downloadTop(){
+        FirebaseAuth firebaseAuth = FirebaseAuth.getInstance();
+        FirebaseUser firebaseUser = firebaseAuth.getCurrentUser();
+
+        DatabaseReference databaseReference = FirebaseDatabase.getInstance().getReference().child("archive")
+                .child("restaurant").child(firebaseUser.getUid());
+        DatabaseReference databaseDishes = databaseReference.child("dishesCount");
+        databaseDishes.addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                if (dataSnapshot.exists()) {
+                    for (DataSnapshot ds : dataSnapshot.getChildren()) {
+                        dishes.put(ds.getKey(), ds.getValue(Integer.class));
+                    }
+
+                    if(dishes.size() > 2) {
+                        List<Map.Entry<String, Integer>> entryList = new ArrayList<>(dishes.entrySet());
+                        Collections.sort(entryList, new Comparator<Map.Entry<String, Integer>>() {
+                            @Override
+                            public int compare(Map.Entry<String, Integer> e1, Map.Entry<String, Integer> e2) {
+                                return e2.getValue() - e1.getValue(); // descending order
+                            }
+                        });
+
+                        // now let's get the top 3
+                        top3 = new ArrayList<>(3);
+                        for (Map.Entry<String, Integer> e : entryList) {
+                            top3.add(e);
+                            if (top3.size() == 3) {
+                                break;
+                            }
+                        }
+                    }
+                }
+                father.setTop3(top3);
+                firstDish.setText(top3.get(0).getKey());
+                secondDish.setText(top3.get(1).getKey());
+                thirdDish.setText(top3.get(2).getKey());
+                firstDishNumber.setText(top3.get(0).getValue()+ " orders");
+                secondDishNumber.setText(top3.get(1).getValue()+ " orders");
+                thirdDishNumber.setText(top3.get(1).getValue()+ " orders");
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError databaseError) {
+
+            }
+        });
+    }
+
+    private void downloadFrequency(){
+        FirebaseAuth firebaseAuth = FirebaseAuth.getInstance();
+        FirebaseUser firebaseUser = firebaseAuth.getCurrentUser();
+
+        DatabaseReference databaseReference = FirebaseDatabase.getInstance().getReference().child("archive")
+                .child("restaurant").child(firebaseUser.getUid());
+        DatabaseReference databaseFrequency = databaseReference.child("frequency");
+        databaseFrequency.addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                if (dataSnapshot.exists()) {
+                    for (DataSnapshot ds : dataSnapshot.getChildren()) {
+                        frequency.put(Integer.parseInt(ds.getKey()), ds.getValue(Integer.class));
+                    }
+                } else {
+                    for (int i = 0; i < 24; i ++){
+                        frequency.put(i, 0);
+                    }
+                }
+                father.setFrequency(frequency);
+                drawChart();
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError databaseError) {
+
+            }
+        });
+    }
+
+    private void downloadStats(){
+        FirebaseAuth firebaseAuth = FirebaseAuth.getInstance();
+        FirebaseUser firebaseUser = firebaseAuth.getCurrentUser();
+
+        DatabaseReference databaseReference = FirebaseDatabase.getInstance().getReference().child("archive")
+                .child("restaurant").child(firebaseUser.getUid());
+        databaseReference.addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                for(DataSnapshot ds : dataSnapshot.getChildren()) {
+                    if(ds.getKey().compareTo("amount") == 0) {
+                        amount = ds.getValue(Float.class);
+                    }
+                    if(ds.getKey().compareTo("accepted") == 0) {
+                        accepted = ds.getValue(Integer.class);
+                    }
+                    if(ds.getKey().compareTo("rejected") == 0) {
+                        rejected = ds.getValue(Integer.class);
+                    }
+                }
+                father.setAmount(amount);
+                father.setAccepted(accepted);
+                father.setRejected(rejected);
+                totalIncome.setText(String.format(Locale.getDefault(), "%.2f", amount));
+                drawPieCharts();
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError databaseError) {
+            }
+        });
     }
 }
