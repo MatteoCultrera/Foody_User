@@ -76,6 +76,7 @@
                 android:layout_height="wrap_content"
                 android:gravity="start"
                 android:textSize="23sp"
+                android:maxLines="1"
                 android:fontFamily="@font/roboto_bold"
                 android:textColor="@color/colorPrimaryDark"
                 android:layout_weight="1"

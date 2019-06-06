@@ -12,13 +12,16 @@
 
         <TextView
             android:id="@+id/title"
-            android:layout_width="wrap_content"
+            android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_marginTop="16dp"
+            android:layout_marginStart="24dp"
+            android:layout_marginEnd="24dp"
+            android:gravity="center"
             android:fontFamily="@font/roboto_bold"
             android:text="@string/most_ordered_dishes"
             android:textSize="25sp"
-            android:textColor="@color/colorPrimaryDark"
+            android:textColor="@color/colorPrimary"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent" />
@@ -335,13 +338,16 @@
 
         <TextView
             android:id="@+id/allOrders"
-            android:layout_width="wrap_content"
+            android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_marginTop="16dp"
+            android:layout_marginStart="24dp"
+            android:layout_marginEnd="24dp"
+            android:gravity="center"
             android:fontFamily="@font/roboto_bold"
             android:text="@string/all_orders"
             android:textSize="25sp"
-            android:textColor="@color/colorPrimaryDark"
+            android:textColor="@color/colorPrimary"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@id/dish_name" />
@@ -361,69 +367,70 @@
             app:layout_constraintTop_toBottomOf="@id/allOrders"
             android:layout_marginTop="16dp" />
 
-        <LinearLayout
+        <TextView
             android:id="@+id/layout_income"
-            android:layout_width="match_parent"
+            android:layout_width="0dp"
             android:layout_height="wrap_content"
-            app:layout_constraintStart_toStartOf="parent"
+            android:layout_marginTop="16dp"
+            android:layout_marginStart="24dp"
+            android:layout_marginEnd="24dp"
+            android:gravity="center"
+            android:fontFamily="@font/roboto_bold"
+            android:text="@string/total_income"
+            android:textSize="25sp"
+            android:textColor="@color/colorPrimary"
             app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/enter_order_history"
-            android:orientation="horizontal"
-            android:layout_marginTop="16dp">
-
-            <TextView
-                android:id="@+id/income"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:fontFamily="@font/roboto_bold"
-                android:text="@string/total_income"
-                android:textSize="25sp"
-                android:textColor="@color/colorPrimaryDark"
-                android:layout_marginStart="24dp"
-                android:layout_weight="0.75"/>
-
-            <TextView
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_weight="0.2"
-                android:text="@string/currency"
-                android:gravity="end"
-                android:layout_marginEnd="8dp"
-                android:fontFamily="@font/roboto_bold"
-                android:textColor="@color/secondaryText"
-                android:textSize="21sp"/>
-
-            <TextView
-                android:id="@+id/total_income"
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:gravity="start"
-                android:textSize="23sp"
-                android:fontFamily="@font/roboto_bold"
-                android:textColor="@color/colorPrimaryDark"
-                android:layout_weight="1"
-                android:layout_marginEnd="24dp"
-                />
-
-        </LinearLayout>
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/enter_order_history" />
 
         <TextView
-            android:id="@+id/working_hours"
+            android:id="@+id/income"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginTop="16dp"
+            android:layout_marginStart="24dp"
+            android:layout_marginEnd="12dp"
+            android:gravity="center"
             android:fontFamily="@font/roboto_bold"
-            android:text="@string/working_hours"
             android:textSize="25sp"
-            android:textColor="@color/colorPrimaryDark"
+            android:textColor="@color/colorPrimaryLight"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@id/layout_income" />
 
+        <TextView
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="16dp"
+            android:layout_marginStart="8dp"
+            android:layout_marginEnd="24dp"
+            android:fontFamily="@font/roboto_bold"
+            android:text="@string/currency"
+            android:textSize="25sp"
+            android:textColor="@color/colorPrimaryLight"
+            app:layout_constraintStart_toEndOf="@id/income"
+            app:layout_constraintTop_toBottomOf="@id/layout_income" />
+
+        <TextView
+            android:id="@+id/working_hours"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="16dp"
+            android:layout_marginStart="24dp"
+            android:layout_marginEnd="24dp"
+            android:gravity="center"
+            android:fontFamily="@font/roboto_bold"
+            android:text="@string/working_hours"
+            android:textSize="25sp"
+            android:textColor="@color/colorPrimary"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/income" />
+
         <com.github.mikephil.charting.charts.BarChart
             android:id="@+id/barChart"
             android:layout_width="match_parent"
-            android:layout_height="200dp"
+            android:layout_height="100dp"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@id/working_hours"
@@ -434,13 +441,16 @@
 
         <TextView
             android:id="@+id/total_orders"
-            android:layout_width="wrap_content"
+            android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_marginTop="16dp"
+            android:layout_marginStart="24dp"
+            android:layout_marginEnd="24dp"
+            android:gravity="center"
             android:fontFamily="@font/roboto_bold"
             android:text="@string/orders_number"
             android:textSize="25sp"
-            android:textColor="@color/colorPrimaryDark"
+            android:textColor="@color/colorPrimary"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@id/barChart"/>
@@ -448,7 +458,7 @@
         <com.github.mikephil.charting.charts.PieChart
             android:id="@+id/pieChart"
             android:layout_width="match_parent"
-            android:layout_height="300dp"
+            android:layout_height="250dp"
             android:layout_marginTop="16dp"
             android:layout_marginStart="8dp"
             android:layout_marginEnd="8dp"
