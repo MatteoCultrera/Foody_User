@@ -2,13 +2,11 @@ package com.example.foodybiker;
 
 import android.content.Intent;
 import android.graphics.Color;
-import android.graphics.Typeface;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.design.button.MaterialButton;
 import android.support.v4.app.Fragment;
-import android.support.v4.content.res.ResourcesCompat;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -16,8 +14,6 @@ import android.widget.TextView;
 
 import com.github.mikephil.charting.charts.BarChart;
 import com.github.mikephil.charting.charts.PieChart;
-import com.github.mikephil.charting.components.Description;
-import com.github.mikephil.charting.components.Legend;
 import com.github.mikephil.charting.components.XAxis;
 import com.github.mikephil.charting.components.YAxis;
 import com.github.mikephil.charting.data.BarData;
@@ -27,8 +23,6 @@ import com.github.mikephil.charting.data.Entry;
 import com.github.mikephil.charting.data.PieData;
 import com.github.mikephil.charting.data.PieDataSet;
 import com.github.mikephil.charting.data.PieEntry;
-import com.github.mikephil.charting.formatter.DefaultValueFormatter;
-import com.github.mikephil.charting.formatter.PercentFormatter;
 import com.github.mikephil.charting.highlight.Highlight;
 import com.github.mikephil.charting.listener.OnChartValueSelectedListener;
 import com.google.firebase.auth.FirebaseAuth;
@@ -43,6 +37,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 
 /**
@@ -54,14 +49,13 @@ public class HistoryFragment extends Fragment {
     private BarChart barChart;
     private PieChart pieChart;
     private HashMap<Integer, Integer> frequency = new HashMap<>();
-    private Integer count;
     private Integer delivered, rejected;
     private Double dbDistance;
     private MaterialButton button;
 
     public HistoryFragment() {
+        // Required empty public constructor
     }
-
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -80,6 +74,7 @@ public class HistoryFragment extends Fragment {
         button = view.findViewById(R.id.enter_order_history);
         delivered = 0;
         rejected = 0;
+
         for (int i = 0; i < 24; i++) {
             frequency.put(i, 0);
         }
@@ -114,7 +109,7 @@ public class HistoryFragment extends Fragment {
                         dbDistance = ds.getValue(Double.class);
                     }
                 }
-                distance.setText(String.format("%.2f", dbDistance));
+                distance.setText(String.format(Locale.getDefault(), "%.2f km", dbDistance));
                 drawPieCharts();
             }
 

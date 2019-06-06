@@ -2,24 +2,19 @@ package com.example.foodyrestaurant;
 
 import android.content.Intent;
 import android.graphics.Color;
-import android.graphics.Typeface;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.design.button.MaterialButton;
 import android.support.v4.app.Fragment;
-import android.support.v4.content.res.ResourcesCompat;
 import android.util.Log;
 import android.view.LayoutInflater;
-import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
 
 import com.github.mikephil.charting.charts.BarChart;
 import com.github.mikephil.charting.charts.PieChart;
-import com.github.mikephil.charting.components.Description;
-import com.github.mikephil.charting.components.Legend;
 import com.github.mikephil.charting.components.XAxis;
 import com.github.mikephil.charting.components.YAxis;
 import com.github.mikephil.charting.data.BarData;
@@ -29,8 +24,6 @@ import com.github.mikephil.charting.data.Entry;
 import com.github.mikephil.charting.data.PieData;
 import com.github.mikephil.charting.data.PieDataSet;
 import com.github.mikephil.charting.data.PieEntry;
-import com.github.mikephil.charting.formatter.DefaultValueFormatter;
-import com.github.mikephil.charting.formatter.PercentFormatter;
 import com.github.mikephil.charting.highlight.Highlight;
 import com.github.mikephil.charting.listener.OnChartValueSelectedListener;
 import com.google.firebase.auth.FirebaseAuth;
@@ -64,7 +57,9 @@ public class HistoryFragment extends Fragment {
     private List<Map.Entry<String, Integer>> top3;
     private MaterialButton button;
 
-    public HistoryFragment() {}
+    public HistoryFragment() {
+        // Required empty public constructor
+    }
 
     @Nullable
     @Override
@@ -87,6 +82,12 @@ public class HistoryFragment extends Fragment {
         barChart = view.findViewById(R.id.barChart);
         pieChart = view.findViewById(R.id.pieChart);
         button = view.findViewById(R.id.enter_order_history);
+        accepted = 0;
+        rejected = 0;
+
+        for(int i = 0; i < 24; i++){
+            frequency.put(i, 0);
+        }
 
         button.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -95,12 +96,6 @@ public class HistoryFragment extends Fragment {
                 startActivity(intent);
             }
         });
-
-        for(int i = 0; i < 24; i++){
-            frequency.put(i, 0);
-        }
-        accepted = 0;
-        rejected = 0;
 
         FirebaseAuth firebaseAuth = FirebaseAuth.getInstance();
         FirebaseUser firebaseUser = firebaseAuth.getCurrentUser();
@@ -194,7 +189,7 @@ public class HistoryFragment extends Fragment {
                         rejected = ds.getValue(Integer.class);
                     }
                 }
-                totalIncome.setText(String.format(Locale.getDefault(), "%.2f", amount));
+                totalIncome.setText(String.format(Locale.getDefault(), "%.2f \u20ac", amount));
                 drawPieCharts();
             }
 

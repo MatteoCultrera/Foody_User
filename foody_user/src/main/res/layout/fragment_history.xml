@@ -58,12 +58,10 @@
             app:layout_constraintTop_toBottomOf="@id/enter_order_history" />
 
         <TextView
-            android:id="@+id/income"
+            android:id="@+id/spent"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginTop="16dp"
-            android:layout_marginStart="24dp"
-            android:layout_marginEnd="12dp"
             android:gravity="center"
             android:fontFamily="@font/roboto_bold"
             android:textSize="25sp"
@@ -73,20 +71,7 @@
             app:layout_constraintTop_toBottomOf="@id/layout_income" />
 
         <TextView
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="16dp"
-            android:layout_marginStart="8dp"
-            android:layout_marginEnd="24dp"
-            android:fontFamily="@font/roboto_bold"
-            android:text="@string/currency"
-            android:textSize="25sp"
-            android:textColor="@color/colorPrimaryLight"
-            app:layout_constraintStart_toEndOf="@id/income"
-            app:layout_constraintTop_toBottomOf="@id/layout_income" />
-
-        <TextView
-            android:id="@+id/working_hours"
+            android:id="@+id/text_review"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_marginTop="16dp"
@@ -94,24 +79,27 @@
             android:layout_marginEnd="24dp"
             android:gravity="center"
             android:fontFamily="@font/roboto_bold"
-            android:text="@string/working_hours"
+            android:text="@string/all_review"
             android:textSize="25sp"
             android:textColor="@color/colorPrimary"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/income" />
+            app:layout_constraintTop_toBottomOf="@id/spent" />
 
-        <com.github.mikephil.charting.charts.BarChart
-            android:id="@+id/barChart"
-            android:layout_width="match_parent"
-            android:layout_height="100dp"
-            app:layout_constraintEnd_toEndOf="parent"
+        <android.support.design.button.MaterialButton
+            android:id="@+id/enter_review"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/enter_review"
+            app:cornerRadius="25dp"
+            android:paddingTop="13dp"
+            android:paddingBottom="13dp"
+            android:paddingStart="30dp"
+            android:paddingEnd="30dp"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/working_hours"
-            android:layout_marginTop="16dp"
-            android:layout_marginStart="8dp"
-            android:layout_marginEnd="8dp"
-            />
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/text_review"
+            android:layout_marginTop="16dp" />
 
         <TextView
             android:id="@+id/total_orders"
@@ -127,7 +115,7 @@
             android:textColor="@color/colorPrimary"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/barChart"/>
+            app:layout_constraintTop_toBottomOf="@id/enter_review"/>
 
         <com.github.mikephil.charting.charts.PieChart
             android:id="@+id/pieChart"
