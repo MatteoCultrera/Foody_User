@@ -288,6 +288,8 @@ public class ReservationFragment extends Fragment {
                 }
                 ReservationDBUser reservationDBUser = new ReservationDBUser(orderId, r.getRestaurantID(), dishes,
                         false, r.getResNote(), r.getOrderTime(), r.getPreparationStatusString(), r.getTotalCost());
+                reservationDBUser.setRestaurantName(r.getRestaurantName());
+                reservationDBUser.setRestaurantAddress(r.getRestaurantAddress());
                 HashMap<String, Object> childSelf = new HashMap<>();
                 childSelf.put(orderId, reservationDBUser);
                 databaseArc.updateChildren(childSelf);

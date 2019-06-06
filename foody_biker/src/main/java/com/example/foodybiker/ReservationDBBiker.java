@@ -14,13 +14,12 @@ public class ReservationDBBiker {
     private String userPhone;
     private String restPhone;
     private String notes;
-    private Double distance;
 
     public ReservationDBBiker() {}
 
     public ReservationDBBiker(String reservationID, String orderTime, String orderTimeBiker,
                               String restaurantName, String userName, String restaurantAddress,
-                              String userAddress, String restaurantID, Double distance) {
+                              String userAddress, String restaurantID) {
         this.reservationID = reservationID;
         this.orderTime = orderTime;
         this.orderTimeBiker = orderTimeBiker;
@@ -29,7 +28,6 @@ public class ReservationDBBiker {
         this.restaurantAddress = restaurantAddress;
         this.userAddress = userAddress;
         this.restaurantID = restaurantID;
-        this.distance = distance;
     }
 
     public String getRestaurantID() {
@@ -126,13 +124,5 @@ public class ReservationDBBiker {
 
     public void setNotes(String notes) {
         this.notes = notes;
-    }
-
-    public Double getDistance() {
-        return distance;
-    }
-
-    public void setDistance(Double distance) {
-        this.distance = distance;
     }
 }

@@ -2,6 +2,7 @@ package com.example.foodyuser;
 
 import android.content.SharedPreferences;
 import android.os.Bundle;
+import android.provider.ContactsContract;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.design.internal.BottomNavigationItemView;
@@ -11,6 +12,7 @@ import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v7.app.AppCompatActivity;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -24,6 +26,7 @@ import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ValueEventListener;
 
 import java.util.Calendar;
 import java.util.HashMap;
@@ -48,6 +51,7 @@ public class MainActivity extends AppCompatActivity {
         setTheme(R.style.AppTheme);
         super.onCreate(savedInstanceState);
 
+        /*
         try {
             bool = new NetworkCheck().execute().get();
         } catch (ExecutionException e) {
@@ -56,7 +60,6 @@ public class MainActivity extends AppCompatActivity {
             i.printStackTrace();
         }
 
-        /*
         if(!bool) {
             //No Internet
             Intent i = new Intent(getApplicationContext(), NoInternetActivity.class);
@@ -262,15 +265,56 @@ public class MainActivity extends AppCompatActivity {
 
             @Override
             public void onChildChanged(@NonNull DataSnapshot dataSnapshot, @Nullable String s) {
+                final DatabaseReference databaseArchive= FirebaseDatabase.getInstance().getReference()
+                        .child("archive").child("user").child(firebaseUser.getUid());
+
                 //order has been accepted
                 if(dataSnapshot.child("accepted").getValue(boolean.class) &&
                         dataSnapshot.child("status").getValue(String.class).compareTo("Doing") == 0) {
-                        setNotification(1);
+                    setNotification(1);
+
+                    final DatabaseReference databaseDelivered = databaseArchive.child("delivered");
+                    databaseDelivered.addListenerForSingleValueEvent(new ValueEventListener() {
+                        @Override
+                        public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                            if (dataSnapshot.exists()) {
+                                int count = dataSnapshot.getValue(int.class);
+                                count++;
+                                databaseDelivered.setValue(count);
+                            } else {
+                                databaseDelivered.setValue(1);
+                            }
+                        }
+
+                        @Override
+                        public void onCancelled(@NonNull DatabaseError databaseError) {
+
+                        }
+                    });
                 }
                 //order has been rejected
                 if(!dataSnapshot.child("accepted").getValue(boolean.class) &&
                         dataSnapshot.child("status").getValue(String.class).compareTo("Done") == 0) {
-                        setNotification(1);
+                    setNotification(1);
+
+                    final DatabaseReference databaseRejected = databaseArchive.child("rejected");
+                    databaseRejected.addListenerForSingleValueEvent(new ValueEventListener() {
+                        @Override
+                        public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                            if (dataSnapshot.exists()) {
+                                int count = dataSnapshot.getValue(int.class);
+                                count++;
+                                databaseRejected.setValue(count);
+                            } else {
+                                databaseRejected.setValue(1);
+                            }
+                        }
+
+                        @Override
+                        public void onCancelled(@NonNull DatabaseError databaseError) {
+
+                        }
+                    });
                 }
 
                 if(dataSnapshot.child("delivered").exists()){
@@ -284,12 +328,35 @@ public class MainActivity extends AppCompatActivity {
                             public void onComplete(@Nullable DatabaseError databaseError, @NonNull DatabaseReference databaseReference) {
                                 Calendar calendar = Calendar.getInstance();
                                 String monthYear = calendar.get(Calendar.MONTH) + "-" + calendar.get(Calendar.YEAR);
-                                DatabaseReference databaseArc = FirebaseDatabase.getInstance().getReference()
-                                        .child("archive").child("user").child(firebaseUser.getUid()).child(monthYear);
+
+                                DatabaseReference databaseMonth = databaseArchive.child(monthYear);
                                 HashMap<String, Object> childSelf = new HashMap<>();
                                 childSelf.put(reservationDBUser.getReservationID(), reservationDBUser);
-                                databaseArc.updateChildren(childSelf);
+                                databaseMonth.updateChildren(childSelf);
                                 ((ReservationFragment) reservations).removeOrder(reservationDBUser.getReservationID());
+                            }
+                        });
+
+                        final DatabaseReference databaseAmount = databaseArchive.child("amount");
+                        databaseAmount.addListenerForSingleValueEvent(new ValueEventListener() {
+                            @Override
+                            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                                if(dataSnapshot.exists()) {
+                                    Float amount = dataSnapshot.getValue(Float.class);
+                                    String[] price = reservationDBUser.getTotalCost().split("\\s+");
+                                    Float toAdd = Float.parseFloat(price[0]);
+                                    amount += toAdd;
+                                    databaseAmount.setValue(amount);
+                                } else {
+                                    String[] price = reservationDBUser.getTotalCost().split("\\s+");
+                                    Float amount = Float.parseFloat(price[0]);
+                                    databaseAmount.setValue(amount);
+                                }
+                            }
+
+                            @Override
+                            public void onCancelled(@NonNull DatabaseError databaseError) {
+
                             }
                         });
                     }

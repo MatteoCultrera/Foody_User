@@ -110,6 +110,7 @@ public class ReservationFragment extends Fragment {
     }
 
     public void init(final View view) {
+        Log.d("CIAOCIAO","init()");
         final ReservationFragment ref = this;
         toAdd = true;
         storageDir = getActivity().getExternalFilesDir(Environment.DIRECTORY_DOCUMENTS);
@@ -296,7 +297,7 @@ public class ReservationFragment extends Fragment {
                             activeReservation.getUserDeliveryTime(), activeReservation.getRestaurantPickupTime(),
                             activeReservation.getRestaurantName(), activeReservation.getUserName(),
                             activeReservation.getRestaurantAddress(), activeReservation.getUserAddress(),
-                            activeReservation.getRestaurantID(), distance);
+                            activeReservation.getRestaurantID());
                     reservation.setStatus("delivered");
                     HashMap<String, Object> childSelf = new HashMap<>();
                     childSelf.put(activeReservation.getReservationID(), reservation);
@@ -347,6 +348,39 @@ public class ReservationFragment extends Fragment {
                         @Override
                         public void onCancelled(@NonNull DatabaseError databaseError) {
 
+                        }
+                    });
+
+                    final DatabaseReference databaseFreq = FirebaseDatabase.getInstance().getReference()
+                            .child("archive").child("Bikers").child(firebaseUser.getUid()).child("frequency");
+                    databaseFreq.addListenerForSingleValueEvent(new ValueEventListener() {
+                        @Override
+                        public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                            if (dataSnapshot.exists()) {
+                                HashMap<String, Object> frequencies = new HashMap<>();
+                                for (DataSnapshot ds : dataSnapshot.getChildren()) {
+                                    frequencies.put(ds.getKey(), ds.getValue(Integer.class));
+                                }
+
+                                String hour = activeReservation.getUserDeliveryTime().split(":")[0];
+                                Integer count = (Integer) frequencies.get(hour) + 1;
+                                frequencies.put(hour, count);
+                                databaseFreq.updateChildren(frequencies);
+                            } else {
+                                HashMap<String, Object> frequencies = new HashMap<>();
+                                for (int i = 0; i < 24; i ++){
+                                    frequencies.put(String.valueOf(i), 0);
+                                }
+
+                                String hour = activeReservation.getUserDeliveryTime().split(":")[0];
+                                Integer count = (Integer) frequencies.get(hour) + 1;
+                                frequencies.put(hour, count);
+                                databaseFreq.updateChildren(frequencies);
+                            }
+                        }
+
+                        @Override
+                        public void onCancelled(@NonNull DatabaseError databaseError) {
                         }
                     });
                 }
@@ -447,9 +481,12 @@ public class ReservationFragment extends Fragment {
         updateTitles();
         int shortAnimationDuration = 600;
         if (deliveringOrder) {
+            orderList.clearAnimation();
+            card.clearAnimation();
+            orderList.setVisibility(View.VISIBLE);
+            card.setVisibility(View.VISIBLE);
             orderList.setAlpha(1f);
             card.setAlpha(0f);
-            card.setVisibility(View.VISIBLE);
             card.animate().alpha(1f)
                     .setDuration(shortAnimationDuration)
                     .setListener(null);
@@ -462,11 +499,26 @@ public class ReservationFragment extends Fragment {
                             orderList.setVisibility(View.GONE);
                         }
                     });
-            //orderList.setVisibility(View.GONE);
             orderDeliveredLayout.setBackgroundResource(R.drawable.order_delivered_background);
         } else {
-            card.setVisibility(View.GONE);
+            orderList.clearAnimation();
+            card.clearAnimation();
             orderList.setVisibility(View.VISIBLE);
+            card.setVisibility(View.VISIBLE);
+            card.setAlpha(1f);
+            orderList.setAlpha(0f);
+            orderList.animate().alpha(1f)
+                    .setDuration(shortAnimationDuration)
+                    .setListener(null);
+            card.animate()
+                    .alpha(0f)
+                    .setDuration(shortAnimationDuration)
+                    .setListener(new AnimatorListenerAdapter() {
+                        @Override
+                        public void onAnimationEnd(Animator animation) {
+                            card.setVisibility(View.GONE);
+                        }
+                    });
             orderDeliveredLayout.setBackgroundResource(R.drawable.order_delivered_background_dis);
         }
     }
@@ -672,6 +724,7 @@ public class ReservationFragment extends Fragment {
 
                     }
                 });
+
             }
 
             @Override

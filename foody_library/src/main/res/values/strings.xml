@@ -93,11 +93,12 @@
     <string name="done">Done</string>
     <string name="doing">Doing</string>
     <string name="rejected">Rejected</string>
+    <string name="delivered">Delivered</string>
 
     <string name="address_not_selected">Select a delivery address</string>
     <string name="click_address">Click to insert address</string>
 
-    <string name="history">History</string>
+    <string name="history">Stats</string>
 
     <string name="jan">Jan</string>
     <string name="feb">Feb</string>
@@ -112,4 +113,34 @@
     <string name="nov">Nov</string>
     <string name="dec">Dec</string>
 
+    <string name="january">January</string>
+    <string name="february">February</string>
+    <string name="march">March</string>
+    <string name="april">April</string>
+    <string name="mayL">May</string>
+    <string name="june">June</string>
+    <string name="july">July</string>
+    <string name="august">August</string>
+    <string name="september">September</string>
+    <string name="october">October</string>
+    <string name="november">November</string>
+    <string name="december">December</string>
+
+    <string name="your_orders">Your Orders</string>
+
+    <string name="all_orders">All orders</string>
+    <string name="enter_orders_history">Enter the history</string>
+    <string name="total_distance">Total distance</string>
+    <string name="working_hours">Frequent working Hours</string>
+    <string name="orders_number">Total number of orders</string>
+    <string name="kilometers" translatable="false">km</string>
+    <string name="currency" translatable="false">€</string>
+    <string name="total_spent">Total spent</string>
+    <string name="most_ordered_dishes">Most ordered dishes</string>
+    <string name="one" translatable="false">1</string>
+    <string name="two" translatable="false">2</string>
+    <string name="three" translatable="false">3</string>
+    <string name="total_income">Total income</string>
+
+    <string name="text_orders">Orders</string>
 </resources>

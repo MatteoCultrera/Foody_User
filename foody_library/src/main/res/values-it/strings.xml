@@ -93,11 +93,12 @@
     <string name="done">Completato</string>
     <string name="doing">In corso</string>
     <string name="rejected">Rifiutato</string>
+    <string name="delivered">Consegnato</string>
 
     <string name="address_not_selected">Selezionare un indirizzo di consengna</string>
     <string name="click_address">Clicca per inserire l\'indirizzo</string>
 
-    <string name="history">Storico</string>
+    <string name="history">Statistiche</string>
 
     <string name="jan">Gen</string>
     <string name="feb">Feb</string>
@@ -111,4 +112,30 @@
     <string name="oct">Ott</string>
     <string name="nov">Nov</string>
     <string name="dec">Dic</string>
+
+    <string name="january">Gennaio</string>
+    <string name="february">Febbraio</string>
+    <string name="march">Marzo</string>
+    <string name="april">Aprile</string>
+    <string name="mayL">Maggio</string>
+    <string name="june">Giugno</string>
+    <string name="july">Luglio</string>
+    <string name="august">Agosto</string>
+    <string name="september">Settembre</string>
+    <string name="october">Ottobre</string>
+    <string name="november">Novembre</string>
+    <string name="december">Dicembre</string>
+
+    <string name="your_orders">I Tuoi Ordini</string>
+
+    <string name="all_orders">Tutti gli ordini</string>
+    <string name="enter_orders_history">Entra nello storico</string>
+    <string name="total_distance">Distanza totale</string>
+    <string name="working_hours">Orari di lavoro più frequenti</string>
+    <string name="orders_number">Numero totale di ordini</string>
+    <string name="total_spent">Totale speso</string>
+    <string name="most_ordered_dishes">Piatti più ordinati</string>
+    <string name="total_income">Incasso totale</string>
+
+    <string name="text_orders">Ordini</string>
 </resources>
