@@ -143,4 +143,8 @@
     <string name="text_accepted">Accettati</string>
     <string name="text_rejected">Rifiutati</string>
     <string name="text_delivered">Consegnati</string>
+
+    <string name="food_quality">Qualità del cibo:</string>
+    <string name="restaurant_service">Servizio del Ristorante:</string>
+    <string name="delivery_time_hint">Tempo di consegna:</string>
 </resources>

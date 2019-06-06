@@ -148,4 +148,8 @@
     <string name="text_accepted">Accepted</string>
     <string name="text_rejected">Rejected</string>
     <string name="text_delivered">Delivered</string>
+
+    <string name="food_quality">Food Quality:</string>
+    <string name="restaurant_service">Restaurant Service:</string>
+    <string name="delivery_time_hint">Delivery Time:</string>
 </resources>
