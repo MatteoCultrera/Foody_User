@@ -363,10 +363,7 @@ public class BikerFragment extends Fragment {
                 @Override
                 public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
                     BikerInfo info = dataSnapshot.getValue(BikerInfo.class);
-
                     String imagePath = info.getPath();
-
-
                     if(biker == null){
                         biker = new BikerInfo(info.getUsername(),
                                 info.getEmail(), info.getAddress(),

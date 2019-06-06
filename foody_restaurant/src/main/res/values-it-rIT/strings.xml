@@ -89,4 +89,7 @@
 
     <string name="order_delivered">ORDINE CONSEGNATO</string>
 
+
+    <string name="orders_history">Storico Ordini</string>
+
 </resources>

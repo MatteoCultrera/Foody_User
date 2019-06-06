@@ -1,10 +1,12 @@
 package com.example.foodybiker;
 
+import android.content.Intent;
 import android.graphics.Color;
 import android.graphics.Typeface;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
+import android.support.design.button.MaterialButton;
 import android.support.v4.app.Fragment;
 import android.support.v4.content.res.ResourcesCompat;
 import android.view.LayoutInflater;
@@ -55,6 +57,7 @@ public class HistoryFragment extends Fragment {
     private Integer count;
     private Integer delivered, rejected;
     private Double dbDistance;
+    private MaterialButton button;
 
     public HistoryFragment() {
     }
@@ -74,11 +77,20 @@ public class HistoryFragment extends Fragment {
         distance = view.findViewById(R.id.total_distance);
         barChart = view.findViewById(R.id.barChart);
         pieChart = view.findViewById(R.id.pieChart);
+        button = view.findViewById(R.id.enter_order_history);
         delivered = 0;
         rejected = 0;
         for (int i = 0; i < 24; i++) {
             frequency.put(i, 0);
         }
+
+        button.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(getActivity(), HistoryPickMonth.class);
+                startActivity(intent);
+            }
+        });
 
         FirebaseAuth firebaseAuth = FirebaseAuth.getInstance();
         FirebaseUser firebaseUser = firebaseAuth.getCurrentUser();

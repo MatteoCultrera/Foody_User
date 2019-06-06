@@ -74,11 +74,23 @@ public class RVAdapterRes extends RecyclerView.Adapter<RVAdapterRes.CardViewHold
 
         final ArrayList<Dish> dishes = reservations.get(pos).getDishesOrdered();
 
-        pvh.idOrder.setText(reservations.get(i).getReservationID());
+        String resId = reservations.get(i).getUserUID();
+        String first2Letters = "";
+        for(char c : resId.toCharArray()){
+            if(first2Letters.length() == 2)
+                break;
+            else{
+                if(Character.isAlphabetic(c))
+                    first2Letters += c;
+            }
+        }
+        int id_size = reservations.get(i).getReservationID().length();
+        String lastFour = reservations.get(i).getReservationID().substring(id_size-4,id_size);
+        String orderId = (first2Letters + lastFour).toUpperCase();
+        pvh.idOrder.setText(orderId);
         pvh.status.setText(reservations.get(i).getPreparationStatusString());
         pvh.time.setText(reservations.get(i).getOrderTime());
         pvh.userName.setText(reservations.get(i).getUserName());
-
 
         if(reservations.get(i).getResNote() == null) {
             pvh.notePlaceholder.setVisibility(View.GONE);

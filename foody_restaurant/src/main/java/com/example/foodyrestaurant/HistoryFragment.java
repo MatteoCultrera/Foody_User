@@ -1,10 +1,12 @@
 package com.example.foodyrestaurant;
 
+import android.content.Intent;
 import android.graphics.Color;
 import android.graphics.Typeface;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
+import android.support.design.button.MaterialButton;
 import android.support.v4.app.Fragment;
 import android.support.v4.content.res.ResourcesCompat;
 import android.util.Log;
@@ -60,6 +62,7 @@ public class HistoryFragment extends Fragment {
     private Float amount;
     private Integer accepted, rejected;
     private List<Map.Entry<String, Integer>> top3;
+    private MaterialButton button;
 
     public HistoryFragment() {}
 
@@ -83,6 +86,16 @@ public class HistoryFragment extends Fragment {
         totalIncome = view.findViewById(R.id.income);
         barChart = view.findViewById(R.id.barChart);
         pieChart = view.findViewById(R.id.pieChart);
+        button = view.findViewById(R.id.enter_order_history);
+
+        button.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(getActivity(), HistoryPickMonth.class);
+                startActivity(intent);
+            }
+        });
+
         for(int i = 0; i < 24; i++){
             frequency.put(i, 0);
         }
