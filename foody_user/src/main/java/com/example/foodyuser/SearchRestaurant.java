@@ -31,10 +31,13 @@ import android.view.inputmethod.InputMethodManager;
 import android.widget.EditText;
 import android.widget.LinearLayout;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.github.ybq.android.spinkit.SpinKitView;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
@@ -66,12 +69,13 @@ public class SearchRestaurant extends AppCompatActivity {
     private ArrayList<Restaurant> restaurants;
     private ArrayList<Restaurant> restName;
     private ArrayList<Restaurant> restCuisine;
+    private ArrayList<String> favouriteRest;
     private boolean[] checkedFoods = new boolean[27];
     private ArrayList<Integer> indexFoods;
     private ArrayList<Integer> copyIndexFoods;
     private ArrayList<String> selectedFoods;
     private SharedPreferences sharedPrefer;
-    private TextView filterButton;
+    private TextView filterButton, favouriteButton;
     private String[] foodCategories;
     private int imageToFetch, imageFetched;
     private SpinKitView loading;
@@ -82,6 +86,7 @@ public class SearchRestaurant extends AppCompatActivity {
     private AlertDialog foodChooseType;
     private int height;
     private boolean allImages;
+    private boolean favourite;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -93,6 +98,7 @@ public class SearchRestaurant extends AppCompatActivity {
         scrollView = findViewById(R.id.list_restaurants);
         loading = findViewById(R.id.loading_restaurants);
         filterButton = findViewById(R.id.filter_button);
+        favouriteButton = findViewById(R.id.favourite_button);
         search = findViewById(R.id.search_restaurant);
         parent = findViewById(R.id.parent_restaurants);
         sharedPrefer = getSharedPreferences("myPreference", MODE_PRIVATE);
@@ -106,6 +112,7 @@ public class SearchRestaurant extends AppCompatActivity {
         allImages = sharedPrefer.getBoolean("restaurantFetches",false);
         Log.d("MADPROVA","All images "+allImages);
         visible = true;
+        favourite = false;
         search.clearFocus();
         search.setY(getResources().getDimensionPixelSize(R.dimen.short30));
         Log.d("MADMAX", parent.getHeight()+"");
@@ -192,6 +199,24 @@ public class SearchRestaurant extends AppCompatActivity {
 
 
     private void fetchRestaurants(final Boolean hasImages){
+        FirebaseAuth firebaseAuth = FirebaseAuth.getInstance();
+        FirebaseUser firebaseUser = firebaseAuth.getCurrentUser();
+        favouriteRest = new ArrayList<>();
+        DatabaseReference databaseFav = FirebaseDatabase.getInstance().getReference().child("endUsers").child(firebaseUser.getUid())
+                .child("favourites");
+        databaseFav.addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                for (DataSnapshot ds : dataSnapshot.getChildren()) {
+                    favouriteRest.add(ds.getKey());
+                }
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError databaseError) {
+
+            }
+        });
 
         Calendar calendar = Calendar.getInstance(Locale.ITALY);
         int dayOfWeek = calendar.get(Calendar.DAY_OF_WEEK) - 2;
@@ -336,6 +361,15 @@ public class SearchRestaurant extends AppCompatActivity {
                 showPickFood(filterButton);
             }
         });
+        favouriteButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                if(favouriteRest != null && favouriteRest.size() != 0)
+                    filterFavourite(view);
+                else
+                    Toast.makeText(getApplicationContext(), getString(R.string.no_favourite), Toast.LENGTH_SHORT).show();
+            }
+        });
     }
 
     private void fetchImages(final Restaurant restaurant){
@@ -384,6 +418,53 @@ public class SearchRestaurant extends AppCompatActivity {
         init();
     }
 
+    public void filterFavourite(View view){
+        ArrayList<Restaurant> filteredFav = new ArrayList<>();
+
+        if (favourite)
+            favourite = false;
+        else
+            favourite = true;
+
+        if(favourite) {
+            for (int i = 0; i < restaurants.size(); i++) {
+                if (favouriteRest.contains(restaurants.get(i).getUid())) {
+                    if (restName != null && restName.size() != 0) {
+                        if (restName.contains(restaurants.get(i))) {
+                            if (restCuisine != null && restCuisine.size() != 0) {
+                                if (restCuisine.contains(restaurants.get(i))) {
+                                    filteredFav.add(restaurants.get(i));
+                                }
+                            }
+                        }
+                    } else if (restCuisine != null && restCuisine.size() != 0) {
+                        if (restCuisine.contains(restaurants.get(i))) {
+                            filteredFav.add(restaurants.get(i));
+                        }
+                    } else
+                        filteredFav.add(restaurants.get(i));
+                }
+            }
+        }
+        else{
+            if(restCuisine != null && restName != null){
+                for(Restaurant r : restCuisine){
+                    if(restName.contains(r)){
+                        filteredFav.add(r);
+                    }
+                }
+            } else if (restCuisine != null){
+                filteredFav = restCuisine;
+            } else if (restName != null){
+                filteredFav = restName;
+            } else {
+                filteredFav = restaurants;
+            }
+        }
+
+        adapter.filterList(filteredFav);
+    }
+
     private void filter(String text) {
         ArrayList<Restaurant> filteredNames = new ArrayList<>();
         restName = new ArrayList<>();
@@ -394,7 +475,10 @@ public class SearchRestaurant extends AppCompatActivity {
         }
         for (int j = 0; j < restName.size(); j++) {
             if (restCuisine.contains(restName.get(j))) {
-                filteredNames.add(restName.get(j));
+                if(favourite && favouriteRest.contains(restName.get(j).getUid()))
+                    filteredNames.add(restName.get(j));
+                else if (!favourite)
+                    filteredNames.add(restName.get(j));
             }
         }
 
@@ -425,13 +509,11 @@ public class SearchRestaurant extends AppCompatActivity {
                             filterButton.animate().translationY(height - getResources().getDimensionPixelSize(R.dimen.short100)).setDuration(200).start();
                             visible = true;
                         }
-
                     }
                 }
 
 
             });
-
 
         adapter.filterList(filteredNames);
     }
@@ -462,7 +544,10 @@ public class SearchRestaurant extends AppCompatActivity {
         }
         for(int j = 0; j < restCuisine.size(); j++){
             if(restName.contains(restCuisine.get(j))){
-                filteredNames.add(restCuisine.get(j));
+                if(favourite && favouriteRest.contains(restCuisine.get(j).getUid()))
+                    filteredNames.add(restCuisine.get(j));
+                else if(!favourite)
+                    filteredNames.add(restCuisine.get(j));
             }
         }
 
