@@ -200,6 +200,14 @@ public class Login extends AppCompatActivity {
                     prefs.edit().remove("name").apply();
                 }
 
+                if(dataSnapshot.child("latitude").exists() && dataSnapshot.child("longitude").exists()){
+                    prefs.edit().putFloat("latitude", dataSnapshot.child("latitude").getValue(Float.class)).apply();
+                    prefs.edit().putFloat("longitude", dataSnapshot.child("longitude").getValue(Float.class)).apply();
+                } else {
+                    prefs.edit().remove("latitude").apply();
+                    prefs.edit().remove("longitude").apply();
+                }
+
                 if(info.getEmail()!=null){
                     if(info.getEmail().length() > 0){
                         prefs.edit().putString("email", info.getEmail()).apply();
@@ -231,7 +239,6 @@ public class Login extends AppCompatActivity {
                 }
 
                 StorageReference mStorageRef = FirebaseStorage.getInstance().getReference();
-
 
                 if(info.getImagePath()!=null){
                     final File image = new File(directory, firebaseAuth.getCurrentUser().getUid()+".jpg");
