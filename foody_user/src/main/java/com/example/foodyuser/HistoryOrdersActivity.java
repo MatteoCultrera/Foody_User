@@ -30,6 +30,7 @@ import com.google.firebase.storage.StorageReference;
 
 import java.io.File;
 import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -123,6 +124,12 @@ public class HistoryOrdersActivity extends AppCompatActivity {
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
                 for (DataSnapshot ds: dataSnapshot.getChildren()){
+
+                    if(!ds.child("date").exists()){
+                        Log.d("SUPERAUTO","No Date, No Fetch");
+                        continue;
+                    }
+
                     ReservationDBUser reservationDBUser = ds.getValue(ReservationDBUser.class);
                     ArrayList<Dish> dishes = new ArrayList<>();
                     for(OrderItem o : reservationDBUser.getDishesOrdered()){
@@ -150,6 +157,8 @@ public class HistoryOrdersActivity extends AppCompatActivity {
                     reservation.setDeliveryTime(reservationDBUser.getOrderTime());
                     reservation.setRestaurantName(reservationDBUser.getRestaurantName());
                     reservation.setRestaurantAddress(reservationDBUser.getRestaurantAddress());
+                    reservation.setDate(ds.child("date").getValue(String.class));
+                    reservation.setISOdate(getISODate(ds.child("date").getValue(String.class),reservationDBUser.getOrderTime()));
                     reservation.setTotalCost(reservationDBUser.getTotalCost());
                     reservation.setImagePathLocale(storage.getPath()+File.separator+reservationDBUser.getRestaurantID()+".jpg");
                     reservations.add(reservation);
@@ -158,6 +167,12 @@ public class HistoryOrdersActivity extends AppCompatActivity {
                         restaurantsWithImage.put(reservationDBUser.getRestaurantID(),"");
 
                 }
+
+                reservations.sort( new Comparator<Reservation>() {
+                    public int compare(Reservation r1, Reservation r2){
+                        return  r1.getISOdate().compareTo(r2.getISOdate());
+                    }
+                });
 
                 if(isReady && !isPaused){
                     //ALL SET UP
@@ -180,6 +195,17 @@ public class HistoryOrdersActivity extends AppCompatActivity {
             }
         });
 
+    }
+
+    private String getISODate(String date, String time){
+        String[] nums = date.split("-");
+        int day = Integer.valueOf(nums[2]);
+        int month = Integer.valueOf(nums[1]);
+        int year = Integer.valueOf(nums[0]);
+        String times[] = time.split(":");
+        int hour = Integer.valueOf(times[0]);
+        int minute = Integer.valueOf(times[1]);
+        return String.format("%d-%02d-%02dT%02d:%02d:00.000",year,month,day,hour,minute);
     }
 
     private void getRestaurantsDB(final Map<String, String> restaurants){
