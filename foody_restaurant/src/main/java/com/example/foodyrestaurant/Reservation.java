@@ -4,6 +4,22 @@ import java.util.ArrayList;
 
 class Reservation {
 
+    public String getDate() {
+        return date;
+    }
+
+    public void setDate(String date) {
+        this.date = date;
+    }
+
+    public String getISOdate() {
+        return ISOdate;
+    }
+
+    public void setISOdate(String ISOdate) {
+        this.ISOdate = ISOdate;
+    }
+
     enum prepStatus {
         PENDING,
         DOING,
@@ -27,6 +43,9 @@ class Reservation {
     private String totalPrice;
     private String restaurantName;
     private String restaurantAddress;
+    private String date;
+    private String ISOdate;
+
 
     Reservation(String identifier, ArrayList<Dish> dishes, prepStatus preparationStatus, boolean accepted,
                        String orderTime, String userName, String userPhone, String resNote, String userLevel,

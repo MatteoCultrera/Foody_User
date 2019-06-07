@@ -130,11 +130,14 @@ public class Login extends AppCompatActivity {
                                 @Override
                                 public void onComplete(@NonNull Task<AuthResult> task) {
                                     if (task.isSuccessful()) {
+
                                         Toast.makeText(getApplicationContext(), R.string.login_success, Toast.LENGTH_SHORT).show();
+                                        /*
                                         Intent intent = new Intent(Login.this, MainActivity.class);
                                         intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK);
                                         startActivity(intent);
-                                        finish();
+                                        finish();*/
+                                        fetchData();
                                     } else {
                                         Toast.makeText(getApplicationContext(), R.string.login_failure, Toast.LENGTH_SHORT).show();
                                         loginDisappear();
@@ -143,6 +146,7 @@ public class Login extends AppCompatActivity {
                             });
                 }
             });
+
             register.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
