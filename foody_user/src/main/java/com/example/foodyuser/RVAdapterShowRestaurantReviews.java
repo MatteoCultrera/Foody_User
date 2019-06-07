@@ -53,7 +53,6 @@ public class RVAdapterShowRestaurantReviews extends RecyclerView.Adapter<RVAdapt
         Context context = pvh.userName.getContext();
         Review current = reviews.get(i);
 
-
         pvh.userName.setText(current.getUserName());
         if(current.getImagePath()!=null){
             if(current.getImagePath().length() > 0){
@@ -83,7 +82,6 @@ public class RVAdapterShowRestaurantReviews extends RecyclerView.Adapter<RVAdapt
         }else{
             pvh.notes.setVisibility(View.GONE);
         }
-
     }
 
 
