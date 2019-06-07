@@ -267,22 +267,35 @@ public class ReservationFragment extends Fragment {
     }
 
     public void removeRejected(){
-        int index = 0;
+        ArrayList<Reservation> toBeDeleted = new ArrayList<>();
         for(Reservation r : reservations){
             if(r.getPreparationStatusString().equals("Rejected")){
+                toBeDeleted.add(r);
+            }
+        }
+
+        for(Reservation r : toBeDeleted){
+            if(reservations.contains(r)) {
+                int index = 0;
+                for(Reservation r2 : reservations){
+                    if (r2.equals(r)){
+                        break;
+                    }
+                    index++;
+                }
                 reservations.remove(r);
                 adapter.notifyItemRemoved(index);
                 adapter.notifyItemRangeChanged(index, reservations.size());
 
                 Calendar calendar = Calendar.getInstance();
                 String monthYear = calendar.get(Calendar.MONTH) + "-" + calendar.get(Calendar.YEAR);
-                String date = calendar.get(Calendar.YEAR) + "-" + (calendar.get(Calendar.MONTH)+1) + "-" +
+                String date = calendar.get(Calendar.YEAR) + "-" + (calendar.get(Calendar.MONTH) + 1) + "-" +
                         calendar.get(Calendar.DAY_OF_MONTH);
                 DatabaseReference databaseArc = FirebaseDatabase.getInstance().getReference()
                         .child("archive").child("user").child(firebaseUser.getUid()).child(monthYear);
                 String orderId = firebaseUser.getUid() + r.getReservationID();
                 ArrayList<OrderItem> dishes = new ArrayList<>();
-                for(Dish d : r.getDishesOrdered()){
+                for (Dish d : r.getDishesOrdered()) {
                     OrderItem dish = new OrderItem();
                     dish.setPieces(d.getQuantity());
                     dish.setOrderName(d.getDishName());
@@ -302,7 +315,6 @@ public class ReservationFragment extends Fragment {
                         .child("reservations").child("users").child(firebaseUser.getUid());
                 databaseRemove.child(orderId).removeValue();
             }
-            index++;
         }
     }
 }
