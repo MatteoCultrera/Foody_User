@@ -67,4 +67,11 @@
     <string name="no_favourite">Nessun ristorante preferito</string>
     <string name="orders_history">Storico Ordini</string>
 
+
+    <string name="insert_deliv_address">Inserisci Indirizzo di Consegna\nOPPURE</string>
+    <string name="deliv_home_address">Ordina a Casa Tua</string>
+
+    <string name="insert_deliv_address_no_home">Inserisci Indirizzo di Consegna\nOPPURE\n\nInserisci il tuo Indirizzo nella pagina Profilo per ordinare al tuo indirizzo di Casa</string>
+
+
 </resources>
