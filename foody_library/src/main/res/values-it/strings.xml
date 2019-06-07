@@ -147,4 +147,5 @@
     <string name="food_quality">Qualità del cibo:</string>
     <string name="restaurant_service">Servizio del Ristorante:</string>
     <string name="delivery_time_hint">Tempo di consegna:</string>
+    <string name="no_reviews">Non hai ancora recensioni</string>
 </resources>
