@@ -9,6 +9,7 @@ import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -169,6 +170,54 @@ public class BikerFragment extends Fragment {
                     @Override
                     public void onChildChanged(@NonNull DataSnapshot dataSnapshot, @Nullable String s) {
                         ReservationDBRestaurant reservationDB = dataSnapshot.getValue(ReservationDBRestaurant.class);
+                        if(!dataSnapshot.child("attemptedBiker").exists()) {
+                            Log.d("SWSW", reservationDB.getReservationID());
+                            if (reservationDB.isAccepted() && !reservationDB.isBiker()) {
+                                //Fetch Dishes
+                                ArrayList<Dish> dishes = new ArrayList<>();
+                                for (OrderItem o : reservationDB.getDishesOrdered()) {
+                                    Dish dish = new Dish();
+                                    dish.setQuantity(o.getPieces());
+                                    dish.setDishName(o.getOrderName());
+                                    dish.setPrice(o.getPrice());
+                                    dishes.add(dish);
+                                }
+                                //Fetch Status
+                                Reservation.prepStatus status;
+                                if (reservationDB.getStatus().toLowerCase().equals("pending")){
+                                    status = Reservation.prepStatus.PENDING;
+                                } else if (reservationDB.getStatus().toLowerCase().equals("doing")){
+                                    status = Reservation.prepStatus.DOING;
+                                } else{
+                                    status = Reservation.prepStatus.DONE;
+                                }
+                                //Fetch OrderID
+                                String orderID = reservationDB.getReservationID().substring(28);
+
+                                Reservation reservation = new Reservation(orderID, dishes, status,
+                                        reservationDB.isAccepted(), reservationDB.getOrderTimeBiker(), reservationDB.getNameUser(),
+                                        reservationDB.getNumberPhone(), reservationDB.getResNote(), "Foody Beginner",
+                                        "", reservationDB.getUserAddress());
+
+                                reservation.setUserUID(reservationDB.getReservationID().substring(0, 28));
+                                reservation.setDeliveryTime(reservationDB.getOrderTime());
+                                reservation.setTotalPrice(reservationDB.getTotalCost());
+                                reservation.setRestaurantAddress(sharedPreferences.getString("address", null));
+                                reservation.setRestaurantName(sharedPreferences.getString("name", null));
+                                String biker = reservationDB.getBikerID();
+                                int i;
+                                for(i = 0; i < reservationAcceptedList.size(); i++) {
+                                    if (reservation.getOrderTime().compareTo(reservationAcceptedList.get(i)
+                                            .getReservation().getOrderTime()) > 0)
+                                        break;
+                                }
+
+                                reservationList.add(i, new ReservationBiker(reservation, biker,
+                                        reservationDB.isWaitingBiker(), reservationDB.getReservationID()));
+                                adapterNotAccepted.notifyItemChanged(i);
+                                adapterNotAccepted.notifyItemRangeChanged(i, reservationAcceptedList.size());
+                            }
+                        }
                         String orderID = reservationDB.getReservationID().substring(28);
                         if(reservationDB.isBiker() && reservationDB.getBikerID().compareTo("") != 0){
                             bikerAccepted(orderID, reservationDB.getBikerID());
@@ -199,10 +248,8 @@ public class BikerFragment extends Fragment {
 
             }
 
-
             @Override
             public void onCancelled(@NonNull DatabaseError databaseError) {
-                //TODO: toast internet not available
             }
         });
 

@@ -3,6 +3,7 @@ package com.example.foodybiker;
 public class ReservationDBBiker {
 
     private String reservationID;
+    private String date;
     private String orderTime;
     private String orderTimeBiker;
     private String restaurantName;
@@ -28,6 +29,14 @@ public class ReservationDBBiker {
         this.restaurantAddress = restaurantAddress;
         this.userAddress = userAddress;
         this.restaurantID = restaurantID;
+    }
+
+    public String getDate() {
+        return date;
+    }
+
+    public void setDate(String date) {
+        this.date = date;
     }
 
     public String getRestaurantID() {

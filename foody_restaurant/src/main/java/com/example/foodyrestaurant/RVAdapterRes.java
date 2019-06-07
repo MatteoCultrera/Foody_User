@@ -243,8 +243,14 @@ public class RVAdapterRes extends RecyclerView.Adapter<RVAdapterRes.CardViewHold
                     }
                 });
 
+                DatabaseReference databaseDelete = FirebaseDatabase.getInstance().getReference()
+                        .child("reservations").child("restaurant").child(firebaseUser.getUid()).child(reservationID);
+                databaseDelete.removeValue();
+
                 Calendar calendar = Calendar.getInstance();
                 String monthYear = calendar.get(Calendar.MONTH) + "-" + calendar.get(Calendar.YEAR);
+                String date = calendar.get(Calendar.YEAR) + "-" + (calendar.get(Calendar.MONTH)+1) + "-" +
+                        calendar.get(Calendar.DAY_OF_MONTH);
                 DatabaseReference databaseRest = FirebaseDatabase.getInstance().getReference()
                         .child("archive").child("restaurant").child(firebaseUser.getUid()).child(monthYear);
                 HashMap<String, Object> childRest = new HashMap<>();
@@ -253,6 +259,7 @@ public class RVAdapterRes extends RecyclerView.Adapter<RVAdapterRes.CardViewHold
                         reservations.get(pos).getUserName(), reservations.get(pos).getDeliveryTime(),
                         reservations.get(pos).getOrderTime(), "Done",
                         reservations.get(pos).getUserAddress(), reservations.get(pos).getTotalPrice());
+                reservationRest.setDate(date);
                 childRest.put(reservationID, reservationRest);
                 databaseRest.updateChildren(childRest).addOnFailureListener(new OnFailureListener() {
                     @Override
@@ -341,10 +348,6 @@ public class RVAdapterRes extends RecyclerView.Adapter<RVAdapterRes.CardViewHold
 
                             }
                         });
-
-                        DatabaseReference databaseDelete = FirebaseDatabase.getInstance().getReference()
-                                .child("archive").child("restaurant").child(firebaseUser.getUid()).child(reservationID);
-                        databaseDelete.removeValue();
 
                         reservations.get(pos).setAccepted(false);
                         reservations.remove(pos);

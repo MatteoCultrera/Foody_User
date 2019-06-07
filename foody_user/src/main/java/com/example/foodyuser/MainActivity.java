@@ -309,9 +309,11 @@ public class MainActivity extends AppCompatActivity {
                             public void onComplete(@Nullable DatabaseError databaseError, @NonNull DatabaseReference databaseReference) {
                                 Calendar calendar = Calendar.getInstance();
                                 String monthYear = calendar.get(Calendar.MONTH) + "-" + calendar.get(Calendar.YEAR);
-
+                                String date = calendar.get(Calendar.YEAR) + "-" + (calendar.get(Calendar.MONTH)+1) + "-" +
+                                        calendar.get(Calendar.DAY_OF_MONTH);
                                 DatabaseReference databaseMonth = databaseArchive.child(monthYear);
                                 HashMap<String, Object> childSelf = new HashMap<>();
+                                reservationDBUser.setDate(date);
                                 childSelf.put(reservationDBUser.getReservationID(), reservationDBUser);
                                 databaseMonth.updateChildren(childSelf);
                                 ((ReservationFragment) reservations).removeOrder(reservationDBUser.getReservationID());
