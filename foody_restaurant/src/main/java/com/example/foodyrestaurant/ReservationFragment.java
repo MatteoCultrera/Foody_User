@@ -138,7 +138,6 @@ public class ReservationFragment extends Fragment {
         pending_reservations.add(i, reservation);
         adapterPending.notifyItemInserted(i);
         adapterPending.notifyItemRangeChanged(i, pending_reservations.size());
-
     }
 
     public void addDoingOrder(DataSnapshot ds){

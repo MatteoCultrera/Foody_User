@@ -276,6 +276,8 @@ public class ReservationFragment extends Fragment {
 
                 Calendar calendar = Calendar.getInstance();
                 String monthYear = calendar.get(Calendar.MONTH) + "-" + calendar.get(Calendar.YEAR);
+                String date = calendar.get(Calendar.YEAR) + "-" + (calendar.get(Calendar.MONTH)+1) + "-" +
+                        calendar.get(Calendar.DAY_OF_MONTH);
                 DatabaseReference databaseArc = FirebaseDatabase.getInstance().getReference()
                         .child("archive").child("user").child(firebaseUser.getUid()).child(monthYear);
                 String orderId = firebaseUser.getUid() + r.getReservationID();
@@ -291,6 +293,7 @@ public class ReservationFragment extends Fragment {
                         false, r.getResNote(), r.getOrderTime(), r.getPreparationStatusString(), r.getTotalCost());
                 reservationDBUser.setRestaurantName(r.getRestaurantName());
                 reservationDBUser.setRestaurantAddress(r.getRestaurantAddress());
+                reservationDBUser.setDate(date);
                 HashMap<String, Object> childSelf = new HashMap<>();
                 childSelf.put(orderId, reservationDBUser);
                 databaseArc.updateChildren(childSelf);

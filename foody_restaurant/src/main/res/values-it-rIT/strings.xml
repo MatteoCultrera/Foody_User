@@ -70,10 +70,8 @@
     <string name="suggestion_checkout">Per archiviare quest\'ordine, conferma che il biker lo ha ritirato
     nella pagina Consegne</string>
 
-
     <string name="biker_choose">Scelta Ciclista</string>
     <string name="biker_wait">Attesa Ciclista</string>
-
 
     <string name="choose_biker">Scegli Biker</string>
     <string name="phone_number">TELEFONO</string>
@@ -81,15 +79,14 @@
 
     <string name="choose">SCEGLI</string>
 
-
     <string name="waiting_biker">ATTESA RISPOSTA</string>
 
     <string name="call_biker">CHIAMA BIKER</string>
 
-
     <string name="order_delivered">ORDINE CONSEGNATO</string>
-
 
     <string name="orders_history">Storico Ordini</string>
 
+    <string name="db_error_message">Errore nella connessione con il DB!</string>
+    <string name="your_reviews">Commenti ricevuti</string>
 </resources>
