@@ -8,6 +8,8 @@ public class Review {
     private String imagePath;
     private String note;
     private float rating;
+    private String restName;
+    private String imagePathRest;
 
     public Review(){
 
@@ -30,7 +32,6 @@ public class Review {
         this.note = note;
         this.rating = rating;
     }
-
 
     public String getUserID() {
         return userID;
@@ -82,5 +83,21 @@ public class Review {
 
     public void setImagePath(String imagePath) {
         this.imagePath = imagePath;
+    }
+
+    public String getRestName() {
+        return restName;
+    }
+
+    public void setRestName(String restName) {
+        this.restName = restName;
+    }
+
+    public String getImagePathRest() {
+        return imagePathRest;
+    }
+
+    public void setImagePathRest(String imagePathRest) {
+        this.imagePathRest = imagePathRest;
     }
 }

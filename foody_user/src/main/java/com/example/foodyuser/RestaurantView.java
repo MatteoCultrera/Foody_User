@@ -308,7 +308,7 @@ public class RestaurantView extends AppCompatActivity {
         }
 
 
-        if(counter.intValue() == 5 && !isOnPause && localeReview != null){
+        if(counter.intValue() == 6 && !isOnPause && localeReview != null){
             enableAddReview();
             reviews.add(localeReview);
             showReview.notifyAdded(reviews.size()-1);
@@ -522,7 +522,7 @@ public class RestaurantView extends AppCompatActivity {
                                 }
 
                                 counter.getAndIncrement();
-                                if(counter.intValue() == 5 && !isOnPause){
+                                if(counter.intValue() == 6 && !isOnPause){
                                     enableAddReview();
                                     reviews.add(localeReview);
                                     showReview.notifyAdded(reviews.size()-1);
@@ -556,7 +556,7 @@ public class RestaurantView extends AppCompatActivity {
                                 }
 
                                 counter.getAndIncrement();
-                                if(counter.intValue() == 5 && !isOnPause){
+                                if(counter.intValue() == 6 && !isOnPause){
                                     enableAddReview();
                                     reviews.add(localeReview);
                                     showReview.notifyAdded(reviews.size()-1);
@@ -590,7 +590,7 @@ public class RestaurantView extends AppCompatActivity {
                                 }
 
                                 counter.getAndIncrement();
-                                if(counter.intValue() == 5 && !isOnPause){
+                                if(counter.intValue() == 6 && !isOnPause){
                                     enableAddReview();
                                     reviews.add(localeReview);
                                     showReview.notifyAdded(reviews.size()-1);
@@ -622,7 +622,7 @@ public class RestaurantView extends AppCompatActivity {
                                 }
 
                                 counter.getAndIncrement();
-                                if(counter.intValue() == 5 && !isOnPause){
+                                if(counter.intValue() == 6 && !isOnPause){
                                     enableAddReview();
                                     reviews.add(localeReview);
                                     showReview.notifyAdded(reviews.size()-1);
@@ -639,7 +639,7 @@ public class RestaurantView extends AppCompatActivity {
                             @Override
                             public void onSuccess(Void aVoid) {
                                 counter.getAndIncrement();
-                                if(counter.intValue() == 5 && !isOnPause){
+                                if(counter.intValue() == 6 && !isOnPause){
                                     enableAddReview();
                                     reviews.add(localeReview);
                                     showReview.notifyAdded(reviews.size()-1);
@@ -651,7 +651,7 @@ public class RestaurantView extends AppCompatActivity {
                             public void onFailure(@NonNull Exception e) {
                                 Toast.makeText(getApplicationContext(),"Error Adding Review",Toast.LENGTH_SHORT);
                                 counter.getAndIncrement();
-                                if(counter.intValue() == 5 && !isOnPause){
+                                if(counter.intValue() == 6 && !isOnPause){
                                     enableAddReview();
                                     reviews.add(localeReview);
                                     showReview.notifyAdded(reviews.size()-1);
@@ -660,6 +660,41 @@ public class RestaurantView extends AppCompatActivity {
                             }
                         });
 
+                        //New node for the user reviews
+                        final FirebaseAuth firebaseAuth = FirebaseAuth.getInstance();
+                        final FirebaseUser firebaseUser = firebaseAuth.getCurrentUser();
+                        DatabaseReference databaseReview = FirebaseDatabase.getInstance().getReference()
+                                .child("userReviews").child(firebaseUser.getUid());
+                        HashMap<String, Object> userReviews = new HashMap<>();
+                        Review userRev;
+                        userRev = remoteReview;
+                        userRev.setRestName(thisRestaurant.getUsername());
+                        userRev.setImagePathRest(thisRestaurant.getImagePath());
+                        userReviews.put(identifier, remoteReview);
+                        databaseReview.updateChildren(userReviews).addOnSuccessListener(new OnSuccessListener<Void>() {
+                            @Override
+                            public void onSuccess(Void aVoid) {
+                                counter.getAndIncrement();
+                                if(counter.intValue() == 6 && !isOnPause){
+                                    enableAddReview();
+                                    reviews.add(localeReview);
+                                    showReview.notifyAdded(reviews.size()-1);
+                                    localeReview = null;
+                                }
+                            }
+                        }).addOnFailureListener(new OnFailureListener() {
+                            @Override
+                            public void onFailure(@NonNull Exception e) {
+                                Toast.makeText(getApplicationContext(),"Error Adding Review",Toast.LENGTH_SHORT);
+                                counter.getAndIncrement();
+                                if(counter.intValue() == 6 && !isOnPause){
+                                    enableAddReview();
+                                    reviews.add(localeReview);
+                                    showReview.notifyAdded(reviews.size()-1);
+                                    localeReview = null;
+                                }
+                            }
+                        });
 
                         button.animate().translationY(-getResources().getDimensionPixelSize(R.dimen.short200)).withEndAction(new Runnable() {
                             @Override
