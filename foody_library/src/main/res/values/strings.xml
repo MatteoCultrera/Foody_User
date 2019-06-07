@@ -153,4 +153,6 @@
     <string name="restaurant_service">Restaurant Service:</string>
     <string name="delivery_time_hint">Delivery Time:</string>
     <string name="no_reviews">You have no reviews yet</string>
+
+    <string name="db_error_message">DB error connection!</string>
 </resources>
