@@ -148,6 +148,15 @@ public class RVAdapterHistory  extends RecyclerView.Adapter<RVAdapterHistory.Car
         pvh.status.setText(String.format(resources.getString(R.string.order_status), status));
         pvh.total.setText(currentRes.getTotalCost());
         pvh.deliveryTime.setText(currentRes.getDeliveryTime());
+        pvh.date.setText(getDate(currentRes.getDate()));
+
+        if(currentRes.isAccepted()){
+            pvh.date.setTextColor(pvh.date.getContext().getResources().getColor(R.color.accept, pvh.date.getContext().getTheme()));
+            pvh.deliveryTime.setTextColor(pvh.date.getContext().getResources().getColor(R.color.accept, pvh.date.getContext().getTheme()));
+        }else{
+            pvh.date.setTextColor(pvh.date.getContext().getResources().getColor(R.color.heart_red, pvh.date.getContext().getTheme()));
+            pvh.deliveryTime.setTextColor(pvh.date.getContext().getResources().getColor(R.color.heart_red, pvh.date.getContext().getTheme()));
+        }
     }
 
     @Override
@@ -155,10 +164,20 @@ public class RVAdapterHistory  extends RecyclerView.Adapter<RVAdapterHistory.Car
         super.onAttachedToRecyclerView(recyclerView);
     }
 
+    private String getDate(String date){
+        String[] nums = date.split("-");
+        int day = Integer.valueOf(nums[2]);
+        int month = Integer.valueOf(nums[1]);
+        int year = Integer.valueOf(nums[0]);
+
+        return String.format("%02d/%02d/%d",day, month, year);
+
+    }
+
 
     static class CardViewHolder extends RecyclerView.ViewHolder {
         ImageView profilePicture;
-        TextView restName, restAddress, total, deliveryTime, status;
+        TextView restName, restAddress, total, deliveryTime, status, date;
         LinearLayout dishes;
 
         CardViewHolder(View itemView) {
@@ -170,6 +189,7 @@ public class RVAdapterHistory  extends RecyclerView.Adapter<RVAdapterHistory.Car
             deliveryTime = itemView.findViewById(R.id.user_reservation_delivery_time);
             dishes = itemView.findViewById(R.id.user_reservation_dish_list);
             status = itemView.findViewById(R.id.user_reservation_order_status_string);
+            date = itemView.findViewById(R.id.user_reservation_delivery_time_string);
         }
     }
 }
