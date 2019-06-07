@@ -1,8 +1,10 @@
 package com.example.foodyrestaurant;
 
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.graphics.Color;
 import android.os.Bundle;
+import android.os.Environment;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.design.button.MaterialButton;
@@ -34,6 +36,8 @@ import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
+
+import java.io.File;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
@@ -42,6 +46,8 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
+
+import static android.content.Context.MODE_PRIVATE;
 
 public class HistoryFragment extends Fragment {
 
@@ -57,12 +63,14 @@ public class HistoryFragment extends Fragment {
     private MainActivity father;
     private Integer accepted, rejected;
     private List<Map.Entry<String, Integer>> top3;
-    private MaterialButton button;
     private Double meanFoodQuality, meanRestaurantService, meanDeliveryTime;
     private Long totalReviews;
     private RatingBar ratingFood, ratingRest, ratingDeliv;
     private TextView foodPoints, restPoints, delivPoints;
     private TextView noReviews, pointTotal;
+    private MaterialButton button, reviews;
+    private String USERS_IMAGE_REVIEWS = "userProfileImages";
+    private SharedPreferences prefs;
 
     public HistoryFragment() {
         // Required empty public constructor
@@ -95,6 +103,7 @@ public class HistoryFragment extends Fragment {
         barChart = view.findViewById(R.id.barChart);
         pieChart = view.findViewById(R.id.pieChart);
         button = view.findViewById(R.id.enter_order_history);
+        reviews = view.findViewById(R.id.enter_review_history);
         ratingFood = view.findViewById(R.id.review_rating);
         ratingRest = view.findViewById(R.id.review_rating_two);
         ratingDeliv = view.findViewById(R.id.review_rating_three);
@@ -105,6 +114,7 @@ public class HistoryFragment extends Fragment {
         delivPoints = view.findViewById(R.id.review_points_three);
         accepted = 0;
         rejected = 0;
+        prefs = view.getContext().getSharedPreferences("myPreference", MODE_PRIVATE);
 
         for(int i = 0; i < 24; i++){
             frequency.put(i, 0);
@@ -114,6 +124,22 @@ public class HistoryFragment extends Fragment {
             @Override
             public void onClick(View v) {
                 Intent intent = new Intent(getActivity(), HistoryPickMonth.class);
+                startActivity(intent);
+            }
+        });
+
+        reviews.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                File root = v.getContext().getExternalFilesDir(Environment.DIRECTORY_DOCUMENTS);
+                File directory = new File(root.getPath()+File.separator+USERS_IMAGE_REVIEWS);
+                if(directory.exists()){
+                    for(File child : directory.listFiles())
+                        child.delete();
+                    directory.delete();
+                }
+                prefs.edit().putBoolean("reviewsImages",false).apply();
+                Intent intent = new Intent(getActivity(),ShowReviewsActivity.class);
                 startActivity(intent);
             }
         });

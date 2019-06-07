@@ -9,6 +9,10 @@ public class Review {
     private String note;
     private float rating;
 
+    public Review(){
+
+    }
+
     public Review(String reviewID, String userID, String note, float rating){
         this.reviewID = reviewID;
         this.userID = userID;
