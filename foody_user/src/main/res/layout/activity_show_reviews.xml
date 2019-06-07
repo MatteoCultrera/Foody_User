@@ -41,7 +41,7 @@
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        android:background="#E4E4E4"/>
+        android:background="@color/whiteText"/>
 
     <com.github.ybq.android.spinkit.SpinKitView
         android:id="@+id/loading_reviews"
