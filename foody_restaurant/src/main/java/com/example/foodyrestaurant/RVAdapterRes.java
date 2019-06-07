@@ -243,6 +243,10 @@ public class RVAdapterRes extends RecyclerView.Adapter<RVAdapterRes.CardViewHold
                     }
                 });
 
+                DatabaseReference databaseDelete = FirebaseDatabase.getInstance().getReference()
+                        .child("reservations").child("restaurant").child(firebaseUser.getUid()).child(reservationID);
+                databaseDelete.removeValue();
+
                 Calendar calendar = Calendar.getInstance();
                 String monthYear = calendar.get(Calendar.MONTH) + "-" + calendar.get(Calendar.YEAR);
                 String date = calendar.get(Calendar.YEAR) + "-" + (calendar.get(Calendar.MONTH)+1) + "-" +
@@ -344,10 +348,6 @@ public class RVAdapterRes extends RecyclerView.Adapter<RVAdapterRes.CardViewHold
 
                             }
                         });
-
-                        DatabaseReference databaseDelete = FirebaseDatabase.getInstance().getReference()
-                                .child("archive").child("restaurant").child(firebaseUser.getUid()).child(reservationID);
-                        databaseDelete.removeValue();
 
                         reservations.get(pos).setAccepted(false);
                         reservations.remove(pos);
