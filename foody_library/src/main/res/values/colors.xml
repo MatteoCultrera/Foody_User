@@ -12,4 +12,5 @@
     <color name="dark_white_background">#EAEAEA</color>
     <color name="accept">#11DB40</color>
     <color name="disabledText">#9D9FA2</color>
+    <color name="heart_red">#FF0000</color>
 </resources>

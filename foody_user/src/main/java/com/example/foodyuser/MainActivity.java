@@ -272,25 +272,6 @@ public class MainActivity extends AppCompatActivity {
                 if(dataSnapshot.child("accepted").getValue(boolean.class) &&
                         dataSnapshot.child("status").getValue(String.class).compareTo("Doing") == 0) {
                     setNotification(1);
-
-                    final DatabaseReference databaseDelivered = databaseArchive.child("delivered");
-                    databaseDelivered.addListenerForSingleValueEvent(new ValueEventListener() {
-                        @Override
-                        public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-                            if (dataSnapshot.exists()) {
-                                int count = dataSnapshot.getValue(int.class);
-                                count++;
-                                databaseDelivered.setValue(count);
-                            } else {
-                                databaseDelivered.setValue(1);
-                            }
-                        }
-
-                        @Override
-                        public void onCancelled(@NonNull DatabaseError databaseError) {
-
-                        }
-                    });
                 }
                 //order has been rejected
                 if(!dataSnapshot.child("accepted").getValue(boolean.class) &&
@@ -353,6 +334,25 @@ public class MainActivity extends AppCompatActivity {
                                     String[] price = reservationDBUser.getTotalCost().split("\\s+");
                                     Float amount = Float.parseFloat(price[0]);
                                     databaseAmount.setValue(amount);
+                                }
+                            }
+
+                            @Override
+                            public void onCancelled(@NonNull DatabaseError databaseError) {
+
+                            }
+                        });
+
+                        final DatabaseReference databaseDelivered = databaseArchive.child("delivered");
+                        databaseDelivered.addListenerForSingleValueEvent(new ValueEventListener() {
+                            @Override
+                            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                                if (dataSnapshot.exists()) {
+                                    int count = dataSnapshot.getValue(int.class);
+                                    count++;
+                                    databaseDelivered.setValue(count);
+                                } else {
+                                    databaseDelivered.setValue(1);
                                 }
                             }
 

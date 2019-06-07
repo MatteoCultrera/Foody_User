@@ -4,6 +4,7 @@ import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.os.Environment;
 import android.support.annotation.NonNull;
+import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.Fragment;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -43,7 +44,7 @@ public class ReservationFragment extends Fragment {
     private SharedPreferences sharedPreferences;
     private View thisView;
     private MainActivity father;
-    private Button button;
+    private FloatingActionButton button;
     private int pending;
     private int doing;
     private int done;
