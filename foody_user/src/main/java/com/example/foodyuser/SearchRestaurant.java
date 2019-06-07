@@ -232,76 +232,76 @@ public class SearchRestaurant extends AppCompatActivity {
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
                 for (DataSnapshot ds : dataSnapshot.getChildren()) {
-                    for (DataSnapshot ds1 : ds.getChildren()) {
-                        Restaurant restaurant = ds1.getValue(Restaurant.class);
-                        restaurant.setUid(ds.getKey());
-                        Log.d("VANGOGH","ds "+ds.getKey());
-                        if (restaurant.getDaysTime() != null) {
-                            String intervalTime = restaurant.getDaysTime().get(day).replace(" ", "");
-                            if (!intervalTime.startsWith("C")) {
-                                String[] splits = intervalTime.split("-");
-                                SimpleDateFormat sdf2 = new SimpleDateFormat("HH:mm", Locale.ITALY);
-                                try{
-                                    Date date = sdf2.parse(splits[1]);
-                                    Calendar cal = Calendar.getInstance();
-                                    cal.setTime(date);
-                                    cal.add(Calendar.MINUTE, -30);
-                                    String newTime = sdf2.format(cal.getTime());
-                                    if (splits[0].compareTo(time) <= 0 && newTime.compareTo(time) >= 0) {
-                                        restaurant.setOpen(true);
-                                    }else{
-                                        restaurant.setOpen(false);
-                                    }
-                                } catch(ParseException e){
-                                    e.printStackTrace();
+                    DataSnapshot ds1 = ds.child("info");
+                    Restaurant restaurant = ds1.getValue(Restaurant.class);
+                    restaurant.setUid(ds.getKey());
+                    Log.d("VANGOGH","ds "+ds.getKey());
+                    if (restaurant.getDaysTime() != null) {
+                        String intervalTime = restaurant.getDaysTime().get(day).replace(" ", "");
+                        if (!intervalTime.startsWith("C")) {
+                            String[] splits = intervalTime.split("-");
+                            SimpleDateFormat sdf2 = new SimpleDateFormat("HH:mm", Locale.ITALY);
+                            try{
+                                Date date = sdf2.parse(splits[1]);
+                                Calendar cal = Calendar.getInstance();
+                                cal.setTime(date);
+                                cal.add(Calendar.MINUTE, -30);
+                                String newTime = sdf2.format(cal.getTime());
+                                if (splits[0].compareTo(time) <= 0 && newTime.compareTo(time) >= 0) {
+                                    restaurant.setOpen(true);
+                                }else{
+                                    restaurant.setOpen(false);
                                 }
+                            } catch(ParseException e){
+                                e.printStackTrace();
                             }
-                            else{
-                                restaurant.setOpen(false);
-                            }
                         }
-                        if (restaurant.getCuisineTypes() != null) {
-                            ArrayList<String> types = new ArrayList<>();
-                            for (Integer i : restaurant.getCuisineTypes()) {
-                                types.add(foodCategories[i]);
-                            }
-                            restaurant.setCuisines(types);
+                        else{
+                            restaurant.setOpen(false);
                         }
-
-                        if(ds1.child("address").exists()) {
-                            //Double distance = calculateDistance(delivAddress, restaurant.getAddress());
-                            //restaurant.setDistance(distance.floatValue());
-                        }
-
-                        if(restaurant.getImagePath()!=null && !hasImages){
-                            imageToFetch++;
-                        }
-
-                        Long totalReviews = -1L;
-
-                        if(ds1.child("totalReviews").exists()){
-                            totalReviews = ds1.child("totalReviews").getValue(Long.class);
-                        }
-
-                        if(ds1.child("meanDeliveryTime").exists() && ds1.child("meanFoodQuality").exists() && ds1.child("meanRestaurantService").exists() && totalReviews!=-1){
-                            Double meanDeliveryTime = ds1.child("meanDeliveryTime").getValue(Double.class);
-                            Double meanFoodQuality = ds1.child("meanFoodQuality").getValue(Double.class);
-                            Double meanRestaurantService = ds1.child("meanRestaurantService").getValue(Double.class);
-                            restaurant.setMeanDeliveryTime(meanDeliveryTime/totalReviews);
-                            restaurant.setMeanDeliveryTime(meanFoodQuality/totalReviews);
-                            restaurant.setMeanDeliveryTime(meanRestaurantService/totalReviews);
-                            restaurant.setTotalMean((meanDeliveryTime + meanFoodQuality + meanRestaurantService)/(totalReviews*3));
-                        }else{
-                            restaurant.setMeanDeliveryTime(-1.d);
-                            restaurant.setMeanDeliveryTime(-1.d);
-                            restaurant.setMeanDeliveryTime(-1.d);
-                            restaurant.setTotalMean(-1.d);
-                        }
-
-                        restaurants.add(restaurant);
-                        restName.add(restaurant);
-                        restCuisine.add(restaurant);
                     }
+                    if (restaurant.getCuisineTypes() != null) {
+                        ArrayList<String> types = new ArrayList<>();
+                        for (Integer i : restaurant.getCuisineTypes()) {
+                            types.add(foodCategories[i]);
+                        }
+                        restaurant.setCuisines(types);
+                    }
+
+                    if(ds1.child("address").exists()) {
+                        //Double distance = calculateDistance(delivAddress, restaurant.getAddress());
+                        //restaurant.setDistance(distance.floatValue());
+                    }
+
+                    if(restaurant.getImagePath()!=null && !hasImages){
+                        imageToFetch++;
+                    }
+
+                    Long totalReviews = -1L;
+
+                    if(ds.child("totalReviews").exists()){
+                        totalReviews = ds.child("totalReviews").getValue(Long.class);
+                    }
+
+                    if(ds.child("meanDeliveryTime").exists() && ds.child("meanFoodQuality").exists() && ds.child("meanRestaurantService").exists() && totalReviews!=-1){
+                        Double meanDeliveryTime = ds.child("meanDeliveryTime").getValue(Double.class);
+                        Double meanFoodQuality = ds.child("meanFoodQuality").getValue(Double.class);
+                        Double meanRestaurantService = ds.child("meanRestaurantService").getValue(Double.class);
+                        restaurant.setMeanDeliveryTime(meanDeliveryTime/totalReviews);
+                        restaurant.setMeanDeliveryTime(meanFoodQuality/totalReviews);
+                        restaurant.setMeanDeliveryTime(meanRestaurantService/totalReviews);
+                        restaurant.setTotalMean((meanDeliveryTime + meanFoodQuality + meanRestaurantService)/(totalReviews*3));
+                    }else{
+                        restaurant.setMeanDeliveryTime(-1.d);
+                        restaurant.setMeanDeliveryTime(-1.d);
+                        restaurant.setMeanDeliveryTime(-1.d);
+                        restaurant.setTotalMean(-1.d);
+                    }
+
+                    restaurants.add(restaurant);
+                    restName.add(restaurant);
+                    restCuisine.add(restaurant);
+
                 }
 
                 restaurants.sort(new Comparator<Restaurant>() {
