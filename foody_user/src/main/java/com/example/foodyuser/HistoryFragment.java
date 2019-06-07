@@ -1,7 +1,9 @@
 package com.example.foodyuser;
 
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Bundle;
+import android.os.Environment;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.design.button.MaterialButton;
@@ -26,8 +28,11 @@ import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 
+import java.io.File;
 import java.util.ArrayList;
 import java.util.Locale;
+
+import static android.content.Context.MODE_PRIVATE;
 
 /**
  * A simple {@link Fragment} subclass.
@@ -38,7 +43,9 @@ public class HistoryFragment extends Fragment {
     private Float amount;
     private Integer delivered, rejected;
     private PieChart pieChart;
-    private MaterialButton button;
+    private MaterialButton button, reviews;
+    private SharedPreferences prefs;
+    private String RESTAURANTS_IMAGE_REVIEWS = "restaurantsProfileImages";
 
     public HistoryFragment() {
         // Required empty public constructor
@@ -57,13 +64,31 @@ public class HistoryFragment extends Fragment {
         totalSpent = view.findViewById(R.id.spent);
         pieChart = view.findViewById(R.id.pieChart);
         button = view.findViewById(R.id.enter_order_history);
+        reviews = view.findViewById(R.id.enter_review);
         delivered = 0;
         rejected = 0;
+        prefs = view.getContext().getSharedPreferences("myPreference", MODE_PRIVATE);
 
         button.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 Intent intent = new Intent(getActivity(), HistoryPickMonth.class);
+                startActivity(intent);
+            }
+        });
+
+        reviews.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                File root = v.getContext().getExternalFilesDir(Environment.DIRECTORY_DOCUMENTS);
+                File directory = new File(root.getPath()+File.separator+RESTAURANTS_IMAGE_REVIEWS);
+                if(directory.exists()){
+                    for(File f : directory.listFiles())
+                        f.delete();
+                    directory.delete();
+                }
+                prefs.edit().putBoolean("reviewsImages",false).apply();
+                Intent intent = new Intent(getActivity(),ShowUserReviewActivity.class);
                 startActivity(intent);
             }
         });
