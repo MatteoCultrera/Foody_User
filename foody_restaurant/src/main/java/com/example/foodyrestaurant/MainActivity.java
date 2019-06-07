@@ -49,11 +49,13 @@ public class MainActivity extends AppCompatActivity {
     private Boolean bool = true;
     private Uri photoProfile;
     private HashMap<String, Uri> photosMap = new HashMap<>();
+    /*
     private HashMap<String, Integer> dishes = new HashMap<>();
     private List<Map.Entry<String, Integer>> top3;
     private HashMap<Integer, Integer> frequency = new HashMap<>();
     private Float amount;
     private Integer accepted, rejected;
+    */
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -380,7 +382,7 @@ public class MainActivity extends AppCompatActivity {
         });
 
     }
-
+/*
     public List<Map.Entry<String, Integer>> getTop3() {
         return top3;
     }
@@ -420,4 +422,5 @@ public class MainActivity extends AppCompatActivity {
     public void setRejected(Integer rejected) {
         this.rejected = rejected;
     }
+    */
 }

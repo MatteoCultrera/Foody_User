@@ -7,9 +7,11 @@ import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.design.button.MaterialButton;
 import android.support.v4.app.Fragment;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.RatingBar;
 import android.widget.TextView;
 
 import com.github.mikephil.charting.charts.BarChart;
@@ -56,6 +58,11 @@ public class HistoryFragment extends Fragment {
     private Integer accepted, rejected;
     private List<Map.Entry<String, Integer>> top3;
     private MaterialButton button;
+    private Double meanFoodQuality, meanRestaurantService, meanDeliveryTime;
+    private Long totalReviews;
+    private RatingBar ratingFood, ratingRest, ratingDeliv;
+    private TextView foodPoints, restPoints, delivPoints;
+    private TextView noReviews, pointTotal;
 
     public HistoryFragment() {
         // Required empty public constructor
@@ -70,6 +77,7 @@ public class HistoryFragment extends Fragment {
         downloadTop();
         downloadFrequency();
         downloadStats();
+        downloadReview();
         return view;
     }
 
@@ -87,6 +95,14 @@ public class HistoryFragment extends Fragment {
         barChart = view.findViewById(R.id.barChart);
         pieChart = view.findViewById(R.id.pieChart);
         button = view.findViewById(R.id.enter_order_history);
+        ratingFood = view.findViewById(R.id.review_rating);
+        ratingRest = view.findViewById(R.id.review_rating_two);
+        ratingDeliv = view.findViewById(R.id.review_rating_three);
+        noReviews = view.findViewById(R.id.no_reviews);
+        pointTotal = view.findViewById(R.id.review_points_total);
+        foodPoints = view.findViewById(R.id.review_points);
+        restPoints = view.findViewById(R.id.review_points_two);
+        delivPoints = view.findViewById(R.id.review_points_three);
         accepted = 0;
         rejected = 0;
 
@@ -108,7 +124,7 @@ public class HistoryFragment extends Fragment {
         accepted = 0;
         rejected = 0;
 
-        if(father.getTop3() == null){
+        /*if(father.getTop3() == null){
             downloadTop();
         } else {
             top3 = father.getTop3();
@@ -136,6 +152,7 @@ public class HistoryFragment extends Fragment {
             totalIncome.setText(String.format(Locale.getDefault(), "%.2f \u20ac", amount));
             drawPieCharts();
         }
+        */
     }
 
     public void drawChart() {
@@ -266,7 +283,7 @@ public class HistoryFragment extends Fragment {
                         }
                     }
                 }
-                father.setTop3(top3);
+                //father.setTop3(top3);
                 firstDish.setText(top3.get(0).getKey());
                 secondDish.setText(top3.get(1).getKey());
                 thirdDish.setText(top3.get(2).getKey());
@@ -301,7 +318,7 @@ public class HistoryFragment extends Fragment {
                         frequency.put(i, 0);
                     }
                 }
-                father.setFrequency(frequency);
+                //father.setFrequency(frequency);
                 drawChart();
             }
 
@@ -332,11 +349,65 @@ public class HistoryFragment extends Fragment {
                         rejected = ds.getValue(Integer.class);
                     }
                 }
-                father.setAmount(amount);
-                father.setAccepted(accepted);
-                father.setRejected(rejected);
+                //father.setAmount(amount);
+                //father.setAccepted(accepted);
+                //father.setRejected(rejected);
                 totalIncome.setText(String.format(Locale.getDefault(), "%.2f \u20ac", amount));
                 drawPieCharts();
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError databaseError) {
+            }
+        });
+    }
+
+    private void downloadReview(){
+        FirebaseAuth firebaseAuth = FirebaseAuth.getInstance();
+        FirebaseUser firebaseUser = firebaseAuth.getCurrentUser();
+
+        final DatabaseReference databaseReview = FirebaseDatabase.getInstance().getReference()
+                .child("restaurantsInfo").child(firebaseUser.getUid());
+
+        databaseReview.addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                for(DataSnapshot ds : dataSnapshot.getChildren()) {
+                    if(ds.getKey().compareTo("meanFoodQuality") == 0) {
+                        meanFoodQuality = ds.getValue(Double.class);
+                    }
+                    if(ds.getKey().compareTo("meanRestaurantService") == 0) {
+                        meanRestaurantService = ds.getValue(Double.class);
+                    }
+                    if(ds.getKey().compareTo("meanDeliveryTime") == 0) {
+                        meanDeliveryTime = ds.getValue(Double.class);
+                    }
+                    if(ds.getKey().compareTo("totalReviews") == 0) {
+                        totalReviews = ds.getValue(Long.class);
+                    }
+                }
+
+                if(meanFoodQuality == null || meanRestaurantService == null || meanDeliveryTime == null || totalReviews == null) {
+                    noReviews.setVisibility(View.VISIBLE);
+                    pointTotal.setVisibility(View.GONE);
+                    foodPoints.setVisibility(View.GONE);
+                    restPoints.setVisibility(View.GONE);
+                    delivPoints.setVisibility(View.GONE);
+
+                } else {
+                    Log.d("PROVA", "quality: " + meanFoodQuality);
+                    float foodMean = meanFoodQuality.floatValue()/totalReviews;
+                    float restMean = meanRestaurantService.floatValue() / totalReviews;
+                    float delivMean = meanDeliveryTime.floatValue() / totalReviews;
+                    float pointMean = (foodMean+restMean+delivMean)/3;
+                    ratingFood.setRating(foodMean);
+                    ratingRest.setRating(restMean);
+                    ratingDeliv.setRating(delivMean);
+                    foodPoints.setText(String.format(Locale.getDefault(), "%.1f", foodMean));
+                    restPoints.setText(String.format(Locale.getDefault(), "%.1f", restMean));
+                    delivPoints.setText(String.format(Locale.getDefault(), "%.1f", delivMean));
+                    pointTotal.setText(String.format(Locale.getDefault(), "%.1f", pointMean));
+                }
             }
 
             @Override
