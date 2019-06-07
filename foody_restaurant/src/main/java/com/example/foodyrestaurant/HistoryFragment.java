@@ -2,14 +2,11 @@ package com.example.foodyrestaurant;
 
 import android.content.Intent;
 import android.graphics.Color;
-import android.graphics.Typeface;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.design.button.MaterialButton;
 import android.support.v4.app.Fragment;
-import android.support.v4.content.res.ResourcesCompat;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -17,18 +14,17 @@ import android.widget.TextView;
 
 import com.github.mikephil.charting.charts.BarChart;
 import com.github.mikephil.charting.charts.PieChart;
-import com.github.mikephil.charting.components.Description;
-import com.github.mikephil.charting.components.Legend;
 import com.github.mikephil.charting.components.XAxis;
 import com.github.mikephil.charting.components.YAxis;
 import com.github.mikephil.charting.data.BarData;
 import com.github.mikephil.charting.data.BarDataSet;
 import com.github.mikephil.charting.data.BarEntry;
+import com.github.mikephil.charting.data.Entry;
 import com.github.mikephil.charting.data.PieData;
 import com.github.mikephil.charting.data.PieDataSet;
 import com.github.mikephil.charting.data.PieEntry;
-import com.github.mikephil.charting.formatter.DefaultValueFormatter;
-import com.github.mikephil.charting.formatter.PercentFormatter;
+import com.github.mikephil.charting.highlight.Highlight;
+import com.github.mikephil.charting.listener.OnChartValueSelectedListener;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.DataSnapshot;
@@ -56,16 +52,24 @@ public class HistoryFragment extends Fragment {
     private PieChart pieChart;
     private HashMap<Integer, Integer> frequency = new HashMap<>();
     private Float amount;
+    private MainActivity father;
     private Integer accepted, rejected;
     private List<Map.Entry<String, Integer>> top3;
     private MaterialButton button;
 
-    public HistoryFragment() {}
+    public HistoryFragment() {
+        // Required empty public constructor
+    }
+
+    public void setFather(MainActivity father) {this.father = father;}
 
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_history, container, false);
+        downloadTop();
+        downloadFrequency();
+        downloadStats();
         return view;
     }
 
@@ -79,10 +83,16 @@ public class HistoryFragment extends Fragment {
         secondDishNumber = view.findViewById(R.id.text_second_secondary);
         thirdDish = view.findViewById(R.id.text_third);
         thirdDishNumber = view.findViewById(R.id.text_third_secondary);
-        totalIncome = view.findViewById(R.id.total_income);
+        totalIncome = view.findViewById(R.id.income);
         barChart = view.findViewById(R.id.barChart);
         pieChart = view.findViewById(R.id.pieChart);
         button = view.findViewById(R.id.enter_order_history);
+        accepted = 0;
+        rejected = 0;
+
+        for(int i = 0; i < 24; i++){
+            frequency.put(i, 0);
+        }
 
         button.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -98,16 +108,137 @@ public class HistoryFragment extends Fragment {
         accepted = 0;
         rejected = 0;
 
+        if(father.getTop3() == null){
+            downloadTop();
+        } else {
+            top3 = father.getTop3();
+            firstDish.setText(top3.get(0).getKey());
+            secondDish.setText(top3.get(1).getKey());
+            thirdDish.setText(top3.get(2).getKey());
+            firstDishNumber.setText(top3.get(0).getValue() + " " + getResources().getString(R.string.text_orders));
+            secondDishNumber.setText(top3.get(1).getValue() + " " + getResources().getString(R.string.text_orders));
+            thirdDishNumber.setText(top3.get(2).getValue() + " " + getResources().getString(R.string.text_orders));
+        }
+
+        if(father.getFrequency() == null){
+            downloadFrequency();
+        } else {
+            frequency = father.getFrequency();
+            drawChart();
+        }
+
+        if(father.getAccepted() == null || father.getAmount() == null || father.getRejected() == null){
+            downloadStats();
+        } else {
+            accepted = father.getAccepted();
+            amount = father.getAmount();
+            rejected = father.getRejected();
+            totalIncome.setText(String.format(Locale.getDefault(), "%.2f \u20ac", amount));
+            drawPieCharts();
+        }
+    }
+
+    public void drawChart() {
+        barChart.setDrawBarShadow(false);
+        barChart.getDescription().setEnabled(false);
+        barChart.setMaxVisibleValueCount(100);
+        barChart.setPinchZoom(false);
+        barChart.setDrawGridBackground(false);
+        barChart.setDrawValueAboveBar(true);
+
+        XAxis xl = barChart.getXAxis();
+        xl.setGranularity(1f);
+        xl.setPosition(XAxis.XAxisPosition.BOTTOM);
+        xl.setAxisMinimum(0f);
+        xl.setAxisMaximum(24f);
+        xl.setLabelCount(9, true);
+        xl.setDrawGridLines(false);
+
+        YAxis leftAxis = barChart.getAxisLeft();
+        leftAxis.setAxisMinimum(0f);
+        leftAxis.setEnabled(false);
+        leftAxis.setDrawLabels(true);
+        leftAxis.setDrawGridLines(true);
+        barChart.getAxisRight().setEnabled(false);
+
+        final List<BarEntry> yVals1 = new ArrayList<>();
+
+        Iterator it = frequency.entrySet().iterator();
+        while (it.hasNext()) {
+            Map.Entry<Integer, Integer> pair = (Map.Entry) it.next();
+            if (pair.getValue() != 0)
+                yVals1.add(new BarEntry(pair.getKey(), pair.getValue()));
+        }
+
+        final BarDataSet set = new BarDataSet(yVals1, "BarDataSet");
+        set.setColor((Color.rgb(132, 171, 241)));
+
+        final BarData data = new BarData(set);
+        data.setDrawValues(false);
+        data.setBarWidth(0.9f);
+        barChart.setData(data);
+        barChart.getLegend().setEnabled(false);
+        barChart.setFitBars(true);
+        barChart.setNoDataText("NO FREQUENCY IN ARCHIVE RIGHT NOW");
+        barChart.animateY(3000);
+
+    }
+
+    public void drawPieCharts() {
+        pieChart.setHighlightPerTapEnabled(true);
+        pieChart.getDescription().setEnabled(false);
+
+        final ArrayList<PieEntry> entries = new ArrayList<>();
+        entries.add(new PieEntry(accepted, getResources().getString(R.string.text_accepted)));
+        entries.add(new PieEntry(rejected, getResources().getString(R.string.text_rejected)));
+
+        PieDataSet dataSet = new PieDataSet(entries, "Orders Results");
+        int[] colors = {getResources().getColor(R.color.accept, getActivity().getTheme()),
+                getResources().getColor(R.color.errorColor, getActivity().getTheme())};
+        dataSet.setColors(colors);
+
+        pieChart.setDrawEntryLabels(false);
+
+        PieData data = new PieData(dataSet);
+        pieChart.setData(data);
+
+        dataSet.setSliceSpace(5f);
+        dataSet.setSelectionShift(5f);
+
+        dataSet.setDrawValues(false);
+        pieChart.getLegend().setEnabled(false);
+
+        int total = accepted+rejected;
+        pieChart.setCenterText(total + "\n" + getResources().getString(R.string.text_orders));
+        pieChart.setCenterTextSize(22f);
+        pieChart.setNoDataText("NO ORDERS IN ARCHIVE RIGHT NOW");
+        pieChart.animateXY(3000, 3000);
+
+        final int totToText = total;
+        pieChart.setOnChartValueSelectedListener(new OnChartValueSelectedListener() {
+            @Override
+            public void onValueSelected(Entry e, Highlight h) {
+                if(entries.get(0).equals(e)) {
+                    pieChart.setCenterText(accepted + "\n" + getResources().getString(R.string.text_accepted));
+                } else {
+                    pieChart.setCenterText(rejected + "\n" + getResources().getString(R.string.text_rejected));
+                }
+            }
+
+            @Override
+            public void onNothingSelected() {
+                pieChart.setCenterText(totToText + "\n" + getResources().getString(R.string.text_orders));
+            }
+        });
+    }
+
+    private void downloadTop() {
         FirebaseAuth firebaseAuth = FirebaseAuth.getInstance();
         FirebaseUser firebaseUser = firebaseAuth.getCurrentUser();
 
         DatabaseReference databaseReference = FirebaseDatabase.getInstance().getReference().child("archive")
                 .child("restaurant").child(firebaseUser.getUid());
-
-        DatabaseReference databaseFrequency = databaseReference.child("frequency");
-
         DatabaseReference databaseDishes = databaseReference.child("dishesCount");
-
         databaseDishes.addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
@@ -116,7 +247,7 @@ public class HistoryFragment extends Fragment {
                         dishes.put(ds.getKey(), ds.getValue(Integer.class));
                     }
 
-                    if(dishes.size() > 2) {
+                    if (dishes.size() > 2) {
                         List<Map.Entry<String, Integer>> entryList = new ArrayList<>(dishes.entrySet());
                         Collections.sort(entryList, new Comparator<Map.Entry<String, Integer>>() {
                             @Override
@@ -133,19 +264,15 @@ public class HistoryFragment extends Fragment {
                                 break;
                             }
                         }
-
-                        Log.d("MADMAD", "1 : " + top3.get(0));
-                        Log.d("MADMAD", "2 : " + top3.get(1));
-                        Log.d("MADMAD", "3 : " + top3.get(2));
-
-                        firstDish.setText(top3.get(0).getKey());
-                        secondDish.setText(top3.get(1).getKey());
-                        thirdDish.setText(top3.get(2).getKey());
-                        firstDishNumber.setText(top3.get(0).getValue()+ " orders");
-                        secondDishNumber.setText(top3.get(1).getValue()+ " orders");
-                        thirdDishNumber.setText(top3.get(1).getValue()+ " orders");
                     }
                 }
+                father.setTop3(top3);
+                firstDish.setText(top3.get(0).getKey());
+                secondDish.setText(top3.get(1).getKey());
+                thirdDish.setText(top3.get(2).getKey());
+                firstDishNumber.setText(top3.get(0).getValue() + " " + getResources().getString(R.string.text_orders));
+                secondDishNumber.setText(top3.get(1).getValue() + " " + getResources().getString(R.string.text_orders));
+                thirdDishNumber.setText(top3.get(2).getValue() + " " + getResources().getString(R.string.text_orders));
             }
 
             @Override
@@ -153,7 +280,15 @@ public class HistoryFragment extends Fragment {
 
             }
         });
+    }
 
+    private void downloadFrequency(){
+        FirebaseAuth firebaseAuth = FirebaseAuth.getInstance();
+        FirebaseUser firebaseUser = firebaseAuth.getCurrentUser();
+
+        DatabaseReference databaseReference = FirebaseDatabase.getInstance().getReference().child("archive")
+                .child("restaurant").child(firebaseUser.getUid());
+        DatabaseReference databaseFrequency = databaseReference.child("frequency");
         databaseFrequency.addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
@@ -166,7 +301,7 @@ public class HistoryFragment extends Fragment {
                         frequency.put(i, 0);
                     }
                 }
-
+                father.setFrequency(frequency);
                 drawChart();
             }
 
@@ -175,7 +310,14 @@ public class HistoryFragment extends Fragment {
 
             }
         });
+    }
 
+    private void downloadStats(){
+        FirebaseAuth firebaseAuth = FirebaseAuth.getInstance();
+        FirebaseUser firebaseUser = firebaseAuth.getCurrentUser();
+
+        DatabaseReference databaseReference = FirebaseDatabase.getInstance().getReference().child("archive")
+                .child("restaurant").child(firebaseUser.getUid());
         databaseReference.addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
@@ -190,7 +332,10 @@ public class HistoryFragment extends Fragment {
                         rejected = ds.getValue(Integer.class);
                     }
                 }
-                totalIncome.setText(String.format(Locale.getDefault(), "%.2f", amount));
+                father.setAmount(amount);
+                father.setAccepted(accepted);
+                father.setRejected(rejected);
+                totalIncome.setText(String.format(Locale.getDefault(), "%.2f \u20ac", amount));
                 drawPieCharts();
             }
 
@@ -198,99 +343,5 @@ public class HistoryFragment extends Fragment {
             public void onCancelled(@NonNull DatabaseError databaseError) {
             }
         });
-
-    }
-
-    //TODO: put string in xml
-
-    public void drawChart() {
-        barChart.setDrawBarShadow(false);
-        barChart.setTouchEnabled(true);
-        Description description = new Description();
-        description.setText("");
-        barChart.setDescription(description);
-        barChart.setMaxVisibleValueCount(50);
-        barChart.setPinchZoom(false);
-        barChart.setDrawGridBackground(false);
-        barChart.setDrawValueAboveBar(true);
-
-        XAxis xl = barChart.getXAxis();
-        xl.setGranularity(1f);
-        xl.setPosition(XAxis.XAxisPosition.BOTTOM);
-        xl.setAxisMinimum(0f);
-        xl.setAxisMaximum(24f);
-        xl.setLabelCount(9, true);
-
-        xl.setDrawGridLines(false);
-
-        YAxis leftAxis = barChart.getAxisLeft();
-        leftAxis.setAxisMinimum(0f);
-        leftAxis.setEnabled(false);
-        leftAxis.setDrawGridLines(false);
-        barChart.getAxisRight().setEnabled(false);
-
-        List<BarEntry> yVals1 = new ArrayList<>();
-
-        Iterator it = frequency.entrySet().iterator();
-        while (it.hasNext()) {
-            Map.Entry<Integer, Integer> pair = (Map.Entry) it.next();
-            if (pair.getValue() != 0)
-                yVals1.add(new BarEntry(pair.getKey(), pair.getValue()));
-        }
-
-        BarDataSet set = new BarDataSet(yVals1, "BarDataSet");
-        set.setColor((Color.rgb(132, 171, 241)));
-        set.setValueFormatter(new DefaultValueFormatter(0));
-        set.setValueTextSize(14f);
-        BarData data = new BarData(set);
-        data.setDrawValues(true);
-        data.setBarWidth(0.9f);
-        barChart.setData(data);
-        barChart.getLegend().setEnabled(false);
-        barChart.setFitBars(true);
-        barChart.setNoDataText("NO FREQUENCY IN ARCHIVE RIGHT NOW");
-        barChart.animateY(3000);
-
-    }
-
-    public void drawPieCharts() {
-        pieChart.setHighlightPerTapEnabled(true);
-        pieChart.getDescription().setEnabled(false);
-
-        ArrayList<PieEntry> entries = new ArrayList<>();
-        entries.add(new PieEntry(accepted, "Consegnati"));
-        entries.add(new PieEntry(rejected, "Rifiutati"));
-
-        PieDataSet dataSet = new PieDataSet(entries, "Orders Results");
-        int[] colors = {getResources().getColor(R.color.accept, getActivity().getTheme()),
-                getResources().getColor(R.color.errorColor, getActivity().getTheme())};
-        dataSet.setColors(colors);
-
-        pieChart.setUsePercentValues(true);
-        pieChart.setDrawEntryLabels(false);
-        dataSet.setValueFormatter(new PercentFormatter(pieChart));
-
-        PieData data = new PieData(dataSet);
-        pieChart.setData(data);
-
-        dataSet.setSliceSpace(5f);
-        dataSet.setSelectionShift(5f);
-
-        Legend legend = pieChart.getLegend();
-        legend.setVerticalAlignment(Legend.LegendVerticalAlignment.BOTTOM);
-        legend.setHorizontalAlignment(Legend.LegendHorizontalAlignment.RIGHT);
-        legend.setOrientation(Legend.LegendOrientation.VERTICAL);
-        legend.setTextSize(14f);
-        legend.setForm(Legend.LegendForm.CIRCLE);
-
-        int total = accepted+rejected;
-        pieChart.setCenterText(total + "\n" + getResources().getString(R.string.text_orders));
-        pieChart.setCenterTextSize(22f);
-        data.setValueTextSize(14f);
-        Typeface typeface = ResourcesCompat.getFont(pieChart.getContext(), R.font.roboto_bold);
-        data.setValueTypeface(typeface);
-        data.setValueTextColor(Color.BLACK);
-        pieChart.setNoDataText("NO ORDERS IN ARCHIVE RIGHT NOW");
-        pieChart.animateXY(3000, 3000);
     }
 }
