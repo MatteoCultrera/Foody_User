@@ -71,7 +71,7 @@ public class ReservationFragment extends Fragment {
     boolean canClick;
     CardView card;
     private ArrayList<Reservation> reservations;
-    private Reservation activeReservation;
+    private Reservation activeReservation, copyReservation;
     private RecyclerView orderList;
     private ImageButton switchButton, navigationRest, navigationUser;
     private RVAdapterReservation adapter;
@@ -271,6 +271,14 @@ public class ReservationFragment extends Fragment {
                         sharedPreferences.edit().remove("customerProfileImage").apply();
                         Log.d("PROVAIMAGE", "l'immagine è stata rimossa");
                     }
+                    copyReservation = activeReservation;
+                    father.noActiveReservation(activeReservation);
+                    setInterface(false);
+                    canClick = false;
+                    setActiveReservation(null);
+                    adapter.setOrderActive(false);
+                    orderDelivered.setText("");
+                    updateTitles();
 
                     DatabaseReference databaseB = FirebaseDatabase.getInstance().getReference()
                             .child("Bikers").child(firebaseUser.getUid());
@@ -283,20 +291,20 @@ public class ReservationFragment extends Fragment {
                         }
                     });
 
-                    calculateDistance(activeReservation);
+                    calculateDistance(copyReservation);
 
                     Calendar calendar = Calendar.getInstance();
                     String monthYear = calendar.get(Calendar.MONTH) + "-" + calendar.get(Calendar.YEAR);
                     DatabaseReference databaseRest = FirebaseDatabase.getInstance().getReference()
                             .child("archive").child("Bikers").child(firebaseUser.getUid()).child(monthYear);
-                    ReservationDBBiker reservation = new ReservationDBBiker(activeReservation.getReservationID(),
-                            activeReservation.getUserDeliveryTime(), activeReservation.getRestaurantPickupTime(),
-                            activeReservation.getRestaurantName(), activeReservation.getUserName(),
-                            activeReservation.getRestaurantAddress(), activeReservation.getUserAddress(),
-                            activeReservation.getRestaurantID());
+                    ReservationDBBiker reservation = new ReservationDBBiker(copyReservation.getReservationID(),
+                            copyReservation.getUserDeliveryTime(), copyReservation.getRestaurantPickupTime(),
+                            copyReservation.getRestaurantName(), copyReservation.getUserName(),
+                            copyReservation.getRestaurantAddress(), copyReservation.getUserAddress(),
+                            copyReservation.getRestaurantID());
                     reservation.setStatus("delivered");
                     HashMap<String, Object> childSelf = new HashMap<>();
-                    childSelf.put(activeReservation.getReservationID(), reservation);
+                    childSelf.put(copyReservation.getReservationID(), reservation);
                     databaseRest.updateChildren(childSelf).addOnFailureListener(new OnFailureListener() {
                         @Override
                         public void onFailure(@NonNull Exception e) {
@@ -307,17 +315,10 @@ public class ReservationFragment extends Fragment {
                         public void onSuccess(Void aVoid) {
                             DatabaseReference databaseDelete = FirebaseDatabase.getInstance().getReference()
                                     .child("reservations").child("Bikers").child(firebaseUser.getUid())
-                                    .child(activeReservation.getReservationID());
+                                    .child(copyReservation.getReservationID());
                             databaseDelete.removeValue().addOnCompleteListener(new OnCompleteListener<Void>() {
                                 @Override
                                 public void onComplete(@NonNull Task<Void> task) {
-                                    father.noActiveReservation(activeReservation);
-                                    setInterface(false);
-                                    canClick = false;
-                                    setActiveReservation(null);
-                                    adapter.setOrderActive(false);
-                                    orderDelivered.setText("");
-                                    updateTitles();
                                 }
                             });
                         }
@@ -358,7 +359,7 @@ public class ReservationFragment extends Fragment {
                                     frequencies.put(ds.getKey(), ds.getValue(Integer.class));
                                 }
 
-                                String hour = activeReservation.getUserDeliveryTime().split(":")[0];
+                                String hour = copyReservation.getUserDeliveryTime().split(":")[0];
                                 Integer count = (Integer) frequencies.get(hour) + 1;
                                 frequencies.put(hour, count);
                                 databaseFreq.updateChildren(frequencies);
@@ -368,7 +369,7 @@ public class ReservationFragment extends Fragment {
                                     frequencies.put(String.valueOf(i), 0);
                                 }
 
-                                String hour = activeReservation.getUserDeliveryTime().split(":")[0];
+                                String hour = copyReservation.getUserDeliveryTime().split(":")[0];
                                 Integer count = (Integer) frequencies.get(hour) + 1;
                                 frequencies.put(hour, count);
                                 databaseFreq.updateChildren(frequencies);
@@ -477,6 +478,7 @@ public class ReservationFragment extends Fragment {
         updateTitles();
         int shortAnimationDuration = 600;
         if (deliveringOrder) {
+            /*
             orderList.clearAnimation();
             card.clearAnimation();
             orderList.setVisibility(View.VISIBLE);
@@ -495,8 +497,12 @@ public class ReservationFragment extends Fragment {
                             orderList.setVisibility(View.GONE);
                         }
                     });
+            */
+            card.setVisibility(View.VISIBLE);
+            orderList.setVisibility(View.GONE);
             orderDeliveredLayout.setBackgroundResource(R.drawable.order_delivered_background);
         } else {
+            /*
             orderList.clearAnimation();
             card.clearAnimation();
             orderList.setVisibility(View.VISIBLE);
@@ -515,6 +521,9 @@ public class ReservationFragment extends Fragment {
                             card.setVisibility(View.GONE);
                         }
                     });
+            */
+            orderList.setVisibility(View.VISIBLE);
+            card.setVisibility(View.GONE);
             orderDeliveredLayout.setBackgroundResource(R.drawable.order_delivered_background_dis);
         }
     }

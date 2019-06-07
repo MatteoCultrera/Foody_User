@@ -2,14 +2,11 @@ package com.example.foodybiker;
 
 import android.content.Intent;
 import android.graphics.Color;
-import android.graphics.Typeface;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.design.button.MaterialButton;
 import android.support.v4.app.Fragment;
-import android.support.v4.content.res.ResourcesCompat;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -17,18 +14,17 @@ import android.widget.TextView;
 
 import com.github.mikephil.charting.charts.BarChart;
 import com.github.mikephil.charting.charts.PieChart;
-import com.github.mikephil.charting.components.Description;
-import com.github.mikephil.charting.components.Legend;
 import com.github.mikephil.charting.components.XAxis;
 import com.github.mikephil.charting.components.YAxis;
 import com.github.mikephil.charting.data.BarData;
 import com.github.mikephil.charting.data.BarDataSet;
 import com.github.mikephil.charting.data.BarEntry;
+import com.github.mikephil.charting.data.Entry;
 import com.github.mikephil.charting.data.PieData;
 import com.github.mikephil.charting.data.PieDataSet;
 import com.github.mikephil.charting.data.PieEntry;
-import com.github.mikephil.charting.formatter.DefaultValueFormatter;
-import com.github.mikephil.charting.formatter.PercentFormatter;
+import com.github.mikephil.charting.highlight.Highlight;
+import com.github.mikephil.charting.listener.OnChartValueSelectedListener;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.DataSnapshot;
@@ -37,11 +33,11 @@ import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 
-import java.lang.reflect.Type;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 
 /**
@@ -53,14 +49,13 @@ public class HistoryFragment extends Fragment {
     private BarChart barChart;
     private PieChart pieChart;
     private HashMap<Integer, Integer> frequency = new HashMap<>();
-    private Integer count;
     private Integer delivered, rejected;
     private Double dbDistance;
     private MaterialButton button;
 
     public HistoryFragment() {
+        // Required empty public constructor
     }
-
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -79,6 +74,7 @@ public class HistoryFragment extends Fragment {
         button = view.findViewById(R.id.enter_order_history);
         delivered = 0;
         rejected = 0;
+
         for (int i = 0; i < 24; i++) {
             frequency.put(i, 0);
         }
@@ -113,7 +109,7 @@ public class HistoryFragment extends Fragment {
                         dbDistance = ds.getValue(Double.class);
                     }
                 }
-                distance.setText(String.format("%.2f", dbDistance));
+                distance.setText(String.format(Locale.getDefault(), "%.2f km", dbDistance));
                 drawPieCharts();
             }
 
@@ -147,11 +143,8 @@ public class HistoryFragment extends Fragment {
 
     public void drawChart() {
         barChart.setDrawBarShadow(false);
-        barChart.setTouchEnabled(true);
-        Description description = new Description();
-        description.setText("");
-        barChart.setDescription(description);
-        barChart.setMaxVisibleValueCount(50);
+        barChart.getDescription().setEnabled(false);
+        barChart.setMaxVisibleValueCount(100);
         barChart.setPinchZoom(false);
         barChart.setDrawGridBackground(false);
         barChart.setDrawValueAboveBar(true);
@@ -162,16 +155,16 @@ public class HistoryFragment extends Fragment {
         xl.setAxisMinimum(0f);
         xl.setAxisMaximum(24f);
         xl.setLabelCount(9, true);
-
         xl.setDrawGridLines(false);
 
         YAxis leftAxis = barChart.getAxisLeft();
         leftAxis.setAxisMinimum(0f);
         leftAxis.setEnabled(false);
-        leftAxis.setDrawGridLines(false);
+        leftAxis.setDrawLabels(true);
+        leftAxis.setDrawGridLines(true);
         barChart.getAxisRight().setEnabled(false);
 
-        List<BarEntry> yVals1 = new ArrayList<>();
+        final List<BarEntry> yVals1 = new ArrayList<>();
 
         Iterator it = frequency.entrySet().iterator();
         while (it.hasNext()) {
@@ -180,12 +173,11 @@ public class HistoryFragment extends Fragment {
                 yVals1.add(new BarEntry(pair.getKey(), pair.getValue()));
         }
 
-        BarDataSet set = new BarDataSet(yVals1, "BarDataSet");
+        final BarDataSet set = new BarDataSet(yVals1, "BarDataSet");
         set.setColor((Color.rgb(132, 171, 241)));
-        set.setValueFormatter(new DefaultValueFormatter(0));
-        set.setValueTextSize(14f);
-        BarData data = new BarData(set);
-        data.setDrawValues(true);
+
+        final BarData data = new BarData(set);
+        data.setDrawValues(false);
         data.setBarWidth(0.9f);
         barChart.setData(data);
         barChart.getLegend().setEnabled(false);
@@ -199,18 +191,16 @@ public class HistoryFragment extends Fragment {
         pieChart.setHighlightPerTapEnabled(true);
         pieChart.getDescription().setEnabled(false);
 
-        ArrayList<PieEntry> entries = new ArrayList<>();
-        entries.add(new PieEntry(delivered, "Consegnati"));
-        entries.add(new PieEntry(rejected, "Rifiutati"));
+        final ArrayList<PieEntry> entries = new ArrayList<>();
+        entries.add(new PieEntry(delivered, getResources().getString(R.string.text_delivered)));
+        entries.add(new PieEntry(rejected, getResources().getString(R.string.text_rejected)));
 
         PieDataSet dataSet = new PieDataSet(entries, "Orders Results");
         int[] colors = {getResources().getColor(R.color.accept, getActivity().getTheme()),
                 getResources().getColor(R.color.errorColor, getActivity().getTheme())};
         dataSet.setColors(colors);
 
-        pieChart.setUsePercentValues(true);
         pieChart.setDrawEntryLabels(false);
-        dataSet.setValueFormatter(new PercentFormatter(pieChart));
 
         PieData data = new PieData(dataSet);
         pieChart.setData(data);
@@ -218,21 +208,30 @@ public class HistoryFragment extends Fragment {
         dataSet.setSliceSpace(5f);
         dataSet.setSelectionShift(5f);
 
-        Legend legend = pieChart.getLegend();
-        legend.setVerticalAlignment(Legend.LegendVerticalAlignment.BOTTOM);
-        legend.setHorizontalAlignment(Legend.LegendHorizontalAlignment.RIGHT);
-        legend.setOrientation(Legend.LegendOrientation.VERTICAL);
-        legend.setTextSize(14f);
-        legend.setForm(Legend.LegendForm.CIRCLE);
+        dataSet.setDrawValues(false);
+        pieChart.getLegend().setEnabled(false);
 
         int total = delivered+rejected;
         pieChart.setCenterText(total + "\n" + getResources().getString(R.string.text_orders));
         pieChart.setCenterTextSize(22f);
-        data.setValueTextSize(14f);
-        Typeface typeface = ResourcesCompat.getFont(pieChart.getContext(), R.font.roboto_bold);
-        data.setValueTypeface(typeface);
-        data.setValueTextColor(Color.BLACK);
         pieChart.setNoDataText("NO ORDERS IN ARCHIVE RIGHT NOW");
         pieChart.animateXY(3000, 3000);
+
+        final int totToText = total;
+        pieChart.setOnChartValueSelectedListener(new OnChartValueSelectedListener() {
+            @Override
+            public void onValueSelected(Entry e, Highlight h) {
+                if(entries.get(0).equals(e)) {
+                    pieChart.setCenterText(delivered + "\n" + getResources().getString(R.string.text_delivered));
+                } else {
+                    pieChart.setCenterText(rejected + "\n" + getResources().getString(R.string.text_rejected));
+                }
+            }
+
+            @Override
+            public void onNothingSelected() {
+                pieChart.setCenterText(totToText + "\n" + getResources().getString(R.string.text_orders));
+            }
+        });
     }
 }
