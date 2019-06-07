@@ -186,8 +186,8 @@ public class RVAdapterReservation extends RecyclerView.Adapter<RVAdapterReservat
                 public void onClick(View v) {
                     Calendar calendar = Calendar.getInstance();
                     String monthYear = calendar.get(Calendar.MONTH) + "-" + calendar.get(Calendar.YEAR);
-                    String date = calendar.get(Calendar.YEAR) + "-" + calendar.get(Calendar.MONTH) + "-" +
-                            calendar.get(Calendar.DAY_OF_YEAR);
+                    String date = calendar.get(Calendar.YEAR) + "-" + (calendar.get(Calendar.MONTH)+1) + "-" +
+                            calendar.get(Calendar.DAY_OF_MONTH);
                     DatabaseReference databaseSelf = FirebaseDatabase.getInstance().getReference()
                             .child("archive").child("Bikers").child(firebaseUser.getUid()).child(monthYear);
                     ReservationDBBiker reservation = new ReservationDBBiker(reservations.get(pos).getReservationID(),

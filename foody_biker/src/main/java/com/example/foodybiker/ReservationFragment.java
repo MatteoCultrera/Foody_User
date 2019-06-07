@@ -295,8 +295,8 @@ public class ReservationFragment extends Fragment {
 
                     Calendar calendar = Calendar.getInstance();
                     String monthYear = calendar.get(Calendar.MONTH) + "-" + calendar.get(Calendar.YEAR);
-                    String date = calendar.get(Calendar.YEAR) + "-" + calendar.get(Calendar.MONTH) + "-" +
-                            calendar.get(Calendar.DAY_OF_YEAR);
+                    String date = calendar.get(Calendar.YEAR) + "-" + (calendar.get(Calendar.MONTH)+1) + "-" +
+                            calendar.get(Calendar.DAY_OF_MONTH);
                     DatabaseReference databaseRest = FirebaseDatabase.getInstance().getReference()
                             .child("archive").child("Bikers").child(firebaseUser.getUid()).child(monthYear);
                     ReservationDBBiker reservation = new ReservationDBBiker(copyReservation.getReservationID(),
