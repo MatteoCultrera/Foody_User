@@ -7,7 +7,9 @@ import android.os.Environment;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v7.app.AppCompatActivity;
+import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.View;
 import android.view.WindowManager;
 import android.widget.Toast;
@@ -76,9 +78,13 @@ public class ShowReviewsActivity extends AppCompatActivity {
 
         loadingAppear();
 
+        Log.d("PROVAREVIEWS", "loading appear");
         if(storage.exists()){
+            Log.d("PROVAREVIEWS", "storage exist");
             fetchReviews(true);
         }else{
+            storage.mkdirs();
+            Log.d("PROVAREVIEWS", "storage doesn't exist");
             imagesToFetch = 0;
             imagesFetched = 0;
             fetchReviews(false);
@@ -102,30 +108,41 @@ public class ShowReviewsActivity extends AppCompatActivity {
 
     private void loadingDisappear(){
         dialog.dismiss();
+        Log.d("PROVAREVIEWS", ""+reviews.size());
+        LinearLayoutManager llm = new LinearLayoutManager(this);
+        recyclerView.setLayoutManager(llm);
         adapterReview = new RVAdapterReview(reviews);
         recyclerView.setAdapter(adapterReview);
         recyclerView.setVisibility(View.VISIBLE);
     }
 
     private void fetchReviews(final boolean hasImages){
+        Log.d("PROVAREVIEWS", "entered");
         DatabaseReference database = FirebaseDatabase.getInstance().getReference().child("reviews");
         Query query = database.child(firebaseUser.getUid());
+        Log.d("PROVAREVIEWS", firebaseUser.getUid());
         query.addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                Log.d("PROVAREVIEWS", ""+dataSnapshot.getKey());
                 for(DataSnapshot singleReview : dataSnapshot.getChildren()){
+                    Log.d("PROVAREVIEWS", "review "+singleReview.getKey());
                     Review review = singleReview.getValue(Review.class);
-
+                    Log.d("PROVAREVIEWS", "image path " + review.getImagePath());
                     if(review.getImagePath() != null && !hasImages){
                         if(!imagesPath.contains(review.getImagePath())){
+                            Log.d("PROVAREVIEWS", "image added");
+                            imagesPath.add(review.getImagePath());
                             imagesToFetch++;
                         }
                     }
-                    review.setImagePath(storage.getPath()+File.separator);
                     reviews.add(review);
                 }
 
+                Log.d("PROVAREVIEWS", "images to fetch: " + imagesToFetch);
+
                 if(hasImages){
+                    Log.d("PROVAREVIEWS", "i have images");
                     for(Review r : reviews){
                         if(r.getImagePath() != null)
                             if(r.getImagePath().length() > 0)
@@ -135,6 +152,7 @@ public class ShowReviewsActivity extends AppCompatActivity {
                     if(allImages)
                         loadingDisappear();
                 }else{
+                    Log.d("PROVAREVIEWS", "don't have images");
                     for(String s : imagesPath)
                         fetchImage(s);
                 }
@@ -153,7 +171,10 @@ public class ShowReviewsActivity extends AppCompatActivity {
         if(imagePath.length() <= 0)
             return;
 
-        String userId = imagePath.split("/")[2].split(".")[0].substring(0,28);
+        Log.d("PROVAREVIEWS", "image path " + imagePath);
+        String userId = imagePath.split("/")[2].substring(0,28);
+        Log.d("PROVAREVIEWS", "downloading image for "+userId);
+        Log.d("PROVAREVIEWS", "storage path " + storage.getPath()+File.separator+userId+".jpg");
         final File userProfile = new File(storage.getPath()+File.separator+userId+".jpg");
         StorageReference mStorageRef = FirebaseStorage.getInstance().getReference();
         mStorageRef.child(imagePath).getFile(userProfile)
@@ -161,6 +182,7 @@ public class ShowReviewsActivity extends AppCompatActivity {
                     @Override
                     public void onComplete(@NonNull Task<FileDownloadTask.TaskSnapshot> task) {
                         imagesFetched++;
+                        Log.d("PROVAREVIEWS", "imageToFetch: " + imagesToFetch + " imagesFetched: " + imagesFetched);
                         for(Review r : reviews){
                             if(r.getImagePath().equals(imagePath)){
                                 if(task.isSuccessful())
@@ -169,6 +191,7 @@ public class ShowReviewsActivity extends AppCompatActivity {
                                     r.setImagePath(null);
                             }
                         }
+                        Log.d("PROVAREVIEWS", "set all the images");
                         if(imagesFetched==imagesToFetch){
                             prefs.edit().putBoolean("reviewsImages",true).apply();
                             loadingDisappear();
