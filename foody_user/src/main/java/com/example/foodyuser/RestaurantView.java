@@ -6,6 +6,7 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.content.res.ColorStateList;
 import android.net.Uri;
 import android.os.Environment;
 import android.support.annotation.NonNull;
@@ -15,10 +16,12 @@ import android.support.design.button.MaterialButton;
 import android.support.design.widget.AppBarLayout;
 import android.support.design.widget.CollapsingToolbarLayout;
 import android.support.design.widget.CoordinatorLayout;
+import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.TabLayout;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentPagerAdapter;
+import android.support.v4.content.ContextCompat;
 import android.support.v4.view.ViewPager;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
@@ -92,7 +95,8 @@ public class RestaurantView extends AppCompatActivity {
     private int reviewsImageToFetch;
     private int reviewsImageFetched;
     private TextView totalText, price;
-    private ConstraintLayout totalLayout, addReview, favouriteLayout;
+    private ConstraintLayout totalLayout, addReview;
+    private FloatingActionButton favouriteLayout;
     private final String RESTAURANT_IMAGES = "RestaurantImages";
     int session;
     private boolean reviewAdded = false;
@@ -117,7 +121,7 @@ public class RestaurantView extends AppCompatActivity {
         appBarLayout = findViewById(R.id.htab_appbar);
         totalText = findViewById(R.id.price_show_frag);
         totalLayout = findViewById(R.id.price_show_layout_frag);
-        favouriteLayout = findViewById(R.id.favourite_add_layout);
+        favouriteLayout = findViewById(R.id.favourite_add);
         price = findViewById(R.id.restaurant_del_price_frag);
         addReview = findViewById(R.id.add_review);
         addReviewLoading = findViewById(R.id.add_review_loading);
@@ -154,8 +158,10 @@ public class RestaurantView extends AppCompatActivity {
                 hasDownloaded = false;
             }
         });
+
         showMenu.setFather(this);
         showReview.setFather(this);
+        setFAB();
         setupViewPager(viewPager);
         viewPager.setOffscreenPageLimit(3);
         tabs.post(new Runnable() {
@@ -172,17 +178,17 @@ public class RestaurantView extends AppCompatActivity {
                 switch (tab.getPosition()){
                     case 0:
                         totalLayout.setVisibility(View.VISIBLE);
-                        favouriteLayout.setVisibility(View.VISIBLE);
+                        favouriteLayout.show();
                         addReview.setVisibility(View.GONE);
                         break;
                     case 1:
                         totalLayout.setVisibility(View.GONE);
-                        favouriteLayout.setVisibility(View.GONE);
+                        favouriteLayout.hide();
                         addReview.setVisibility(View.VISIBLE);
                         break;
                     default:
                         totalLayout.setVisibility(View.GONE);
-                        favouriteLayout.setVisibility(View.GONE);
+                        favouriteLayout.hide();
                         addReview.setVisibility(View.GONE);
                         break;
                 }
@@ -218,12 +224,14 @@ public class RestaurantView extends AppCompatActivity {
                             public void onComplete(@NonNull Task<Void> task) {
                                 isFavourite = true;
                                 hasDownloaded = true;
+                                setFAB();
                             }
                         }).addOnFailureListener(new OnFailureListener() {
                             @Override
                             public void onFailure(@NonNull Exception e) {
                                 isFavourite = false;
                                 hasDownloaded = true;
+                                setFAB();
                             }
                         });
                     } else {
@@ -232,12 +240,14 @@ public class RestaurantView extends AppCompatActivity {
                             public void onComplete(@NonNull Task<Void> task) {
                                 isFavourite = false;
                                 hasDownloaded = true;
+                                setFAB();
                             }
                         }).addOnFailureListener(new OnFailureListener() {
                             @Override
                             public void onFailure(@NonNull Exception e) {
                                 isFavourite = true;
                                 hasDownloaded = true;
+                                setFAB();
                             }
                         });
                     }
@@ -320,6 +330,18 @@ public class RestaurantView extends AppCompatActivity {
             showMenu.init(cards);
         }
 
+    }
+
+    private void setFAB(){
+        if(isFavourite){
+            favouriteLayout.setBackgroundTintList(getColorStateList(R.color.heart_red));
+            favouriteLayout.setImageDrawable(getResources().getDrawable(R.drawable.heart_fill, getTheme()));
+        }else{
+            favouriteLayout.setBackgroundTintList(getColorStateList(R.color.colorAccent));
+            favouriteLayout.setImageDrawable(getResources().getDrawable(R.drawable.heart_empty, getTheme()));
+        }
+        favouriteLayout.hide();
+        favouriteLayout.show();
     }
 
     public void disableAddReview(){
@@ -461,18 +483,18 @@ public class RestaurantView extends AppCompatActivity {
                                 remotePath, notes, meanPoints);
 
                         final DatabaseReference meanFoodQuality = FirebaseDatabase.getInstance().getReference()
-                                .child("restaurantsInfo").child(thisRestaurant.getUid()).child("info").child("meanFoodQuality");
+                                .child("restaurantsInfo").child(thisRestaurant.getUid()).child("meanFoodQuality");
 
                         final DatabaseReference meanRestaurantService = FirebaseDatabase.getInstance().getReference()
-                                .child("restaurantsInfo").child(thisRestaurant.getUid()).child("info").child("meanRestaurantService");
+                                .child("restaurantsInfo").child(thisRestaurant.getUid()).child("meanRestaurantService");
 
 
                         final DatabaseReference meanDeliveryTime = FirebaseDatabase.getInstance().getReference()
-                                .child("restaurantsInfo").child(thisRestaurant.getUid()).child("info").child("meanDeliveryTime");
+                                .child("restaurantsInfo").child(thisRestaurant.getUid()).child("meanDeliveryTime");
 
 
                         final DatabaseReference totalReviews = FirebaseDatabase.getInstance().getReference()
-                                .child("restaurantsInfo").child(thisRestaurant.getUid()).child("info").child("totalReviews");
+                                .child("restaurantsInfo").child(thisRestaurant.getUid()).child("totalReviews");
 
 
                         meanFoodQuality.runTransaction(new Transaction.Handler() {
@@ -1139,7 +1161,6 @@ public class RestaurantView extends AppCompatActivity {
                                 if (imagePath.length() > 0 && !imageLocale.exists()) {
                                     usersWithImages.put(r.getUserID(), imagePath);
                                     r.setImagePath(storage.getPath() + File.separator + r.getUserID() + ".jpg");
-
                                     Log.d("PROVATRE","added image pats to "+username+" remote");
                                 } else{
                                     r.setImagePath(imageLocale.getPath());
