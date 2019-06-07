@@ -284,9 +284,9 @@ public class SearchRestaurant extends AppCompatActivity {
                     }
 
                     if(ds.child("meanDeliveryTime").exists() && ds.child("meanFoodQuality").exists() && ds.child("meanRestaurantService").exists() && totalReviews!=-1){
-                        Double meanDeliveryTime = ds1.child("meanDeliveryTime").getValue(Double.class);
-                        Double meanFoodQuality = ds1.child("meanFoodQuality").getValue(Double.class);
-                        Double meanRestaurantService = ds1.child("meanRestaurantService").getValue(Double.class);
+                        Double meanDeliveryTime = ds.child("meanDeliveryTime").getValue(Double.class);
+                        Double meanFoodQuality = ds.child("meanFoodQuality").getValue(Double.class);
+                        Double meanRestaurantService = ds.child("meanRestaurantService").getValue(Double.class);
                         restaurant.setMeanDeliveryTime(meanDeliveryTime/totalReviews);
                         restaurant.setMeanDeliveryTime(meanFoodQuality/totalReviews);
                         restaurant.setMeanDeliveryTime(meanRestaurantService/totalReviews);

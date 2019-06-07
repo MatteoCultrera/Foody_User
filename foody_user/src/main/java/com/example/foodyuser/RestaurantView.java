@@ -972,28 +972,29 @@ public class RestaurantView extends AppCompatActivity {
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
                 if (set!=session)
                     return;
-                for (DataSnapshot ds : dataSnapshot.getChildren()) {
-                    thisRestaurant = ds.getValue(Restaurant.class);
-                    //cuisines.setText(thisRestaurant.getKitchensString());
-                    //deliveryPrice.setText(thisRestaurant.getDeliveryPriceString());
-                    //distance.setText(thisRestaurant.getDistanceString());
-                    thisRestaurant.setUid(dataSnapshot.getKey());
-                    File root = getExternalFilesDir(Environment.DIRECTORY_PICTURES);
-                    File dir = new File(root.getPath()+File.separator+RESTAURANT_IMAGES);
-                    thisRestaurant.setImagePath(dir.getPath()+File.separator+thisRestaurant.getUid()+".jpg");
-                    File imageFile = new File(thisRestaurant.getImagePath());
-                    RequestOptions options = new RequestOptions();
-                    options.signature(new ObjectKey(thisRestaurant.getImagePath()+" "+imageFile.lastModified()));
+                DataSnapshot ds = dataSnapshot.child("info");
 
-                    if(thisRestaurant.getImagePath()!=null){
-                        Glide
-                                .with(toolbar.getContext())
-                                .setDefaultRequestOptions(options)
-                                .load(thisRestaurant.getImagePath())
-                                .into(background);
-                    }
+                thisRestaurant = ds.getValue(Restaurant.class);
+                //cuisines.setText(thisRestaurant.getKitchensString());
+                //deliveryPrice.setText(thisRestaurant.getDeliveryPriceString());
+                //distance.setText(thisRestaurant.getDistanceString());
+                thisRestaurant.setUid(dataSnapshot.getKey());
+                File root = getExternalFilesDir(Environment.DIRECTORY_PICTURES);
+                File dir = new File(root.getPath()+File.separator+RESTAURANT_IMAGES);
+                thisRestaurant.setImagePath(dir.getPath()+File.separator+thisRestaurant.getUid()+".jpg");
+                File imageFile = new File(thisRestaurant.getImagePath());
+                RequestOptions options = new RequestOptions();
+                options.signature(new ObjectKey(thisRestaurant.getImagePath()+" "+imageFile.lastModified()));
 
+                if(thisRestaurant.getImagePath()!=null){
+                    Glide
+                            .with(toolbar.getContext())
+                            .setDefaultRequestOptions(options)
+                            .load(thisRestaurant.getImagePath())
+                            .into(background);
                 }
+
+
                 toolbar.setTitle(thisRestaurant.getUsername());
                 Log.d("VANGOGH",""+thisRestaurant.getUid());
                 showInfo.init(thisRestaurant);
