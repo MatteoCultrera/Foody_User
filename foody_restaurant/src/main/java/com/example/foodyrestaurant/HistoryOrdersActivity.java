@@ -7,6 +7,7 @@ import android.support.annotation.NonNull;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.View;
 import android.widget.ImageButton;
 import android.widget.TextView;
@@ -26,6 +27,8 @@ import com.google.firebase.storage.StorageReference;
 
 import java.io.File;
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Comparator;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -121,6 +124,11 @@ public class HistoryOrdersActivity extends AppCompatActivity {
 
                 for (DataSnapshot ds: dataSnapshot.getChildren()){
 
+                    if(!ds.child("date").exists()){
+                        Log.d("SUPERAUTO","No Date, No Fetch");
+                        continue;
+                    }
+
                     ReservationDBRestaurant reservationDB = ds.getValue(ReservationDBRestaurant.class);
                     ArrayList<Dish> dishes = new ArrayList<>();
                     for (OrderItem o : reservationDB.getDishesOrdered()) {
@@ -147,11 +155,19 @@ public class HistoryOrdersActivity extends AppCompatActivity {
                     reservation.setUserUID(reservationDB.getReservationID().substring(0, 28));
                     reservation.setDeliveryTime(reservationDB.getOrderTime());
                     reservation.setTotalPrice(reservationDB.getTotalCost());
+                    reservation.setDate(ds.child("date").getValue(String.class));
+                    reservation.setISOdate(getISODate(ds.child("date").getValue(String.class),reservationDB.getOrderTimeBiker()));
                     reservation.setRestaurantAddress(shared.getString("address", null));
                     reservation.setRestaurantName(shared.getString("name", null));
                     reservations.add(reservation);
 
                 }
+
+                reservations.sort( new Comparator<Reservation>() {
+                    public int compare(Reservation r1, Reservation r2){
+                        return  r1.getISOdate().compareTo(r2.getISOdate());
+                    }
+                });
 
                 if(!isPaused){
                     //ALL SET UP
@@ -170,6 +186,19 @@ public class HistoryOrdersActivity extends AppCompatActivity {
             }
         });
 
+    }
+
+    private String getISODate(String date, String time){
+
+        String[] nums = date.split("-");
+        int day = Integer.valueOf(nums[2]);
+        int month = Integer.valueOf(nums[1]);
+        int year = Integer.valueOf(nums[0]);
+        String times[] = time.split(":");
+        int hour = Integer.valueOf(times[0]);
+        int minute = Integer.valueOf(times[1]);
+
+        return String.format("%d-%02d-%02dT%02d:%02d:00.000",year,month,day,hour,minute);
     }
 
     private String getMonthLong(String value){
