@@ -245,6 +245,8 @@ public class RVAdapterRes extends RecyclerView.Adapter<RVAdapterRes.CardViewHold
 
                 Calendar calendar = Calendar.getInstance();
                 String monthYear = calendar.get(Calendar.MONTH) + "-" + calendar.get(Calendar.YEAR);
+                String date = calendar.get(Calendar.YEAR) + "-" + calendar.get(Calendar.MONTH) + "-" +
+                        calendar.get(Calendar.DAY_OF_YEAR);
                 DatabaseReference databaseRest = FirebaseDatabase.getInstance().getReference()
                         .child("archive").child("restaurant").child(firebaseUser.getUid()).child(monthYear);
                 HashMap<String, Object> childRest = new HashMap<>();
@@ -253,6 +255,7 @@ public class RVAdapterRes extends RecyclerView.Adapter<RVAdapterRes.CardViewHold
                         reservations.get(pos).getUserName(), reservations.get(pos).getDeliveryTime(),
                         reservations.get(pos).getOrderTime(), "Done",
                         reservations.get(pos).getUserAddress(), reservations.get(pos).getTotalPrice());
+                reservationRest.setDate(date);
                 childRest.put(reservationID, reservationRest);
                 databaseRest.updateChildren(childRest).addOnFailureListener(new OnFailureListener() {
                     @Override

@@ -295,6 +295,8 @@ public class ReservationFragment extends Fragment {
 
                     Calendar calendar = Calendar.getInstance();
                     String monthYear = calendar.get(Calendar.MONTH) + "-" + calendar.get(Calendar.YEAR);
+                    String date = calendar.get(Calendar.YEAR) + "-" + calendar.get(Calendar.MONTH) + "-" +
+                            calendar.get(Calendar.DAY_OF_YEAR);
                     DatabaseReference databaseRest = FirebaseDatabase.getInstance().getReference()
                             .child("archive").child("Bikers").child(firebaseUser.getUid()).child(monthYear);
                     ReservationDBBiker reservation = new ReservationDBBiker(copyReservation.getReservationID(),
@@ -302,6 +304,7 @@ public class ReservationFragment extends Fragment {
                             copyReservation.getRestaurantName(), copyReservation.getUserName(),
                             copyReservation.getRestaurantAddress(), copyReservation.getUserAddress(),
                             copyReservation.getRestaurantID());
+                    reservation.setDate(date);
                     reservation.setStatus("delivered");
                     HashMap<String, Object> childSelf = new HashMap<>();
                     childSelf.put(copyReservation.getReservationID(), reservation);

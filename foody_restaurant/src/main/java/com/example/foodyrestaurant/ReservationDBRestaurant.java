@@ -18,6 +18,7 @@ public class ReservationDBRestaurant {
     private String totalCost;
     private boolean biker;
     private boolean waitingBiker;
+    private String date;
 
     public ReservationDBRestaurant() {}
 
@@ -34,6 +35,14 @@ public class ReservationDBRestaurant {
         this.status = status;
         this.userAddress = userAddress;
         this.totalCost = totalCost;
+    }
+
+    public String getDate() {
+        return date;
+    }
+
+    public void setDate(String date) {
+        this.date = date;
     }
 
     public boolean isBiker() {

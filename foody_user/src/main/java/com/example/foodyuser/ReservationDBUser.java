@@ -14,6 +14,7 @@ public class ReservationDBUser {
     private String totalCost;
     private String restaurantName;
     private String restaurantAddress;
+    private String date;
 
     public ReservationDBUser() {
     }
@@ -27,6 +28,14 @@ public class ReservationDBUser {
         this.orderTime = orderTime;
         this.status = status;
         this.totalCost = totalCost;
+    }
+
+    public String getDate() {
+        return date;
+    }
+
+    public void setDate(String date) {
+        this.date = date;
     }
 
     public String getRestaurantAddress() {

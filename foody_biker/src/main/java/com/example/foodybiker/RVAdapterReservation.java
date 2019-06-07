@@ -186,7 +186,8 @@ public class RVAdapterReservation extends RecyclerView.Adapter<RVAdapterReservat
                 public void onClick(View v) {
                     Calendar calendar = Calendar.getInstance();
                     String monthYear = calendar.get(Calendar.MONTH) + "-" + calendar.get(Calendar.YEAR);
-
+                    String date = calendar.get(Calendar.YEAR) + "-" + calendar.get(Calendar.MONTH) + "-" +
+                            calendar.get(Calendar.DAY_OF_YEAR);
                     DatabaseReference databaseSelf = FirebaseDatabase.getInstance().getReference()
                             .child("archive").child("Bikers").child(firebaseUser.getUid()).child(monthYear);
                     ReservationDBBiker reservation = new ReservationDBBiker(reservations.get(pos).getReservationID(),
@@ -194,6 +195,7 @@ public class RVAdapterReservation extends RecyclerView.Adapter<RVAdapterReservat
                             reservations.get(pos).getRestaurantName(), reservations.get(pos).getUserName(),
                             reservations.get(pos).getRestaurantAddress(), reservations.get(pos).getUserAddress(),
                             reservations.get(pos).getRestaurantID());
+                    reservation.setDate(date);
                     HashMap<String, Object> childSelf = new HashMap<>();
                     reservation.setStatus("rejected");
                     childSelf.put(reservations.get(pos).getReservationID(), reservation);
