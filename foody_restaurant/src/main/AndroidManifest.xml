@@ -23,6 +23,7 @@
         android:theme="@style/AppTheme">
         <activity android:name=".HistoryPickMonth"></activity>
         <activity android:name=".HistoryOrdersActivity" />
+        <activity android:name=".ShowReviewsActivity"/>
         <activity android:name=".ChooseBikerActivity"></activity>
         <activity
             android:name=".Login"
