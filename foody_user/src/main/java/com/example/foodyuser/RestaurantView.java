@@ -660,6 +660,18 @@ public class RestaurantView extends AppCompatActivity {
                             }
                         });
 
+                        //New node for the user reviews
+                        final FirebaseAuth firebaseAuth = FirebaseAuth.getInstance();
+                        final FirebaseUser firebaseUser = firebaseAuth.getCurrentUser();
+                        DatabaseReference databaseReview = FirebaseDatabase.getInstance().getReference()
+                                .child("userReviews").child(firebaseUser.getUid());
+                        HashMap<String, Object> userReviews = new HashMap<>();
+                        Review userRev;
+                        userRev = remoteReview;
+                        userRev.setRestName(thisRestaurant.getUsername());
+                        userRev.setImagePathRest(thisRestaurant.getImagePath());
+                        userReviews.put(identifier, remoteReview);
+                        databaseReview.updateChildren(userReviews);
 
                         button.animate().translationY(-getResources().getDimensionPixelSize(R.dimen.short200)).withEndAction(new Runnable() {
                             @Override
