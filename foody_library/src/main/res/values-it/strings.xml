@@ -148,4 +148,6 @@
     <string name="restaurant_service">Servizio del Ristorante:</string>
     <string name="delivery_time_hint">Tempo di consegna:</string>
     <string name="no_reviews">Non hai ancora recensioni</string>
+
+    <string name="db_error_message">Errore nella connessione con il DB!</string>
 </resources>

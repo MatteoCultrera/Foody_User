@@ -25,6 +25,7 @@
         <activity android:name=".HistoryOrdersActivity" />
         <activity android:name=".SearchRestaurant" />
         <activity android:name=".RestaurantView" />
+        <activity android:name=".ShowUserReviewActivity"/>
         <activity
             android:name=".Login"
             android:screenOrientation="portrait"

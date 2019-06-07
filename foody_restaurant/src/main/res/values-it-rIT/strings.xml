@@ -87,6 +87,5 @@
 
     <string name="orders_history">Storico Ordini</string>
 
-    <string name="db_error_message">Errore nella connessione con il DB!</string>
     <string name="your_reviews">Commenti ricevuti</string>
 </resources>
