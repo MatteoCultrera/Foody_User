@@ -15,6 +15,7 @@ import android.view.WindowManager;
 import android.widget.Toast;
 
 import com.example.foody_library.Review;
+import com.github.ybq.android.spinkit.SpinKitView;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
@@ -42,16 +43,17 @@ public class ShowReviewsActivity extends AppCompatActivity {
     private FirebaseUser firebaseUser;
     private SharedPreferences prefs;
     private ArrayList<String> imagesPath;
-    private Dialog dialog;
     private boolean allImages;
     private int imagesToFetch, imagesFetched;
     private File storage;
     private String USERS_IMAGE_REVIEWS = "userProfileImages";
+    private SpinKitView loading;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_show_reviews);
+        loading = findViewById(R.id.loading_reviews);
         recyclerView = findViewById(R.id.list_reviews);
         prefs = getApplicationContext().getSharedPreferences("myPreference", MODE_PRIVATE);
         firebaseUser = FirebaseAuth.getInstance().getCurrentUser();
@@ -92,22 +94,12 @@ public class ShowReviewsActivity extends AppCompatActivity {
     }
 
     private void loadingAppear(){
-        dialog = new Dialog(this);
-        dialog.setContentView(R.layout.loading_dialog);
-        WindowManager.LayoutParams lp = new WindowManager.LayoutParams();
-        lp.copyFrom(dialog.getWindow().getAttributes());
-        lp.width = WindowManager.LayoutParams.MATCH_PARENT;
-        lp.height = WindowManager.LayoutParams.MATCH_PARENT;
-        dialog.setCancelable(false);
-        dialog.show();
-        dialog.getWindow().setAttributes(lp);
-        dialog.getWindow().setBackgroundDrawableResource(android.R.color.transparent);
-
+        loading.setVisibility(View.VISIBLE);
         recyclerView.setVisibility(View.GONE);
     }
 
     private void loadingDisappear(){
-        dialog.dismiss();
+        loading.setVisibility(View.GONE);
         Log.d("PROVAREVIEWS", ""+reviews.size());
         LinearLayoutManager llm = new LinearLayoutManager(this);
         recyclerView.setLayoutManager(llm);
