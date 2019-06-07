@@ -89,7 +89,7 @@ public class RVAdapterRes extends RecyclerView.Adapter<RVAdapterRes.CardViewHold
         String orderId = (first2Letters + lastFour).toUpperCase();
         pvh.idOrder.setText(orderId);
         pvh.status.setText(reservations.get(i).getPreparationStatusString());
-        pvh.time.setText(reservations.get(i).getOrderTime());
+        pvh.time.setText(reservations.get(i).getOrderTime()+"\n");
         pvh.userName.setText(reservations.get(i).getUserName());
 
         if(reservations.get(i).getResNote() == null) {

@@ -152,6 +152,7 @@ public class RestaurantView extends AppCompatActivity {
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
                 isFavourite = dataSnapshot.child(reName).exists();
                 hasDownloaded = true;
+                setFAB();
             }
 
             @Override
@@ -162,7 +163,10 @@ public class RestaurantView extends AppCompatActivity {
 
         showMenu.setFather(this);
         showReview.setFather(this);
-        setFAB();
+        if(!hasDownloaded)
+            favouriteLayout.hide();
+        else
+            favouriteLayout.show();
         setupViewPager(viewPager);
         viewPager.setOffscreenPageLimit(3);
         tabs.post(new Runnable() {
