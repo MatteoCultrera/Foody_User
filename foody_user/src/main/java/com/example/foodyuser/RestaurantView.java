@@ -108,6 +108,7 @@ public class RestaurantView extends AppCompatActivity {
     private AtomicInteger counter;
     private boolean hasDownloaded;
     private boolean isFavourite;
+    private String remoteImagePath;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -151,6 +152,7 @@ public class RestaurantView extends AppCompatActivity {
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
                 isFavourite = dataSnapshot.child(reName).exists();
                 hasDownloaded = true;
+                setFAB();
             }
 
             @Override
@@ -161,7 +163,10 @@ public class RestaurantView extends AppCompatActivity {
 
         showMenu.setFather(this);
         showReview.setFather(this);
-        setFAB();
+        if(!hasDownloaded)
+            favouriteLayout.hide();
+        else
+            favouriteLayout.show();
         setupViewPager(viewPager);
         viewPager.setOffscreenPageLimit(3);
         tabs.post(new Runnable() {
@@ -669,7 +674,7 @@ public class RestaurantView extends AppCompatActivity {
                         Review userRev;
                         userRev = remoteReview;
                         userRev.setRestName(thisRestaurant.getUsername());
-                        userRev.setImagePathRest(thisRestaurant.getImagePath());
+                        userRev.setImagePathRest(remoteImagePath);
                         userReviews.put(identifier, remoteReview);
                         databaseReview.updateChildren(userReviews).addOnSuccessListener(new OnSuccessListener<Void>() {
                             @Override
@@ -685,7 +690,7 @@ public class RestaurantView extends AppCompatActivity {
                         }).addOnFailureListener(new OnFailureListener() {
                             @Override
                             public void onFailure(@NonNull Exception e) {
-                                Toast.makeText(getApplicationContext(),"Error Adding Review",Toast.LENGTH_SHORT);
+                                Toast.makeText(getApplicationContext(),"Error Adding Review",Toast.LENGTH_SHORT).show();
                                 counter.getAndIncrement();
                                 if(counter.intValue() == 6 && !isOnPause){
                                     enableAddReview();
@@ -1014,6 +1019,7 @@ public class RestaurantView extends AppCompatActivity {
                 //deliveryPrice.setText(thisRestaurant.getDeliveryPriceString());
                 //distance.setText(thisRestaurant.getDistanceString());
                 thisRestaurant.setUid(dataSnapshot.getKey());
+                remoteImagePath = thisRestaurant.getImagePath();
                 File root = getExternalFilesDir(Environment.DIRECTORY_PICTURES);
                 File dir = new File(root.getPath()+File.separator+RESTAURANT_IMAGES);
                 thisRestaurant.setImagePath(dir.getPath()+File.separator+thisRestaurant.getUid()+".jpg");

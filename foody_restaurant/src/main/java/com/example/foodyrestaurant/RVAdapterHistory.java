@@ -57,6 +57,16 @@ public class RVAdapterHistory extends RecyclerView.Adapter<RVAdapterHistory.Card
         return new RVAdapterHistory.CardViewHolder(v);
     }
 
+    private String getDate(String date){
+        String[] nums = date.split("-");
+        int day = Integer.valueOf(nums[2]);
+        int month = Integer.valueOf(nums[1]);
+        int year = Integer.valueOf(nums[0]);
+
+        return String.format("%02d/%02d/%d",day, month, year);
+
+    }
+
     @Override
     public void onBindViewHolder(@NonNull final RVAdapterHistory.CardViewHolder pvh, int i) {
         final Context context = pvh.cv.getContext();
@@ -80,7 +90,13 @@ public class RVAdapterHistory extends RecyclerView.Adapter<RVAdapterHistory.Card
         String orderId = (first2Letters + lastFour).toUpperCase();
         pvh.idOrder.setText(orderId);
         pvh.status.setText(reservations.get(i).getPreparationStatusString());
-        pvh.time.setText(reservations.get(i).getOrderTime());
+        pvh.time.setText(getDate(reservations.get(i).getDate())+"\n"+reservations.get(i).getOrderTime());
+
+        if(reservations.get(i).isAccepted())
+            pvh.time.setTextColor(context.getResources().getColor(R.color.accept, context.getTheme()));
+        else
+            pvh.time.setTextColor(context.getResources().getColor(R.color.heart_red, context.getTheme()));
+
         pvh.userName.setText(reservations.get(i).getUserName());
 
         if(reservations.get(i).getResNote() == null) {

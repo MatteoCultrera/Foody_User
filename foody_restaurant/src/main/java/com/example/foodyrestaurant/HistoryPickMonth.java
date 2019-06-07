@@ -77,10 +77,20 @@ public class HistoryPickMonth extends AppCompatActivity {
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
                 for(DataSnapshot ds : dataSnapshot.getChildren()){
-                    Log.d("DATAFETCH",""+ds.getKey());
+
+                    Log.d("SUPERAUTO","Fetching Month "+ds.getKey());
                     Pattern pattern = Pattern.compile("[0-9]+-[0-9]+");
                     Matcher matcher = pattern.matcher(ds.getKey());
                     if(matcher.matches()){
+                        boolean hasDates = false;
+                        for(DataSnapshot s : ds.getChildren()){
+                            if(s.child("date").exists()) {
+                                hasDates = true;
+                            }
+                        }
+                        if(!hasDates)
+                            continue;
+                        Log.d("SUPERAUTO",ds.getKey()+" matches");
                         String[] parts = ds.getKey().split("-");
                         String month = parts[0];
                         String year = parts[1];
@@ -93,6 +103,7 @@ public class HistoryPickMonth extends AppCompatActivity {
                         }
                     }
                 }
+
 
                 if(calendar.keySet().size() == 0){
                     Log.d("PROVA","NO History");
