@@ -7,15 +7,18 @@ import android.os.Environment;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
+import android.support.v7.widget.CardView;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.ImageButton;
+import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.bumptech.glide.Glide;
 import com.google.android.libraries.places.api.Places;
 import com.google.android.libraries.places.api.model.Place;
 import com.google.android.libraries.places.widget.Autocomplete;
@@ -33,9 +36,11 @@ public class DiscoverFragment extends Fragment {
     private static final int AUTOCOMPLETE_REQUEST_CODE = 9;
 
     private ImageButton searchButton;
-    private TextView address;
+    private TextView address, insertDelivDiscovery;
     private boolean setted = false;
     private SharedPreferences.Editor edit;
+    private ImageView house, mainBackground;
+    private CardView cardOrderHome;
     private final String RESTAURANT_IMAGES = "RestaurantImages";
 
     public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
@@ -57,6 +62,10 @@ public class DiscoverFragment extends Fragment {
         edit = sharedPref.edit();
         searchButton = view.findViewById(R.id.discover_search_button);
         address = view.findViewById(R.id.discover_search_address);
+        house = view.findViewById(R.id.house_discover);
+        mainBackground = view.findViewById(R.id.main_image);
+        cardOrderHome = view.findViewById(R.id.deliver_home_card);
+        insertDelivDiscovery = view.findViewById(R.id.insert_deliv_discover);
 
         searchButton.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -89,6 +98,43 @@ public class DiscoverFragment extends Fragment {
             }
         });
 
+        if(sharedPref.contains("address")){
+            Glide
+                    .with(view)
+                    .load(R.drawable.house_icon)
+                    .into(house);
+
+            insertDelivDiscovery.setText(getString(R.string.insert_deliv_address));
+            cardOrderHome.setVisibility(View.VISIBLE);
+            cardOrderHome.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    Intent intent = new Intent(getActivity(), SearchRestaurant.class);
+                    File root = v.getContext().getExternalFilesDir(Environment.DIRECTORY_PICTURES);
+                    File directory = new File(root.getPath()+File.separator+RESTAURANT_IMAGES);
+                    sharedPref.edit().remove("positionSearch").apply();
+                    if(directory.exists()){
+                        for(File child: directory.listFiles())
+                            child.delete();
+                        directory.delete();
+                    }
+                    sharedPref.edit().putBoolean("restaurantFetches",false).apply();
+                    //Delete Image directory
+                    sharedPref.edit().putString("delivery_address", sharedPref.getString("address","")).apply();
+                    startActivity(intent);
+                }
+            });
+
+        }else{
+            cardOrderHome.setVisibility(View.GONE);
+            insertDelivDiscovery.setText(getString(R.string.insert_deliv_address_no_home));
+        }
+
+
+        Glide
+                .with(view)
+                .load(R.drawable.main_screen_background)
+                .into(mainBackground);
     }
 
     public void addressActivity() {
