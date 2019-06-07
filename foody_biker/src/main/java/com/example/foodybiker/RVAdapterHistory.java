@@ -51,6 +51,23 @@ public class RVAdapterHistory extends RecyclerView.Adapter<RVAdapterHistory.Card
         pvh.userName.setText(currentRes.getUserName());
         pvh.userAddress.setText(currentRes.getUserAddress());
         pvh.userTime.setText(currentRes.getUserDeliveryTime());
+        pvh.date.setVisibility(View.VISIBLE);
+        pvh.date.setText(getDate(currentRes.getDate()));
+        if(currentRes.isAccepted())
+            pvh.date.setTextColor(pvh.date.getContext().getResources().getColor(R.color.accept, pvh.date.getContext().getTheme()));
+        else
+            pvh.date.setTextColor(pvh.date.getContext().getResources().getColor(R.color.heart_red, pvh.date.getContext().getTheme()));
+
+    }
+
+    private String getDate(String date){
+        String[] nums = date.split("-");
+        int day = Integer.valueOf(nums[2]);
+        int month = Integer.valueOf(nums[1]);
+        int year = Integer.valueOf(nums[0]);
+
+        return String.format("%02d/%02d/%d",day, month, year);
+
     }
 
     @Override
@@ -61,7 +78,7 @@ public class RVAdapterHistory extends RecyclerView.Adapter<RVAdapterHistory.Card
 
     static class CardViewHolder extends RecyclerView.ViewHolder {
 
-        TextView restaurantName, restaurantAddress, restaurantTime, userName, userAddress, userTime;
+        TextView restaurantName, restaurantAddress, restaurantTime, userName, userAddress, userTime, date;
         View lastDiv;
         MaterialButton accept, decline;
 
@@ -76,6 +93,7 @@ public class RVAdapterHistory extends RecyclerView.Adapter<RVAdapterHistory.Card
             lastDiv = itemView.findViewById(R.id.pending_order_user_div);
             accept = itemView.findViewById(R.id.pending_order_accept);
             decline = itemView.findViewById(R.id.pending_order_decline);
+            date = itemView.findViewById(R.id.date);
 
             CardView cv = itemView.findViewById(R.id.pending_order_card);
             ConstraintLayout layout = itemView.findViewById(R.id.pending_order_main_layout);

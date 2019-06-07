@@ -10,6 +10,8 @@ public class Reservation {
     private String userPhone;
     private String restPhone;
     private Double distance;
+    private String date;
+    private String ISOdate;
 
     public Reservation(String restaurantName, String restaurantAddress, String restaurantPickupTime, String userName, String userAddress, String userDeliveryTime, String restaurantID, String notes, boolean accepted) {
         this.restaurantName = restaurantName;
@@ -133,5 +135,21 @@ public class Reservation {
 
     public void setDistance(Double distance) {
         this.distance = distance;
+    }
+
+    public String getDate() {
+        return date;
+    }
+
+    public void setDate(String date) {
+        this.date = date;
+    }
+
+    public String getISOdate() {
+        return ISOdate;
+    }
+
+    public void setISOdate(String ISOdate) {
+        this.ISOdate = ISOdate;
     }
 }
