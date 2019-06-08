@@ -13,6 +13,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
+import android.widget.Toast;
 
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
@@ -172,7 +173,7 @@ public class ReservationFragment extends Fragment {
                                         }
                                         if (i == reservations.size()){
                                             for (index = 0; index < reservations.size(); index++){
-                                                if (reservationDBUser.getOrderTime().compareTo(reservations.get(index).getOrderTime()) > 0){
+                                                if (reservationDBUser.getOrderTime().compareTo(reservations.get(index).getOrderTime()) < 0){
                                                     break;
                                                 }
                                             }
@@ -267,7 +268,61 @@ public class ReservationFragment extends Fragment {
     }
 
     public void removeRejected(){
-        ArrayList<Reservation> toBeDeleted = new ArrayList<>();
+        int array_size = reservations.size();
+        int removed = 0;
+
+        if(array_size == 0){
+            Toast.makeText(getContext(),"",Toast.LENGTH_SHORT).show();
+            return;
+        }
+
+        Log.d("PROVAREMOVE", "reservations size: " + reservations.size());
+        for(int i=0; i < array_size; i++){
+            Reservation res = reservations.get(i-removed);
+            Log.d("PROVAREMOVE", res.getPreparationStatusString());
+            if(res.getPreparationStatusString().equals("Rejected")){
+                removed++;
+                reservations.remove(res);
+                adapter.notifyItemRemoved(i);
+                adapter.notifyItemRangeChanged(i,reservations.size());
+
+                Calendar calendar = Calendar.getInstance();
+                String monthYear = calendar.get(Calendar.MONTH) + "-" + calendar.get(Calendar.YEAR);
+                String date = calendar.get(Calendar.YEAR) + "-" + (calendar.get(Calendar.MONTH) + 1) + "-" +
+                        calendar.get(Calendar.DAY_OF_MONTH);
+                DatabaseReference databaseArc = FirebaseDatabase.getInstance().getReference()
+                        .child("archive").child("user").child(firebaseUser.getUid()).child(monthYear);
+                String orderId = firebaseUser.getUid() + res.getReservationID();
+                ArrayList<OrderItem> dishes = new ArrayList<>();
+                for (Dish d : res.getDishesOrdered()) {
+                    OrderItem dish = new OrderItem();
+                    dish.setPieces(d.getQuantity());
+                    dish.setOrderName(d.getDishName());
+                    dish.setPrice(d.getPrice());
+                    dishes.add(dish);
+                }
+                ReservationDBUser reservationDBUser = new ReservationDBUser(orderId, res.getRestaurantID(), dishes,
+                        false, res.getResNote(), res.getOrderTime(), res.getPreparationStatusString(), res.getTotalCost());
+                reservationDBUser.setRestaurantName(res.getRestaurantName());
+                reservationDBUser.setRestaurantAddress(res.getRestaurantAddress());
+                reservationDBUser.setDate(date);
+                HashMap<String, Object> childSelf = new HashMap<>();
+                childSelf.put(orderId, reservationDBUser);
+                databaseArc.updateChildren(childSelf);
+
+                DatabaseReference databaseRemove = FirebaseDatabase.getInstance().getReference()
+                        .child("reservations").child("users").child(firebaseUser.getUid());
+                databaseRemove.child(orderId).removeValue();
+            }
+        }
+
+        Log.d("PROVAREMOVE", "size: " + reservations.size());
+        for(int j=0; j<reservations.size(); j++){
+            Log.d("PROVAREMOVE", reservations.get(j).getPreparationStatusString());
+        }
+        Log.d("PROVAREMOVE", "removed " + removed + " rejected reservation");
+
+        /*ArrayList<Reservation> toBeDeleted = new ArrayList<>();
         for(Reservation r : reservations){
             if(r.getPreparationStatusString().equals("Rejected")){
                 toBeDeleted.add(r);
@@ -315,6 +370,6 @@ public class ReservationFragment extends Fragment {
                         .child("reservations").child("users").child(firebaseUser.getUid());
                 databaseRemove.child(orderId).removeValue();
             }
-        }
+        }*/
     }
 }
