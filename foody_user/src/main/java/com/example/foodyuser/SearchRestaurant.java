@@ -441,7 +441,7 @@ public class SearchRestaurant extends AppCompatActivity {
     public void filterFavourite(View view){
         ArrayList<Restaurant> filteredFav = new ArrayList<>();
 
-        if (favourite)
+        if(favourite)
             favourite = false;
         else
             favourite = true;
@@ -481,6 +481,17 @@ public class SearchRestaurant extends AppCompatActivity {
                 filteredFav = restaurants;
             }
         }
+
+        filteredFav.sort(new Comparator<Restaurant>() {
+            @Override
+            public int compare(Restaurant r1, Restaurant r2) {
+                if (r1.isOpen() && !r2.isOpen())
+                    return -1;
+                if (!r1.isOpen() && r2.isOpen())
+                    return 1;
+                return 0;
+            }
+        });
 
         adapter.filterList(filteredFav);
     }
