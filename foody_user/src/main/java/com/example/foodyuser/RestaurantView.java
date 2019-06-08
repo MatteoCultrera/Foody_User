@@ -273,14 +273,12 @@ public class RestaurantView extends AppCompatActivity {
             String minTime = String.format("%02d:%02d",hours,minutes);
             shared.edit().putString("minTime",minTime).apply();
             shared.edit().putString("selectedTime",minTime).apply();
-
         }
 
         if(showReview.notReady())
             disableAddReview();
         else
             enableAddReview();
-
 
         File root = getExternalFilesDir(Environment.DIRECTORY_PICTURES);
         storage = new File(root.getPath()+File.separator+DIRECTORY_IMAGES);
@@ -312,14 +310,12 @@ public class RestaurantView extends AppCompatActivity {
             updateTotal();
         }
 
-
         if(counter.intValue() == 6 && !isOnPause && localeReview != null){
             enableAddReview();
             reviews.add(localeReview);
             showReview.notifyAdded(reviews.size()-1);
             localeReview = null;
         }
-
     }
 
     public void cardsFromFile(){
@@ -334,7 +330,6 @@ public class RestaurantView extends AppCompatActivity {
             Log.d("MAD3","called init set "+set+" session "+session);
             showMenu.init(cards);
         }
-
     }
 
     private void setFAB(){
@@ -861,8 +856,6 @@ public class RestaurantView extends AppCompatActivity {
         }else{
             totalDisappear();
         }
-
-
     }
 
     private void setTotalText(float total){
@@ -916,7 +909,6 @@ public class RestaurantView extends AppCompatActivity {
                 intent.putExtra("restaurantDeliveryPrice", Float.valueOf(price.getText().toString()));
 
                 startActivity(intent);
-
             }
         });
 
