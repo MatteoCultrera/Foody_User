@@ -93,7 +93,7 @@
 
         <TextView
             android:id="@+id/filter_button_text"
-            android:layout_width="150dp"
+            android:layout_width="160dp"
             android:layout_height="wrap_content"
             android:background="@drawable/filters_background"
             android:clickable="true"
@@ -116,7 +116,7 @@
 
         <TextView
             android:id="@+id/favs_button_text"
-            android:layout_width="150dp"
+            android:layout_width="160dp"
             android:layout_height="wrap_content"
             android:clickable="true"
             android:drawableStart="@drawable/heart_empty"
@@ -129,7 +129,7 @@
             android:paddingTop="10dp"
             android:paddingEnd="30dp"
             android:paddingBottom="10dp"
-            android:text="Loved"
+            android:text="@string/loved"
             android:textColor="@color/colorAccent"
             android:textSize="18dp"
             app:layout_constraintBottom_toBottomOf="parent"
