@@ -283,8 +283,8 @@ public class ReservationFragment extends Fragment {
             if(res.getPreparationStatusString().equals("Rejected")){
                 removed++;
                 reservations.remove(res);
-                adapter.notifyItemRemoved(i);
-                adapter.notifyItemRangeChanged(i,reservations.size());
+                adapter.notifyItemRemoved(i-removed);
+                adapter.notifyItemRangeChanged(i-removed,reservations.size());
 
                 Calendar calendar = Calendar.getInstance();
                 String monthYear = calendar.get(Calendar.MONTH) + "-" + calendar.get(Calendar.YEAR);

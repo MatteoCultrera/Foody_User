@@ -208,7 +208,7 @@ public class BikerFragment extends Fragment {
                                 int i;
                                 for(i = 0; i < reservationAcceptedList.size(); i++) {
                                     if (reservation.getOrderTime().compareTo(reservationAcceptedList.get(i)
-                                            .getReservation().getOrderTime()) > 0)
+                                            .getReservation().getOrderTime()) < 0)
                                         break;
                                 }
 
