@@ -160,6 +160,7 @@ public class SearchRestaurant extends AppCompatActivity {
         copyIndexFoods = new ArrayList<>();
         foodCategories = getResources().getStringArray(R.array.foodcategory_array);
         switchPrefs(false);
+        switchFilters(false);
 
         filterButton.setOnClickListener(null);
 
@@ -212,6 +213,18 @@ public class SearchRestaurant extends AppCompatActivity {
             favouriteButton.setCompoundDrawablesWithIntrinsicBounds(R.drawable.heart_empty, 0, 0, 0);
             favouriteButton.setCompoundDrawableTintList(ContextCompat.getColorStateList(this, R.color.colorAccent));
             favouriteButton.setBackgroundResource(R.drawable.favs_background_dis);
+        }
+    }
+
+    private void switchFilters(boolean enabled){
+        if(enabled){
+            filterButton.setTextColor(getColor(R.color.whiteText));
+            filterButton.setCompoundDrawableTintList(ContextCompat.getColorStateList(this, R.color.whiteText));
+            filterButton.setBackgroundResource(R.drawable.filters_background_en);
+        }else{
+            filterButton.setTextColor(getColor(R.color.colorAccent));
+            filterButton.setCompoundDrawableTintList(ContextCompat.getColorStateList(this, R.color.colorAccent));
+            filterButton.setBackgroundResource(R.drawable.filters_background);
         }
     }
 
