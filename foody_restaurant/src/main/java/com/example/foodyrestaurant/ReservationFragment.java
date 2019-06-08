@@ -131,7 +131,7 @@ public class ReservationFragment extends Fragment {
 
         int i;
         for (i = 0; i < pending_reservations.size(); i++) {
-            if (reservation.getOrderTime().compareTo(pending_reservations.get(i).getOrderTime()) > 0)
+            if (reservation.getOrderTime().compareTo(pending_reservations.get(i).getOrderTime()) < 0)
                 break;
         }
 
@@ -172,7 +172,7 @@ public class ReservationFragment extends Fragment {
 
         int i;
         for (i = 0; i < doing_reservations.size(); i++) {
-            if (reservation.getOrderTime().compareTo(doing_reservations.get(i).getOrderTime()) > 0)
+            if (reservation.getOrderTime().compareTo(doing_reservations.get(i).getOrderTime()) < 0)
                 break;
         }
 
