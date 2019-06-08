@@ -62,50 +62,83 @@
         app:SpinKit_Color="@color/colorAccent"
         />
 
-    <TextView
-        android:id="@+id/filter_button"
-        android:clickable="true"
-        android:focusable="true"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        android:text="@string/filters_string"
-        android:fontFamily="@font/roboto_regular"
-        android:textSize="18sp"
-        android:background="@drawable/search_background"
-        android:paddingTop="10dp"
-        android:paddingBottom="10dp"
-        android:paddingStart="30dp"
-        android:paddingEnd="30dp"
-        android:drawableStart="@drawable/filter_white"
-        android:drawableTint="@color/colorAccent"
-        android:elevation="20dp"
-        android:textColor="@color/colorAccent"
-        android:drawablePadding="10dp" />
 
-    <TextView
-        android:id="@+id/favourite_button"
-        android:clickable="true"
-        android:focusable="true"
+    <android.support.constraint.ConstraintLayout
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
+        android:id="@+id/main_constraint"
+        android:background="@android:color/transparent"
         app:layout_constraintTop_toTopOf="parent"
-        android:text="@string/filters_string"
-        android:fontFamily="@font/roboto_regular"
-        android:textSize="18sp"
-        android:background="@drawable/search_background"
-        android:paddingTop="10dp"
-        android:paddingBottom="10dp"
-        android:paddingStart="30dp"
-        android:paddingEnd="30dp"
-        android:drawableStart="@drawable/filter_white"
-        android:drawableTint="@color/colorAccent"
+        app:layout_constraintStart_toStartOf="parent"
         android:elevation="20dp"
-        android:textColor="@color/colorAccent"
-        android:drawablePadding="10dp" />
+        app:layout_constraintEnd_toEndOf="parent"
+        >
+
+        <View
+            android:layout_width="1dp"
+            android:layout_height="40dp"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintBottom_toBottomOf="parent"
+            android:background="@color/divider"
+            android:elevation="1dp"/>
+
+        <android.support.constraint.Guideline
+            android:id="@+id/guideline_fabs"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            app:layout_constraintGuide_percent="0.5"/>
+
+        <TextView
+            android:id="@+id/filter_button_text"
+            android:layout_width="160dp"
+            android:layout_height="wrap_content"
+            android:background="@drawable/filters_background"
+            android:clickable="true"
+            android:drawableStart="@drawable/filter_white"
+            android:drawablePadding="10dp"
+            android:drawableTint="@color/colorAccent"
+            android:focusable="true"
+            android:fontFamily="@font/roboto_regular"
+            android:paddingStart="30dp"
+            android:paddingTop="10dp"
+            android:paddingEnd="30dp"
+            android:paddingBottom="10dp"
+            android:text="@string/filters_string"
+            android:textColor="@color/colorAccent"
+            android:textSize="18dp"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintHorizontal_bias="0.0"
+            app:layout_constraintStart_toEndOf="@id/guideline_fabs"
+            app:layout_constraintTop_toTopOf="parent" />
+
+        <TextView
+            android:id="@+id/favs_button_text"
+            android:layout_width="160dp"
+            android:layout_height="wrap_content"
+            android:clickable="true"
+            android:drawableStart="@drawable/heart_empty"
+            android:drawablePadding="10dp"
+            android:drawableTint="@color/colorAccent"
+            android:background="@drawable/favs_background_dis"
+            android:focusable="true"
+            android:fontFamily="@font/roboto_regular"
+            android:paddingStart="30dp"
+            android:paddingTop="10dp"
+            android:paddingEnd="30dp"
+            android:paddingBottom="10dp"
+            android:text="@string/loved"
+            android:textColor="@color/colorAccent"
+            android:textSize="18dp"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toStartOf="@id/guideline_fabs"
+            app:layout_constraintTop_toTopOf="parent" />
+
+
+    </android.support.constraint.ConstraintLayout>
+
 
 </android.support.constraint.ConstraintLayout>

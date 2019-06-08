@@ -12,6 +12,7 @@ import android.graphics.drawable.Drawable;
 import android.os.Environment;
 import android.support.annotation.NonNull;
 import android.support.constraint.ConstraintLayout;
+import android.support.v4.content.ContextCompat;
 import android.support.v4.content.res.ResourcesCompat;
 import android.support.v4.widget.NestedScrollView;
 import android.support.v7.app.AppCompatActivity;
@@ -75,7 +76,9 @@ public class SearchRestaurant extends AppCompatActivity {
     private ArrayList<Integer> copyIndexFoods;
     private ArrayList<String> selectedFoods;
     private SharedPreferences sharedPrefer;
-    private TextView filterButton, favouriteButton;
+    private TextView favouriteButton, filterButton;
+    private ConstraintLayout mainConstraint;
+
     private String[] foodCategories;
     private int imageToFetch, imageFetched;
     private SpinKitView loading;
@@ -97,8 +100,9 @@ public class SearchRestaurant extends AppCompatActivity {
         foodCategories = getResources().getStringArray(R.array.foodcategory_array);
         scrollView = findViewById(R.id.list_restaurants);
         loading = findViewById(R.id.loading_restaurants);
-        filterButton = findViewById(R.id.filter_button);
-        favouriteButton = findViewById(R.id.favourite_button);
+        mainConstraint = findViewById(R.id.main_constraint);
+        filterButton = findViewById(R.id.filter_button_text);
+        favouriteButton = findViewById(R.id.favs_button_text);
         search = findViewById(R.id.search_restaurant);
         parent = findViewById(R.id.parent_restaurants);
         sharedPrefer = getSharedPreferences("myPreference", MODE_PRIVATE);
@@ -115,9 +119,7 @@ public class SearchRestaurant extends AppCompatActivity {
         favourite = false;
         search.clearFocus();
         search.setY(getResources().getDimensionPixelSize(R.dimen.short30));
-        Log.d("MADMAX", parent.getHeight()+"");
-        filterButton.setY(height - getResources().getDimensionPixelSize(R.dimen.short100));
-        Log.d("MADMAX", filterButton.getY()+"");
+        mainConstraint.setY(height - getResources().getDimensionPixelSize(R.dimen.short100));
         scrollView.clearOnScrollListeners();
         scrollView.addOnScrollListener(new RecyclerView.OnScrollListener() {
 
@@ -134,13 +136,13 @@ public class SearchRestaurant extends AppCompatActivity {
                         search.animate().translationY(-getResources().getDimensionPixelSize(R.dimen.short60)).setDuration(200).start();
                         search.clearFocus();
                         hideKeyboard();
-                        filterButton.animate().translationY(height + getResources().getDimensionPixelSize(R.dimen.short100)).setDuration(200).start();
+                        mainConstraint.animate().translationY(height + getResources().getDimensionPixelSize(R.dimen.short100)).setDuration(200).start();
                         visible = false;
                     }
 
                     if(dy < 0 && !visible){
                         search.animate().translationY(getResources().getDimensionPixelSize(R.dimen.short30)).setDuration(200).start();
-                        filterButton.animate().translationY(height - getResources().getDimensionPixelSize(R.dimen.short100)).setDuration(200).start();
+                        mainConstraint.animate().translationY(height - getResources().getDimensionPixelSize(R.dimen.short100)).setDuration(200).start();
                         visible = true;
                     }
 
@@ -157,6 +159,7 @@ public class SearchRestaurant extends AppCompatActivity {
         indexFoods = new ArrayList<>();
         copyIndexFoods = new ArrayList<>();
         foodCategories = getResources().getStringArray(R.array.foodcategory_array);
+        switchPrefs(false);
 
         filterButton.setOnClickListener(null);
 
@@ -197,6 +200,20 @@ public class SearchRestaurant extends AppCompatActivity {
         }
     }
 
+
+    private void switchPrefs(boolean enabled){
+        if(enabled){
+            favouriteButton.setTextColor(getColor(R.color.whiteText));
+            favouriteButton.setCompoundDrawablesWithIntrinsicBounds(R.drawable.heart_fill, 0, 0, 0);
+            favouriteButton.setCompoundDrawableTintList(ContextCompat.getColorStateList(this, R.color.whiteText));
+            favouriteButton.setBackgroundResource(R.drawable.favs_background_en);
+        }else{
+            favouriteButton.setTextColor(getColor(R.color.colorAccent));
+            favouriteButton.setCompoundDrawablesWithIntrinsicBounds(R.drawable.heart_empty, 0, 0, 0);
+            favouriteButton.setCompoundDrawableTintList(ContextCompat.getColorStateList(this, R.color.colorAccent));
+            favouriteButton.setBackgroundResource(R.drawable.favs_background_dis);
+        }
+    }
 
     private void fetchRestaurants(final Boolean hasImages){
         FirebaseAuth firebaseAuth = FirebaseAuth.getInstance();
@@ -364,10 +381,13 @@ public class SearchRestaurant extends AppCompatActivity {
         favouriteButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                if(favouriteRest != null && favouriteRest.size() != 0)
+                if(favouriteRest != null && favouriteRest.size() != 0){
                     filterFavourite(view);
-                else
+                }
+                else{
                     Toast.makeText(getApplicationContext(), getString(R.string.no_favourite), Toast.LENGTH_SHORT).show();
+                }
+                switchPrefs(favourite);
             }
         });
     }
@@ -500,13 +520,13 @@ public class SearchRestaurant extends AppCompatActivity {
                             search.animate().translationY(-getResources().getDimensionPixelSize(R.dimen.short60)).setDuration(200).start();
                             search.clearFocus();
                             hideKeyboard();
-                            filterButton.animate().translationY(height + getResources().getDimensionPixelSize(R.dimen.short100)).setDuration(200).start();
+                            mainConstraint.animate().translationY(height + getResources().getDimensionPixelSize(R.dimen.short100)).setDuration(200).start();
                             visible = false;
                         }
 
                         if(dy < 0 && !visible){
                             search.animate().translationY(getResources().getDimensionPixelSize(R.dimen.short30)).setDuration(200).start();
-                            filterButton.animate().translationY(height - getResources().getDimensionPixelSize(R.dimen.short100)).setDuration(200).start();
+                            mainConstraint.animate().translationY(height - getResources().getDimensionPixelSize(R.dimen.short100)).setDuration(200).start();
                             visible = true;
                         }
                     }

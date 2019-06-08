@@ -81,4 +81,6 @@
 
     <string name="insert_deliv_address_no_home">Insert Delivery Address\nOR\n\nSet Up Your Address in the Profile Page to order at your Home Address</string>
     <string name="your_reviews">Your reviews</string>
+
+    <string name="loved">Loved</string>
 </resources>
