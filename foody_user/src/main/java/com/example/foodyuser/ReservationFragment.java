@@ -269,20 +269,19 @@ public class ReservationFragment extends Fragment {
     public void removeRejected(){
         ArrayList<Reservation> toBeDeleted = new ArrayList<>();
         for(Reservation r : reservations){
-            if(r.getPreparationStatusString().equals("Rejected")){
+            if(r.getPreparationStatusString().toLowerCase().equals("rejected")){
                 toBeDeleted.add(r);
             }
         }
 
+        for(Reservation r: toBeDeleted){
+            Log.d("FIXINGREMOVE",r.getReservationID()+" "+r.getRestaurantName()+" "+r.getPreparationStatusString());
+        }
+
         for(Reservation r : toBeDeleted){
             if(reservations.contains(r)) {
-                int index = 0;
-                for(Reservation r2 : reservations){
-                    if (r2.equals(r)){
-                        break;
-                    }
-                    index++;
-                }
+                int index = reservations.indexOf(r);
+                Log.d("FIXINGREMOVE","removing "+r.getReservationID()+" "+r.getRestaurantName()+" "+r.getPreparationStatusString()+"\nat "+index);
                 reservations.remove(r);
                 adapter.notifyItemRemoved(index);
                 adapter.notifyItemRangeChanged(index, reservations.size());
