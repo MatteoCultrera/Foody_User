@@ -264,7 +264,7 @@ public class RestaurantView extends AppCompatActivity {
             Calendar now = Calendar.getInstance();
             int hours = now.get(Calendar.HOUR_OF_DAY);
             int minutes = now.get(Calendar.MINUTE);
-            minutes += 30;
+            minutes += 40;
             if(minutes/60 != 0){
                 hours++;
                 minutes = minutes%60;
