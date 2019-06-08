@@ -100,6 +100,7 @@ public class Order extends AppCompatActivity {
         placeOrder.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
+            placeOrder.setClickable(false);
             //Inserting the reservation inside the user reservation DB
             final DatabaseReference database = FirebaseDatabase.getInstance().getReference()
                     .child("reservations").child("users").child(firebaseUser.getUid());
