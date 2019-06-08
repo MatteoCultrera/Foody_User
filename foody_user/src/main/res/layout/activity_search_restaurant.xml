@@ -91,6 +91,7 @@
             android:orientation="vertical"
             app:layout_constraintGuide_percent="0.5"/>
 
+        <!--This MUST remain 18 dp, do not correct the warning-->
         <TextView
             android:id="@+id/filter_button_text"
             android:layout_width="160dp"
@@ -114,6 +115,7 @@
             app:layout_constraintStart_toEndOf="@id/guideline_fabs"
             app:layout_constraintTop_toTopOf="parent" />
 
+        <!--This MUST remain 18 dp, do not correct the warning-->
         <TextView
             android:id="@+id/favs_button_text"
             android:layout_width="160dp"
