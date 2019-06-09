@@ -787,7 +787,11 @@ public class Setup extends AppCompatActivity {
         days.add(saturday.getText().toString());
         days.add(sunday.getText().toString());
         BikerInfo info = new BikerInfo(name.getText().toString(), email.getText().toString(), address.getText().toString(), phoneNumber.getText().toString(), days);
-        info.setPath(pathImage);
+        if(f.exists()){
+            info.setPath(pathImage);
+        }else{
+            info.setPath(sharedPref.getString("imgRemote",""));
+        }
         child.put("info", info);
         database.updateChildren(child);
 

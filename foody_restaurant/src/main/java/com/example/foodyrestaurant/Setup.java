@@ -972,7 +972,11 @@ public class Setup extends AppCompatActivity {
         days.add(sunday.getText().toString());
         RestaurantInfo restaurant = new RestaurantInfo(name.getText().toString(), email.getText().toString(),
                 address.getText().toString(), phoneNumber.getText().toString(), days, deliveryPrice, indexFoods);
-        restaurant.setImagePath(pathImage);
+        if(f.exists()){
+            restaurant.setImagePath(pathImage);
+        }else{
+            restaurant.setImagePath(sharedPref.getString("imgRemote",""));
+        }
         DatabaseReference database = FirebaseDatabase.getInstance().getReference()
                 .child("restaurantsInfo/" + user.getUid());
         HashMap<String, Object> child = new HashMap<>();
