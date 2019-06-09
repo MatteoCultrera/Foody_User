@@ -59,6 +59,7 @@ public class RVAdapter extends RecyclerView.Adapter<RVAdapter.CardViewHolder>{
 
         pvh.menuDishes.removeAllViews();
 
+
         if (dishes != null) {
             for (int j = 0; j < dishes.size(); j++) {
                 View dish = inflater.inflate(R.layout.menu_item_display, pvh.menuDishes, false);
@@ -105,11 +106,13 @@ public class RVAdapter extends RecyclerView.Adapter<RVAdapter.CardViewHolder>{
                     title.setTextColor(ContextCompat.getColor(enabler.getContext(), R.color.primaryText));
                     subtitle.setTextColor(ContextCompat.getColor(enabler.getContext(), R.color.secondaryText));
                     price.setTextColor(ContextCompat.getColor(enabler.getContext(), R.color.primaryText));
+                    image.setAlpha(1f);
                 } else {
                     enabler.setChecked(dishes.get(j).isAvailable());
                     title.setTextColor(ContextCompat.getColor(enabler.getContext(), R.color.disabledText));
                     subtitle.setTextColor(ContextCompat.getColor(enabler.getContext(), R.color.disabledText));
                     price.setTextColor(ContextCompat.getColor(enabler.getContext(), R.color.disabledText));
+                    image.setAlpha(0.3f);
                 }
                 enabler.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
                     @Override
@@ -119,6 +122,7 @@ public class RVAdapter extends RecyclerView.Adapter<RVAdapter.CardViewHolder>{
                             titleF.setTextColor(ContextCompat.getColor(enabler.getContext(), R.color.disabledText));
                             subtitleF.setTextColor(ContextCompat.getColor(enabler.getContext(), R.color.disabledText));
                             priceF.setTextColor(ContextCompat.getColor(enabler.getContext(), R.color.disabledText));
+                            Log.d("PROVADUE","set alpha 0.3");
                             image.setAlpha(0.3f);
                             father.updateMenuDB();
                         } else {
@@ -126,6 +130,7 @@ public class RVAdapter extends RecyclerView.Adapter<RVAdapter.CardViewHolder>{
                             titleF.setTextColor(ContextCompat.getColor(enabler.getContext(), R.color.primaryText));
                             subtitleF.setTextColor(ContextCompat.getColor(enabler.getContext(), R.color.secondaryText));
                             priceF.setTextColor(ContextCompat.getColor(enabler.getContext(), R.color.primaryText));
+                            Log.d("PROVADUE","set alpha 1");
                             image.setAlpha(1f);
                             father.updateMenuDB();
                         }
