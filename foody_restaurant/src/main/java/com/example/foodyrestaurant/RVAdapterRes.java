@@ -208,6 +208,7 @@ public class RVAdapterRes extends RecyclerView.Adapter<RVAdapterRes.CardViewHold
                 pvh.status.setText(reservations.get(pos).getPreparationStatusString());
                 */
 
+                pvh.accept.setClickable(false);
                 DatabaseReference database = FirebaseDatabase.getInstance().getReference()
                         .child("reservations").child("users").child(reservations.get(pos).getUserUID());
                 HashMap<String, Object> child = new HashMap<>();
@@ -265,6 +266,7 @@ public class RVAdapterRes extends RecyclerView.Adapter<RVAdapterRes.CardViewHold
         pvh.decline.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                pvh.decline.setClickable(false);
                 DatabaseReference database = FirebaseDatabase.getInstance().getReference()
                         .child("reservations").child("users").child(reservations.get(pos).getUserUID());
                 HashMap<String, Object> child = new HashMap<>();
