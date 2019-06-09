@@ -312,7 +312,8 @@ public class MainActivity extends AppCompatActivity {
 
             @Override
             public void onChildRemoved(@NonNull DataSnapshot dataSnapshot) {
-                ((ReservationFragment) reservations).removeDoingOrder(dataSnapshot);
+                if(!dataSnapshot.child("status").getValue(String.class).toLowerCase().equals("pending"))
+                    ((ReservationFragment) reservations).removeDoingOrder(dataSnapshot);
             }
 
             @Override

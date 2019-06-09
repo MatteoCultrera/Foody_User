@@ -188,12 +188,10 @@ public class ReservationFragment extends Fragment {
         int i;
         for(i = 0; i < doing_reservations.size(); i++){
             if(key.contains(doing_reservations.get(i).getReservationID())){
-                Log.d("PROVAPROVA", "Found at "+i);
                 break;
             }
         }
 
-        Log.d("PROVAPROVA", key+" "+doing_reservations.get(i).getReservationID());
         doing_reservations.remove(i);
         adapterDoing.notifyItemRemoved(i);
         adapterDoing.notifyItemRangeChanged(i,doing_reservations.size());

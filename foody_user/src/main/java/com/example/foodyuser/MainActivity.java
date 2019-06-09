@@ -46,6 +46,7 @@ public class MainActivity extends AppCompatActivity {
     private SharedPreferences sharedPref;
     private Boolean bool = true;
 
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         setTheme(R.style.AppTheme);

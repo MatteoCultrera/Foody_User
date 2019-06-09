@@ -3,6 +3,7 @@ package com.example.foodyuser;
 import android.animation.LayoutTransition;
 import android.app.AlertDialog;
 import android.content.DialogInterface;
+import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Environment;
 import android.support.annotation.NonNull;
@@ -326,8 +327,12 @@ public class Order extends AppCompatActivity {
             File orderFile = new File(root, getString(R.string.order_file_name));
             if(orderFile.exists())
                 orderFile.delete();
+            Intent intent = new Intent(this, MainActivity.class);
+            intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
+            startActivity(intent);
+        }else{
+            finish();
         }
-        finish();
     }
 
     @Override
