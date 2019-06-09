@@ -92,7 +92,7 @@ public class RVAdapterBiker extends RecyclerView.Adapter<RVAdapterBiker.CardView
 
         pvh.idOrder.setText(orderId);
         pvh.time.setText(current.getReservation().getDeliveryTime());
-        pvh.status.setText(current.getReservation().getPreparationStatusString());
+        pvh.status.setText(" ");
         if(current.hasBiker()){
             pvh.bikerInfoLayout.setVisibility(View.VISIBLE);
             pvh.callBiker.setVisibility(View.VISIBLE);
@@ -119,6 +119,7 @@ public class RVAdapterBiker extends RecyclerView.Adapter<RVAdapterBiker.CardView
                         order.setPrice(d.getPrice());
                         dishes.add(order);
                     }
+
                     final ReservationDBRestaurant reservationRest = new ReservationDBRestaurant(orderID,
                             current.getBikerID(), dishes, true, reservation.getResNote(),
                             reservation.getUserPhone(), reservation.getUserName(), reservation.getDeliveryTime(),

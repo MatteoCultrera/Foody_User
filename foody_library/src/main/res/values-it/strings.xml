@@ -150,4 +150,7 @@
     <string name="no_reviews">Non hai ancora recensioni</string>
 
     <string name="db_error_message">Errore nella connessione con il DB!</string>
+
+    <string name="no_revies_posted">Nessuna Recensione Pubblicata</string>
+    <string name="no_reviews_received">Nessuna Recensione Ricevuta</string>
 </resources>

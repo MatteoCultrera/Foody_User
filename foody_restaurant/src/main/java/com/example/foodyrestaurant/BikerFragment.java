@@ -206,8 +206,8 @@ public class BikerFragment extends Fragment {
                                 reservation.setRestaurantName(sharedPreferences.getString("name", null));
                                 String biker = reservationDB.getBikerID();
                                 int i;
-                                for(i = 0; i < reservationAcceptedList.size(); i++) {
-                                    if (reservation.getOrderTime().compareTo(reservationAcceptedList.get(i)
+                                for(i = 0; i < reservationList.size(); i++) {
+                                    if (reservation.getOrderTime().compareTo(reservationList.get(i)
                                             .getReservation().getOrderTime()) > 0)
                                         break;
                                 }
@@ -215,7 +215,7 @@ public class BikerFragment extends Fragment {
                                 reservationList.add(i, new ReservationBiker(reservation, biker,
                                         reservationDB.isWaitingBiker(), reservationDB.getReservationID()));
                                 adapterNotAccepted.notifyItemChanged(i);
-                                adapterNotAccepted.notifyItemRangeChanged(i, reservationAcceptedList.size());
+                                adapterNotAccepted.notifyItemRangeChanged(i, reservationList.size());
                             }
                         }
                         String orderID = reservationDB.getReservationID().substring(28);
