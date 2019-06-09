@@ -587,7 +587,6 @@ public class Setup extends AppCompatActivity {
 
                 case AUTOCOMPLETE_REQUEST_CODE:
                     Place place = Autocomplete.getPlaceFromIntent(data);
-                    Log.d("PLACE", "Place: " + place.getAddress() + " LAT_LNG " + place.getLatLng());
                     pos.address = place.getAddress();
                     pos.latitude = place.getLatLng().latitude;
                     pos.longitude = place.getLatLng().longitude;

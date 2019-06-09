@@ -510,7 +510,6 @@ public class Setup extends AppCompatActivity {
 
                 case AUTOCOMPLETE_REQUEST_CODE:
                     Place place = Autocomplete.getPlaceFromIntent(data);
-                    Log.d("PLACE", "Place: " + place.getAddress() + " LAT_LNG " + place.getLatLng());
                     pos.address = place.getAddress();
                     pos.latitude = place.getLatLng().latitude;
                     pos.longitude = place.getLatLng().longitude;
@@ -678,7 +677,6 @@ public class Setup extends AppCompatActivity {
             BitmapFactory.Options bmOptions = new BitmapFactory.Options();
             Bitmap bitmap = BitmapFactory.decodeFile(f.getAbsolutePath(),bmOptions);
             pathImage = "images/users/"+user.getUid() + System.currentTimeMillis()+".jpeg";
-            Log.d("PORCODIO","path remote "+pathImage);
             File root = getExternalFilesDir(Environment.DIRECTORY_DOCUMENTS);
             final File directory = new File(root.getPath()+File.separator+MAIN_DIR);
             final File profile = new File(sharedPref.getString("imgLocale",directory.getPath()+File.separator+firebaseAuth.getCurrentUser().getUid()+".jpg"));
@@ -706,7 +704,6 @@ public class Setup extends AppCompatActivity {
         HashMap<String, Object> child = new HashMap<>();
         UserInfo info = new UserInfo(name.getText().toString(), email.getText().toString(), address.getText().toString(),
                 phoneNumber.getText().toString(), bio.getText().toString());
-        Log.d("PORCODIO","path remote "+pathImage);
 
         if(f.exists()){
             info.setImagePath(pathImage);

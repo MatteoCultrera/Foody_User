@@ -193,7 +193,6 @@ public class Login extends AppCompatActivity {
 
     private void fetchData(){
 
-        Log.d("PORCODIO","fetch data()");
 
         File root = getExternalFilesDir(Environment.DIRECTORY_DOCUMENTS);
         final File directory = new File(root.getPath()+File.separator+MAIN_DIR);
@@ -205,7 +204,6 @@ public class Login extends AppCompatActivity {
         directory.mkdirs();
 
         prefs.edit().putString("id", firebaseAuth.getCurrentUser().getUid()).apply();
-        Log.d("PORCODIO","fetched id "+firebaseAuth.getCurrentUser().getUid());
 
         final DatabaseReference database = FirebaseDatabase.getInstance().getReference().child("endUsers");
         Query query = database.child(firebaseAuth.getCurrentUser().getUid()).child("info");
@@ -224,8 +222,6 @@ public class Login extends AppCompatActivity {
                     prefs.edit().remove("name").apply();
                 }
 
-                Log.d("PORCODIO","Fetched username"+info.getUsername());
-
                 if(info.getEmail()!=null){
                     if(info.getEmail().length() > 0){
                         prefs.edit().putString("email", info.getEmail()).apply();
@@ -236,7 +232,6 @@ public class Login extends AppCompatActivity {
                     prefs.edit().remove("email").apply();
                 }
 
-                Log.d("PORCODIO","Fetched email"+info.getEmail());
 
                 if(info.getAddress()!=null){
                     if(info.getAddress().length() > 0){
@@ -271,14 +266,11 @@ public class Login extends AppCompatActivity {
                 StorageReference mStorageRef = FirebaseStorage.getInstance().getReference();
 
                 if(info.getImagePath()!=null){
-                    Log.d("PORCODIO","Image Path "+info.getImagePath());
                     final File image = new File(directory, firebaseAuth.getCurrentUser().getUid()+".jpg");
                     mStorageRef.child(info.getImagePath()).getFile(image).addOnSuccessListener(new OnSuccessListener<FileDownloadTask.TaskSnapshot>() {
                         @Override
                         public void onSuccess(FileDownloadTask.TaskSnapshot taskSnapshot) {
-                            Log.d("PORCODIO","Got Image locale "+image.getPath());
                             prefs.edit().putString("imgLocale",image.getPath()).apply();
-                            Log.d("PORCODIO","Got Image Remote "+info.getImagePath());
                             prefs.edit().putString("imgRemote",info.getImagePath()).apply();
                             Toast.makeText(getApplicationContext(), R.string.login_success, Toast.LENGTH_SHORT).show();
                             Intent intent = new Intent(Login.this, MainActivity.class);
@@ -288,7 +280,6 @@ public class Login extends AppCompatActivity {
                         }
                     });
                 }else{
-                    Log.d("PORCODIO","No Image Path");
                     prefs.edit().remove("imgLocale").apply();
                     prefs.edit().remove("imgRemote").apply();
                     Toast.makeText(getApplicationContext(), R.string.login_success, Toast.LENGTH_SHORT).show();
