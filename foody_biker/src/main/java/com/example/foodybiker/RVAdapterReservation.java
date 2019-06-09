@@ -155,26 +155,6 @@ public class RVAdapterReservation extends RecyclerView.Adapter<RVAdapterReservat
                         });
                     }
 
-                    final DatabaseReference databaseRej = FirebaseDatabase.getInstance().getReference()
-                            .child("archive").child("Bikers").child(firebaseUser.getUid()).child("rejected");
-                    databaseRej.addListenerForSingleValueEvent(new ValueEventListener() {
-                        @Override
-                        public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-                            if (dataSnapshot.exists()) {
-                                int count = dataSnapshot.getValue(int.class);
-                                databaseRej.setValue(count+incRejected);
-                                Log.d("PROVA", "Inside : count: " + count + " toInc: "+ incRejected);
-                            } else {
-                                databaseRej.setValue(1);
-                                Log.d("PROVA", "Inside in else");
-                            }
-                        }
-
-                        @Override
-                        public void onCancelled(@NonNull DatabaseError databaseError) {
-
-                        }
-                    });
                     //Removing all the pending delivery and update the title
                     fatherFragment.removeAllItem();
                     fatherFragment.updateTitles();

@@ -435,7 +435,7 @@ public class ReservationFragment extends Fragment {
                 @Override
                 public void onClick(View v) {
                     String address = activeReservation.getRestaurantAddress();
-                    Uri gmmIntentUri = Uri.parse("google.navigation:q=" + address + "&mode=b");
+                    Uri gmmIntentUri = Uri.parse("google.navigation:q=" + address + "&mode=d");
                     Intent mapIntent = new Intent(Intent.ACTION_VIEW, gmmIntentUri);
                     mapIntent.setPackage("com.google.android.apps.maps");
                     startActivity(mapIntent);
@@ -446,7 +446,7 @@ public class ReservationFragment extends Fragment {
                 @Override
                 public void onClick(View v) {
                     String address = activeReservation.getUserAddress();
-                    Uri gmmIntentUri = Uri.parse("google.navigation:q=" + address + "&mode=b");
+                    Uri gmmIntentUri = Uri.parse("google.navigation:q=" + address + "&mode=d");
                     Intent mapIntent = new Intent(Intent.ACTION_VIEW, gmmIntentUri);
                     mapIntent.setPackage("com.google.android.apps.maps");
                     startActivity(mapIntent);
