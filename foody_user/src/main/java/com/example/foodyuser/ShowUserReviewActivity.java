@@ -116,6 +116,10 @@ public class ShowUserReviewActivity extends AppCompatActivity {
                     }
                     reviews.add(review);
                 }
+                if(reviews.size() == 0){
+                    loadingDisappear();
+                    Toast.makeText(getApplicationContext(),getResources().getText(R.string.no_revies_posted),Toast.LENGTH_SHORT).show();
+                }
 
                 if(hasImages){
                     for(Review r : reviews){
@@ -130,6 +134,7 @@ public class ShowUserReviewActivity extends AppCompatActivity {
                     for(String s : imagesPath)
                         fetchRestaurantImages(s);
                 }
+
             }
 
             @Override

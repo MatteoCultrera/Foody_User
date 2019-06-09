@@ -568,9 +568,11 @@ public class SearchRestaurant extends AppCompatActivity {
 
         if(text.size() == 0) {
             restCuisine = restaurants;
-        }
-
-        else {
+            //Non ho filtri
+            switchFilters(false);
+        } else {
+            //Ho filtri
+            switchFilters(true);
             for (int i = 0; i < restaurants.size(); i++) {
                 ArrayList<String> cuisines = restaurants.get(i).getCuisines();
                 if(cuisines != null) {

@@ -169,7 +169,7 @@ public class MainActivity extends AppCompatActivity {
                 }else if(id == R.id.history && active != history){
                     FragmentTransaction transaction = fm.beginTransaction();
                     transaction.setCustomAnimations(R.anim.enter_from_right,R.anim.exit_to_left);
-                    transaction.hide(active).show(history).commit();
+                    transaction.replace(R.id.mainFrame, history).commit();
                     active = history;
                     return true;
                 }

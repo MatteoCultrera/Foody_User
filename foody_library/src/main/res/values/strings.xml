@@ -155,4 +155,7 @@
     <string name="no_reviews">You have no reviews yet</string>
 
     <string name="db_error_message">DB error connection!</string>
+
+    <string name="no_revies_posted">No Reviews Posted</string>
+    <string name="no_reviews_received">No Reviews Received</string>
 </resources>

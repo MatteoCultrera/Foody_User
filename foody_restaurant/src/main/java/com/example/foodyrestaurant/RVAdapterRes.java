@@ -88,7 +88,23 @@ public class RVAdapterRes extends RecyclerView.Adapter<RVAdapterRes.CardViewHold
         String lastFour = reservations.get(i).getReservationID().substring(id_size-4,id_size);
         String orderId = (first2Letters + lastFour).toUpperCase();
         pvh.idOrder.setText(orderId);
-        pvh.status.setText(reservations.get(i).getPreparationStatusString());
+        String status;
+        switch (reservations.get(i).getPreparationStatus()){
+            case PENDING:
+                status = pvh.accept.getContext().getString(R.string.pending);
+                break;
+            case DOING:
+                status = pvh.accept.getContext().getString(R.string.doing);
+                break;
+            case DONE:
+                status = pvh.accept.getContext().getString(R.string.done);
+                break;
+            default:
+                status=" ";
+                break;
+        }
+
+        pvh.status.setText(status);
         pvh.time.setText(reservations.get(i).getOrderTime()+"\n");
         pvh.userName.setText(reservations.get(i).getUserName());
 
@@ -125,13 +141,29 @@ public class RVAdapterRes extends RecyclerView.Adapter<RVAdapterRes.CardViewHold
             foodTitle.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
+
                     if(reservations.get(pos).isAccepted()) {
                         if(dishes.get(toSet).isPrepared()) {
                             foodTitle.setPaintFlags(0);
                             reservations.get(pos).incrementToBePrepared();
                             dishes.get(toSet).setPrepared(false);
                             reservations.get(pos).setPreparationStatus(Reservation.prepStatus.DOING);
-                            pvh.status.setText(reservations.get(pos).getPreparationStatusString());
+                            String status1;
+                            switch (reservations.get(pos).getPreparationStatus()){
+                                case PENDING:
+                                    status1 = pvh.accept.getContext().getString(R.string.pending);
+                                    break;
+                                case DOING:
+                                    status1 = pvh.accept.getContext().getString(R.string.doing);
+                                    break;
+                                case DONE:
+                                    status1 = pvh.accept.getContext().getString(R.string.done);
+                                    break;
+                                default:
+                                    status1=" ";
+                                    break;
+                            }
+                            pvh.status.setText(status1);
                             pvh.hintLayout.setVisibility(View.GONE);
                         } else {
                             foodTitle.setPaintFlags(Paint.STRIKE_THRU_TEXT_FLAG);
@@ -139,7 +171,22 @@ public class RVAdapterRes extends RecyclerView.Adapter<RVAdapterRes.CardViewHold
                             dishes.get(toSet).setPrepared(true);
                             if(reservations.get(pos).getToBePrepared() == 0) {
                                 reservations.get(pos).setPreparationStatus(Reservation.prepStatus.DONE);
-                                pvh.status.setText(reservations.get(pos).getPreparationStatusString());
+                                String status1;
+                                switch (reservations.get(pos).getPreparationStatus()){
+                                    case PENDING:
+                                        status1 = pvh.accept.getContext().getString(R.string.pending);
+                                        break;
+                                    case DOING:
+                                        status1 = pvh.accept.getContext().getString(R.string.doing);
+                                        break;
+                                    case DONE:
+                                        status1 = pvh.accept.getContext().getString(R.string.done);
+                                        break;
+                                    default:
+                                        status1=" ";
+                                        break;
+                                }
+                                pvh.status.setText(status1);
                                 if(pvh.additionalLayout.getVisibility() == View.VISIBLE){
                                     pvh.hintLayout.setVisibility(View.VISIBLE);
                                 }
