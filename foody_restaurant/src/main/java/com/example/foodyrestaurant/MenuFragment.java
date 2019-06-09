@@ -153,9 +153,10 @@ public class MenuFragment extends Fragment {
             public void run() {
                 DatabaseReference database = FirebaseDatabase.getInstance().getReference();
                 DatabaseReference ref = database.child("restaurantsMenu").child(user.getUid());
-                ref.addValueEventListener(new ValueEventListener() {
+                ref.addListenerForSingleValueEvent(new ValueEventListener() {
                     @Override
                     public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                        Log.d("PROVADUE","called on data change");
                         cards = new ArrayList<>();
                         for (DataSnapshot ds : dataSnapshot.getChildren()) {
                             for (DataSnapshot ds1 : ds.getChildren()) {
