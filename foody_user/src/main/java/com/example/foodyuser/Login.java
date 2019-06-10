@@ -193,6 +193,7 @@ public class Login extends AppCompatActivity {
 
     private void fetchData(){
 
+
         File root = getExternalFilesDir(Environment.DIRECTORY_DOCUMENTS);
         final File directory = new File(root.getPath()+File.separator+MAIN_DIR);
         if(directory.exists()){
@@ -230,6 +231,7 @@ public class Login extends AppCompatActivity {
                 }else {
                     prefs.edit().remove("email").apply();
                 }
+
 
                 if(info.getAddress()!=null){
                     if(info.getAddress().length() > 0){

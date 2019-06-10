@@ -132,6 +132,10 @@ public class ShowReviewsActivity extends AppCompatActivity {
                 }
 
                 Log.d("PROVAREVIEWS", "images to fetch: " + imagesToFetch);
+                if(reviews.size() == 0){
+                    loadingDisappear();
+                    Toast.makeText(getApplicationContext(), getString(R.string.no_reviews_received), Toast.LENGTH_SHORT).show();
+                }
 
                 if(hasImages){
                     Log.d("PROVAREVIEWS", "i have images");

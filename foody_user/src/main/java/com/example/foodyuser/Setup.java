@@ -510,7 +510,6 @@ public class Setup extends AppCompatActivity {
 
                 case AUTOCOMPLETE_REQUEST_CODE:
                     Place place = Autocomplete.getPlaceFromIntent(data);
-                    Log.d("PLACE", "Place: " + place.getAddress() + " LAT_LNG " + place.getLatLng());
                     pos.address = place.getAddress();
                     pos.latitude = place.getLatLng().latitude;
                     pos.longitude = place.getLatLng().longitude;
@@ -705,7 +704,12 @@ public class Setup extends AppCompatActivity {
         HashMap<String, Object> child = new HashMap<>();
         UserInfo info = new UserInfo(name.getText().toString(), email.getText().toString(), address.getText().toString(),
                 phoneNumber.getText().toString(), bio.getText().toString());
-        info.setImagePath(pathImage);
+
+        if(f.exists()){
+            info.setImagePath(pathImage);
+        }else{
+            info.setImagePath(sharedPref.getString("imgRemote",""));
+        }
 
         sharedPref.edit().putString("name", info.getUsername()).apply();
         sharedPref.edit().putString("email", info.getEmail()).apply();

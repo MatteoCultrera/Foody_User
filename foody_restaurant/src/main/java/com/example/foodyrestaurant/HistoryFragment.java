@@ -9,6 +9,7 @@ import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.design.button.MaterialButton;
 import android.support.v4.app.Fragment;
+import android.support.v4.content.ContextCompat;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -310,12 +311,14 @@ public class HistoryFragment extends Fragment {
                     }
                 }
                 //father.setTop3(top3);
-                firstDish.setText(top3.get(0).getKey());
-                secondDish.setText(top3.get(1).getKey());
-                thirdDish.setText(top3.get(2).getKey());
-                firstDishNumber.setText(top3.get(0).getValue() + " " + getResources().getString(R.string.text_orders));
-                secondDishNumber.setText(top3.get(1).getValue() + " " + getResources().getString(R.string.text_orders));
-                thirdDishNumber.setText(top3.get(2).getValue() + " " + getResources().getString(R.string.text_orders));
+                if(top3!=null){
+                    firstDish.setText(top3.get(0).getKey());
+                    secondDish.setText(top3.get(1).getKey());
+                    thirdDish.setText(top3.get(2).getKey());
+                    firstDishNumber.setText(top3.get(0).getValue() + " " + getResources().getString(R.string.text_orders));
+                    secondDishNumber.setText(top3.get(1).getValue() + " " + getResources().getString(R.string.text_orders));
+                    thirdDishNumber.setText(top3.get(2).getValue() + " " + getResources().getString(R.string.text_orders));
+                }
             }
 
             @Override
@@ -353,6 +356,16 @@ public class HistoryFragment extends Fragment {
 
             }
         });
+    }
+
+    private void setReviewButton(boolean enabled){
+        if(!enabled){
+            reviews.setBackgroundTintList(ContextCompat.getColorStateList(getContext(), R.color.colorPrimaryLight));
+            reviews.setClickable(false);
+        }else{
+            reviews.setBackgroundTintList(ContextCompat.getColorStateList(getContext(), R.color.colorAccent));
+            reviews.setClickable(true);
+        }
     }
 
     private void downloadStats(){
@@ -419,6 +432,7 @@ public class HistoryFragment extends Fragment {
                     foodPoints.setVisibility(View.GONE);
                     restPoints.setVisibility(View.GONE);
                     delivPoints.setVisibility(View.GONE);
+                    setReviewButton(false);
 
                 } else {
                     Log.d("PROVA", "quality: " + meanFoodQuality);
@@ -433,7 +447,9 @@ public class HistoryFragment extends Fragment {
                     restPoints.setText(String.format(Locale.getDefault(), "%.1f", restMean));
                     delivPoints.setText(String.format(Locale.getDefault(), "%.1f", delivMean));
                     pointTotal.setText(String.format(Locale.getDefault(), "%.1f", pointMean));
+                    setReviewButton(true);
                 }
+
             }
 
             @Override

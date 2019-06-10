@@ -163,10 +163,8 @@ public class RVAdapterReservation extends RecyclerView.Adapter<RVAdapterReservat
                             if (dataSnapshot.exists()) {
                                 int count = dataSnapshot.getValue(int.class);
                                 databaseRej.setValue(count+incRejected);
-                                Log.d("PROVA", "Inside : count: " + count + " toInc: "+ incRejected);
                             } else {
-                                databaseRej.setValue(1);
-                                Log.d("PROVA", "Inside in else");
+                                databaseRej.setValue(incRejected);
                             }
                         }
 
@@ -175,6 +173,7 @@ public class RVAdapterReservation extends RecyclerView.Adapter<RVAdapterReservat
 
                         }
                     });
+
                     //Removing all the pending delivery and update the title
                     fatherFragment.removeAllItem();
                     fatherFragment.updateTitles();

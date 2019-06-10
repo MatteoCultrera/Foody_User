@@ -587,7 +587,6 @@ public class Setup extends AppCompatActivity {
 
                 case AUTOCOMPLETE_REQUEST_CODE:
                     Place place = Autocomplete.getPlaceFromIntent(data);
-                    Log.d("PLACE", "Place: " + place.getAddress() + " LAT_LNG " + place.getLatLng());
                     pos.address = place.getAddress();
                     pos.latitude = place.getLatLng().latitude;
                     pos.longitude = place.getLatLng().longitude;
@@ -787,7 +786,11 @@ public class Setup extends AppCompatActivity {
         days.add(saturday.getText().toString());
         days.add(sunday.getText().toString());
         BikerInfo info = new BikerInfo(name.getText().toString(), email.getText().toString(), address.getText().toString(), phoneNumber.getText().toString(), days);
-        info.setPath(pathImage);
+        if(f.exists()){
+            info.setPath(pathImage);
+        }else{
+            info.setPath(sharedPref.getString("imgRemote",""));
+        }
         child.put("info", info);
         database.updateChildren(child);
 

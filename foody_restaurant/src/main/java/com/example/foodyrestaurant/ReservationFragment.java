@@ -7,6 +7,7 @@ import android.support.annotation.NonNull;
 import android.support.v4.app.Fragment;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -179,6 +180,23 @@ public class ReservationFragment extends Fragment {
         doing_reservations.add(i, reservation);
         adapterDoing.notifyItemInserted(i);
         adapterDoing.notifyItemRangeChanged(i, doing_reservations.size());
+    }
+
+    public void removeDoingOrder(DataSnapshot ds){
+        if(doing_reservations.size() == 0)
+            return;
+
+        String key = ds.getKey();
+        int i;
+        for(i = 0; i < doing_reservations.size(); i++){
+            if(key.contains(doing_reservations.get(i).getReservationID())){
+                break;
+            }
+        }
+
+        doing_reservations.remove(i);
+        adapterDoing.notifyItemRemoved(i);
+        adapterDoing.notifyItemRangeChanged(i,doing_reservations.size());
     }
 
     public void clearNotification(){

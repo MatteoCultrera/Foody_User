@@ -48,6 +48,7 @@ public class BikerFragment extends Fragment {
     private boolean onChooseSide;
     private final int CHOOSE_BIKER = 1;
     private int currentPosition;
+    private View thisView;
 
     public BikerFragment() {}
 
@@ -69,7 +70,13 @@ public class BikerFragment extends Fragment {
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
-        init(view);
+        thisView = view;
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+        init(thisView);
     }
 
     private void init(View view){
@@ -129,8 +136,9 @@ public class BikerFragment extends Fragment {
                     reservation.setRestaurantName(sharedPreferences.getString("name", null));
 
                     String biker = reservationDB.getBikerID();
-                    if(!reservation.getPreparationStatusString().toLowerCase().equals("pending") && biker.equals(""))
+                    if(!reservation.getPreparationStatusString().toLowerCase().equals("pending") && biker.equals("")){
                         reservationList.add(new ReservationBiker(reservation, reservationDB.isWaitingBiker(), reservationDB.getReservationID()));
+                    }
                     if(!reservation.getPreparationStatusString().toLowerCase().equals("pending") && !biker.equals("")){
                         reservationAcceptedList.add(new ReservationBiker(reservation,biker, reservationDB.isWaitingBiker(), reservationDB.getReservationID()));
                     }
@@ -171,7 +179,6 @@ public class BikerFragment extends Fragment {
                     public void onChildChanged(@NonNull DataSnapshot dataSnapshot, @Nullable String s) {
                         ReservationDBRestaurant reservationDB = dataSnapshot.getValue(ReservationDBRestaurant.class);
                         if(!dataSnapshot.child("attemptedBiker").exists()) {
-                            Log.d("SWSW", reservationDB.getReservationID());
                             if (reservationDB.isAccepted() && !reservationDB.isBiker()) {
                                 //Fetch Dishes
                                 ArrayList<Dish> dishes = new ArrayList<>();
@@ -206,16 +213,16 @@ public class BikerFragment extends Fragment {
                                 reservation.setRestaurantName(sharedPreferences.getString("name", null));
                                 String biker = reservationDB.getBikerID();
                                 int i;
-                                for(i = 0; i < reservationAcceptedList.size(); i++) {
-                                    if (reservation.getOrderTime().compareTo(reservationAcceptedList.get(i)
-                                            .getReservation().getOrderTime()) < 0)
+                                for(i = 0; i < reservationList.size(); i++) {
+                                    if (reservation.getOrderTime().compareTo(reservationList.get(i)
+                                            .getReservation().getOrderTime()) > 0)
                                         break;
                                 }
 
                                 reservationList.add(i, new ReservationBiker(reservation, biker,
                                         reservationDB.isWaitingBiker(), reservationDB.getReservationID()));
                                 adapterNotAccepted.notifyItemChanged(i);
-                                adapterNotAccepted.notifyItemRangeChanged(i, reservationAcceptedList.size());
+                                adapterNotAccepted.notifyItemRangeChanged(i, reservationList.size());
                             }
                         }
                         String orderID = reservationDB.getReservationID().substring(28);

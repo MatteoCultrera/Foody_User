@@ -105,10 +105,10 @@ public class MainActivity extends AppCompatActivity {
         ((BikerFragment) biker).setFather(this);
         history = new HistoryFragment();
         ((HistoryFragment) history).setFather(this);
-        fm.beginTransaction().add(R.id.mainFrame, history, "5").hide(history).commit();
-        fm.beginTransaction().add(R.id.mainFrame, user, "4").hide(user).commit();
-        fm.beginTransaction().add(R.id.mainFrame, biker, "3").hide(biker).commit();
-        fm.beginTransaction().add(R.id.mainFrame, reservations, "2").hide(reservations).commit();
+        fm.beginTransaction().add(R.id.mainFrame, history, "5").commit();
+        fm.beginTransaction().add(R.id.mainFrame, user, "4").commit();
+        fm.beginTransaction().add(R.id.mainFrame, biker, "3").commit();
+        fm.beginTransaction().add(R.id.mainFrame, reservations, "2").commit();
         fm.beginTransaction().add(R.id.mainFrame, menu, "1").show(menu).commit();
         active = menu;
         init();
@@ -162,7 +162,7 @@ public class MainActivity extends AppCompatActivity {
                 if(id == R.id.menu && active != menu){
                     FragmentTransaction transaction = fm.beginTransaction();
                     transaction.setCustomAnimations(R.anim.enter_from_left,R.anim.exit_to_right);
-                    transaction.hide(active).show(menu).commit();
+                    transaction.replace(R.id.mainFrame, menu).commit();
                     active = menu;
                     return true;
                 }else if(id == R.id.orders && active != reservations){
@@ -170,11 +170,11 @@ public class MainActivity extends AppCompatActivity {
                     if(active == menu){
                         FragmentTransaction transaction =fm.beginTransaction();
                         transaction.setCustomAnimations(R.anim.enter_from_right,R.anim.exit_to_left);
-                        transaction.hide(active).show(reservations).commit();
+                        transaction.replace(R.id.mainFrame, reservations).commit();
                     }else{
                         FragmentTransaction transaction = fm.beginTransaction();
                         transaction.setCustomAnimations(R.anim.enter_from_left, R.anim.exit_to_right);
-                        transaction.hide(active).show(reservations).commit();
+                        transaction.replace(R.id.mainFrame, reservations).commit();
                     }
                     active = reservations;
                     return true;
@@ -183,11 +183,11 @@ public class MainActivity extends AppCompatActivity {
                     if(active == menu || active == reservations){
                         FragmentTransaction transaction = fm.beginTransaction();
                         transaction.setCustomAnimations(R.anim.enter_from_right, R.anim.exit_to_left);
-                        transaction.hide(active).show(biker).commit();
+                        transaction.replace(R.id.mainFrame, biker).commit();
                     }else{
                         FragmentTransaction transaction = fm.beginTransaction();
                         transaction.setCustomAnimations(R.anim.enter_from_left, R.anim.exit_to_right);
-                        transaction.hide(active).show(biker).commit();
+                        transaction.replace(R.id.mainFrame, biker).commit();
                     }
                     active = biker;
                     return true;
@@ -196,11 +196,11 @@ public class MainActivity extends AppCompatActivity {
                     if(active == history){
                         FragmentTransaction transaction = fm.beginTransaction();
                         transaction.setCustomAnimations(R.anim.enter_from_left,R.anim.exit_to_right);
-                        transaction.hide(active).show(user).commit();
+                        transaction.replace(R.id.mainFrame, user).commit();
                     }else{
                         FragmentTransaction transaction = fm.beginTransaction();
                         transaction.setCustomAnimations(R.anim.enter_from_right,R.anim.exit_to_left);
-                        transaction.hide(active).show(user).commit();
+                        transaction.replace(R.id.mainFrame, user).commit();
                     }
 
                     active = user;
@@ -208,7 +208,7 @@ public class MainActivity extends AppCompatActivity {
                 }else if(id == R.id.orders_done && active != history){
                     FragmentTransaction transaction = fm.beginTransaction();
                     transaction.setCustomAnimations(R.anim.enter_from_right, R.anim.exit_to_left);
-                    transaction.hide(active).show(history).commit();
+                    transaction.replace(R.id.mainFrame, history).commit();
                     active = history;
                     return true;
                 }
@@ -312,7 +312,8 @@ public class MainActivity extends AppCompatActivity {
 
             @Override
             public void onChildRemoved(@NonNull DataSnapshot dataSnapshot) {
-
+                if(!dataSnapshot.child("status").getValue(String.class).toLowerCase().equals("pending"))
+                    ((ReservationFragment) reservations).removeDoingOrder(dataSnapshot);
             }
 
             @Override

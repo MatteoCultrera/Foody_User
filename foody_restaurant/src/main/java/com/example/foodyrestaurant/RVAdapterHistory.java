@@ -89,7 +89,22 @@ public class RVAdapterHistory extends RecyclerView.Adapter<RVAdapterHistory.Card
         String lastFour = reservations.get(i).getReservationID().substring(id_size-4,id_size);
         String orderId = (first2Letters + lastFour).toUpperCase();
         pvh.idOrder.setText(orderId);
-        pvh.status.setText(reservations.get(i).getPreparationStatusString());
+        String status1;
+        switch (reservations.get(pos).getPreparationStatus()){
+            case PENDING:
+                status1 = pvh.accept.getContext().getString(R.string.pending);
+                break;
+            case DOING:
+                status1 = pvh.accept.getContext().getString(R.string.doing);
+                break;
+            case DONE:
+                status1 = pvh.accept.getContext().getString(R.string.done);
+                break;
+            default:
+                status1=" ";
+                break;
+        }
+        pvh.status.setText(status1);
         pvh.time.setText(getDate(reservations.get(i).getDate())+"\n"+reservations.get(i).getOrderTime());
 
         if(reservations.get(i).isAccepted())
